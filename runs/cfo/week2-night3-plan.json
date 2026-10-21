@@ -1,0 +1,58 @@
+{
+ "notes": "Report 1 (ledger detail) actually resolves last night's big worry in Tidewick's favor: the \"credit = payment + refund\" pattern is correct double-entry accounting, not double-counted revenue. On capture: Sales revenue (credit) + VAT payable (credit) = Payment gateway clearing (debit). On refund: Refunds and returns/contra-revenue (debit) + VAT payable (debit) = Payment gateway clearing (credit) — e.g. Ampfeld Elektronik #1727 and every other refunded sample shows this exact structure, balanced to the cent. My \"ledger_credit_total\" diagnostic from Night 2 was simply summing credits across unrelated accounts (revenue credits at capture + clearing credits at refund), which is apples-to-oranges — the ledger itself is fine. Report 2's scale-up confirms this: 78.55% + 18.74% ≈ 97.3% of 2025's captured payments follow one of these two clean, explainable patterns. That's good news I can tell Tobias with confidence.\n\nTwo smaller things still need a next step before I call #1 fully done: (a) \"other mismatch\" is 249 payments / €84,443 in payment value (2.1% of count) — Castell Fasteners' SO-100233 in the detail report hints these may be non-gateway payment methods (bank transfer) where VAT/revenue nets differently than my simple gross/net comparison expected, not a real error, but I want to confirm that before saying so; (b) \"no ledger entries\" is small in money (€3,380 across 67 payments, 0.58%) but is a genuine audit-trail gap spread across 31 merchants — worth knowing whether it's an old, fixed bug or still happening now, since \"we found gaps but can't tell if they're ongoing\" is a weak answer to give auditors.\n\nTonight's three slots: characterize the \"other mismatch\" bucket by payment method (test the bank-transfer/B2B hypothesis); redo the revenue reconciliation using the *correct* ledger accounts (Sales/Shipping revenue credits minus Refunds-and-returns debits, compared to payments' net amount) so I have a trustworthy \"yes, it ties out\" statement built the right way instead of my flawed Night 2 shortcut; and trend the no-ledger-entries gap by month to see if it's historical or still occurring.",
+ "requests": [
+  {
+   "title": "Other-Mismatch Payments: Characterization by Payment Method, 2025",
+   "question": "Is the 2.1%-of-payments 'other mismatch' ledger bucket explained by a specific payment method (e.g. bank transfer/wire rather than card/gateway), or is it unexplained?",
+   "grain": "one payment_methods.kind, restricted to 2025 payments in the 'other mismatch' reconciliation category",
+   "columns": [
+    "payment_method_kind",
+    "payment_count",
+    "pct_of_mismatch_count",
+    "total_payment_amount_eur",
+    "pct_of_mismatch_amount",
+    "avg_abs_diff_eur (average of |ledger_credit_total_eur - expected_eur| where expected is the nearer of net_amount or payment+refund)"
+   ],
+   "details": "Recompute the same classification as last night's 'Ledger-to-Payment Reconciliation Pattern at Scale, 2025' report: for payments captured in 2025 (status captured/refunded/partially_refunded), aggregate linked ledger_entries by payment_id (sum of direction='credit' amounts, each converted to EUR via exchange_rates on the ledger entry's own currency_code and date(occurred_at)), and compare to payment_amount_eur and amount_refunded_eur (converted via exchange_rates on captured_at). A payment falls in 'other mismatch' if its ledger credit total is NOT within 1% (or €1, whichever is larger) of either (payment_amount_eur - amount_refunded_eur) or (payment_amount_eur + amount_refunded_eur), and it has at least one ledger_entries row (i.e., exclude 'no ledger entries' payments). For that 'other mismatch' set only, join payments.payment_method_id -> payment_methods.kind and group by kind (null/missing payment_method_id as 'unknown'). avg_abs_diff_eur = average of the absolute difference between ledger_credit_total_eur and whichever of the two expected values (net or gross+refund) is closer. Order by payment_count descending.",
+   "builds_on": [
+    "Ledger-to-Payment Reconciliation Pattern at Scale, 2025",
+    "Ledger Line-Item Detail for Flagged Sample Payments, 2025"
+   ]
+  },
+  {
+   "title": "2025 Revenue Reconciliation via Correct Ledger Accounts, by Quarter",
+   "question": "Using the right ledger accounts (revenue credits net of refund contra-revenue debits), does the ledger's net revenue tie to the payments table's net captured amount each quarter?",
+   "grain": "one calendar quarter, 2025",
+   "columns": [
+    "quarter",
+    "ledger_revenue_credit_eur (sum of ledger_entries.amount, direction='credit', for ledger_accounts.account_type='revenue', occurred_at in the quarter)",
+    "ledger_contra_revenue_debit_eur (same but account_type='contra_revenue', direction='debit')",
+    "ledger_net_revenue_eur (credit minus debit)",
+    "payments_net_amount_eur (sum of payments.amount - payments.amount_refunded for payments captured_at in the quarter, status captured/refunded/partially_refunded)",
+    "diff_eur",
+    "diff_pct"
+   ],
+   "details": "Source: ledger_entries joined to ledger_accounts for account_type, filtered to occurred_at in calendar year 2025, converting each ledger_entries.amount to EUR via exchange_rates (base_code='EUR', quote_code=ledger_entries.currency_code, as_of=date(occurred_at)). Separately, payments filtered to captured_at in 2025 with the usual status filter, converting amount and amount_refunded to EUR via exchange_rates on captured_at. Group both sides by calendar quarter and join on quarter. diff_eur = ledger_net_revenue_eur - payments_net_amount_eur; diff_pct = diff_eur / payments_net_amount_eur * 100. Order chronologically 2025-Q1 to 2025-Q4 (4 rows).",
+   "builds_on": [
+    "Ledger Line-Item Detail for Flagged Sample Payments, 2025",
+    "Ledger-to-Payment Reconciliation Pattern at Scale, 2025"
+   ]
+  },
+  {
+   "title": "No-Ledger-Entries Gap Trend by Month, 2025",
+   "question": "Is the small 'payment with zero ledger entries' gap an ongoing issue in current operations, or was it confined to earlier in the year and since resolved?",
+   "grain": "one calendar month, 2025",
+   "columns": [
+    "month",
+    "total_payments",
+    "payments_without_ledger_entries",
+    "pct_without_ledger_entries",
+    "amount_at_risk_eur"
+   ],
+   "details": "Source: payments with status captured/refunded/partially_refunded and captured_at in 2025, LEFT JOIN to a per-payment count of linked ledger_entries via payment_id. Convert payment amounts to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=date(captured_at)). Group by calendar month of captured_at. amount_at_risk_eur sums payment_amount_eur only for payments with zero linked ledger_entries. Order chronologically 2025-01 to 2025-12 (12 rows).",
+   "builds_on": [
+    "Payments With No Ledger Entries, by Merchant, 2025"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Storefront-to-order funnel for top merchants, Q4 2025",
+    "--question",
+    "Where do shoppers drop off between landing on the storefront and placing a paid order, and does the shape differ across our biggest merchants?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Grace\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per tenant (top 10 merchants by paid order volume in Q4 2025)\", \"columns_requested\": [\"tenant name\", \"visits (distinct web_sessions started in period)\", \"carts created in period\", \"orders placed in period (any status)\", \"orders paid in period (status not in pending, cancelled)\", \"visit \\u2192 cart %\", \"cart \\u2192 order %\", \"order \\u2192 paid %\", \"overall visit \\u2192 paid %\"], \"details\": \"Time window: 2025-10-01 to 2025-12-31 (orders.placed_at, carts.created_at, web_sessions.started_at all within this range). Tenant selection: rank tenants by count of orders with status not in ('pending','cancelled') and placed_at in this window; keep the top 10, ordered descending by that paid-order count. Tables: tenants (name), web_sessions (visits, started_at, tenant_id), carts (carts created, created_at, tenant_id), orders (orders placed and orders paid, placed_at, status, tenant_id). No FK links web_sessions to carts or carts to orders' session \\u2014 just count each stage independently per tenant per period (don't try to force a row-level join between visits and carts). Round percentages to 1 decimal. Order final report by overall visit\\u2192paid % descending, tie-break by tenant name.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

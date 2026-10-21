@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant status and payout activity, today",
+    "--question",
+    "What share of our merchant base is actually transacting, and how does that break down by account status?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per tenants.status value\", \"columns_requested\": [\"tenant status\", \"tenant count\", \"count with a settled payout in the trailing 12 months\", \"count with no settled payout in the trailing 12 months\", \"share with no recent payout (%)\", \"average tenure in days for those with no recent payout (now - created_at, as of 2026-01-05)\"], \"details\": \"Source: tenants left joined to payouts (status='paid', paid_at >= 2025-01-01 and < 2026-01-01) aggregated per tenant_id to a yes/no flag. Group by tenants.status (trial, active, past_due, suspended, churned) and exclude tenants with deleted_at not null. For the tenure column, compute age in days as 2026-01-05 minus tenants.created_at, averaged only over the 'no recent payout' group within each status. Order by tenant count descending, tie-break by status name ascending.\", \"builds_on\": [\"Merchant and order growth by quarter\", \"Revenue by vertical, trailing 12 months (corrected)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

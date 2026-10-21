@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Tenant-level breakdown of the lapsed-subscriber leakage trend, by half-year",
+    "--question",
+    "Is the decline in lapsed-subscriber free-delivery leakage since late 2024 broad-based across all affected tenants, or driven by one or two tenants fixing something while others stayed flat?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Ines\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per tenant and half-year period (2023-H1 through 2025-H2, 6 periods)\", \"columns_requested\": [\"tenant name\", \"half-year period\", \"orphan orders where most-recent subscription status = 'canceled' (count)\", \"distinct customers\", \"total discount amount (EUR)\"], \"details\": \"Source: same confirmed-leakage population as the monthly trend report (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at 2023-01-01 to 2025-12-31, status != 'cancelled', no overlapping active/trialing/past_due subscription, most-recent subscription status = 'canceled') joined to tenants for name. Bucket placed_at into half-year periods (2023-H1 = Jan-Jun 2023, 2023-H2 = Jul-Dec 2023, etc. through 2025-H2). Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Include all 6 tenants identified in the original subscription-delivery analysis (Grind Collective, Honeycomb Larder, Kibblewick, Feather & Fin, Saffron & Sage, The Balm Room) even in periods with zero orphan orders (zero-fill). Order by tenant name, then period ascending. Print all rows (expect up to 36).\", \"builds_on\": [\"Monthly trend of confirmed lapsed-subscriber free-delivery leakage, 2023-2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty point economics by vertical: cost and liability",
+    "--question",
+    "Within each vertical that runs a loyalty program, how much of members' revenue is given back as redeemed points, and how large is the unredeemed points liability sitting on the books?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per industry with at least one tenant running an active loyalty program\", \"columns_requested\": [\"industry - tenants.industry\", \"members_count - distinct users with a loyalty_accounts row who placed >=1 order with placed_at in 2025 at a tenant in this industry\", \"member_revenue_eur - sum of grand_total (EUR) of those members' 2025 orders in this industry, rounded to 0 decimals\", \"points_redeemed_value_eur - sum over loyalty_transactions with the 'points spent/redeemed' direction (e.g. 'burn') in 2025, of points / loyalty_programs.points_per_currency (via the account's program), converted from the program's currency_code to EUR as of each transaction's occurred_at date, rounded to 0 decimals\", \"redemption_cost_pct - points_redeemed_value_eur / member_revenue_eur * 100, rounded to 1 decimal\", \"outstanding_points_value_eur - sum of loyalty_accounts.points_balance (current, not time-filtered) / points_per_currency for accounts in this industry, converted to EUR using the exchange rate as of 2025-12-31, rounded to 0 decimals\"], \"details\": \"Source: orders joined to tenants (industry) and loyalty_accounts (member match on user_id+tenant_id) for members_count/member_revenue_eur, same definitions as the 'Is loyalty members' lower spend...' report from last week. loyalty_transactions joined to loyalty_accounts and loyalty_programs (for points_per_currency and currency_code) to compute points_redeemed_value_eur, filtered to occurred_at in 2025 and the ledger direction representing points spent (confirm the exact direction value via dry run; the table description calls this an 'earn/burn' ledger). loyalty_accounts.points_balance (undated, current snapshot) for outstanding_points_value_eur, same conversion logic but valued as of 2025-12-31. Restrict industries to those with a tenant in loyalty_programs where is_active = true. Order by industry ascending.\", \"builds_on\": [\"Is loyalty members' lower spend a within-industry effect or a merchant-mix effect?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

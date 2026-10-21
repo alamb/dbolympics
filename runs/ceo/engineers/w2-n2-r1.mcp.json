@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant refund-rate spike check, Q3 2025 vs H1 2025 baseline",
+    "--question",
+    "Does the refund spike Finance flagged for Q3 2025 (naming OfficeHub Nordic and Sports & Outdoor sellers) hold up at the merchant level, and is it the same story as Q4?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Omar\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"vertical\", \"refund rate Q3 2025 (%)\", \"refund rate H1 2025 baseline (%)\", \"change vs own baseline (percentage points)\", \"refund amount Q3 2025 (EUR)\", \"order count Q3 2025\"], \"details\": \"Same method as last night's Q4 refund-spike report: refund rate = 100 * (succeeded payment_refunds amount, EUR, processed_at in quarter) / (captured payments amount, EUR, captured_at in quarter, status in 'captured','partially_refunded','refunded'), attributed to merchant via tenant_id on payments/payment_refunds directly. Q3 2025 = 2025-07-01 to 2025-10-01; H1 2025 baseline = 2025-01-01 to 2025-07-01. Include only merchants with at least 10 orders in Q3 2025. Order by change vs own baseline descending, tie-break by refund amount Q3 2025 descending. I specifically want to see where OfficeHub Nordic and any Sports & Outdoor merchants land in this ranking, and whether the same merchants appear here as in the Q4 version of this report.\", \"builds_on\": [\"Merchant refund-rate spike check, Q4 2025 vs 2025 baseline\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

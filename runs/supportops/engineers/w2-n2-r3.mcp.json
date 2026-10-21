@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Monthly ticket volume vs. knowledge-base engagement trend",
+    "--question",
+    "Is there any visible relationship between how much customers engage with the knowledge base and how many tickets we get — even a rough, non-causal signal?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Felix\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per calendar month in 2025\", \"columns_requested\": [\"month_label (YYYY-MM)\", \"ticket_count (tickets created that month)\", \"kb_engagement_count (count of whichever signal is available and most plausible: events rows with event_name indicating a knowledge/article view, or page_views rows whose path indicates a knowledge-base/help-center page \\u2014 engineer's judgment on which signal exists and is usable)\", \"kb_engagement_signal_used (text noting which table/definition was actually used, e.g. 'events.event_name = article_viewed' or 'page_views.path LIKE %/help/%')\"], \"details\": \"Window: 2025-01-01 through 2025-12-31, by calendar month (use calendar_days.month_label for consistent bucketing). Source tables: tickets for ticket_count; events and/or page_views for kb_engagement_count \\u2014 please first check what event_name values or path patterns actually look knowledge-base-related in this warehouse and use whichever is usable, noting the exact definition in the kb_engagement_signal_used column (same text repeated on every row is fine). If genuinely nothing in events or page_views looks KB-related, return the report with kb_engagement_count as NULL and say so in the engineer's note rather than guessing \\u2014 we'd rather know we don't have the signal than get a wrong one. Order by month_label ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,68 @@
+{
+ "notes": "Two things from last night change tonight's plan:\n\n(1) The single biggest cost line in Report 1 — \"Subscription delivery (prepaid)\" — shows real discount spend (up to ~€24k on one tenant instance, and it recurs across ~6 rows/tenants) but €0.0 associated order revenue every single time, which also explains the absurd discount_pct_of_revenue values in Report 2 (Grind Collective 99.92%, Honeycomb Larder 96.93%, The Pencil Case 781.56%). Before I rank \"biggest cost, no lift\" discounts for Marco, I need to know whether this is a real zero-margin giveaway or a billing-model artifact where the actual revenue is collected via subscription invoices rather than the order itself. Getting this wrong would make me tell Marco to kill a discount that isn't actually losing money, or miss one that genuinely is.\n\n(2) Report 3's abuse framing was broken: usage_limit and per_customer_limit were NULL for every coupon shown, so \"max redemptions by a customer > limit\" could never actually fire — we only surfaced raw repeat-redemption counts, not real breaches. I want to redo this narrowly on coupons that actually have a configured cap, which is the only place \"abuse\" is well-defined.\n\nI'm also starting the hard incrementality question (Marco/Tobias Q2) now rather than waiting, using a within-customer before/after comparison (discounted order value vs. the same customers' other, non-discounted orders) as an honest, approximate read — this needs iteration so it's better to see a first pass early.\n\nAll three tonight are independent and don't block each other.",
+ "requests": [
+  {
+   "title": "Order economics behind the 'Subscription delivery (prepaid)' discount",
+   "question": "Is the 'Subscription delivery (prepaid)' discount a real zero-margin giveaway, or does the €0 order revenue reflect that these customers actually pay via a separate subscription invoice?",
+   "grain": "one row per tenant, restricted to orders carrying the 'Subscription delivery (prepaid)' discount",
+   "columns": [
+    "tenant name",
+    "order count",
+    "distinct customers",
+    "avg order subtotal (EUR)",
+    "avg discount_total on the order (EUR)",
+    "avg shipping_total (EUR)",
+    "avg tax_total (EUR)",
+    "avg grand_total (EUR)",
+    "% of these orders with grand_total = 0",
+    "% of these customers with an active subscription (subscriptions.status in ('trialing','active','past_due')) overlapping the order's placed_at date"
+   ],
+   "details": "Source: order_discounts joined to discounts (filter discounts.name = 'Subscription delivery (prepaid)') and orders (subtotal, discount_total, tax_total, shipping_total, grand_total, placed_at, currency_code, user_id, tenant_id, status != 'cancelled'), tenants for name. Time window: orders.placed_at in 2025-01-01 to 2025-12-31. Convert all money columns to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at date). For the subscription-overlap check, join subscriptions on user_id and tenant_id where subscriptions.started_at <= order.placed_at and (ended_at is null or ended_at >= order.placed_at). Order by order_count descending, tenant name as tie-break. Note total row count (expect ~6-10 tenants); print all.",
+   "builds_on": [
+    "Discount cost vs. order volume/revenue by discount, 2025",
+    "Discount spend concentration by tenant and vertical, 2025"
+   ]
+  },
+  {
+   "title": "Coupons with a configured usage cap: actual breaches of usage_limit or per_customer_limit",
+   "question": "Among coupons that actually have a usage_limit or per_customer_limit configured, which ones have been redeemed beyond that stated cap?",
+   "grain": "one row per coupon (coupons.id)",
+   "columns": [
+    "coupon code",
+    "tenant name",
+    "status",
+    "usage_limit",
+    "per_customer_limit",
+    "times_redeemed (actual count from coupon_redemptions)",
+    "redemptions over usage_limit (times_redeemed - usage_limit, floor 0)",
+    "max redemptions by a single customer",
+    "distinct customers whose redemptions exceed per_customer_limit",
+    "total discount redeemed (EUR)"
+   ],
+   "details": "Source: coupons joined to tenants (name) and coupon_redemptions (for actual counts, distinct user_id, per-user redemption counts) and orders (currency_code, placed_at) for EUR conversion via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=redeemed_at date). Filter to coupons where usage_limit IS NOT NULL OR per_customer_limit IS NOT NULL. Use full history (redeemed_at 2023-01-01 to 2025-12-31) since a cap can be breached across the coupon's whole life, not just 2025. Order by 'redemptions over usage_limit' descending, then 'distinct customers whose redemptions exceed per_customer_limit' descending, coupon code ascending as final tie-break. Note total row count; print top 50.",
+   "builds_on": [
+    "Coupon redemption patterns: repeat use, limit breaches and post-expiry usage, 2025"
+   ]
+  },
+  {
+   "title": "Within-customer order value lift on top discount codes, 2025",
+   "question": "For our top discounts, do the same customers spend more per order when using the discount than they do on their own other, non-discounted orders — our best approximate read on incrementality?",
+   "grain": "one row per discount (discounts.id), restricted to the top discounts by 2025 discount spend excluding 'Subscription delivery (prepaid)'",
+   "columns": [
+    "discount name",
+    "coupon code (or 'automatic')",
+    "order count with this discount",
+    "distinct customers using this discount",
+    "avg order value on discounted orders (grand_total, EUR)",
+    "avg order value on the same customers' other non-discounted orders in 2025 (EUR)",
+    "lift (EUR, discounted minus other)",
+    "lift (%)",
+    "% of these customers who placed at least one other order in 2025 with no discount applied"
+   ],
+   "details": "Source: order_discounts + discounts + orders for the discounted-order side (orders.status != 'cancelled', placed_at in 2025, discount name != 'Subscription delivery (prepaid)'); for the comparison side, for each user_id found above, pull their other 2025 orders (same tenant, status != 'cancelled') that have no row in order_discounts, and average grand_total (EUR) across those. Convert all amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at date). Restrict to the top 15 discounts by total 2025 discount_amount_eur (from the existing ranking, excluding the subscription-delivery discount) to keep this focused and affordable. Order by lift (%) ascending (so we see 'no discernible lift' cases first, as that's the more actionable finding), discount name as tie-break. Note total discounts considered (15) and how many customers had no comparison orders available (flag as a caveat if material).",
+   "builds_on": [
+    "Discount cost vs. order volume/revenue by discount, 2025"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Albion Parcel performance by destination country, baseline vs collapse",
+    "--question",
+    "Is Albion Parcel's November-December breakdown concentrated in specific destination countries, or did it hit all regions roughly equally?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per destination country and period, for Albion Parcel shipments only\", \"columns_requested\": [\"destination_country\", \"period ('baseline' = shipped_at 2025-01-01 to 2025-10-31; 'collapse' = shipped_at 2025-11-01 to 2025-12-31)\", \"shipments_shipped\", \"avg_transit_days (shipped_at to delivered_at, delivered subset only)\", \"pct_within_3_days\", \"share_of_period_shipments_pct (this country's shipments / all Albion shipments in that period, x100)\"], \"details\": \"Tables: shipments (carrier='Albion Parcel', shipped_at, delivered_at) joined via fulfillments (fulfillment_id) -> orders (order_id) -> addresses (orders.shipping_address_id) -> countries (destination country name). transit_days = DATEDIFF(day, shipped_at, delivered_at), delivered subset only. Round avg_transit_days to 2 decimals, pct columns to 1 decimal. Include only countries with at least 15 shipments in at least one of the two periods (to avoid noise from one-off destinations). Order by destination_country ascending, then period (baseline before collapse).\", \"builds_on\": [\"Albion Parcel transit performance by month, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

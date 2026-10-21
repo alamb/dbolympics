@@ -1,0 +1,73 @@
+=== Report 1: Carrier mix and on-time delivery performance, flagged merchants vs. Cragsley (written by Omar) ===
+Engineer's note: pct_of_tenant_shipments is based on all 2025 shipments for the tenant (any delivery status); avg_delivery_days and pct_delivered_within_3_days are computed only over the subset of shipments with both shipped_at and delivered_at populated, as requested.
+REPORT: Carrier mix and on-time delivery performance, flagged merchants vs. Cragsley
+QUESTION: Do Marrowby & Vane and Studio Vrij rely on a slower or less reliable carrier than Cragsley Outfitters, which would explain their outsized delivery/where-is-my-order ticket resolution times?
+tenant_name         | carrier              | shipment_count | pct_of_tenant_shipments | avg_delivery_days | pct_delivered_within_3_days
+--------------------+----------------------+----------------+-------------------------+-------------------+----------------------------
+Cragsley Outfitters | Liberty Ground       |           1634 |                    46.9 |               2.3 |                        80.3
+Cragsley Outfitters | Trailhead Express    |           1253 |                    36.0 |               2.5 |                        73.1
+Cragsley Outfitters | Prairie Line Express |            511 |                    14.7 |               2.6 |                        70.4
+Cragsley Outfitters | Landfall Freight     |             85 |                     2.4 |               4.3 |                        24.1
+Marrowby & Vane     | Albion Parcel        |            863 |                    51.6 |               2.5 |                        76.8
+Marrowby & Vane     | Regent Parcels       |            260 |                    15.6 |               2.3 |                        76.7
+Marrowby & Vane     | Kennet Freight       |            219 |                    13.1 |               1.9 |                        90.1
+Marrowby & Vane     | Landfall Freight     |            192 |                    11.5 |               6.4 |                         9.0
+Marrowby & Vane     | Lowlands Express     |            137 |                     8.2 |               6.1 |                         9.9
+Studio Vrij         | Lowlands Express     |            347 |                    58.1 |               2.5 |                        71.0
+Studio Vrij         | Polder Post          |            188 |                    31.5 |               2.7 |                        63.2
+Studio Vrij         | Landfall Freight     |             62 |                    10.4 |               4.3 |                        18.3
+(12 rows)
+
+=== Report 2: Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley (written by Omar) ===
+Engineer's note: avg_resolution_minutes is computed only over tickets that have a resolved_at timestamp (unresolved tickets in a month are excluded from that average but still counted in ticket_count and the breach-rate denominator); resolution_breach_rate is the share of that month's tagged tickets with at least one sla_breaches row of breach_kind='resolution'.
+REPORT: Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley
+QUESTION: Did the delivery/where-is-my-order slowness at Marrowby & Vane and Studio Vrij spike in a specific period (e.g. November-December, matching a known carrier breakdown) or run elevated all year?
+tenant_name         | month_label | ticket_count | avg_resolution_minutes | resolution_breach_rate
+--------------------+-------------+--------------+------------------------+-----------------------
+Cragsley Outfitters | 2025-02     |            1 |                  314.0 |                    0.0
+Cragsley Outfitters | 2025-03     |            9 |                 1051.0 |                    0.0
+Cragsley Outfitters | 2025-04     |            3 |                  636.0 |                    0.0
+Cragsley Outfitters | 2025-05     |            4 |                 1224.0 |                    0.0
+Cragsley Outfitters | 2025-06     |            6 |                 1338.0 |                    0.0
+Cragsley Outfitters | 2025-07     |           16 |                 1529.0 |                    6.3
+Cragsley Outfitters | 2025-08     |            5 |                 1994.0 |                   40.0
+Cragsley Outfitters | 2025-09     |            8 |                  508.0 |                    0.0
+Cragsley Outfitters | 2025-10     |           11 |                 2876.0 |                   45.5
+Cragsley Outfitters | 2025-11     |           10 |                 2032.0 |                   20.0
+Cragsley Outfitters | 2025-12     |           24 |                 2081.0 |                   33.3
+Marrowby & Vane     | 2025-02     |            1 |                  240.0 |                    0.0
+Marrowby & Vane     | 2025-03     |            3 |                  346.0 |                    0.0
+Marrowby & Vane     | 2025-04     |            2 |                  799.0 |                    0.0
+Marrowby & Vane     | 2025-05     |            2 |                  642.0 |                    0.0
+Marrowby & Vane     | 2025-06     |            4 |                 1137.0 |                    0.0
+Marrowby & Vane     | 2025-07     |            2 |                  797.0 |                    0.0
+Marrowby & Vane     | 2025-08     |            1 |                 1196.0 |                    0.0
+Marrowby & Vane     | 2025-09     |            3 |                  398.0 |                    0.0
+Marrowby & Vane     | 2025-10     |            6 |                  933.0 |                    0.0
+Marrowby & Vane     | 2025-11     |           34 |                 9533.0 |                   61.8
+Marrowby & Vane     | 2025-12     |            7 |                19274.0 |                  100.0
+Studio Vrij         | 2025-03     |            2 |                  987.0 |                    0.0
+Studio Vrij         | 2025-04     |            4 |                  957.0 |                    0.0
+Studio Vrij         | 2025-05     |           54 |                 8528.0 |                   51.9
+Studio Vrij         | 2025-06     |           18 |                29549.0 |                  100.0
+Studio Vrij         | 2025-07     |            2 |                 8763.0 |                  100.0
+Studio Vrij         | 2025-09     |            1 |                   83.0 |                    0.0
+Studio Vrij         | 2025-10     |            9 |                  669.0 |                    0.0
+Studio Vrij         | 2025-12     |            8 |                  680.0 |                    0.0
+(30 rows)
+
+=== Report 3: Event name inventory for knowledge-base engagement signal (written by Felix) ===
+Engineer's note: Platform-wide, unfiltered inventory of all distinct event_name values in 2025 with their counts, as requested, so the analyst can visually identify KB/article/help-view events; the printed report will show the total distinct event_name count alongside the top-30 rows.
+REPORT: Event name inventory for knowledge-base engagement signal
+QUESTION: Which event_name values in the events table actually correspond to a customer viewing a knowledge-base/help article, so we can build a trustworthy KB-engagement metric next week instead of guessing?
+event_name        | event_count | distinct_user_count
+------------------+-------------+--------------------
+product_viewed    |      102153 |                2931
+search            |       17410 |                1932
+add_to_cart       |       11664 |                1765
+login             |        3526 |                2227
+experiment_viewed |        2774 |                 604
+checkout_started  |        2160 |                1332
+order_completed   |        1669 |                1288
+signup            |         344 |                 344
+(8 rows)

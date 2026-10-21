@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Lowest-Rated Products Platform-Wide With Sufficient Review Volume",
+    "--question",
+    "Which specific products are getting the worst customer feedback, among those with enough reviews for the rating to be meaningful?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per product\", \"columns_requested\": [\"product_name\", \"merchant_name\", \"industry\", \"review_count\", \"avg_rating\", \"pct_1_2_star\", \"units_sold_last_12mo\"], \"details\": \"Tables: products, tenants, product_reviews (is_approved = true), order_items joined to orders (placed_at 2025-01-01 to 2025-12-31, status not cancelled) for units_sold_last_12mo. review_count = count of approved reviews for the product (all-time). Filter to review_count >= 5. avg_rating and pct_1_2_star (share of that product's approved reviews rated 1 or 2) computed over all-time approved reviews. units_sold_last_12mo = sum of order_items.quantity across that product's variants in the 2025 window (0 if none). Round avg_rating to 2 decimals, pct to 1 decimal. Order by avg_rating ascending, tie-break by review_count descending; cap at 50 rows and note the total qualifying product count.\", \"builds_on\": [\"Lowest-Rated Products Platform-Wide\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

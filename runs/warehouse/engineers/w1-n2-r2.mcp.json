@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Stock-count discrepancies by storage-location kind, company-wide",
+    "--question",
+    "Across the whole company (not just the top warehouses by value), does the cycle-count mismatch concentrate in pick locations specifically, or do other location kinds (bulk, overflow, etc.) also carry meaningful discrepancy volume?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Ines\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"stock_locations.kind\", \"columns_requested\": [\"location_kind\", \"distinct_locations_with_activity (count of distinct stock_location_id with >=1 cycle_count event in the window)\", \"total_locations_of_this_kind (count of distinct stock_location_id of this kind that exist at all, active or not)\", \"cycle_count_events\", \"abs_units_variance\", \"net_units_variance (signed; negative = net shrinkage)\", \"estimated_value_eur (same costing/FX method as night 1: preferred-then-cheapest supplier_products.unit_cost, converted to EUR via exchange_rates on the movement's occurred_at date)\", \"share_of_total_value_pct\"], \"details\": \"Start from the full set of distinct stock_locations.kind values across all tenants (so a kind with zero cycle_count activity still appears as a row with 0s, via LEFT JOIN \\u2014 do not just omit kinds with no matches). Then LEFT JOIN stock_movements where kind='cycle_count' and occurred_at between 2025-01-01 and 2025-12-31 on stock_location_id, aggregating per stock_locations.kind. total_locations_of_this_kind should count all stock_locations rows of that kind regardless of activity, to show how much of the location base is even generating cycle counts. Order by estimated_value_eur descending, tie-break by location_kind.\", \"builds_on\": [\"Stock discrepancies by warehouse and location type\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

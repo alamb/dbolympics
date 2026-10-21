@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Late-refund concentration and trend by merchant",
+    "--question",
+    "Is the refund-after-payout-settled problem concentrated in a handful of merchants, and did it get bigger or smaller in the second half of 2025 versus the first?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Omar\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"tenant (merchant)\", \"columns_requested\": [\"tenant_name\", \"h1_2025_late_refund_eur\", \"h2_2025_late_refund_eur\", \"change_pct\", \"total_2025_late_refund_eur\", \"pct_of_all_late_refunds_2025\"], \"details\": \"Population: payment_refunds with status='succeeded' and processed_at in 2025 (2025-01-01 to 2025-12-31) that are 'late' - i.e. processed_at is after the paid_at of the payout that settled the original payment (find the payout via payout_items.payment_id = payment_refunds.payment_id joined to payouts; exclude refunds whose payment has no matching payout_items row or where the refund is before/equal to the payout's paid_at). Group by tenant (join tenants on payment_refunds.tenant_id). h1_2025_late_refund_eur = sum for processed_at in Jan-Jun 2025, converted to EUR via exchange_rates using payment_refunds.currency_code and processed_at date. h2_2025_late_refund_eur = same for Jul-Dec 2025. change_pct = (h2 - h1) / h1 * 100, rounded to 1 decimal (NULL if h1 is 0). total_2025_late_refund_eur = h1 + h2. pct_of_all_late_refunds_2025 = total_2025_late_refund_eur / (sum of total_2025_late_refund_eur across ALL tenants with any late refunds in 2025, not just those shown) * 100, rounded to 1 decimal. Tables: payment_refunds, payout_items, payouts, tenants, exchange_rates. Show only the top 20 tenants by total_2025_late_refund_eur. Order by total_2025_late_refund_eur descending.\", \"builds_on\": [\"Refund timing relative to payout settlement\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

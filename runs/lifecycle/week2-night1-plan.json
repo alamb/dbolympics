@@ -1,0 +1,58 @@
+{
+ "notes": "Aisha's push is right: with 72% of members in one vertical, the revenue/order gap could be a second Simpson's-paradox case just like refunds were. Tonight I'm prioritizing her questions 1-3 in order since she explicitly ranked the apparel-only comparison as the one she'll trust as a verdict, and flagged the liability trajectory and the redemption-linkage retest as the two things that could change the recommendation. Before rebuilding the gaming-hypothesis join (which returned zero matches last time), I'm first running a cheap diagnostic on whether order_id is ever populated on redemption-direction loyalty_transactions at all - if it's structurally never set, I need a different join strategy (e.g. time-proximity matching) rather than repeating the same failed approach, and I'd rather spend a slot finding that out now than waste a bigger request later. Holding question 4 (what better-performing members look like) and the B2B question for later nights, per Aisha's explicit deprioritization.",
+ "requests": [
+  {
+   "title": "Apparel and Footwear: loyalty member vs non-member behavior by tenure",
+   "question": "Within Apparel and Footwear alone, where 72% of loyalty members sit, do members still look worse off than non-members on orders, revenue and refunds once we also control for how long they have been a customer?",
+   "grain": "one row per combination of account-tenure band and loyalty segment (member vs non-member), restricted to the Apparel and Footwear vertical",
+   "columns": [
+    "tenure_band",
+    "segment",
+    "customer_count",
+    "avg_lifetime_orders",
+    "avg_lifetime_revenue_eur",
+    "avg_order_value_eur",
+    "refund_rate_pct"
+   ],
+   "details": "Same population, segment and metric definitions as the earlier 'Loyalty member vs non-member behavior by account tenure' report, but filtered to users whose tenant has tenants.industry = 'Apparel & Footwear' only. Population: users (is_staff = false) in Apparel and Footwear tenants with at least one order 2023-01-01 to 2025-12-31. Tenure band = time from users.created_at to 2025-12-31, bucketed as: 'under 6 months', '6 to 12 months', '12 to 24 months', 'over 24 months'. Segment = 'loyalty member' if present in loyalty_accounts, else 'non-member'. Revenue/AOV use non-cancelled orders converted to EUR via exchange_rates (as_of placed_at, fallback created_at). avg_lifetime_orders and refund_rate_pct use all orders (any status); refund = payments.amount_refunded greater than 0 OR an order_returns row. Order rows by tenure_band (youngest to oldest), then segment ('loyalty member' before 'non-member').",
+   "builds_on": [
+    "Loyalty member vs non-member behavior by account tenure",
+    "Loyalty member refund rate by merchant vertical"
+   ]
+  },
+  {
+   "title": "Loyalty points redemption rate by enrollment cohort age",
+   "question": "Is the growing points liability just a 'young programme, redemptions lag issuance' phase that will level out, or do even our oldest member cohorts still show a structurally low redemption rate?",
+   "grain": "one row per loyalty_accounts enrollment cohort, grouped by the calendar quarter the member enrolled",
+   "columns": [
+    "enrollment_quarter",
+    "member_count",
+    "months_since_cohort_quarter_start",
+    "total_points_earned_value_eur",
+    "total_points_redeemed_value_eur",
+    "lifetime_redemption_rate_pct"
+   ],
+   "details": "Group loyalty_accounts by the calendar quarter of enrolled_at (2023-Q1 through 2025-Q4). member_count = distinct accounts in that cohort. months_since_cohort_quarter_start = number of months between that quarter's start date and 2025-12-31 (fixed reference, so older cohorts show a higher number, e.g. 2023-Q1 to 2025-12-31 is about 36 months). For each cohort's members, total_points_earned_value_eur = lifetime sum of 'earn'-direction loyalty_transactions converted to currency via the account's program points_per_currency and currency_code, then to EUR via exchange_rates as_of occurred_at (same method as the earlier cost-by-month and unit-economics reports). total_points_redeemed_value_eur = same conversion for non-'earn'-direction transactions. lifetime_redemption_rate_pct = total_points_redeemed_value_eur divided by total_points_earned_value_eur as a percentage. Order by enrollment_quarter ascending (oldest cohort first) so the trend across cohort age is easy to read.",
+   "builds_on": [
+    "Loyalty points and referral reward cost by month",
+    "Loyalty programme unit economics: points cost vs revenue per customer"
+   ]
+  },
+  {
+   "title": "Loyalty transaction order-linkage diagnostic by direction",
+   "question": "Before retesting the rewards-redemption-without-purchase hypothesis, is order_id even populated on redemption-direction loyalty_transactions, or do we need a different way to connect a redemption to an order?",
+   "grain": "one row per distinct loyalty_transactions.direction value",
+   "columns": [
+    "direction",
+    "transaction_count",
+    "transactions_with_order_id",
+    "pct_with_order_id",
+    "distinct_order_ids_referenced"
+   ],
+   "details": "Source: loyalty_transactions across all tenants, 2023-01-01 to 2025-12-31. Group by direction. transaction_count = total rows for that direction. transactions_with_order_id = count where order_id is not null. pct_with_order_id = transactions_with_order_id divided by transaction_count as a percentage. distinct_order_ids_referenced = count of distinct non-null order_id values for that direction. This is a diagnostic to determine whether order_id linkage is usable at all for testing the redemption-to-refund hypothesis, or whether an alternative approach (e.g. matching by time proximity between a transaction and the customer's orders) will be needed instead. Order by transaction_count descending.",
+   "builds_on": [
+    "Refund rate on points-redeeming orders vs other member orders"
+   ]
+  }
+ ]
+}

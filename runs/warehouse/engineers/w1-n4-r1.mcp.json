@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Monthly volume of stock_adjustments table entries, 2025",
+    "--question",
+    "Does the stock_adjustments table show a steady, roughly even pattern across 2025 (like the cycle_count movement stream it appears to feed), or does it also cluster at year-end like the stock_movements kind='adjustment' ledger?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Bea\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"calendar month (Jan 2025 - Dec 2025)\", \"columns_requested\": [\"month (YYYY-MM)\", \"adjustment_count (rows in stock_adjustments)\", \"total_abs_quantity_delta (sum of abs(quantity_delta))\", \"net_quantity_delta (signed sum; negative = net shrinkage)\", \"distinct_variants_affected\", \"avg_abs_quantity_delta (rounded 2dp)\"], \"details\": \"Source: stock_adjustments, filtered on created_at between 2025-01-01 and 2025-12-31 (half-open: created_at >= 2025-01-01 and < 2026-01-01), since the table has no occurred_at column. Group by the month of created_at. No joins needed. Order by month ascending.\", \"builds_on\": [\"Cross-check: stock_adjustments table vs stock_movements adjustment-kind ledger, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

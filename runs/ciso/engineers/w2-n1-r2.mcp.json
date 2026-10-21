@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Audit traceability of order cancellations and invoice voids",
+    "--question",
+    "For the two 'deletion-like' events on our financial documents that don't use soft-delete — a cancelled order, a voided invoice — is there any audit_log record at all tying back to that specific row?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per entity type: 'order cancellations' and 'invoice voids'\", \"columns_requested\": [\"entity type\", \"total events (all-time, 2023-01-01 to 2025-12-31)\", \"events with at least one matching audit_log row (any action, entity_table + entity_id match)\", \"coverage rate (%)\", \"distinct tenants represented\"], \"details\": \"Row 1: orders where status = 'cancelled'. For each such order, check whether any audit_log row exists with entity_table = 'orders' and entity_id = orders.id (any action, not just 'delete', since the logged action type for a cancellation isn't known in advance). Row 2: invoices where status = 'void'. Same existence check against audit_log with entity_table = 'invoices' and entity_id = invoices.id. coverage_rate = events with a match / total events, rounded to 1 decimal percent. This is a looser test than the soft-delete report (any audit row at all for that record, not specifically a 'delete' action) \\u2014 flag in the report notes that even a 100% match here wouldn't confirm the cancellation/void itself was logged, only that the record has some audit trail presence.\", \"builds_on\": [\"Audit-trail coverage of actual soft-deletions, by entity table\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

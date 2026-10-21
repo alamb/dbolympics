@@ -1,0 +1,111 @@
+=== Report 1: Delivery time trend, monthly (2024-2025) (written by Felix) ===
+Engineer's note: Delivery days are computed as calendar-day difference between placed_at and the latest shipment delivered_at across all shipments for the order (requiring all linked shipments to be delivered); orders with no shipments are excluded as specified. Month grain uses calendar_days.month_label on the order's placed_at date.
+REPORT: Delivery time trend, monthly (2024-2025)
+QUESTION: Over the last two years, how long does it take from order placed to delivered, and how much does that vary month to month?
+month   | orders_delivered | avg_delivery_days | median_delivery_days | p90_delivery_days | pct_within_5_days
+--------+------------------+-------------------+----------------------+-------------------+------------------
+2024-01 |             1234 |               3.5 |                  3.0 |               6.0 |              89.6
+2024-02 |             1061 |               3.8 |                  3.0 |               6.0 |              86.1
+2024-03 |             1139 |               3.8 |                  3.0 |               6.0 |              86.9
+2024-04 |             1154 |               4.0 |                  4.0 |               6.0 |              83.4
+2024-05 |             1275 |               4.2 |                  4.0 |               6.0 |              79.1
+2024-06 |             1223 |               4.1 |                  4.0 |               6.0 |              83.7
+2024-07 |             1292 |               3.9 |                  4.0 |               6.0 |              84.9
+2024-08 |             1233 |               4.0 |                  4.0 |               6.0 |              83.4
+2024-09 |             1281 |               3.9 |                  3.0 |               6.0 |              85.0
+2024-10 |             1422 |               4.0 |                  4.0 |               6.0 |              82.6
+2024-11 |             1961 |               3.9 |                  4.0 |               6.0 |              84.8
+2024-12 |             2432 |               4.3 |                  4.0 |               7.0 |              77.9
+2025-01 |             1717 |               3.6 |                  3.0 |               5.0 |              90.3
+2025-02 |             1329 |               3.7 |                  3.0 |               6.0 |              89.4
+2025-03 |             1545 |               3.8 |                  4.0 |               6.0 |              87.1
+2025-04 |             1477 |               3.7 |                  3.0 |               6.0 |              88.8
+2025-05 |             1574 |               4.3 |                  4.0 |               7.0 |              80.6
+2025-06 |             1419 |               3.8 |                  3.0 |               6.0 |              86.3
+2025-07 |             1565 |               3.9 |                  4.0 |               6.0 |              85.2
+2025-08 |             1457 |               3.9 |                  4.0 |               6.0 |              87.2
+2025-09 |             1611 |               4.1 |                  4.0 |               6.0 |              83.2
+2025-10 |             1767 |               4.1 |                  4.0 |               6.0 |              83.1
+2025-11 |             2419 |               4.7 |                  4.0 |               8.0 |              78.7
+2025-12 |             2653 |               4.2 |                  3.0 |               7.0 |              81.1
+(24 rows)
+
+=== Report 2: Delivery time by merchant, 2025 (written by Felix) ===
+Engineer's note: Delivery days computed as placed_at to the latest linked shipment.delivered_at (via fulfillments), restricted to orders where every linked shipment has delivered_at set, matching the monthly trend report's definition. Tenants with fewer than 50 such delivered orders in 2025 are excluded.
+REPORT: Delivery time by merchant, 2025
+QUESTION: Which merchants deliver reliably fast, and which are a coin toss, over the past year?
+tenant_name                   | industry                  | orders_delivered | avg_delivery_days | median_delivery_days | p90_delivery_days | pct_within_5_days
+------------------------------+---------------------------+------------------+-------------------+----------------------+-------------------+------------------
+Brennquell Kaffee             | Food & Coffee             |             4071 |              3.48 |                 3.22 |              5.15 |            0.8828
+Cragsley Outfitters           | Apparel & Footwear        |             3219 |              3.39 |                 3.13 |              4.96 |            0.9031
+Marrowby & Vane               | Apparel & Footwear        |             1529 |              4.09 |                 3.34 |              7.28 |            0.7933
+Grind Collective              | Food & Coffee             |             1082 |               5.1 |                 3.98 |              9.12 |            0.6636
+Spice Route Box               | Food & Coffee             |              755 |              4.31 |                 4.18 |              6.55 |            0.6742
+Petalcourt Beauty             | Beauty                    |              646 |              4.98 |                 3.82 |              7.92 |            0.7183
+Kibblewick                    | Pet Supplies              |              644 |              4.72 |                 3.88 |              7.98 |            0.7298
+Honeycomb Larder              | Food & Coffee             |              592 |              3.75 |                 3.56 |              5.78 |            0.8226
+Studio Vrij                   | Apparel & Footwear        |              532 |              4.92 |                 4.02 |              8.96 |            0.6259
+Ampfeld Elektronik            | Consumer Electronics      |              418 |              3.88 |                 3.61 |              5.97 |            0.7919
+Fennel & Flint                | Home & Living             |              360 |              5.36 |                  4.0 |             10.09 |            0.6583
+Ballycorran Industrial Supply | Industrial Supplies (B2B) |              338 |              4.74 |                 4.14 |              6.94 |            0.6509
+Cinder Peak Sports Co.        | Sports & Outdoor          |              303 |              3.91 |                 3.63 |              6.24 |            0.7954
+Sourdough Club                | Food & Coffee             |              298 |              5.03 |                 4.24 |              8.77 |            0.6342
+Wiesgrund Wohnen              | Home & Living             |              270 |              3.94 |                 3.77 |              6.14 |            0.7704
+Kontor24 Bürobedarf           | Office Supplies (B2B)     |              258 |               3.6 |                 3.28 |              5.29 |            0.8295
+Linden & Loom                 | Home & Living             |              237 |              4.12 |                 3.86 |              6.12 |            0.7679
+Gratlinie Outdoor             | Sports & Outdoor          |              212 |              3.91 |                 3.43 |              6.06 |            0.7925
+Feather & Fin                 | Pet Supplies              |              207 |              3.63 |                 3.56 |              5.01 |            0.8937
+Whisker Works                 | Pet Supplies              |              172 |              3.89 |                 3.72 |              6.18 |            0.7733
+OfficeHub Nordic              | Office Supplies (B2B)     |              163 |              4.16 |                 3.86 |              6.32 |            0.7301
+Castell Fasteners             | Industrial Supplies (B2B) |              155 |              3.47 |                 3.33 |              5.11 |            0.8839
+Rue Lafayette Studio          | Apparel & Footwear        |              155 |              4.13 |                 3.94 |              6.69 |            0.7226
+Juniper Apothecary            | Beauty                    |              146 |              4.23 |                 3.92 |              6.69 |            0.7055
+Coastline Interiors           | Home & Living             |              143 |               4.2 |                  4.1 |              6.14 |            0.7203
+Midland Safety Wear           | Industrial Supplies (B2B) |              139 |               4.0 |                 3.86 |              6.27 |            0.7482
+Oakhurst Tailoring            | Apparel & Footwear        |              139 |              4.32 |                  4.1 |              6.35 |            0.7194
+Wohnglück                     | Home & Living             |              138 |              3.65 |                 3.65 |              5.16 |            0.8478
+Nordic Bloom Cosmetics        | Beauty                    |              132 |              4.19 |                 3.96 |              6.29 |              0.75
+Velvet Ash                    | Apparel & Footwear        |              114 |              4.26 |                 3.96 |              6.91 |             0.693
+Saffron & Sage                | Beauty                    |              113 |              3.86 |                 3.73 |              5.91 |            0.7876
+Pfotenglück                   | Pet Supplies              |              111 |              3.37 |                 3.16 |              4.91 |            0.9189
+Ostwind Mode                  | Apparel & Footwear        |              108 |              3.85 |                 3.49 |              6.01 |              0.75
+Ridgeback Gear                | Sports & Outdoor          |              102 |              3.76 |                 3.76 |              5.36 |            0.8627
+The Balm Room                 | Beauty                    |              100 |               5.0 |                 4.22 |              7.37 |               0.7
+Chocolaterie Mireille         | Food & Coffee             |               99 |               4.9 |                 4.78 |               7.2 |            0.5657
+Kayak Corner                  | Sports & Outdoor          |               96 |              5.22 |                 4.06 |               7.3 |            0.6875
+Sorella Skin                  | Beauty                    |               93 |              3.94 |                 3.84 |              5.87 |            0.7957
+Hautnah                       | Beauty                    |               90 |               4.0 |                 3.78 |              6.17 |            0.7222
+Willow & Wren                 | Home & Living             |               90 |              4.66 |                 3.68 |              6.81 |            0.7889
+Tail Wag Supply               | Pet Supplies              |               87 |               3.6 |                 3.55 |              5.43 |            0.8736
+Thistlecombe                  | Apparel & Footwear        |               84 |               6.0 |                 4.75 |             11.51 |            0.5476
+Deskline Supplies             | Office Supplies (B2B)     |               75 |              4.55 |                 4.14 |              6.91 |            0.7067
+Fell & Fjell                  | Sports & Outdoor          |               72 |              4.05 |                 3.98 |              6.02 |            0.7083
+Purrfect Pantry               | Pet Supplies              |               72 |              5.92 |                 4.37 |             10.92 |            0.5417
+Hanse Industriebedarf         | Industrial Supplies (B2B) |               71 |              4.01 |                 3.99 |              6.05 |            0.7465
+Mirelle                       | Beauty                    |               60 |              3.82 |                  3.8 |              5.54 |              0.85
+Ampere & Co.                  | Consumer Electronics      |               56 |              4.22 |                  4.0 |               6.2 |            0.6964
+Kettle & Key                  | Home & Living             |               55 |              4.48 |                 4.16 |              6.52 |            0.6182
+Polder Packaging              | Industrial Supplies (B2B) |               55 |              4.56 |                 4.25 |              6.79 |               0.6
+(50 rows)
+
+=== Report 3: Peak season weekly fulfillment performance (Oct-Dec 2025) (written by Ines) ===
+Engineer's note: Report is platform-wide (all tenants pooled) since the question concerns overall fulfillment ops, not specific merchants; no currency conversion was needed as no money columns are reported. orders_still_undelivered follows the spec literally (status != 'fulfilled' OR delivery unresolved), so it can include orders that are physically delivered but not yet marked 'fulfilled' in status, and will naturally rise in the most recent weeks due to transit-time right-censoring as noted in the request.
+REPORT: Peak season weekly fulfillment performance (Oct-Dec 2025)
+QUESTION: Did delivery speed and reliability hold up during the most recent peak season, and did any backlog build up or clear by year-end?
+week_start | orders_placed | orders_delivered | avg_delivery_days | pct_within_5_days | orders_still_undelivered
+-----------+---------------+------------------+-------------------+-------------------+-------------------------
+2025-09-29 |           279 |              271 |               4.5 |              72.7 |                       19
+2025-10-06 |           397 |              383 |              3.94 |              79.4 |                       25
+2025-10-13 |           423 |              414 |              3.92 |              80.7 |                       25
+2025-10-20 |           448 |              440 |              4.31 |              73.9 |                       21
+2025-10-27 |           441 |              427 |              3.91 |              82.4 |                       27
+2025-11-03 |           480 |              466 |              3.92 |              80.5 |                       41
+2025-11-10 |           470 |              452 |              4.73 |              64.8 |                       35
+2025-11-17 |           576 |              559 |              4.29 |              73.3 |                       41
+2025-11-24 |          1010 |              966 |              5.26 |              73.5 |                      104
+2025-12-01 |           969 |              928 |              5.73 |              56.1 |                       87
+2025-12-08 |           635 |              611 |              3.96 |              80.7 |                       34
+2025-12-15 |           660 |              628 |              3.43 |              87.9 |                       38
+2025-12-22 |           577 |              510 |               3.1 |              92.5 |                       67
+2025-12-29 |           271 |               38 |              1.87 |             100.0 |                      233
+(14 rows)

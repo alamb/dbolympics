@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Referral redemption concentration by referrer",
+    "--question",
+    "Is referral activity concentrated among a small number of referrers in a way that looks like gaming rather than broad-based word-of-mouth, and are the top referrers themselves genuine, active customers?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Viktor\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per referrer (referrer_user_id) who has at least one referral redemption\", \"columns_requested\": [\"referrer_user_id\", \"tenant_name\", \"redemption_count\", \"distinct_referred_customers\", \"total_reward_paid_eur\", \"share_of_all_redemptions_pct\", \"referrer_lifetime_order_count\", \"referrer_lifetime_revenue_eur\"], \"details\": \"Source: referral_redemptions joined to referrals (for referrer_user_id) and tenants (for tenant_name). redemption_count = count of referral_redemptions rows for that referrer across the full history (2023-01-01 to 2025-12-31). distinct_referred_customers = count of distinct referred_user_id for that referrer. total_reward_paid_eur = sum of referral_redemptions.reward_amount converted to EUR via exchange_rates (as_of redeemed_at). share_of_all_redemptions_pct = that referrer's redemption_count divided by total redemptions across all referrers, as a percentage. referrer_lifetime_order_count and referrer_lifetime_revenue_eur = the referrer's own order count (any status) and EUR revenue (non-cancelled orders, grand_total converted to EUR as_of placed_at) over the same history, to check whether top referrers are genuine active customers. Order by redemption_count descending, then referrer_user_id ascending; cap at 50 rows (note total referrer count and total redemption count in the report notes if more rows exist).\", \"builds_on\": [\"Referred vs non-referred customer early behavior\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT p.name as product_name,\n       c.name as category_name,\n       r.review_count,\n       r.avg_rating,\n       r.pct_1_2_star,\n       (SELECT COALESCE(SUM(oi.quantity),0)\n        FROM order_items oi\n        JOIN orders o ON o.id = oi.order_id\n        WHERE o.tenant_id = p.tenant_id\n          AND o.status <> 'cancelled'\n          AND o.placed_at >= timestamp '2025-01-01' AND o.placed_at < timestamp '2026-01-01'\n          AND oi.product_variant_id IN (SELECT pv.id FROM product_variants pv WHERE pv.product_id = p.id)\n       ) AS units_sold_last_12mo\nFROM products p\nJOIN categories c ON c.id = p.primary_category_id\nJOIN (\n   SELECT pr.product_id,\n          COUNT(*) AS review_count,\n          ROUND(AVG(pr.rating),2) AS avg_rating,\n          ROUND(100.0 * SUM(CASE WHEN pr.rating IN (1,2) THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_1_2_star\n   FROM product_reviews pr\n   WHERE pr.is_approved = true\n     AND pr.created_at >= timestamp '2025-12-01' AND pr.created_at < timestamp '2026-01-01'\n     AND pr.tenant_id = (SELECT id FROM tenants WHERE name = 'Wiesgrund Wohnen')\n   GROUP BY pr.product_id\n) r ON r.product_id = p.id\nWHERE p.tenant_id = (SELECT id FROM tenants WHERE name = 'Wiesgrund Wohnen')\nORDER BY r.review_count DESC, r.avg_rating ASC, p.name ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: product_name, category_name, review_count, avg_rating, pct_1_2_star, units_sold_last_12mo"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT p.name as product_name,\n       c.name as category_name,\n       r.review_count,\n       r.avg_rating,\n       r.pct_1_2_star,\n       (SELECT COALESCE(SUM(oi.quantity),0)\n        FROM order_items oi\n        JOIN orders o ON o.id = oi.order_id\n        WHERE o.tenant_id = p.tenant_id\n          AND o.status <> 'cancelled'\n          AND o.placed_at >= timestamp '2025-01-01' AND o.placed_at < timestamp '2026-01-01'\n          AND oi.product_variant_id IN (SELECT pv.id FROM product_variants pv WHERE pv.product_id = p.id)\n       ) AS units_sold_last_12mo\nFROM products p\nJOIN categories c ON c.id = p.primary_category_id\nJOIN (\n   SELECT pr.product_id,\n          COUNT(*) AS review_count,\n          ROUND(AVG(pr.rating),2) AS avg_rating,\n          ROUND(100.0 * SUM(CASE WHEN pr.rating IN (1,2) THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_1_2_star\n   FROM product_reviews pr\n   WHERE pr.is_approved = true\n     AND pr.created_at >= timestamp '2025-12-01' AND pr.created_at < timestamp '2026-01-01'\n     AND pr.tenant_id = (SELECT id FROM tenants WHERE name = 'Wiesgrund Wohnen')\n   GROUP BY pr.product_id\n) r ON r.product_id = p.id\nWHERE p.tenant_id = (SELECT id FROM tenants WHERE name = 'Wiesgrund Wohnen')\nORDER BY r.review_count DESC, r.avg_rating ASC, p.name ASC",
+  "note": "units_sold_last_12mo uses orders.placed_at in 2025-01-01..2025-12-31 and excludes only 'cancelled' status (other non-fulfilled statuses like pending/refunded are still counted as sold units, per the request's wording \"placed ... with status not cancelled\").",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per Wiesgrund Wohnen product with at least one approved December 2025 review, showing review volume/rating stats alongside trailing-12-month unit sales for context, ordered by review count (desc) then average rating (asc)."
+ }
+]

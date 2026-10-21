@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant risk signals: refunds, cancellations, unpaid invoices, shopper drop-off",
+    "--question",
+    "Which merchants show warning signs right now: rising refunds or cancellations, unpaid invoices, or falling shopper activity?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"industry\", \"refund rate last 90 days\", \"refund rate prior 90 days\", \"cancellation rate last 90 days\", \"cancellation rate prior 90 days\", \"overdue invoice amount EUR\", \"web sessions last 90 days\", \"web sessions prior 90 days\", \"session growth pct\"], \"details\": \"Tables payment_refunds joined to payments for refund rate, equal to refund EUR divided by captured payment EUR per period. Orders for cancellation rate, equal to cancelled orders divided by all orders placed per period. Invoices for overdue amount, equal to amount_due in EUR where status is past_due, or status is open with due date already passed as of 2026-01-05. Web_sessions for session counts per period. Convert money via exchange_rates. Periods: last 90 days is Oct 3 to Dec 31 2025; prior 90 days is Jul 5 to Oct 2 2025. Order by overdue invoice amount EUR descending, tie-break refund rate last 90 days descending, then tenant_id. Cap 50 rows.\", \"builds_on\": [\"Merchant size and recent growth trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

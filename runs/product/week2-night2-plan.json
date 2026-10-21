@@ -1,0 +1,54 @@
+{
+ "notes": "Reading last night's reports:\n\nReport 1 (cart contents) is the headline for Q1: fast-converting carts (<1hr) average 2.79 items and €242 (median €131), while stalled carts (1-24h, 1-7d) average only 1.6-1.8 items and €169-210 (median €75-84). So hesitation concentrates in smaller, lower-value, mostly single-item carts — not \"sticker shock\" on big purchases. Interestingly, per-item price is actually *higher* in stalled carts (~€97-117/item) than fast carts (~€87/item), suggesting the stalling archetype may be \"one pricier item, deliberated over\" rather than \"big basket, abandoned.\" I want one more cut on price tier specifically to confirm this before I put it in front of Jonas. Caveat: the discount-presence column is only observable among carts that converted (abandoned carts never reach an order, so there's no discount record) — it's a real but narrower sub-question than \"stalled vs fast,\" and I've noted that.\n\nReport 2 (monthly trend) shows a genuinely flat cart→order conversion rate (34-38%) Jan-Oct — good evidence the bleed is structural, not worsening, which is itself useful for Jonas. But Nov (37.7%) and especially Dec's lower 1-7-day resolution rate (62.5% vs typical 69-73%) are suspect: cart volume nearly doubled in Nov/Dec (holiday season) and any cart created in the back half of December simply hasn't had a full 7 days to resolve against our Dec-31 data cutoff — that's right-censoring, not a real behavior change, and I should not over-read it. More interesting: last week's company channel flagged that cart-reminder emails broke for exactly the week of Nov 24 at 10 merchants including Cragsley Outfitters (one of our 6 retail tenants). That's a natural experiment sitting right there, and it answers two of Jonas's questions at once — Q2 (\"what changed\") and Q3 (\"is a nudge already happening\") — so I'm prioritizing it tonight.\n\nReport 3 (subscription tracking gap) flipped my expectation: \"after first order\" session coverage is actually substantial (42-70% of customers have a session after, averaging 2.4-4.1 of them) — these shoppers do keep coming back and browsing. The real gap is \"before first order\" (only 16-30% have a tracked session pre-signup), which looks more like a tracking gap at the signup moment than a behavioral finding. That's a sufficient \"quick gut-check\" per Jonas's ask — I'm not spending more slots on this this week.\n\nTonight's 3 requests: (1) the Nov 24 cart-reminder-outage natural experiment at Cragsley Outfitters, (2) a price-tier cut to sharpen the Q1 \"why\" story, (3) a direct empirical test of whether an email nudge correlates with recovery among stalled carts generally (not just the outage week) — the clearest way to answer Jonas's \"is a nudge already happening that we could learn from.\"",
+ "requests": [
+  {
+   "title": "Cart conversion by week at Cragsley Outfitters around the Nov 24 reminder-email outage",
+   "question": "Did cart conversion dip during the week cart-reminder emails broke (week of Nov 24, 2025), suggesting those reminders meaningfully nudge stalled carts toward purchase?",
+   "grain": "one row per ISO week of cart creation, for Cragsley Outfitters only",
+   "columns": [
+    "week start date",
+    "carts created",
+    "overall conversion pct (cart eventually became an order)",
+    "pct converted within 1 hour",
+    "pct converted in 1-7 days"
+   ],
+   "details": "Tenant: Cragsley Outfitters only (look up tenant_id by name). Population: carts with created_at falling in ISO weeks starting 2025-10-06 through 2025-12-22 inclusive (12 weeks) — stop at week-start 2025-12-22 so every included cart has a full 7-day window to resolve before the 2025-12-31 data cutoff (avoids right-censoring bias). overall_conversion_pct = % of that week's carts with status='converted' (no time limit on when). pct_converted_within_1_hour and pct_converted_in_1_7_days use resolution_time = converted_at - created_at (hours/days), same definitions as prior cart-timing reports. Order rows by week start ascending. The week of 2025-11-24 should be visually easy to compare against the surrounding weeks.",
+   "builds_on": [
+    "Cart bleed trend by month, 2025"
+   ]
+  },
+  {
+   "title": "Cart value tier vs. conversion speed, 2025",
+   "question": "Is checkout hesitation concentrated in higher-priced carts specifically (not just low-item-count carts), i.e. does price point on its own predict stalling?",
+   "grain": "one row per cart subtotal (price) tier",
+   "columns": [
+    "price tier",
+    "cart count",
+    "pct of total carts",
+    "avg item count",
+    "overall conversion pct",
+    "pct resolved within 1 hour",
+    "pct resolved in 1-7 days"
+   ],
+   "details": "Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-12-31. Convert carts.subtotal to EUR via exchange_rates as in the earlier cart-contents report (base_code='EUR', quote_code=currency_code, as_of=created_at date). Price tiers on the EUR subtotal: '<€50', '€50-100', '€100-200', '€200+'. overall_conversion_pct, pct_resolved_within_1_hour, pct_resolved_in_1_7_days use the same definitions as prior cart-timing reports. Order rows in the fixed tier sequence above (not alphabetical).",
+   "builds_on": [
+    "Cart contents: stalled vs. fast-converting carts, 2025"
+   ]
+  },
+  {
+   "title": "Do stalled carts that receive an email convert more often?",
+   "question": "Among carts that don't convert within the first hour, is there already an organic recovery nudge happening (an email reaching the shopper), and does it correlate with eventually converting?",
+   "grain": "one row per group: carts whose user received an email in the 1-48 hour window after cart creation, vs. carts whose user did not",
+   "columns": [
+    "group (received email / no email)",
+    "cart count",
+    "pct eventually converted",
+    "median days to convert (converted carts only)"
+   ],
+   "details": "Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-11-30 (leaves at least a month of follow-up before the 2025-12-31 cutoff), restricted to carts NOT already converted within the first hour of creation (i.e., still open at the 1-hour mark — these are the ones that would actually need a nudge). For each such cart with a non-null user_id, check email_log for any row with the same tenant_id and user_id where sent_at falls between (cart's created_at + 1 hour) and (cart's created_at + 48 hours); group = 'received_email' if at least one such row exists, else 'no_email' (carts with a null user_id, i.e. guest carts with no way to match an email recipient, also fall into 'no_email' — flag in the report notes what share of the population that is, since it affects how to read the comparison). pct_eventually_converted = % of carts in the group with status='converted' (any time). median_days_to_convert = median of (converted_at - created_at) in days among the converted carts in that group. Order rows with 'received_email' first, then 'no_email'.",
+   "builds_on": [
+    "Cart abandonment timing by tenant, Q4 2025 (retail merchants)"
+   ]
+  }
+ ]
+}

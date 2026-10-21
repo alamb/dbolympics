@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH user_mfa AS (\n  SELECT user_id, tenant_id,\n         max(case when confirmed_at is not null then 1 else 0 end) as has_confirmed,\n         1 as has_any\n  FROM mfa_devices\n  GROUP BY user_id, tenant_id\n)\nSELECT\n  u.is_staff,\n  u.status,\n  count(*) as total_users,\n  sum(case when um.has_confirmed = 1 then 1 else 0 end) as users_with_confirmed_mfa,\n  round(100.0 * sum(case when um.has_confirmed = 1 then 1 else 0 end) / count(*), 1) as pct_with_confirmed_mfa,\n  sum(case when um.has_any = 1 then 1 else 0 end) as users_with_any_mfa_device,\n  round(100.0 * sum(case when um.has_any = 1 then 1 else 0 end) / count(*), 1) as pct_with_any_mfa_device\nFROM users u\nLEFT JOIN user_mfa um ON um.user_id = u.id AND um.tenant_id = u.tenant_id\nWHERE u.deleted_at is null\nGROUP BY u.is_staff, u.status\nORDER BY u.is_staff desc, u.status",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: is_staff, status, total_users, users_with_confirmed_mfa, pct_with_confirmed_mfa, users_with_any_mfa_device, pct_with_any_mfa_device"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and matches the requested grain and columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH user_mfa AS (\n  SELECT user_id, tenant_id,\n         max(case when confirmed_at is not null then 1 else 0 end) as has_confirmed,\n         1 as has_any\n  FROM mfa_devices\n  GROUP BY user_id, tenant_id\n)\nSELECT\n  u.is_staff,\n  u.status,\n  count(*) as total_users,\n  sum(case when um.has_confirmed = 1 then 1 else 0 end) as users_with_confirmed_mfa,\n  round(100.0 * sum(case when um.has_confirmed = 1 then 1 else 0 end) / count(*), 1) as pct_with_confirmed_mfa,\n  sum(case when um.has_any = 1 then 1 else 0 end) as users_with_any_mfa_device,\n  round(100.0 * sum(case when um.has_any = 1 then 1 else 0 end) / count(*), 1) as pct_with_any_mfa_device\nFROM users u\nLEFT JOIN user_mfa um ON um.user_id = u.id AND um.tenant_id = u.tenant_id\nWHERE u.deleted_at is null\nGROUP BY u.is_staff, u.status\nORDER BY u.is_staff desc, u.status",
+  "note": "This is a current-state snapshot across all tenants (no date filter applied beyond excluding deleted users), since users/mfa_devices have no period column to bound as of 2025-12-31 and the warehouse already ends there. Percentages are rounded to 1 decimal place.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups non-deleted users by `is_staff` and `status`, computing total users, confirmed-MFA coverage, and any-MFA-device coverage (with percentages), ordered by `is_staff` descending then `status` — ready for tonight's batch."
+ }
+]

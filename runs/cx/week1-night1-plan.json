@@ -1,0 +1,57 @@
+{
+ "notes": "Daniel's top priority is #1 (response/resolution trend, and variance by merchant), so I'm spending 2 of tonight's 3 slots there: a platform-wide monthly trend (to see direction of travel) and a per-merchant snapshot for the latest full year (to see spread across merchants, since he likes peer comparisons). The third slot starts #2 (where load comes from) with a tag-based mix comparing the last two half-years to catch any shift. I'm deliberately holding off on YoY columns inside the trend report itself since the 36-month series already shows year-over-year pattern, and saving width for the core time metrics. Returns/refunds (#3), satisfaction (#4) and reviews (#5) are next on my list for later nights.",
+ "requests": [
+  {
+   "title": "Support response & resolution time trend, monthly",
+   "question": "Is first-response and resolution speed on support tickets getting better or worse over time?",
+   "grain": "one calendar month, platform-wide across all tenants",
+   "columns": [
+    "month (YYYY-MM)",
+    "tickets created",
+    "tickets with a first response (count)",
+    "avg first response hours",
+    "median first response hours",
+    "tickets resolved (count)",
+    "avg resolution hours",
+    "median resolution hours",
+    "SLA breach rate (%)"
+   ],
+   "details": "Source: tickets, joined to sla_breaches for breach rate. Grain the month on tickets.created_at (date_trunc to month / use calendar_days.month_label for the label). Window: 2023-01-01 through 2025-12-31 (full history, 36 rows). First response hours = extract(epoch from first_response_at - created_at)/3600, only for tickets where first_response_at is not null (report both the count with a response and the avg/median so the denominator is clear). Resolution hours = extract(epoch from resolved_at - created_at)/3600 for tickets where resolved_at is not null. SLA breach rate = distinct tickets in that month's cohort with at least one row in sla_breaches, divided by tickets created that month, as a percentage rounded to 1 decimal. Round all hour figures to 1 decimal. Note in the report how many of the 36 months are returned, and flag that the most recent 1-2 months will understate resolution/response times for tickets still open (right-censoring) so we read the tail with caution. Order by month ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "Response & resolution times by merchant, 2025",
+   "question": "How much does support speed vary across merchants, and who is fastest/slowest?",
+   "grain": "one row per tenant (merchant), for tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "tickets created",
+    "avg first response hours",
+    "median first response hours",
+    "avg resolution hours",
+    "median resolution hours",
+    "SLA breach rate (%)"
+   ],
+   "details": "Source: tickets joined to tenants (for name) and sla_breaches (for breach rate). Filter tickets.created_at in 2025-01-01 through 2025-12-31. Same hour definitions as the monthly trend report (first_response_at - created_at, resolved_at - created_at, both in hours, only over tickets where that timestamp is not null). SLA breach rate = tenant's distinct tickets with >=1 sla_breaches row / tenant's tickets created in 2025, as a percentage. Only include tenants with at least 20 tickets created in 2025 to avoid noisy small-sample rows. Order by tickets created descending, tie-break by merchant name ascending; report will show at most 50 rows so note total tenant count meeting the threshold and how many are printed.",
+   "builds_on": [
+    "Support response & resolution time trend, monthly"
+   ]
+  },
+  {
+   "title": "Ticket topic mix and recent shift",
+   "question": "What kinds of problems are shoppers contacting merchants about most, and has that mix shifted in the last 6 months versus the prior 6?",
+   "grain": "one row per support tag (platform-wide, tag name)",
+   "columns": [
+    "tag name",
+    "tickets, last 6 months (Jul-Dec 2025)",
+    "tickets, prior 6 months (Jan-Jun 2025)",
+    "share of tickets, last 6 months (%)",
+    "share of tickets, prior 6 months (%)",
+    "share change (percentage points)",
+    "avg resolution hours, last 6 months"
+   ],
+   "details": "Source: tickets joined to ticket_tags_map and support_tags (group by support_tags.name across all tenants, since we want the platform-level theme). A ticket can carry multiple tags; count each ticket once per tag it carries (so a ticket with 2 tags contributes to both tag rows - note this in the report so totals don't have to sum to ticket volume). Period A = tickets.created_at between 2025-07-01 and 2025-12-31 inclusive; period B = 2025-01-01 to 2025-06-30 inclusive. Share of tickets = tag's ticket count in that period / total tagged-ticket-tag-rows in that period, as a percentage rounded to 1 decimal. Share change = share in period A minus share in period B, in percentage points, rounded to 1 decimal. avg resolution hours (period A only) = extract(epoch from resolved_at - created_at)/3600 averaged over that tag's resolved tickets in period A, rounded to 1 decimal. Order by tickets in the last 6 months descending, tie-break by tag name ascending. Report total distinct tag count returned (expect well under 50 rows).",
+   "builds_on": []
+  }
+ ]
+}

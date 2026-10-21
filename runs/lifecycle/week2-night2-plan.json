@@ -1,0 +1,60 @@
+{
+ "notes": "Night 1 answered Aisha's Q1 cleanly: within Apparel and controlling for tenure, order counts and refund rates between members and non-members are essentially indistinguishable in every tenure band (refund rates all cluster 33-40% regardless of segment) - the refund-rate and order-frequency 'penalty' really was mostly mix artifact. But a new, robust finding emerged: average order value is 28-40% lower for members than non-members in every single tenure band within Apparel - consistent and large, so that's the real driver of lower member revenue, and it needs explaining before I call it a verdict. Report 2 answered Q2 well: redemption rate rises steadily with cohort age (4% for 2-month-old cohorts up to ~32-37% for cohorts over 2 years old) and then plateaus around that 32-37% level even for the oldest 2023 cohorts - so it's both a timing lag (explains why young cohorts drag the blended rate down) and a structural ceiling (most points, even given 3 years, never get redeemed) - meaning the liability will keep growing in euros as we add members, while each cohort's own eventual redemption converges to roughly a third of what's issued. Report 3 gave a clean, important negative result for Q3: order_id is populated on 100% of 'earn' transactions but 0% of 343 'burn' transactions - the data model genuinely never records which order (if any) a redemption applied to, so the order_id-based gaming test was never going to work; I need a different join (same-user, same-day proximity) before I can call this inconclusive for good. Tonight: (1) retry the gaming test using date-proximity matching instead of order_id; (2) decompose the Apparel AOV gap into subtotal vs discount to see if heavier discounting (consistent with points use) explains it; (3) start on Q4 by comparing top-revenue members against the rest of the member base to see if better performers use the programme differently.",
+ "requests": [
+  {
+   "title": "Refund rate on orders with a same-day points redemption",
+   "question": "Using date-proximity matching instead of the unusable order_id link, do loyalty members' orders that coincide with a points redemption on the same calendar day show a different refund rate than their other orders?",
+   "grain": "one row per order type among loyalty members' orders: 'same-day points redemption' vs 'no same-day points redemption'",
+   "columns": [
+    "order_type",
+    "order_count",
+    "distinct_customers",
+    "refund_rate_pct",
+    "avg_order_value_eur",
+    "avg_points_redeemed_that_day"
+   ],
+   "details": "Population: all orders (any status, placed_at between 2023-01-01 and 2025-12-31) placed by users who have a loyalty_accounts row. For each such order, classify as 'same-day points redemption' if there exists a loyalty_transactions row for the same user_id with direction = 'burn' whose occurred_at falls on the same calendar date as the order's placed_at; otherwise 'no same-day points redemption'. refund_rate_pct = share of orders in the group with payments.amount_refunded greater than 0 OR an order_returns row, same definition used throughout. avg_order_value_eur = average grand_total of non-cancelled orders in the group, converted to EUR via exchange_rates (as_of placed_at). avg_points_redeemed_that_day = average absolute points value of the matching same-day burn transaction(s) for the 'same-day' group (0 for the other group). Order rows: 'same-day points redemption' first.",
+   "builds_on": [
+    "Loyalty transaction order-linkage diagnostic by direction",
+    "Refund rate on points-redeeming orders vs other member orders"
+   ]
+  },
+  {
+   "title": "Apparel order value breakdown: subtotal, discount and total, member vs non-member",
+   "question": "Is the large average-order-value gap seen among Apparel members (28-40% lower than non-members across every tenure band) explained by heavier discounting at checkout, or do members simply buy cheaper products before any discount is applied?",
+   "grain": "one row per loyalty segment (member vs non-member), restricted to the Apparel and Footwear vertical",
+   "columns": [
+    "segment",
+    "order_count",
+    "avg_subtotal_eur",
+    "avg_discount_total_eur",
+    "avg_grand_total_eur",
+    "discount_rate_pct"
+   ],
+   "details": "Population: non-cancelled orders placed 2023-01-01 to 2025-12-31 by users (is_staff = false) belonging to tenants with tenants.industry = 'Apparel & Footwear'. Segment = 'loyalty member' if the user has a loyalty_accounts row, else 'non-member'. avg_subtotal_eur, avg_discount_total_eur and avg_grand_total_eur are averages of orders.subtotal, orders.discount_total and orders.grand_total respectively, each converted to EUR via exchange_rates (order currency_code to EUR, rate as_of placed_at). discount_rate_pct = (sum of discount_total in EUR) divided by (sum of subtotal in EUR) for the segment, as a percentage (an aggregate rate, not an average of per-order ratios). Order rows: 'loyalty member' first, then 'non-member'.",
+   "builds_on": [
+    "Apparel and Footwear: loyalty member vs non-member behavior by tenure"
+   ]
+  },
+  {
+   "title": "What distinguishes higher-revenue loyalty members from the rest",
+   "question": "Among enrolled loyalty members, do the ones who generate the most revenue use the programme differently - redeeming more or less, staying longer, returning less - giving a hint at what a healthier version of the programme would look like?",
+   "grain": "one row per member performance group: 'top 25% by lifetime revenue' vs 'remaining 75%'",
+   "columns": [
+    "performance_group",
+    "member_count",
+    "avg_lifetime_revenue_eur",
+    "avg_lifetime_orders",
+    "avg_tenure_days",
+    "pct_who_ever_redeemed_points",
+    "own_redemption_rate_pct",
+    "refund_rate_pct"
+   ],
+   "details": "Population: all users with a loyalty_accounts row who placed at least one order between 2023-01-01 and 2025-12-31. Rank these members by lifetime revenue (sum of grand_total on non-cancelled orders, converted to EUR via exchange_rates as_of placed_at) and split into the top 25% and the remaining 75% by that ranking. avg_lifetime_orders = average count of orders (any status) per member in the group. avg_tenure_days = average of (last order placed_at minus users.created_at) in days per member in the group. pct_who_ever_redeemed_points = share of members in the group with at least one 'burn'-direction loyalty_transactions row. own_redemption_rate_pct = for the group, (sum of redeemed points value in EUR) divided by (sum of earned points value in EUR), using the same points-to-EUR conversion method as the unit-economics report. refund_rate_pct = share of orders (any status) in the group with payments.amount_refunded greater than 0 OR an order_returns row. Order rows: 'top 25% by lifetime revenue' first.",
+   "builds_on": [
+    "Loyalty programme unit economics: points cost vs revenue per customer",
+    "Loyalty points redemption rate by enrollment cohort age"
+   ]
+  }
+ ]
+}

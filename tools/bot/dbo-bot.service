@@ -1,0 +1,18 @@
+# The benchmark bot (docs/BOT.md), a systemd user service of the user that runs the benchmark, installed by
+# `bench/host-setup.sh --bot` (which puts the checkout's path in place of %h/dbolympics). It needs the user's
+# lingering, so that it runs without a login and rootless podman has the user's cgroups. When the reservation runs
+# out, release-machine --kill kills it with the run, and it starts again (Restart=always), finding the run unfinished.
+[Unit]
+Description=DB Olympics benchmark bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/python3 %h/dbolympics/tools/bot/bot.py --config %h/.config/dbo-bot/config.toml
+Environment=PATH=%h/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Restart=always
+RestartSec=30
+TimeoutStopSec=120
+
+[Install]
+WantedBy=default.target

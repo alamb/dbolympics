@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Do we run A/B tests, and do we act on the results?",
+    "--question",
+    "How many A/B tests has the platform run, in what state are they, and how often does a test actually end with a declared winner?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per ab_tests.status value\", \"columns_requested\": [\"status - ab_tests.status (draft, running, paused, completed, archived)\", \"tests_count - count of ab_tests in that status, all tenants, all-time\", \"share_of_tests_pct - tests_count / total tests across all statuses * 100, rounded to 1 decimal\", \"tests_with_winner_declared_count - count of tests in that status where winner_variant_id is not null\", \"avg_variants_per_test - average number of linked ab_variants rows per test in that status, rounded to 1 decimal\", \"avg_duration_days - average of (ended_at - started_at) in days for tests in that status where both are not null, rounded to 1 decimal\"], \"details\": \"Source: ab_tests left joined to ab_variants (count per ab_test_id) for the variants average; no date filter, all-time, all tenants, since this is a first look at whether the capability is used at all. Order by tests_count descending, tie-break status ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,5 @@
+[
+ "🔐 Shopper accounts have 0% multi-factor authentication (MFA) enabled — literally none of our ~11,200 shopper logins use a second factor, vs. ~55% of staff.",
+ "🕵️ We can't currently prove who deleted things: of 615 products deleted across 91 merchants, 0 show up in our audit log as a logged deletion.",
+ "👋 When a merchant churns, their staff logins don't get shut off: 16 Owner/Admin accounts on churned merchants are still marked \"active,\" some unused for 500+ days."
+]

@@ -1,0 +1,38 @@
+=== Report 1: Apparel: never-redeemed vs ever-redeemed members vs non-members, by tenure (written by Grace) ===
+Engineer's note: Tenure bands are bucketed using day-count thresholds (182/365/730 days) as proxies for 6/12/24 months, since the warehouse has no native month-diff function. avg_order_value_eur and refund_rate_pct are computed as group-level ratios (total revenue/orders), not an average of each customer's own ratio.
+REPORT: Apparel: never-redeemed vs ever-redeemed members vs non-members, by tenure
+QUESTION: Once we separate loyalty members into those who have actually redeemed a point at least once versus those who never have, do the engaged ones match or beat non-members of similar tenure, while the disengaged majority lags behind?
+tenure_band     | group                 | customer_count | avg_lifetime_orders | avg_lifetime_revenue_eur | avg_order_value_eur | refund_rate_pct
+----------------+-----------------------+----------------+---------------------+--------------------------+---------------------+----------------
+under 6 months  | non-member            |            634 |                1.80 |                   350.18 |              202.94 |           36.87
+under 6 months  | never-redeemed member |            184 |                1.72 |                   296.74 |              184.46 |           33.86
+6 to 12 months  | non-member            |            483 |                2.75 |                   495.71 |              188.08 |           37.33
+6 to 12 months  | never-redeemed member |            148 |                2.27 |                   368.43 |              172.56 |           34.52
+6 to 12 months  | ever-redeemed member  |              6 |                5.50 |                  1430.22 |              268.17 |           75.76
+12 to 24 months | non-member            |           1019 |                4.05 |                   750.15 |              193.62 |           38.76
+12 to 24 months | never-redeemed member |            216 |                3.26 |                   468.46 |              153.78 |           39.97
+12 to 24 months | ever-redeemed member  |             46 |                8.35 |                  1434.80 |              180.33 |           38.02
+over 24 months  | non-member            |           1275 |                5.33 |                  1012.97 |              199.31 |           39.50
+over 24 months  | never-redeemed member |            261 |                3.43 |                   495.12 |              151.50 |           38.17
+over 24 months  | ever-redeemed member  |             92 |               10.01 |                  1872.74 |              193.59 |           39.09
+(11 rows)
+
+=== Report 2: Loyalty unit economics: ever-redeemed vs never-redeemed members (written by Felix) ===
+Engineer's note: Population = users with a loyalty_accounts row and at least one order (any status) placed 2023-01-01..2025-12-31; revenue is summed over non-cancelled orders in that same window. Points costs/liabilities use points_per_currency and the program's currency, converted to EUR via exchange_rates as of occurred_at; EUR-denominated amounts use the rate=1 identity rather than a self-join lookup.
+REPORT: Loyalty unit economics: ever-redeemed vs never-redeemed members
+QUESTION: Is the programme's realized cost concentrated entirely in the minority of members who actually redeem, while the disengaged majority sits as pure unclaimed liability rather than real cost?
+group                 | member_count | total_revenue_eur | revenue_per_customer_eur | total_points_redeemed_cost_eur | total_points_earned_liability_eur | redeemed_cost_pct_of_revenue
+----------------------+--------------+-------------------+--------------------------+--------------------------------+-----------------------------------+-----------------------------
+ever-redeemed member  |          225 |         434119.65 |                  1929.42 |                      177782.98 |                         345431.82 |                        40.95
+never-redeemed member |         1105 |         480911.34 |                   435.21 |                            0.0 |                         323569.59 |                          0.0
+(2 rows)
+
+=== Report 3: Member order behavior before vs after their first points redemption (written by Bea) ===
+Engineer's note: Population = users with a loyalty_accounts row and >=1 'burn' loyalty_transactions row; split is on their first burn's occurred_at. For exposure-after's end date, since the schema has no customer-level churn flag, I used the tenant's status: if the merchant tenant has churned, exposed-after runs to the customer's last order after redemption, otherwise it is right-censored at 2025-12-31 (i.e. "still active" = tenant still active on the platform). AOV uses non-cancelled orders converted to EUR via exchange_rates; refund_rate_pct and order counts use all orders (any status) in the period.
+REPORT: Member order behavior before vs after their first points redemption
+QUESTION: Among members who have redeemed at least once, does their order frequency and spend actually pick up after that first redemption, or were they already heavy buyers beforehand - i.e. does redeeming look like a cause of engagement or just a marker of customers who were already engaged?
+period                  | distinct_customers | total_orders | avg_order_value_eur | orders_per_customer_per_year | refund_rate_pct
+------------------------+--------------------+--------------+---------------------+------------------------------+----------------
+before first redemption |                225 |         1228 |              239.47 |                         6.64 |           32.33
+after first redemption  |                158 |          705 |              221.73 |                         2.79 |           34.61
+(2 rows)

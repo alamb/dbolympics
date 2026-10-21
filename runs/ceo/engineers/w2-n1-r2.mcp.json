@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant refund-rate spike check, Q4 2025 vs 2025 baseline",
+    "--question",
+    "Is the Q4 2025 refund-rate increase concentrated in a handful of merchants, or spread broadly across the merchant base?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Bea\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"vertical\", \"refund rate Q4 2025 (%)\", \"refund rate Q1-Q3 2025 baseline (%)\", \"change vs own baseline (percentage points)\", \"refund amount Q4 2025 (EUR)\", \"order count Q4 2025\"], \"details\": \"Source: payment_refunds (status='succeeded', processed_at in quarter, amount converted to EUR via exchange_rates as_of processed_at date) as the numerator, divided by payments (status in 'captured','partially_refunded','refunded', captured_at in quarter, amount converted to EUR via exchange_rates as_of captured_at date) as the denominator, both joined to orders->tenants (or directly via payments.order_id->orders.tenant_id) to attribute to a merchant. Compute refund rate = 100 * refund EUR / captured payment EUR, once for Q4 2025 (2025-10-01 to 2026-01-01) and once pooled across Q1-Q3 2025 (2025-01-01 to 2025-10-01) as each merchant's own baseline. 'Change vs own baseline' lets us separate merchants with a structurally high rate (e.g. apparel, reportedly ~20% normally) from merchants whose rate genuinely jumped in Q4. Include only merchants with at least 10 orders in Q4 2025 to avoid noise from tiny volumes. Order by change vs own baseline descending (biggest jumps first), tie-break by refund amount Q4 2025 descending. Note total merchant count returned.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

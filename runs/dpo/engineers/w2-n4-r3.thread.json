@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "with user_status_stats as (\n    select\n        status,\n        count(*) as total_users,\n        count(deleted_at) as users_with_deleted_at,\n        max(deleted_at) as most_recent_deleted_at\n    from users\n    group by status\n)\nselect\n    status,\n    total_users,\n    users_with_deleted_at as count_with_deleted_at_not_null,\n    round(100.0 * users_with_deleted_at / nullif(total_users, 0), 2) as pct_with_deleted_at_set,\n    most_recent_deleted_at\nfrom user_status_stats\norder by total_users desc, status asc",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: status, total_users, count_with_deleted_at_not_null, pct_with_deleted_at_set, most_recent_deleted_at"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "with user_status_stats as (\n    select\n        status,\n        count(*) as total_users,\n        count(deleted_at) as users_with_deleted_at,\n        max(deleted_at) as most_recent_deleted_at\n    from users\n    group by status\n)\nselect\n    status,\n    total_users,\n    users_with_deleted_at as count_with_deleted_at_not_null,\n    round(100.0 * users_with_deleted_at / nullif(total_users, 0), 2) as pct_with_deleted_at_set,\n    most_recent_deleted_at\nfrom user_status_stats\norder by total_users desc, status asc",
+  "note": "Platform-wide, all tenants, full history, one row per users.status as requested.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `users` by `status` platform-wide (no tenant/date filters) and shows total users, how many have `deleted_at` populated, the percentage, and the most recent `deleted_at` per status — giving Priyanka the baseline to compare against the 39 erasure-subject cases."
+ }
+]

@@ -1,0 +1,28 @@
+=== Report 1: B2B Wholesale: Win Rate and Cycle Time by Merchant (New Business) (written by Felix) ===
+Engineer's note: EUR conversion uses the nearest prior exchange_rates.as_of on or before closed_at's date (per currency); avg_days_open and avg_amount_eur are rounded to 1 and 2 decimals respectively.
+REPORT: B2B Wholesale: Win Rate and Cycle Time by Merchant (New Business)
+QUESTION: Is the acquisition struggle spread evenly across our B2B wholesale merchants, or concentrated in a few accounts?
+merchant                      | opportunities_closed | closed_won | closed_lost | win_rate_pct | avg_days_open | avg_amount_eur
+------------------------------+----------------------+------------+-------------+--------------+---------------+---------------
+Polder Packaging              |                   16 |         12 |           4 |         75.0 |          16.4 |           NULL
+Ballycorran Industrial Supply |                   76 |         63 |          13 |         82.9 |          15.3 |           NULL
+Midland Safety Wear           |                   40 |         34 |           6 |         85.0 |          10.4 |           NULL
+Castell Fasteners             |                   36 |         31 |           5 |         86.1 |          12.8 |        6835.52
+Hanse Industriebedarf         |                   17 |         15 |           2 |         88.2 |           9.9 |           NULL
+(5 rows)
+
+=== Report 2: B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business) (written by Felix) ===
+Engineer's note: I used tenants.industry IN ('industrial supplies','office equipment') as the B2B wholesale tenant filter and pipelines.name = 'New business' as the pipeline filter, matching the verticals and pipeline naming convention described for this series of reports — please confirm these match the exact filter used in the earlier merchant-level report if it differed. The exact count of reps excluded by the <3 closed-deals rule isn't a value I can compute at authoring time (dry runs don't return data); it will be visible as the gap between total distinct owners in scope and the row count printed on this report.
+REPORT: B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business)
+QUESTION: Among reps who own B2B wholesale new-business opportunities, are a few reps clearly underperforming on win rate or cycle time, or is performance broadly similar?
+rep_name | merchant | opportunities_closed | closed_won | closed_lost | win_rate_pct | avg_days_open | avg_amount_eur
+---------+----------+----------------------+------------+-------------+--------------+---------------+---------------
+(0 rows)
+
+=== Report 3: B2B Wholesale: Age Profile of Currently Open New-Business Pipeline (written by Ines) ===
+Engineer's note: The request didn't name the specific wholesale tenant(s), so I scoped it to tenants whose industry text matches wholesale/industrial/office-equipment (the B2B wholesaler verticals noted in the company briefing) rather than a single hardcoded tenant_id — please flag if a narrower/different tenant set was intended. Pipeline is matched case-insensitively on name = 'New business'.
+REPORT: B2B Wholesale: Age Profile of Currently Open New-Business Pipeline
+QUESTION: How much of our current B2B wholesale new-business pipeline is already older than the typical window in which deals actually win, i.e. how much open pipeline is quietly turning stale and at risk?
+age_bucket | opportunities_count | pct_of_open_pipeline | avg_amount_eur | total_amount_eur
+-----------+---------------------+----------------------+----------------+-----------------
+(0 rows)

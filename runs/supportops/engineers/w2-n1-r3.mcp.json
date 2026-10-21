@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket tag coverage: tagged vs. untagged volume and speed",
+    "--question",
+    "What share of 2025 tickets carry no topic tag at all, and do untagged tickets differ from tagged ones enough to change the topic/breach story from last week?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Bea\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per tag-coverage status: 'Tagged' (at least one row in ticket_tags_map) vs. 'Untagged' (no rows)\", \"columns_requested\": [\"coverage_status\", \"ticket_count (2025)\", \"pct_of_total_tickets\", \"avg_resolution_minutes\", \"resolution_breach_rate\", \"first_response_breach_rate\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets, ticket_tags_map, sla_breaches (breach_kind = 'resolution' / 'first_response'). A ticket counts as 'Tagged' if it has at least one row in ticket_tags_map, regardless of how many tags; 'Untagged' otherwise. 2 rows total. Order 'Tagged' first then 'Untagged'. Round pct and rates to 1 decimal percent, minutes to whole numbers.\", \"builds_on\": [\"Ticket volume and speed by topic tag\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

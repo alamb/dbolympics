@@ -1,0 +1,56 @@
+{
+ "notes": "Chloé's #1 ask is a real cost picture for discounting, not just return rates, and two other teams already shipped adjacent pieces I should build on rather than duplicate: Oliver Grant (Pricing) found Welcome10's refunds now exceed its own discount cost and that no coupon has usage limits; Ingrid Solberg (Lifecycle) already did the rigorous loyalty cost-vs-value reconciliation Chloé is asking me for in Q2, including the category-mix correction on the 'members return more' claim. So tonight I'm putting all three slots behind Q1 (discounting), turning last week's return-rate finding into an actual euro cost picture by vertical, a ranked list of which specific coupon codes are worst (to give Chloé something actionable and consistent with Oliver's Welcome10 catch), and a monthly trend to see if the leakage is worsening alongside the refund-rate creep the CEO and CFO teams flagged. I'll pick up loyalty reconciliation, referral growth, and the unlinked-orders question starting night 2, leaning on Ingrid's numbers rather than re-deriving them.",
+ "requests": [
+  {
+   "title": "The real euro cost of discounting, by vertical",
+   "question": "Beyond return rates, how much revenue does discounting actually cost each vertical once you add up both the discounts given and the refunds paid out on those orders?",
+   "grain": "one row per industry and order group (discounted vs full price)",
+   "columns": [
+    "industry - tenants.industry",
+    "order_group - 'discounted' (orders.discount_total > 0) or 'full price' (= 0)",
+    "orders_count - count of orders placed_at in 2025 in that industry/group",
+    "discount_given_eur - sum of orders.discount_total converted to EUR, rounded to 0 decimals",
+    "refund_amount_eur - sum of order_returns.refund_total (joined on order_id) for orders in that group, converted to EUR, rounded to 0 decimals",
+    "gmv_eur - sum of orders.subtotal (pre-discount product value) converted to EUR, rounded to 0 decimals",
+    "net_leakage_pct - (discount_given_eur + refund_amount_eur) / gmv_eur * 100, rounded to 1 decimal",
+    "refund_rate_pct - share of orders in that cell with at least one linked order_returns row, *100, rounded to 1 decimal"
+   ],
+   "details": "Source: orders joined to tenants (industry), order_returns (refund_total, matched on order_id). Filter placed_at in 2025-01-01 to 2026-01-01 exclusive, all tenants. Convert orders.discount_total and orders.subtotal to EUR using exchange_rates as of placed_at date (base_code='EUR', quote_code=order currency, EUR=rate 1); convert order_returns.refund_total to EUR using exchange_rates as of order_returns.refunded_at date (same method). Order by industry ascending, then order_group ascending ('discounted' before 'full price'). Expect ~18-22 rows (industries x 2).",
+   "builds_on": [
+    "Are discounted orders healthier across verticals, or just in B2B?"
+   ]
+  },
+  {
+   "title": "Which coupon codes cost more than they're worth",
+   "question": "Ranking individual coupon codes by discount-plus-refund cost, which specific codes are the worst offenders (like Welcome10), and which are clean?",
+   "grain": "one row per coupon code",
+   "columns": [
+    "code - coupons.code",
+    "times_redeemed - count of coupon_redemptions rows for that code with redeemed_at in 2025",
+    "orders_count - count of distinct order_id among those redemptions",
+    "discount_given_eur - sum of coupon_redemptions.discount_amount converted to EUR, rounded to 0 decimals",
+    "refund_amount_eur - sum of order_returns.refund_total for those same orders, converted to EUR, rounded to 0 decimals",
+    "net_cost_eur - discount_given_eur + refund_amount_eur, rounded to 0 decimals",
+    "refund_rate_pct - share of those orders with at least one linked order_returns row, *100, rounded to 1 decimal",
+    "avg_order_value_eur - average grand_total (EUR) of those orders, rounded to 0 decimals"
+   ],
+   "details": "Source: coupon_redemptions (redeemed_at in 2025, all tenants) joined to coupons for the code, and to order_returns on order_id for refund amounts. Convert coupon_redemptions.discount_amount to EUR using exchange_rates as of redeemed_at date; convert order_returns.refund_total to EUR using exchange_rates as of order_returns.refunded_at date; convert orders.grand_total to EUR as of orders.placed_at date (all base_code='EUR', EUR=rate 1). Order by net_cost_eur descending, tie-break code ascending, limit to the top 20 codes by net_cost_eur.",
+   "builds_on": []
+  },
+  {
+   "title": "Is discount-related revenue leakage getting worse over 2025?",
+   "question": "Is the euro cost of discounting (discounts given plus refunds on those orders) trending up or down over the course of 2025, in step with the refund-rate creep other teams have flagged?",
+   "grain": "one row per calendar month (2025)",
+   "columns": [
+    "month - YYYY-MM label from orders.placed_at",
+    "orders_count - count of orders placed_at in that month, all tenants",
+    "discount_given_eur - sum of orders.discount_total converted to EUR for that month's orders, rounded to 0 decimals",
+    "refund_amount_eur - sum of order_returns.refund_total converted to EUR for returns tied to that month's orders, rounded to 0 decimals",
+    "gmv_eur - sum of orders.subtotal converted to EUR for that month's orders, rounded to 0 decimals",
+    "net_leakage_pct - (discount_given_eur + refund_amount_eur) / gmv_eur * 100, rounded to 1 decimal"
+   ],
+   "details": "Source: orders (placed_at in 2025, all tenants) left joined to order_returns on order_id for refund_total (attributed to the month of the original order, not the return date, so leakage is tied to the order cohort). Same EUR conversion approach as the other two reports tonight (exchange_rates, as_of the relevant date, EUR=rate 1). Cover all 12 months of 2025 even if a month has no qualifying rows. Order by month ascending.",
+   "builds_on": []
+  }
+ ]
+}

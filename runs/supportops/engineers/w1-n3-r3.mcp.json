@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Macro usage overview",
+    "--question",
+    "How much do agents actually lean on canned-reply macros, and is usage concentrated in a few macros or spread across the library?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Viktor\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per macro, restricted to the top 20 by usage_count\", \"columns_requested\": [\"macro_title\", \"is_shared\", \"usage_count\", \"pct_of_total_macro_usage (this macro's usage_count / sum of usage_count across all macros)\", \"total_macro_count (constant: count of all non-deleted macros)\", \"total_macro_usage_sum (constant: sum of usage_count across all macros)\", \"total_agent_reply_messages_2025 (constant: count of ticket_messages with is_public = true and author_agent_id not null, created_at in 2025, as a rough denominator for how many agent replies exist platform-wide)\"], \"details\": \"Source tables: macros (deleted_at is null), ticket_messages for the context denominator. macros.usage_count is a running lifetime counter (no date filter available on it), so note in the report that usage_count is all-time, not 2025-only, while total_agent_reply_messages_2025 is scoped to 2025 \\u2014 the ratio is a rough reliance signal, not exact. Order by usage_count descending, top 20 rows; note the total number of macros in the library so we can see how many are barely used.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

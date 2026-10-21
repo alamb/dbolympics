@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale: Win Rate and Cycle Time by Merchant (New Business)",
+    "--question",
+    "Is the acquisition struggle spread evenly across our B2B wholesale merchants, or concentrated in a few accounts?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Felix\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per wholesale merchant (tenant)\", \"columns_requested\": [\"merchant\", \"opportunities_closed\", \"closed_won\", \"closed_lost\", \"win_rate_pct\", \"avg_days_open\", \"avg_amount_eur\"], \"details\": \"Scope: same wholesale tenant filter as prior nights (tenants.industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'), opportunities where pipeline_id = the tenant's 'New business' pipeline (join pipelines on name = 'New business'), is_closed = true. avg_days_open = avg(closed_at - created_at) in days. Convert amount to EUR via exchange_rates (base_code='EUR', quote_code = opportunity currency_code, rate as_of closed_at date or nearest prior day). Order by win_rate_pct ascending (worst performers first), tie-break by opportunities_closed descending, then merchant name ascending.\", \"builds_on\": [\"B2B Wholesale Pipeline: Opportunities by Merchant and Stage\", \"New Business Only: Won vs Lost Opportunity Characteristics\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

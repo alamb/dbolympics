@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Checkout/Storefront Severe Outages, Nov-Dec 2025",
+    "--question",
+    "Was the Nov 28 checkout/storefront outage a one-off, or did similarly severe (>=50% unhealthy) readings happen at other times in the window we have data for?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Ines\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per hour and component where unhealthy_rate_pct >= 50\", \"columns_requested\": [\"checked_hour\", \"component\", \"total_checks\", \"unhealthy_checks\", \"unhealthy_rate_pct\", \"avg_latency_ms\"], \"details\": \"Table system_health_checks. Filter checked_at >= 2025-11-01 and < 2026-01-01, component in ('checkout','storefront'). Group by hour of checked_at and component. Keep only groups where unhealthy_rate_pct (is_healthy=false count / total_checks * 100) >= 50, rounded 2dp. avg_latency_ms over non-null latency_ms, rounded to whole number. Order by checked_hour ascending, component ascending.\", \"builds_on\": [\"Checkout/Storefront Outage Timeline, Nov 28 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

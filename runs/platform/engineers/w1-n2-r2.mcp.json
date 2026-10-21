@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Job Failures by Job Type (Handler)",
+    "--question",
+    "Are job failures concentrated in a small number of job types/handlers rather than spread evenly across tenants?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Bea\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per job handler (job type), aggregated across all tenants whose jobs use that handler\", \"columns_requested\": [\"handler\", \"total_runs\", \"failed_runs\", \"failure_rate_pct\", \"distinct_tenants_run\", \"distinct_tenants_failed\", \"avg_duration_seconds_failed\"], \"details\": \"Tables job_runs joined to jobs on job_id to get jobs.handler (the shared job-type identifier, since jobs.name/jobs table rows are per-tenant but handler denotes the same underlying job type across tenants). Filter queued_at >= 2025-10-01 and < 2026-01-01 (the available window). Group by handler. distinct_tenants_run = count distinct tenant_id among all runs for that handler; distinct_tenants_failed = count distinct tenant_id among failed runs for that handler. avg_duration_seconds_failed computed over failed runs only where started_at and finished_at are both set. Order by failed_runs descending, tie-break by handler ascending.\", \"builds_on\": [\"Merchants Hit Hardest by Job Failures, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

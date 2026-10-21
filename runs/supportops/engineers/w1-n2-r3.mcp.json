@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "SLA breach rates by day of week and time of day",
+    "--question",
+    "Is there a time-of-day or day-of-week pattern to when we breach first-response and resolution SLA targets?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Ines\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per combination of ticket creation day-of-week (Monday..Sunday) and time-of-day bucket (Night 00-06, Morning 06-12, Afternoon 12-18, Evening 18-24, all in UTC)\", \"columns_requested\": [\"day_of_week\", \"time_of_day_bucket\", \"ticket_count (created 2025, sla_policy_id not null)\", \"first_response_breach_rate\", \"resolution_breach_rate\", \"avg_first_response_minutes\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31, restricted to tickets with sla_policy_id not null. Derive day-of-week from tickets.created_at (use calendar_days.day_name joined on the date, or extract directly) and a 6-hour UTC time bucket from the created_at time component. Source tables: tickets, sla_breaches, calendar_days. 28 rows total (7 days x 4 buckets); order by day_of_week (Monday first) then time_of_day_bucket in chronological order (Night, Morning, Afternoon, Evening). Round rates to 1 decimal percent, minutes to whole numbers.\", \"builds_on\": [\"SLA breach rates by priority, with overall headline rate\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

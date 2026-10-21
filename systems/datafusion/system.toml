@@ -1,0 +1,20 @@
+# Apache DataFusion, embedded in the query program (Rust, query/), which lives for the whole run.
+# DataFusion has no storage of its own: it queries the Parquet files where they are, so a load only
+# adds a file to a table (a command of the query program, not SQL).
+name = "datafusion"
+# the version, kept with the results (by hand)
+version = "55.0.0"
+keys = ["none"]
+
+
+[load]
+statement = "LOAD {table} '{file}'"
+
+[dialect.types]
+uuid = "varchar"
+json = "varchar"
+"array(element)" = "{element}[]"
+
+[dialect.functions]
+# DataFusion has no FETCH FIRST
+"fetch_first(n)" = "LIMIT {n}"

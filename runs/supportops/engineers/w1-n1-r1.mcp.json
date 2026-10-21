@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket volume and staffing by agent group",
+    "--question",
+    "How is ticket volume distributed across our agent groups, and does staffing (agent count) look balanced against that load?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Grace\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per agent group (plus one row for tickets with no agent_group_id, labeled 'Unassigned queue')\", \"columns_requested\": [\"agent_group_name\", \"ticket_count (tickets created in 2025)\", \"open_ticket_count (status not in solved, closed, as of 2025-12-31)\", \"agent_count (distinct active support_agents in that group via agent_group_members)\", \"tickets_per_agent (ticket_count / agent_count)\", \"pct_unassigned (share of the group's tickets with assignee_agent_id null)\", \"avg_first_response_minutes (first_response_at - created_at, tickets with a first response)\", \"avg_resolution_minutes (resolved_at - created_at, tickets resolved)\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31 inclusive. Source tables: tickets, agent_groups, agent_group_members, support_agents. Join tickets.agent_group_id to agent_groups; count distinct support_agents per group from agent_group_members (count membership, no activity filter). Order by ticket_count descending, with the 'Unassigned queue' row last regardless of count so it reads as a footnote. Round averages to whole minutes and rates to 1 decimal percent.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Bundle Creation Timing: Seeded in a Batch or Built Up Organically?",
+    "--question",
+    "Does the suspiciously clean 100%/0% bundle adoption split by vertical look like genuine, ongoing merchant activity, or does it look like a one-time data-seeding event?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per calendar month, 2023-01 through 2025-12\", \"columns_requested\": [\"month\", \"bundles_created_count\", \"distinct_tenants_creating_a_bundle\"], \"details\": \"Table: product_bundles. bundles_created_count = count of product_bundles rows with created_at in that month, across all tenants. distinct_tenants_creating_a_bundle = count of distinct tenant_id values among those rows. Build off the full calendar so every month appears even with zero bundles created. Order by month ascending. If the counts cluster heavily into one or two months, that points to a seeding/backfill event rather than organic, ongoing adoption.\", \"builds_on\": [\"Bundle Adoption Rate by Vertical\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

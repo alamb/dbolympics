@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Repeat purchase after a return vs. no return, 2025",
+    "--question",
+    "Does experiencing a return change whether, and how soon, a customer places their next order, compared to orders that had no return?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Grace\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per group: orders that had a return vs orders that had no return\", \"columns_requested\": [\"group (has_return / no_return)\", \"orders count\", \"distinct customers\", \"pct with a subsequent order within 90 days\", \"median days to that subsequent order\"], \"details\": \"Restrict to the 6 retail tenants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik) since returns are only meaningful volume there (the food/coffee merchants showed near-zero return rates in the earlier delivery report and would just dilute this). Base population: orders with placed_at in 2025-01-01 to 2025-09-30 (leaves a full 90-day forward window against data through 2025-12-31). group = 'has_return' if the order has at least one row in order_returns, else 'no_return'. For each group: orders_count = count of orders; distinct_customers = distinct (tenant_id, user_id) among those orders. For each order, check whether the same user placed another order with placed_at strictly after this order's placed_at and within 90 days after it; pct_with_subsequent_order_within_90_days = % of orders in the group meeting that condition, rounded 1 decimal; median_days_to_subsequent_order = median of (that next order's placed_at minus this order's placed_at) in days, among orders that had one, rounded to a whole number. Order rows with 'has_return' first, then 'no_return'.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "email_log actual retention vs. the stated 730-day delete policy",
+    "--question",
+    "Since email_log's retention policy is configured but inactive and has never run for any tenant, how much email data are we actually still holding well past the stated 730-day window?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per calendar month, based on email_log.created_at\", \"columns_requested\": [\"month (YYYY-MM)\", \"emails logged in month (count)\", \"days old as of 2026-01-05 (measured from month start)\", \"exceeds 730-day retention (Y/N)\"], \"details\": \"Source: email_log, platform-wide (all tenants), grouped by date_trunc('month', created_at) or joined to calendar_days. Span the full 2023-01 through 2025-12 history so we can see the total volume of retained email data and how far past the 730-day policy threshold the oldest months are, using the literal date 2026-01-05 (not CURRENT_DATE) for the age calculation. This directly sizes the gap identified last night: retention_policies shows a 730-day/delete rule for email_log configured for all 120 tenants but with active_count = 0 and never_run_count = 120. Order by month ascending.\", \"builds_on\": [\"Retention policy landscape: distinct rules by entity table\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

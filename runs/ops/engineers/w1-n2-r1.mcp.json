@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Carrier transit performance by quarter, 2025",
+    "--question",
+    "Which carriers are consistently fast and dependable, and did any carrier's transit time blow out specifically during peak (Q4)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per carrier and calendar quarter\", \"columns_requested\": [\"carrier\", \"quarter (e.g. 2025-Q1)\", \"shipments_shipped (count of shipments with shipped_at in that quarter)\", \"shipments_delivered (of those, count with a non-null delivered_at as of the 2025-12-31 cutoff)\", \"avg_transit_days (mean, shipped_at to delivered_at, delivered subset only)\", \"median_transit_days\", \"pct_within_3_days (share of delivered shipments with transit_days <= 3)\", \"pct_delivered (shipments_delivered / shipments_shipped)\"], \"details\": \"Table: shipments (carrier, shipped_at, delivered_at). Scope: shipments.shipped_at between 2025-01-01 and 2025-12-31. Quarter = calendar quarter of shipped_at (use calendar_days.quarter_num/quarter_start). transit_days = DATEDIFF(day, shipped_at, delivered_at), computed only where delivered_at is not null; round avg/median to 2 decimals, pct columns to 1 decimal (as %). Note for the report: shipments shipped very late in Q4 (especially December) may show lower pct_delivered simply because delivery hadn't completed by the 2025-12-31 cutoff -- flag this caveat in the printed notes rather than treating it as a carrier failure. Group by carrier, quarter_start. Order by carrier ascending, quarter ascending.\", \"builds_on\": [\"Delivery time trend, monthly (2024-2025)\", \"Peak season weekly fulfillment performance (Oct-Dec 2025)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

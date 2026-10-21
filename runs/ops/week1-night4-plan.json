@@ -1,0 +1,53 @@
+{
+ "notes": "Night 3 nailed down priority #3 cleanly, so I'm done there and pivoting all of tonight's slots to priority #4 (inventory/replenishment), which I haven't touched yet. Key night-3 findings for the memo: (a) the complete Q4 carrier table confirms three chronically-weak carriers -- Landfall Freight (13.6% within 3 days, worst all year), Lowlands Express (44.6%), and now Albion Parcel -- together carrying ~32% of Q4 volume; (b) Albion Parcel's monthly breakdown shows it was perfectly fine through October (75.7% within 3 days) then catastrophically broke in November (28.2%) and got *worse*, not better, in December (p90 blew out to 20.7 days, pct_delivered slipped to 94.2%) -- this is an acute, ongoing carrier failure, not a peak blip that self-resolved, and is the single most actionable finding for a carrier conversation; (c) the carrier-mix report confirms the merchant-level variance from Night 1 is almost entirely explained by carrier assignment, not the merchant or warehouse itself -- e.g. Grind Collective's Kennet Freight leg hits 88.7% within 3 days while its Landfall Freight leg on the very same business hits 19.4%; the \"best\" merchants simply route nearly all volume through the strong carriers (Strombogen Kurier, Liberty Ground, Alpenpaket, Trailhead Express), while \"worst\" merchants have meaningful share stuck on the weak ones. That resolves priority #3 well enough to write up without further queries. Tonight (last night) I'm spending all 3 slots on priority #4: whether replenishment from suppliers keeps pace (purchase order lead times, by supplier and by quarter to check for a peak-season backlog) and a current snapshot of stockout exposure by warehouse. I'm leaving returns (#5) for a future week per Priya's explicit prioritization.",
+ "requests": [
+  {
+   "title": "Purchase order replenishment performance by supplier, 2025",
+   "question": "Which suppliers are chronically slow to deliver against purchase orders, relative to what they've promised?",
+   "grain": "one row per supplier",
+   "columns": [
+    "supplier_name",
+    "lead_time_days_contracted (suppliers.lead_time_days)",
+    "pos_ordered (count of purchase_orders with ordered_at in 2025)",
+    "pos_received (of those, count with received_at not null)",
+    "avg_actual_lead_days (DATEDIFF(day, ordered_at, received_at), received subset only)",
+    "pct_received_late (share of POs with both expected_at and received_at set, where received_at > expected_at)",
+    "avg_days_late (average of DATEDIFF(day, expected_at, received_at) for the late subset only)"
+   ],
+   "details": "Tables: purchase_orders (supplier_id, ordered_at, expected_at, received_at, status) joined to suppliers (name, lead_time_days). Scope: purchase_orders.ordered_at between 2025-01-01 and 2025-12-31. Round avg_actual_lead_days and avg_days_late to 1 decimal, pct_received_late to 1 decimal (as %). Include only suppliers with at least 10 POs ordered in the window. Order by pos_ordered descending, tie-break by supplier_name ascending. Cap at 50 rows.",
+   "builds_on": []
+  },
+  {
+   "title": "Purchase order replenishment performance by quarter, 2025",
+   "question": "Did supplier replenishment slow down or back up around peak season, and did it clear by year-end?",
+   "grain": "one row per calendar quarter of ordered_at, 2025, aggregated across all suppliers",
+   "columns": [
+    "quarter (e.g. 2025-Q1)",
+    "pos_ordered",
+    "pos_received (received_at not null)",
+    "avg_actual_lead_days (ordered_at to received_at, received subset)",
+    "pct_received_late (received_at > expected_at, among POs with both dates set)",
+    "avg_days_late (for the late subset only)",
+    "pos_still_open_at_cutoff (status in ('submitted','partially_received') and received_at is null, as measured against the 2025-12-31 data cutoff)"
+   ],
+   "details": "Table: purchase_orders. Scope: ordered_at between 2025-01-01 and 2025-12-31, grouped by calendar quarter of ordered_at (use calendar_days.quarter_num/quarter_start). Round day metrics to 1 decimal, pct to 1 decimal. Please flag in the report that pos_still_open_at_cutoff will naturally be higher for Q4 (especially POs ordered in December) simply because there hasn't been time to receive them before 2025-12-31 -- this is expected right-censoring, not necessarily a sign of backlog, and should be read alongside Q1-Q3 as a baseline. Order by quarter ascending. Expect 4 rows.",
+   "builds_on": []
+  },
+  {
+   "title": "Current stockout exposure by warehouse, as of 2025-12-31",
+   "question": "As of now, how exposed are our fulfillment sites to stockouts, and how many SKUs are already at or below their reorder point?",
+   "grain": "one row per warehouse",
+   "columns": [
+    "warehouse_name",
+    "tenant_name",
+    "variants_tracked (distinct variant_id with a stock_items row at a location in this warehouse)",
+    "variants_out_of_stock (quantity - reserved_quantity <= 0, summed across the warehouse's locations per variant, i.e. no sellable units left)",
+    "pct_out_of_stock",
+    "variants_at_or_below_reorder_point (reorder_point is not null and on-hand quantity <= reorder_point)",
+    "pct_at_or_below_reorder"
+   ],
+   "details": "Tables: stock_items (variant_id, stock_location_id, quantity, reserved_quantity, reorder_point) joined to stock_locations (warehouse_id) joined to warehouses (name, tenant_id) joined to tenants (name). This reflects the current live snapshot as replicated into the warehouse (effectively as of 2025-12-31) -- note in the report that this is a point-in-time view, not a trend over the year, since we don't have a reliable historical stockout event log. For variants present at multiple locations within the same warehouse, aggregate (sum quantity and reserved_quantity) to one on-hand figure per variant per warehouse before applying the out-of-stock and reorder-point tests. Round pct columns to 1 decimal (as %). Include only warehouses with at least 20 tracked variants. Order by pct_out_of_stock descending, tie-break by warehouse_name ascending. Cap at 50 rows.",
+   "builds_on": []
+  }
+ ]
+}

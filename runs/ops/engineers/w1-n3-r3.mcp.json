@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Carrier mix for best vs worst performing merchants, 2025",
+    "--question",
+    "Do the merchants with the worst delivery reliability simply ship disproportionately with the weaker carriers?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per tenant and carrier combination, for a fixed list of 20 named tenants\", \"columns_requested\": [\"tenant_name\", \"performance_group ('best' or 'worst', per the fixed list below)\", \"carrier\", \"shipments_count (2025)\", \"share_of_tenant_shipments_pct (this carrier's shipments / tenant's total shipments in 2025, x100)\", \"avg_transit_days (this tenant+carrier combination, 2025)\", \"pct_within_3_days\"], \"details\": \"Scope: shipments joined via fulfillments -> orders -> tenants, shipped_at in 2025-01-01 through 2025-12-31, restricted to these 20 tenants only (matched by tenants.name): WORST group = 'Thistlecombe', 'Purrfect Pantry', 'Chocolaterie Mireille', 'Kayak Corner', 'Studio Vrij', 'Sourdough Club', 'Grind Collective', 'Spice Route Box', 'Kettle & Key', 'Polder Packaging'. BEST group = 'Pfotengl\\u00fcck', 'Cragsley Outfitters', 'Brennquell Kaffee', 'Feather & Fin', 'Ridgeback Gear', 'Wohngl\\u00fcck', 'Mirelle', 'Honeycomb Larder', 'Kontor24 B\\u00fcrobedarf', 'Tail Wag Supply'. transit_days = DATEDIFF(day, shipped_at, delivered_at), delivered subset only. Round avg_transit_days to 2 decimals, pct columns to 1 decimal. Order by performance_group ('worst' first, then 'best'), then tenant_name ascending, then shipments_count descending within each tenant.\", \"builds_on\": [\"Fulfillment performance by warehouse, 2025\", \"Delivery time by merchant, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,30 @@
+[workspace]
+members = [".", "bench"]
+
+[package]
+name = "dbolympics"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Realistic multi-tenant commerce simulator and data generator for database benchmarking"
+license = "MIT"
+publish = false
+
+[dependencies]
+anyhow = "1"
+arrow = { version = "58", default-features = false }
+chrono = { version = "0.4", default-features = false, features = ["std"] }
+clap = { version = "4", features = ["derive"] }
+duckdb = { version = "1.10505", features = ["bundled", "json", "parquet"] }
+libm = "0.2"
+parquet = { version = "58", default-features = false, features = ["arrow", "zstd"] }
+rayon = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[build-dependencies]
+serde_json = "1"
+
+[profile.release]
+codegen-units = 1
+lto = "thin"

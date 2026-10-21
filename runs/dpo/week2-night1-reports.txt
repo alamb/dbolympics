@@ -1,0 +1,34 @@
+=== Report 1: Privacy request volume reconciliation: counts by type and status (written by Felix) ===
+Engineer's note: Full history, all tenants, request_type/status left exactly as stored (no casing normalization) per request, so any oddball strings will surface as their own rows. Median days-to-close is blank (NULL) for type/status combinations with no completed_at values.
+REPORT: Privacy request volume reconciliation: counts by type and status
+QUESTION: What is the defensible, auditable count of privacy (DSAR) requests by type and status, so we can reconcile against the ~48 figure quoted elsewhere and the 60 we found last week before briefing the regulator?
+request_type  | status      | request_count | earliest_received_at | latest_received_at | median_days_to_close
+--------------+-------------+---------------+----------------------+--------------------+---------------------
+access        | completed   |            11 | 2022-08-25           | 2025-09-01         |                  5.8
+access        | in_progress |             1 | 2025-12-29           | 2025-12-29         |                 NULL
+erasure       | completed   |            39 | 2020-04-24           | 2025-10-18         |                  8.1
+erasure       | received    |             1 | 2025-12-06           | 2025-12-06         |                 NULL
+erasure       | rejected    |             3 | 2023-05-26           | 2025-03-21         |                 NULL
+rectification | completed   |             5 | 2021-09-23           | 2024-06-26         |                 13.9
+(6 rows)
+
+=== Report 2: Portability requests: formal DSAR count vs. unlinked data exports (written by Ines) ===
+Engineer's note: Completed export count uses status = 'completed' since data_exports.status has no documented fixed code list in the catalog; please confirm this is the correct 'finished' value if the warehouse uses a different code (e.g. 'done'/'success').
+REPORT: Portability requests: formal DSAR count vs. unlinked data exports
+QUESTION: Is 'zero portability requests in 3 years' a real zero, or are shopper data exports being fulfilled outside the formal DSAR process (a logging blind spot)?
+linked_to_dsar | export_count | distinct_subject_users | earliest_requested_at | latest_requested_at | completed_export_count | avg_row_count
+---------------+--------------+------------------------+-----------------------+---------------------+------------------------+--------------
+Y              |           11 |                     11 | 2022-08-25            | 2025-09-01          |                      0 |        1456.1
+(1 rows)
+
+=== Report 3: Retention reality check beyond email: events, job_runs, page_views, system_health_checks (written by Bea) ===
+Engineer's note: Retention_days and action_on_expiry are taken via MIN() per entity_table from retention_policies, relying on the analyst's confirmation that these are uniform across all 120 tenants (so MIN picks the single shared value); the query is platform-wide (not per-tenant) as requested.
+REPORT: Retention reality check beyond email: events, job_runs, page_views, system_health_checks
+QUESTION: Beyond the confirmed email_log failure, how much data in the other four policy-covered tables is currently sitting past its stated retention window?
+entity_table         | stated_retention_days | action_on_expiry | total_rows | oldest_row_age_days | rows_exceeding_retention | pct_exceeding_retention
+---------------------+-----------------------+------------------+------------+---------------------+--------------------------+------------------------
+system_health_checks |                    35 | delete           |     129780 |                  39 |                    14832 |                   11.43
+job_runs             |                    90 | delete           |      49247 |                  94 |                     2281 |                    4.63
+events               |                  1095 | delete           |     360478 |                1100 |                     1324 |                    0.37
+page_views           |                  1095 | delete           |     396998 |                1100 |                     1449 |                    0.36
+(4 rows)

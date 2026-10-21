@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-to-payment gap by order status, aged cohort",
+    "--question",
+    "Is the 20-40% gap between order value and captured payments explained by order status (i.e. structural - many orders simply never get paid), or does it look like something else, once we only look at orders old enough that timing lag can't be the excuse?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Felix\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"order status\", \"columns_requested\": [\"order_status\", \"order_count\", \"pct_of_orders\", \"orders_grand_total_eur\", \"orders_with_captured_payment_count\", \"matched_captured_payment_eur\", \"gap_eur\", \"gap_pct\"], \"details\": \"Population: orders with placed_at between 2023-01-01 and 2025-06-30 inclusive (at least 6 months old as of the 2025-12-31 data cutoff, so any legitimate capture lag has had time to resolve). Group by orders.status (pending, confirmed, paid, partially_fulfilled, fulfilled, cancelled, refunded). order_count = count of orders in that status. pct_of_orders = order_count / total orders in the population, as a percentage rounded to 1 decimal. orders_grand_total_eur = sum of grand_total converted to EUR (via exchange_rates, base_code='EUR', rate matched to placed_at date and orders.currency_code). orders_with_captured_payment_count = count of those orders with at least one linked payments row (payments.order_id = orders.id) with status='captured'. matched_captured_payment_eur = sum of those linked captured payments.amount, converted to EUR using payments.currency_code and captured_at date. gap_eur = orders_grand_total_eur minus matched_captured_payment_eur. gap_pct = gap_eur / orders_grand_total_eur * 100, rounded to 1 decimal. Tables: orders, payments, exchange_rates. Order by orders_grand_total_eur descending.\", \"builds_on\": [\"Orders traced into captured payments\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

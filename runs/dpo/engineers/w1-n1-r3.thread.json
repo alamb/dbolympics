@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  to_char(date_trunc('month', occurred_at), 'YYYY-MM') as month,\n  severity,\n  count(*) as incidents_detected,\n  count(*) filter (where resolved) as resolved_count,\n  count(*) filter (where not resolved) as unresolved_count,\n  round(\n    (percentile_cont(0.5) within group (order by extract(epoch from (resolved_at - occurred_at))/86400.0) filter (where resolved))::numeric,\n    1\n  ) as median_days_to_resolve,\n  count(*) filter (\n    where not resolved\n      and (timestamp '2026-01-05' - occurred_at) > interval '30 days'\n  ) as unresolved_over_30d\nFROM compliance_events\nWHERE occurred_at >= timestamp '2023-01-01'\n  AND occurred_at < timestamp '2026-01-01'\nGROUP BY 1, 2\nORDER BY 1, 2",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Catalog Error: Scalar Function with name to_char does not exist!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  strftime(date_trunc('month', occurred_at), '%Y-%m') as month,\n  severity,\n  count(*) as incidents_detected,\n  count(*) filter (where resolved) as resolved_count,\n  count(*) filter (where not resolved) as unresolved_count,\n  round(\n    (percentile_cont(0.5) within group (order by extract(epoch from (resolved_at - occurred_at))/86400.0) filter (where resolved))::numeric,\n    1\n  ) as median_days_to_resolve,\n  count(*) filter (\n    where not resolved\n      and (timestamp '2026-01-05' - occurred_at) > interval '30 days'\n  ) as unresolved_over_30d\nFROM compliance_events\nWHERE occurred_at >= timestamp '2023-01-01'\n  AND occurred_at < timestamp '2026-01-01'\nGROUP BY 1, 2\nORDER BY 1, 2",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, severity, incidents_detected, resolved_count, unresolved_count, median_days_to_resolve, unresolved_over_30d"
+ },
+ {
+  "kind": "text",
+  "text": "This compiles correctly with all requested columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  strftime(date_trunc('month', occurred_at), '%Y-%m') as month,\n  severity,\n  count(*) as incidents_detected,\n  count(*) filter (where resolved) as resolved_count,\n  count(*) filter (where not resolved) as unresolved_count,\n  round(\n    (percentile_cont(0.5) within group (order by extract(epoch from (resolved_at - occurred_at))/86400.0) filter (where resolved))::numeric,\n    1\n  ) as median_days_to_resolve,\n  count(*) filter (\n    where not resolved\n      and (timestamp '2026-01-05' - occurred_at) > interval '30 days'\n  ) as unresolved_over_30d\nFROM compliance_events\nWHERE occurred_at >= timestamp '2023-01-01'\n  AND occurred_at < timestamp '2026-01-01'\nGROUP BY 1, 2\nORDER BY 1, 2",
+  "note": "Platform-wide (no tenant filter) as requested. median_days_to_resolve is computed as the median of (resolved_at - occurred_at) in fractional days over resolved=true rows only; months/severities with zero resolved incidents will show a null median rather than zero.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `compliance_events` by detection month (2023-01 through 2025-12) and the raw `severity` values, with detected/resolved/unresolved counts, the median resolution time in days for resolved incidents, and a backlog count of unresolved incidents older than 30 days as of 2026-01-05."
+ }
+]

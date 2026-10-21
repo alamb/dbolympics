@@ -1,0 +1,5 @@
+[
+ "Inventory accuracy update: the rising miscount numbers aren't a worsening problem — it's just more warehouses coming online; the underlying rate has stayed flat all year (~5 discrepancies per location, 12 months running).",
+ "Apparel sites don't have worse inventory handling than other merchants — they just carry far more SKUs (~6,000 vs. ~100-300 elsewhere). Once you adjust for catalog size, the miscount rate is almost identical across all 11 merchant verticals (~1 unit per SKU per year).",
+ "Two things in our inventory data look more like system artifacts than real findings: a year-end €138k correction where 59 merchants all posted at the exact same microsecond, and a suspiciously even 3-way split of loss reasons — both need an engineering check before we use them in any external reporting."
+]

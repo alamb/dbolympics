@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH order_fulfillment_counts AS (\n  SELECT order_id, COUNT(*) AS fulfillment_count\n  FROM fulfillments\n  GROUP BY order_id\n),\nqualifying_fulfillments AS (\n  SELECT\n    o.id AS order_id,\n    o.placed_at,\n    f.warehouse_id,\n    f.shipped_at,\n    f.delivered_at\n  FROM orders o\n  JOIN order_fulfillment_counts ofc ON ofc.order_id = o.id AND ofc.fulfillment_count = 1\n  JOIN fulfillments f ON f.order_id = o.id\n  WHERE o.status = 'fulfilled'\n    AND o.placed_at >= DATE '2025-01-01'\n    AND o.placed_at < DATE '2026-01-01'\n    AND f.shipped_at IS NOT NULL\n    AND f.delivered_at IS NOT NULL\n),\norder_metrics AS (\n  SELECT\n    warehouse_id,\n    (shipped_at::date - placed_at::date) AS processing_days,\n    (delivered_at::date - placed_at::date) AS delivery_days\n  FROM qualifying_fulfillments\n),\nwarehouse_agg AS (\n  SELECT\n    warehouse_id,\n    COUNT(*) AS orders_shipped,\n    AVG(processing_days) AS avg_processing_days,\n    AVG(delivery_days) AS avg_delivery_days,\n    AVG(CASE WHEN delivery_days <= 5 THEN 1.0 ELSE 0.0 END) * 100 AS pct_within_5_days\n  FROM order_metrics\n  GROUP BY warehouse_id\n  HAVING COUNT(*) >= 30\n)\nSELECT\n  w.name AS warehouse_name,\n  t.name AS tenant_name,\n  wa.orders_shipped,\n  ROUND(wa.avg_processing_days, 2) AS avg_processing_days,\n  ROUND(wa.avg_delivery_days, 2) AS avg_delivery_days,\n  ROUND(wa.pct_within_5_days, 1) AS pct_within_5_days\nFROM warehouse_agg wa\nJOIN warehouses w ON w.id = wa.warehouse_id\nJOIN tenants t ON t.id = w.tenant_id\nORDER BY wa.orders_shipped DESC, w.name ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: warehouse_name, tenant_name, orders_shipped, avg_processing_days, avg_delivery_days, pct_within_5_days"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and produces the requested columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH order_fulfillment_counts AS (\n  SELECT order_id, COUNT(*) AS fulfillment_count\n  FROM fulfillments\n  GROUP BY order_id\n),\nqualifying_fulfillments AS (\n  SELECT\n    o.id AS order_id,\n    o.placed_at,\n    f.warehouse_id,\n    f.shipped_at,\n    f.delivered_at\n  FROM orders o\n  JOIN order_fulfillment_counts ofc ON ofc.order_id = o.id AND ofc.fulfillment_count = 1\n  JOIN fulfillments f ON f.order_id = o.id\n  WHERE o.status = 'fulfilled'\n    AND o.placed_at >= DATE '2025-01-01'\n    AND o.placed_at < DATE '2026-01-01'\n    AND f.shipped_at IS NOT NULL\n    AND f.delivered_at IS NOT NULL\n),\norder_metrics AS (\n  SELECT\n    warehouse_id,\n    (shipped_at::date - placed_at::date) AS processing_days,\n    (delivered_at::date - placed_at::date) AS delivery_days\n  FROM qualifying_fulfillments\n),\nwarehouse_agg AS (\n  SELECT\n    warehouse_id,\n    COUNT(*) AS orders_shipped,\n    AVG(processing_days) AS avg_processing_days,\n    AVG(delivery_days) AS avg_delivery_days,\n    AVG(CASE WHEN delivery_days <= 5 THEN 1.0 ELSE 0.0 END) * 100 AS pct_within_5_days\n  FROM order_metrics\n  GROUP BY warehouse_id\n  HAVING COUNT(*) >= 30\n)\nSELECT\n  w.name AS warehouse_name,\n  t.name AS tenant_name,\n  wa.orders_shipped,\n  ROUND(wa.avg_processing_days, 2) AS avg_processing_days,\n  ROUND(wa.avg_delivery_days, 2) AS avg_delivery_days,\n  ROUND(wa.pct_within_5_days, 1) AS pct_within_5_days\nFROM warehouse_agg wa\nJOIN warehouses w ON w.id = wa.warehouse_id\nJOIN tenants t ON t.id = w.tenant_id\nORDER BY wa.orders_shipped DESC, w.name ASC\nLIMIT 50",
+  "note": "Warehouses have a single tenant (no cross-tenant sharing in the schema), so warehouse_name alone would be unique, but tenant_name is included as requested for readability. Days are computed as plain calendar-date differences (not fractional/time-of-day), matching DATEDIFF(day, ...) semantics.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per qualifying warehouse (≥30 orders meeting the single-fulfillment, fully-shipped-and-delivered criteria in 2025), ranked by volume, with processing/delivery day averages and the on-time-within-5-days share so the COO's analyst can spot consistently slow or unreliable sites."
+ }
+]

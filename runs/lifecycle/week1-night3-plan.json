@@ -1,0 +1,56 @@
+{
+ "notes": "Night 2 sharpened the picture. The tenure-controlled cut (Report 1) rules out the 'members are just newer accounts' explanation: at every tenure band members order less, spend less, and are refunded 2x more than non-members - and the refund gap actually widens with tenure (27% to 34% for members vs 20% down to 14% for non-members). So this isn't a cohort artifact; it's a persistent, worsening pattern. The before/after enrollment report (Report 2) came back with zero pre-enrollment orders for everyone - meaning enrollment essentially happens at or before a member's very first order (likely at signup), so there is no 'pre' baseline to diff against; that test was a dead end for isolating causality but confirms enrollment is immediate, not something people do after building a track record. Report 3 shows no smoking-gun concentration: redemption counts per referrer are almost all 1 (occasional 2), spread across dozens of tenants and referrers with normal-looking order histories (from near-zero to tens of thousands of EUR) - this looks like genuine light word-of-mouth, not gaming, though volume is tiny. For the last full night before the memo, I want to: (1) directly test Aisha's 'rewards redeemed without real repeat purchase' hypothesis by checking whether orders where points were actually redeemed show elevated refund rates versus other member orders - this could explain the mechanism behind the refund gap; (2) quantify participation and its trend for Aisha's #4; (3) close out Tobias's B2B payment-terms question, which is still untouched. I'm leaving one night in reserve for any necessary follow-up before Friday.",
+ "requests": [
+  {
+   "title": "Refund rate on points-redeeming orders vs other member orders",
+   "question": "Among loyalty members' own orders, do the ones where loyalty points were actually redeemed show a higher refund rate than their other orders - i.e. is the elevated member refund rate concentrated in reward-redeeming purchases, suggesting rewards are being used without real purchase intent?",
+   "grain": "one row per order type among loyalty members' orders: 'points redeemed on this order' vs 'no points redeemed on this order'",
+   "columns": [
+    "order_type",
+    "order_count",
+    "distinct_customers",
+    "refund_rate_pct",
+    "avg_order_value_eur",
+    "avg_points_redeemed_per_order"
+   ],
+   "details": "Population: all orders (any status, 2023-01-01 to 2025-12-31) placed by users who have a row in loyalty_accounts. Classify an order as 'points redeemed on this order' if there exists a loyalty_transactions row with that order_id and a direction other than 'earn' (i.e. a burn/redeem row); otherwise 'no points redeemed on this order'. refund_rate_pct = share of orders in that group with payments.amount_refunded greater than 0 OR an order_returns row, consistent with prior reports' refund definition. avg_order_value_eur = average grand_total of non-cancelled orders in the group, converted to EUR via exchange_rates (order currency_code to EUR, rate as_of placed_at). avg_points_redeemed_per_order = average absolute points value of the matched redeem transaction(s) for the 'points redeemed' group (0 for the other group). Order rows: 'points redeemed on this order' first, then 'no points redeemed on this order'.",
+   "builds_on": [
+    "Loyalty member order behavior before vs after enrollment",
+    "Loyalty member vs non-member behavior by account tenure"
+   ]
+  },
+  {
+   "title": "Loyalty and referral programme participation rate over time",
+   "question": "What share of our active customer base is enrolled in loyalty or has ever used a referral code, and is that share growing, flat, or shrinking over time?",
+   "grain": "one row per calendar quarter from 2023-Q1 through 2025-Q4",
+   "columns": [
+    "quarter",
+    "active_customers_cumulative",
+    "loyalty_members_cumulative",
+    "pct_customers_loyalty_members",
+    "referred_customers_cumulative",
+    "pct_customers_referred"
+   ],
+   "details": "For each quarter end date (2023-03-31, 2023-06-30, ... 2025-12-31), compute cumulative counts as of that date: active_customers_cumulative = distinct users (is_staff = false) with at least one order placed_at on or before the quarter end; loyalty_members_cumulative = distinct users with a loyalty_accounts.enrolled_at on or before the quarter end; pct_customers_loyalty_members = loyalty_members_cumulative / active_customers_cumulative as a percentage; referred_customers_cumulative = distinct referred_user_id in referral_redemptions with redeemed_at on or before the quarter end; pct_customers_referred = referred_customers_cumulative / active_customers_cumulative as a percentage. Use calendar_days to get correct quarter-end dates. Order by quarter ascending.",
+   "builds_on": [
+    "Loyalty points and referral reward cost by month"
+   ]
+  },
+  {
+   "title": "B2B invoice payment behavior: loyalty-enrolled vs not",
+   "question": "Among our B2B wholesaler tenants (industrial supplies, office equipment), do customers enrolled in the loyalty programme settle invoices faster and carry fewer overdue balances than non-enrolled customers?",
+   "grain": "one row per segment: 'loyalty member' vs 'non-member', within B2B wholesaler tenants only",
+   "columns": [
+    "segment",
+    "customer_count",
+    "invoice_count",
+    "avg_days_to_pay",
+    "pct_invoices_paid_late",
+    "pct_invoices_currently_overdue",
+    "avg_invoice_amount_eur"
+   ],
+   "details": "Scope to tenants whose industry/vertical is a B2B wholesaler (industrial supplies or office equipment - identify via tenants.industry or tenants.name/slug matching those verticals; list which tenants were included in the report notes). Within those tenants, segment users (invoices.user_id) into 'loyalty member' (has a loyalty_accounts row) vs 'non-member'. invoice_count = count of invoices (any status) issued 2023-01-01 to 2025-12-31 for users in that segment. avg_days_to_pay = average of (paid_at - issued_at) in days for invoices with status = 'paid'. pct_invoices_paid_late = share of paid invoices where paid_at is after due_at. pct_invoices_currently_overdue = share of all invoices in the segment with status = 'past_due', or status = 'open' and due_at before 2025-12-31 and amount_due greater than 0. avg_invoice_amount_eur = average invoices.total converted to EUR via exchange_rates (currency_code to EUR, rate as_of issued_at). Order rows: 'loyalty member' first, then 'non-member'.",
+   "builds_on": []
+  }
+ ]
+}

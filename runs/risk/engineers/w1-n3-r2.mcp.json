@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Resolution timing of rejected DSARs via audit trail",
+    "--question",
+    "For the data subject requests that were rejected without a completed_at timestamp, can the audit/change-history trail tell us when the rejection decision was actually made, and was it within the due date?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Viktor\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per rejected data_subject_requests record (expect 3 rows), no subject-identifying columns included\", \"columns_requested\": [\"request_type\", \"received_at\", \"due_at\", \"rejection_event_timestamp (occurred_at of the audit_log or change_history row recording the status change to 'rejected' for this request)\", \"days_received_to_rejection_event\", \"within_due_at (rejection_event_timestamp <= due_at)\"], \"details\": \"Sources: data_subject_requests (status='rejected', completed_at is null; filter to the 3 rows identified last night), joined to change_history where entity_table='data_subject_requests' and entity_id = data_subject_requests.id and after_data contains status='rejected' (take the relevant occurred_at); if change_history has no matching row, fall back to audit_log where entity_table='data_subject_requests', entity_id matches, action='update', and summary/metadata indicates a status change, taking the latest such occurred_at before any later change. Please note in the report which source (change_history vs audit_log vs neither found) was used per row. Do not include subject_email or subject_user_id. Order by received_at ascending.\", \"builds_on\": [\"DSAR backlog reconciliation by status and request type\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,19 @@
+**Memo: B2B Wholesale Pipeline Health — for Patrick O'Neill**
+*From Daniel Kim, Fri 2026-01-09*
+
+**1. We can't find the "graveyard stage" — because it isn't being recorded.**
+Every closed opportunity across all 5 wholesale merchants shows only as *Closed Won* or *Closed Lost* in current stage data (Report: *Pipeline by Merchant and Stage*, night 1) — zero opportunities, ever, sit at Prospecting/Qualification/Proposal/Negotiation. I tried reconstructing history from the audit log; 30/30 lost deals had **no logged stage change at all** (*Stage Where Lost Opportunities Were Last Seen*, night 2). Confidence: high that this data simply doesn't exist, not that deals skip stages instantly. This is itself a finding — reps (or the tool) aren't tracking progression, only final outcome.
+
+**2. Cycle time is the clearest signal we have, and it's large.** Won deals close in **~9.1 days** on average; lost deals drag on **~35.5 days** — nearly 4x longer — before dying (*New Business Only: Won vs Lost*, night 2). The monthly trend (*Cycle Time Trend*, night 2) is noisy (2–19 deals/month) but shows **no secular worsening or improvement** over 2023–2025; it's held steady around 13–20 days average. Confidence: high on the won/lost gap, moderate on "no trend" given small monthly samples.
+
+**3. Lost deals get *more* attention before they die, not less.** Avg 3.37 activities logged before a loss vs 2.30 before a win (night 2 report). Combined with #2, this points to deals that *stall and get chased* rather than deals that die fast from neglect. Deal size is **not** a clean differentiator: win rate is flat at 79–88% across every size band from <€3,000 to €12,000+, and if anything the biggest deals close *faster* (9.8 days vs ~14 for mid-size) (*Win Rate by Deal-Size Band*, night 4). The earlier avg/median flip in won vs lost amounts (avg lost lower, median lost higher) was a skew artifact, resolved by this banding — confidence now high that size alone isn't driving outcomes.
+
+**4. Merchant performance is fairly even; one rep stands out.** Win rates by merchant range 75.0% (Polder Packaging) to 88.2% (Hanse Industriebedarf) — a real but modest spread, no merchant in trouble (*Win Rate by Merchant*, night 4). By rep, most cluster 80–89%, but **Youssef Meijer at Polder sits at 57.1%** (n=7, lowest of any rep with ≥3 deals) — and Polder is also the lowest-performing merchant overall (*Win Rate by Rep*, night 4). This looks concentrated, not widespread: one rep is likely pulling down one merchant's numbers.
+
+**5. No usable data on payment terms; deal size doesn't drag deals out.** I could not find any field capturing the wholesaler's own credit/payment terms with their B2B customers (billing_profiles.net_terms_days is Tidewick's billing of the merchant, not the merchant's terms with its customers) — this part of Samuel's question is unanswered, not just deprioritized.
+
+**6. Stale-pipeline risk can't be assessed going forward.** There is currently **zero open new-business pipeline** across all 5 merchants — every opportunity in 3 years of history is already closed (confirmed twice: night 1 and night 3). We only have the backward-looking signal from #2.
+
+**Caveats:** I hit two engineering errors this week (a currency-conversion bug producing NULLs for EUR merchants, and a tenant filter that silently returned zero rows) — both caught and corrected, but a reminder that small filter wording differences can silently zero out a report.
+
+**Next steps:** (1) Pull Youssef Meijer's deals directly — coaching issue or bad territory? (2) Flag to product/eng that stage transitions aren't being audited — that's a quick instrumentation fix that would let us build a real funnel next time. (3) Qualitatively check with Samuel's merchants whether long-open deals are being actively chased or forgotten — the activity data suggests chased-but-failing, which is a different fix than neglect.

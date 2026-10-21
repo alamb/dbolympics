@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale Deal Cycle Time Trend by Month",
+    "--question",
+    "From an opportunity being opened to it closing (won or lost), how long does that take for our B2B wholesale merchants, and is that cycle time getting longer or shorter over the last three years?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Viktor\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per calendar month (based on the opportunity's closed_at month)\", \"columns_requested\": [\"month (YYYY-MM)\", \"opportunities closed (count)\", \"closed won (count)\", \"closed lost (count)\", \"win rate (closed won / opportunities closed, %)\", \"average cycle days (closed_at - created_at)\", \"median cycle days (closed_at - created_at)\"], \"details\": \"Scope to the same B2B wholesale tenants as the stage report: tenants where industry ILIKE '%industrial%' OR industry ILIKE '%office equipment%' OR industry ILIKE '%wholesal%'. Use opportunities where is_closed = true, closed_at is not null, for the full history 2023-01-01 through 2025-12-31. Cycle time = DATE_PART('day', closed_at - created_at) per opportunity; this is a proxy for the full lead-to-close journey since opportunities have no direct FK back to the originating lead \\u2014 note this as a known limitation in the report. Group by month of closed_at (use calendar_days.month_label or an equivalent truncation). Round average and median cycle days to 1 decimal. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

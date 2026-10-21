@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t0.name AS tenant_name,\n  COALESCE(t1.total_sessions_2025, 0) AS total_sessions_2025,\n  COALESCE(t2.direct_sessions_2025, 0) AS direct_sessions_2025,\n  ROUND(COALESCE(t2.direct_sessions_2025, 0) * 100.0 / NULLIF(COALESCE(t1.total_sessions_2025, 0), 0), 1) AS direct_share_of_tenant_pct,\n  ROUND(COALESCE(t2.direct_sessions_2025, 0) * 100.0 / NULLIF(t3.platform_direct_sessions_2025, 0), 1) AS pct_of_platform_direct_sessions\nFROM tenants t0\nLEFT JOIN (\n  SELECT tenant_id, COUNT(*) AS total_sessions_2025\n  FROM web_sessions\n  WHERE started_at >= DATE '2025-01-01' AND started_at < DATE '2026-01-01'\n  GROUP BY tenant_id\n) t1 ON t1.tenant_id = t0.id\nLEFT JOIN (\n  SELECT tenant_id, COUNT(*) AS direct_sessions_2025\n  FROM web_sessions\n  WHERE started_at >= DATE '2025-01-01' AND started_at < DATE '2026-01-01'\n    AND (utm_source IS NULL OR TRIM(utm_source) = '')\n  GROUP BY tenant_id\n) t2 ON t2.tenant_id = t0.id\nCROSS JOIN (\n  SELECT COUNT(*) AS platform_direct_sessions_2025\n  FROM web_sessions\n  WHERE started_at >= DATE '2025-01-01' AND started_at < DATE '2026-01-01'\n    AND (utm_source IS NULL OR TRIM(utm_source) = '')\n) t3\nORDER BY direct_sessions_2025 DESC, tenant_name ASC\nLIMIT 15",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, total_sessions_2025, direct_sessions_2025, direct_share_of_tenant_pct, pct_of_platform_direct_sessions"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t0.name AS tenant_name,\n  COALESCE(t1.total_sessions_2025, 0) AS total_sessions_2025,\n  COALESCE(t2.direct_sessions_2025, 0) AS direct_sessions_2025,\n  ROUND(COALESCE(t2.direct_sessions_2025, 0) * 100.0 / NULLIF(COALESCE(t1.total_sessions_2025, 0), 0), 1) AS direct_share_of_tenant_pct,\n  ROUND(COALESCE(t2.direct_sessions_2025, 0) * 100.0 / NULLIF(t3.platform_direct_sessions_2025, 0), 1) AS pct_of_platform_direct_sessions\nFROM tenants t0\nLEFT JOIN (\n  SELECT tenant_id, COUNT(*) AS total_sessions_2025\n  FROM web_sessions\n  WHERE started_at >= DATE '2025-01-01' AND started_at < DATE '2026-01-01'\n  GROUP BY tenant_id\n) t1 ON t1.tenant_id = t0.id\nLEFT JOIN (\n  SELECT tenant_id, COUNT(*) AS direct_sessions_2025\n  FROM web_sessions\n  WHERE started_at >= DATE '2025-01-01' AND started_at < DATE '2026-01-01'\n    AND (utm_source IS NULL OR TRIM(utm_source) = '')\n  GROUP BY tenant_id\n) t2 ON t2.tenant_id = t0.id\nCROSS JOIN (\n  SELECT COUNT(*) AS platform_direct_sessions_2025\n  FROM web_sessions\n  WHERE started_at >= DATE '2025-01-01' AND started_at < DATE '2026-01-01'\n    AND (utm_source IS NULL OR TRIM(utm_source) = '')\n) t3\nORDER BY direct_sessions_2025 DESC, tenant_name ASC\nLIMIT 15",
+  "note": "Grain is one row per tenant, top 15 by direct_sessions_2025 descending as requested; the 2025 date filter is implemented as started_at >= 2025-01-01 and < 2026-01-01 to include all of Dec 31 2025.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per tenant (top 15 by direct session volume) with total sessions, direct sessions, each tenant's own direct share, and that tenant's share of platform-wide direct traffic — which directly tests the concentration hypothesis behind report 1's headline numbers."
+ }
+]

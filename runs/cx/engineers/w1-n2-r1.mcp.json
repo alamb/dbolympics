@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Delivery-related vs other tickets: volume and resolution speed",
+    "--question",
+    "Are delivery/where-is-my-order tickets driving the recent growth in ticket volume and the slower/more volatile resolution times seen in the monthly trend?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one calendar month, platform-wide, split into two ticket groups (delivery-related vs other)\", \"columns_requested\": [\"month (YYYY-MM)\", \"tickets total\", \"tickets delivery-related\", \"delivery share of tickets (%)\", \"avg first response hours, delivery-related\", \"avg first response hours, other\", \"avg resolution hours, delivery-related\", \"avg resolution hours, other\"], \"details\": \"Source: tickets joined to ticket_tags_map and support_tags. Define a ticket as 'delivery-related' if it has at least one tag whose support_tags.name is 'delivery' or 'where-is-my-order' (case-insensitive match); all other tickets are 'other'. Classify at the ticket level (distinct ticket ids), not the tag-row level, so a ticket is counted once even if it carries both tags or additional tags. Window: tickets.created_at from 2024-07-01 through 2025-12-31 (18 months) to cover the Dec-2024 spike, the Jan-2025 carryover, the May/Jun-2025 anomaly, and the Nov/Dec-2025 spike. avg first response hours = extract(epoch from first_response_at - created_at)/3600 averaged over tickets in that group/month with first_response_at not null; avg resolution hours = extract(epoch from resolved_at - created_at)/3600 averaged over tickets in that group/month with resolved_at not null. Round hour figures to 1 decimal, share to 1 decimal. Order by month ascending. Expect 18 rows.\", \"builds_on\": [\"Support response & resolution time trend, monthly\", \"Ticket topic mix and recent shift\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

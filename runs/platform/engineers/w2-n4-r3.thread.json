@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  EXTRACT(HOUR FROM pa.attempted_at) AS hour,\n  COUNT(*) AS total_payment_attempts,\n  COUNT(*) FILTER (WHERE pa.status IN ('authorized', 'captured')) AS captured_or_authorized_count,\n  COUNT(*) FILTER (WHERE pa.status = 'failed') AS failed_count,\n  ROUND(\n    COUNT(*) FILTER (WHERE pa.status = 'failed')::decimal / NULLIF(COUNT(*), 0) * 100,\n    2\n  ) AS failure_rate_pct\nFROM payment_attempts pa\nWHERE pa.attempted_at >= DATE '2025-11-28'\n  AND pa.attempted_at < DATE '2025-11-29'\nGROUP BY EXTRACT(HOUR FROM pa.attempted_at)\nORDER BY hour ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: hour, total_payment_attempts, captured_or_authorized_count, failed_count, failure_rate_pct"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly and matches the requested grain/columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  EXTRACT(HOUR FROM pa.attempted_at) AS hour,\n  COUNT(*) AS total_payment_attempts,\n  COUNT(*) FILTER (WHERE pa.status IN ('authorized', 'captured')) AS captured_or_authorized_count,\n  COUNT(*) FILTER (WHERE pa.status = 'failed') AS failed_count,\n  ROUND(\n    COUNT(*) FILTER (WHERE pa.status = 'failed')::decimal / NULLIF(COUNT(*), 0) * 100,\n    2\n  ) AS failure_rate_pct\nFROM payment_attempts pa\nWHERE pa.attempted_at >= DATE '2025-11-28'\n  AND pa.attempted_at < DATE '2025-11-29'\nGROUP BY EXTRACT(HOUR FROM pa.attempted_at)\nORDER BY hour ASC",
+  "note": "Query is platform-wide (all tenants) since the outage question is about the checkout path generally, not one merchant; hours with zero attempts will simply be absent from the 24-row output, as the request anticipated.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The query buckets `payment_attempts` by UTC hour for 2025-11-28, computing total attempts, captured/authorized counts, failed counts, and failure rate — across all tenants, since the outage question concerns the platform's checkout path as a whole rather than any single merchant. Any hour with zero attempts will simply not appear in the printed rows, as anticipated in the request."
+ }
+]

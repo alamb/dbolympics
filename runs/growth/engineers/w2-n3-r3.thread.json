@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH order_amounts AS (\n  SELECT o.id, o.placed_at, o.currency_code, o.grand_total,\n    CASE WHEN o.currency_code = 'EUR' THEN o.grand_total\n         ELSE o.grand_total / er.rate END AS grand_total_eur\n  FROM orders o\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n),\nattributed AS (\n  SELECT DISTINCT order_id FROM attributions WHERE order_id IS NOT NULL\n)\nSELECT\n  TO_CHAR(oa.placed_at, 'YYYY-MM') AS month,\n  COUNT(*) AS orders_count,\n  COUNT(*) FILTER (WHERE a.order_id IS NOT NULL) AS attributed_orders_count,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE a.order_id IS NOT NULL) / COUNT(*), 1) AS attribution_coverage_pct,\n  ROUND(SUM(oa.grand_total_eur), 0) AS total_revenue_eur,\n  ROUND(SUM(oa.grand_total_eur) FILTER (WHERE a.order_id IS NOT NULL), 0) AS attributed_revenue_eur\nFROM order_amounts oa\nLEFT JOIN attributed a ON a.order_id = oa.id\nGROUP BY 1\nORDER BY 1",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Catalog Error: Scalar Function with name to_char does not exist!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH order_amounts AS (\n  SELECT o.id, o.placed_at, o.currency_code, o.grand_total,\n    CASE WHEN o.currency_code = 'EUR' THEN o.grand_total\n         ELSE o.grand_total / er.rate END AS grand_total_eur\n  FROM orders o\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n),\nattributed AS (\n  SELECT DISTINCT order_id FROM attributions WHERE order_id IS NOT NULL\n)\nSELECT\n  strftime(oa.placed_at, '%Y-%m') AS month,\n  COUNT(*) AS orders_count,\n  COUNT(*) FILTER (WHERE a.order_id IS NOT NULL) AS attributed_orders_count,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE a.order_id IS NOT NULL) / COUNT(*), 1) AS attribution_coverage_pct,\n  ROUND(SUM(oa.grand_total_eur), 0) AS total_revenue_eur,\n  ROUND(SUM(oa.grand_total_eur) FILTER (WHERE a.order_id IS NOT NULL), 0) AS attributed_revenue_eur\nFROM order_amounts oa\nLEFT JOIN attributed a ON a.order_id = oa.id\nGROUP BY 1\nORDER BY 1",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, orders_count, attributed_orders_count, attribution_coverage_pct, total_revenue_eur, attributed_revenue_eur"
+ },
+ {
+  "kind": "text",
+  "text": "This compiles correctly with the expected columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH order_amounts AS (\n  SELECT o.id, o.placed_at, o.currency_code, o.grand_total,\n    CASE WHEN o.currency_code = 'EUR' THEN o.grand_total\n         ELSE o.grand_total / er.rate END AS grand_total_eur\n  FROM orders o\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n),\nattributed AS (\n  SELECT DISTINCT order_id FROM attributions WHERE order_id IS NOT NULL\n)\nSELECT\n  strftime(oa.placed_at, '%Y-%m') AS month,\n  COUNT(*) AS orders_count,\n  COUNT(*) FILTER (WHERE a.order_id IS NOT NULL) AS attributed_orders_count,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE a.order_id IS NOT NULL) / COUNT(*), 1) AS attribution_coverage_pct,\n  ROUND(SUM(oa.grand_total_eur), 0) AS total_revenue_eur,\n  ROUND(SUM(oa.grand_total_eur) FILTER (WHERE a.order_id IS NOT NULL), 0) AS attributed_revenue_eur\nFROM order_amounts oa\nLEFT JOIN attributed a ON a.order_id = oa.id\nGROUP BY 1\nORDER BY 1",
+  "note": "EUR conversion uses exchange_rates with base_code='EUR', quote_code=order currency, matched on the order's placed_at calendar date (EUR orders use rate 1 directly); months with no orders in 2025 would not appear since the grain is derived from orders.placed_at itself, but given order volume this is expected to cover all 12 months.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The query computes, per 2025 month, order counts/revenue (converted to EUR via `exchange_rates` keyed on the order's placed date) alongside the subset of orders found in `attributions`, giving coverage % and attributed revenue to track the attribution blind spot over the year."
+ }
+]

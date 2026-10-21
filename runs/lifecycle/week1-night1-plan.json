@@ -1,0 +1,55 @@
+{
+ "notes": "Prioritizing Aisha's must-haves (3,1,2) which also cover most of Tobias's asks (net cost, refund profile). Night 1 establishes three independent baselines: (a) program cost/liability trend, (b) member vs non-member behavior, (c) referred vs non-referred early behavior. I'm folding Tobias's refund-rate question into (b) and (c) as extra columns rather than separate reports, since it's a natural measure at the same grain. Deliberately NOT yet controlling for tenure/cohort matching in (b) - that's the obvious follow-up once I see whether raw numbers show a gap (my risk-focused read: if members already look no better on raw numbers, that itself is a red flag worth flagging Friday). Saving participation-rate trend (#4) and gaming/concentration red flags (#5) for night 2 once I've seen these results and know where to dig. Will flag to Aisha/Tobias to confirm their analyst isn't pulling the same cost report before night 2.",
+ "requests": [
+  {
+   "title": "Loyalty points and referral reward cost by month",
+   "question": "How much is the loyalty/referral programme costing the business each month - points value issued and redeemed, outstanding points liability, and referral rewards paid - and is that cost trending up or down?",
+   "grain": "one calendar month (platform-wide, all tenants combined)",
+   "columns": [
+    "month (YYYY-MM)",
+    "points earned value (EUR)",
+    "points redeemed value (EUR)",
+    "net points liability change (EUR)",
+    "cumulative points liability outstanding (EUR, running total since 2023-01-01)",
+    "referral rewards paid (EUR)",
+    "referral redemptions (count)",
+    "new loyalty enrollments (count)"
+   ],
+   "details": "Time window: 2023-01-01 through 2025-12-31, grouped by calendar month (use calendar_days.month_label or date_trunc on occurred_at). Points value: from loyalty_transactions, convert points to currency using the points' loyalty_programs.points_per_currency and loyalty_programs.currency_code (amount_in_program_currency = points / points_per_currency), split by direction (treat the 'earn' direction as positive issuance and the other direction as redemption). Then convert that program-currency amount to EUR using exchange_rates (base_code='EUR', quote_code=program currency, as_of = the transaction date; EUR_amount = amount_in_currency / rate). Net points liability change = earned value - redeemed value for the month; cumulative liability outstanding = running sum of net change from the start of history through the end of that month. Referral rewards paid: sum of referral_redemptions.reward_amount by redeemed_at month, converted from referral_redemptions.currency_code to EUR the same way. Referral redemptions count: count of referral_redemptions rows per month. New loyalty enrollments: count of loyalty_accounts.enrolled_at per month. Order by month ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "Loyalty member vs non-member customer behavior",
+   "question": "Do enrolled loyalty members actually order more often, spend more, stick around longer, and return items less than non-member customers, as of today?",
+   "grain": "one row per customer segment: 'loyalty member' vs 'non-member'",
+   "columns": [
+    "segment",
+    "customer count",
+    "avg lifetime orders per customer",
+    "avg lifetime revenue per customer (EUR)",
+    "avg order value (EUR)",
+    "avg customer tenure days (first order to last order)",
+    "repeat purchase rate (% with 2+ orders)",
+    "refund rate (% of orders with any amount refunded or an associated return)"
+   ],
+   "details": "Population: all users (is_staff = false) across all tenants who have placed at least one order (any status) between 2023-01-01 and 2025-12-31. Segment = 'loyalty member' if the user has a row in loyalty_accounts (any program, any tenant), else 'non-member'. Revenue and order value: use orders.grand_total converted to EUR via exchange_rates using orders.currency_code and the rate as_of orders.placed_at (fall back to created_at if placed_at is null). Avg lifetime revenue per customer = total EUR revenue from non-cancelled orders / customer count in segment. Avg order value = total EUR revenue / total order count in segment. Tenure = days between each customer's first and last placed order (0 for single-order customers). Repeat purchase rate = share of customers in the segment with 2 or more orders. Refund rate = (orders with payments.amount_refunded > 0 OR an order_returns row) / total orders in the segment. Order rows with 'loyalty member' first, then 'non-member'.",
+   "builds_on": []
+  },
+  {
+   "title": "Referred vs non-referred customer early behavior",
+   "question": "Do customers acquired through a referral behave better in their first 90 days - more orders, more revenue, more likely to return, fewer refunds - than customers acquired another way?",
+   "grain": "one row per acquisition segment: 'referred' vs 'other'",
+   "columns": [
+    "segment",
+    "customer count",
+    "avg orders in first 90 days",
+    "avg revenue in first 90 days (EUR)",
+    "share with a 2nd order within 90 days (%)",
+    "share with a 2nd order within 90-180 days (%)",
+    "refund rate within first 90 days (%)"
+   ],
+   "details": "Population: users (is_staff = false) across all tenants whose account created_at is between 2023-01-01 and 2025-10-02 (so a full 90-day and 180-day window is observable before data end 2025-12-31), and who placed at least one order. Segment = 'referred' if the user appears as referred_user_id in referral_redemptions, else 'other'. For each customer, 'day 0' is their first order's placed_at. Orders/revenue in first 90 days = orders placed in [day0, day0+90 days); revenue in orders.grand_total converted to EUR via exchange_rates (rate as_of placed_at, orders.currency_code to EUR). 'Share with a 2nd order within 90 days' = % of customers with a 2nd distinct order placed within 90 days of day 0. 'Share with a 2nd order within 90-180 days' = % of customers (among those without a 2nd order in the first 90 days) whose 2nd order falls between day0+90 and day0+180. Refund rate within first 90 days = share of orders placed in that window that have payments.amount_refunded > 0 or an order_returns row. Order rows with 'referred' first, then 'other'.",
+   "builds_on": []
+  }
+ ]
+}

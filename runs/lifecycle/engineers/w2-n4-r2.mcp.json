@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Platform-wide: never-redeemed vs ever-redeemed members vs non-members, by tenure",
+    "--question",
+    "Does the Apparel finding - that engaged (ever-redeemed) members beat tenure-matched non-members while never-redeemed members lag behind - hold up across the whole platform, or was it specific to Apparel?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Grace\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per combination of account-tenure band and customer group: 'non-member', 'never-redeemed member', 'ever-redeemed member', across all tenants and verticals\", \"columns_requested\": [\"tenure_band\", \"group\", \"customer_count\", \"avg_lifetime_orders\", \"avg_lifetime_revenue_eur\", \"avg_order_value_eur\", \"refund_rate_pct\"], \"details\": \"Identical definitions to the 'Apparel: never-redeemed vs ever-redeemed members vs non-members, by tenure' report, but with no industry filter - include users across all tenants and verticals. Population: users (is_staff = false) with at least one order 2023-01-01 to 2025-12-31. Tenure band = time from users.created_at to 2025-12-31, bucketed 'under 6 months', '6 to 12 months', '12 to 24 months', 'over 24 months'. Group: 'non-member' if no loyalty_accounts row; 'ever-redeemed member' if at least one 'burn'-direction loyalty_transactions row; else 'never-redeemed member'. Revenue/AOV use non-cancelled orders converted to EUR via exchange_rates (as_of placed_at); avg_lifetime_orders and refund_rate_pct use all orders (any status); refund = payments.amount_refunded greater than 0 OR an order_returns row. Order rows by tenure_band (youngest to oldest), then group ('non-member', 'never-redeemed member', 'ever-redeemed member').\", \"builds_on\": [\"Apparel: never-redeemed vs ever-redeemed members vs non-members, by tenure\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

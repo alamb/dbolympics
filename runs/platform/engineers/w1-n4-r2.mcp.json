@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Webhook Delivery Reliability by Endpoint",
+    "--question",
+    "Which individual webhook endpoints are chronically troublesome - low success rates or deliveries stuck retrying rather than resolving?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Felix\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per webhook (endpoint)\", \"columns_requested\": [\"webhook_name\", \"tenant_name\", \"total_deliveries_2025\", \"success_rate_pct\", \"failed_rate_pct\", \"pending_or_retrying_rate_pct\", \"avg_duration_ms\"], \"details\": \"Table webhook_deliveries joined to webhooks on webhook_id (for webhook name and target_url/tenant) and tenants for tenant_name. Filter created_at in 2025. success_rate_pct = status='success' count / total * 100; failed_rate_pct = status='failed' count / total * 100; pending_or_retrying_rate_pct = status in ('pending','retrying') count / total * 100 (deliveries that never resolved), all rounded 2dp. avg_duration_ms over non-null duration_ms, rounded to whole number. Only include webhooks with at least 20 total_deliveries_2025 to avoid noise from near-empty endpoints. Order by pending_or_retrying_rate_pct descending, then failed_rate_pct descending, tie-break webhook_name ascending. Limit to 20 rows (the worst endpoints).\", \"builds_on\": [\"2025 Webhook Delivery Reliability Trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

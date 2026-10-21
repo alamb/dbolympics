@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Weekly sign-in attempt volume and failure pattern",
+    "--question",
+    "Over the last 26 weeks, how many login attempts are we seeing platform-wide, what share fail, and are there signs of credential-stuffing-style behavior (many attempts concentrated on few IPs)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per ISO week (week_start), platform-wide across all tenants\", \"columns_requested\": [\"week_start (Monday of the ISO week)\", \"total login attempts\", \"successful logins\", \"failed logins\", \"failure rate (failed / total, %)\", \"distinct emails/users attempted\", \"distinct IP addresses used\", \"average attempts per distinct IP (total attempts / distinct IPs)\", \"max attempts from a single IP in the week\"], \"details\": \"Source: login_attempts (occurred_at, succeeded, email, user_id, ip_address). Bucket occurred_at::date into ISO weeks via calendar_days.week_start. Window: the 26 ISO weeks ending with the week containing 2025-12-31 (i.e. roughly 2025-07 through 2025-12, last available data). Aggregate across all tenants (no currency conversion needed, no money involved). failure rate = failed_logins / total_attempts, rounded to 1 decimal. 'max attempts from a single IP in the week' = the highest per-IP attempt count within that week (compute per-IP counts, then take the max per week). Order by week_start ascending, which is already unique so no further tie-break needed.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

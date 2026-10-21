@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Platform-wide check: how often do 'currently active' subscriptions already have a past end date?",
+    "--question",
+    "Is a subscription being marked trialing/active/past_due while already having an ended_at in the past a one-off to the subscription-delivery analysis, or a broader data-quality pattern across the platform?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Omar\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per subscription status (trialing, active, past_due)\", \"columns_requested\": [\"status\", \"total subscriptions with this status (platform-wide, all tenants, current snapshot)\", \"count with ended_at not null and ended_at before 2026-01-05 (today)\", \"% with a past ended_at despite this status\", \"count with ended_at null or in the future (status-consistent)\"], \"details\": \"Source: subscriptions table, all tenants, no date filter on started_at (current full snapshot as of today, 2026-01-05). Filter to status in ('trialing','active','past_due'). For each status, count total rows, count rows where ended_at is not null and ended_at < 2026-01-05, and compute the percentage. Order by % with a past ended_at descending. Print all 3 rows.\", \"builds_on\": [\"Root cause of the 291 'unexplained' active-bucket orphan orders\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT reason,\n  COUNT(*) AS event_count,\n  ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct_of_total_events,\n  SUM(quantity_delta) AS net_quantity_delta,\n  SUM(ABS(quantity_delta)) AS total_abs_quantity_delta,\n  ROUND(AVG(ABS(quantity_delta)), 2) AS avg_abs_quantity_delta\nFROM stock_adjustments\nWHERE created_at >= DATE '2025-01-01'\n  AND created_at < DATE '2026-01-01'\n  AND ABS(quantity_delta) = 1\nGROUP BY reason\nORDER BY event_count DESC, reason ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: reason, event_count, pct_of_total_events, net_quantity_delta, total_abs_quantity_delta, avg_abs_quantity_delta"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT reason,\n  COUNT(*) AS event_count,\n  ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct_of_total_events,\n  SUM(quantity_delta) AS net_quantity_delta,\n  SUM(ABS(quantity_delta)) AS total_abs_quantity_delta,\n  ROUND(AVG(ABS(quantity_delta)), 2) AS avg_abs_quantity_delta\nFROM stock_adjustments\nWHERE created_at >= DATE '2025-01-01'\n  AND created_at < DATE '2026-01-01'\n  AND ABS(quantity_delta) = 1\nGROUP BY reason\nORDER BY event_count DESC, reason ASC\nLIMIT 50",
+  "note": "\"Routine, single-unit, year-round\" entries were interpreted as rows where ABS(quantity_delta)=1 (the one-unit-at-a-time stream that would feed cycle_count movements); other adjustment sizes (bulk corrections, etc.) are excluded. Grouped by the exact reason string with no bucketing, as requested; if the result hits the 50-row cap the true distinct-reason count is higher and worth a follow-up.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. Summary of what the query does:\n\n- **Scope**: `stock_adjustments` rows with `created_at` in 2025 (half-open bound), filtered to `ABS(quantity_delta) = 1` to isolate the routine single-unit stream (as opposed to bulk/one-off corrections).\n- **Grain**: one row per exact `reason` text value, no pattern-matching or bucketing.\n- **Measures**: event count, share of total events (1dp), net signed quantity delta (shrinkage-sign-aware), total and average absolute delta (2dp).\n- **Ordering**: event count descending, reason alphabetically as tiebreak, capped at 50 rows.\n\nNoted in the submission: if the reason set is more fragmented than 50 distinct values, the printed row count will flag that there's a longer tail worth a follow-up request."
+ }
+]

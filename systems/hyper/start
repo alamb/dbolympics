@@ -1,0 +1,25 @@
+#!/bin/bash
+# Start the Hyper server (hyperd), which speaks the PostgreSQL protocol, and create the database
+# file. The query program's connection keeps the database open for the run (Hyper closes a database
+# when its last connection ends, and opens it again cold).
+set -e
+mkdir -p db
+nohup hyperd run --no-password --skip-license --init-user postgres \
+    --listen-connection tab.tcp://127.0.0.1:7483 --log-dir "$PWD/db" \
+    --default-database-version=4 --memory-limit="${DBO_MEMORY_MB}m" \
+    --soft-concurrent-query-thread-limit="$DBO_THREADS" --hard-concurrent-query-thread-limit="$DBO_THREADS" \
+    >server.log 2>&1 &
+echo $! > server.pid
+
+for _ in $(seq 1 60); do
+    if psql -h 127.0.0.1 -p 7483 -U postgres -d postgres -v ON_ERROR_STOP=1 -q -c "CREATE DATABASE \"$PWD/db/dbo.hyper\"" 2>/dev/null; then
+        # the query program, for the whole run: the runner's protocol on /run/dbo/dbo.sock
+        nohup ./query >/run/dbo/query.log 2>&1 &
+        echo $! > query.pid
+        exit 0
+    fi
+    sleep 1
+done
+echo "hyper: the server did not answer within 60 s" >&2
+cat server.log >&2
+exit 1

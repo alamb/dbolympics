@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Corrected incrementality read: pre-discount basket size on top marketing discounts, 2025",
+    "--question",
+    "Using basket size before the discount is applied (subtotal), do customers actually buy bigger baskets when using our top marketing discount codes, or was the earlier post-discount comparison just showing the mechanical effect of the discount itself?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Felix\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per discount (discounts.id), restricted to the top marketing-type discounts by 2025 spend: 'Welcome 10% off', 'Black Friday 2025' (all coupon variants), 'January Sale 2025', 'Summer Sale 2025' \\u2014 explicitly excluding 'Subscription delivery (prepaid)' and 'Volume tier 10+/50+' (those are a prepaid billing artifact and a structural large-order discount respectively, not marketing incentives)\", \"columns_requested\": [\"discount name\", \"coupon code (or 'automatic')\", \"discounted order count\", \"distinct customers\", \"avg order subtotal on discounted orders, pre-discount (EUR)\", \"avg order subtotal on the same customers' other non-discounted 2025 orders (EUR)\", \"subtotal lift (EUR)\", \"subtotal lift (%)\", \"% of these customers who placed at least one other order in 2025 with no discount applied\"], \"details\": \"Source: order_discounts + discounts (filtered to the named discounts above) + orders (subtotal, currency_code, placed_at, status != 'cancelled', user_id, tenant_id) for the discounted side; for the comparison side, same customers' (user_id, tenant_id) other 2025 orders with no row in order_discounts, averaging orders.subtotal. Convert to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Use the same set of up to 15 discount rows (by discount_amount_eur) identified in the prior lift report, minus Volume tier and Subscription delivery, so results are directly comparable to that earlier (flawed) pass. Order by subtotal lift (%) ascending, discount name as tie-break. Note how many customers had no comparison orders available.\", \"builds_on\": [\"Within-customer order value lift on top discount codes, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  date_trunc('hour', checked_at) AS checked_hour,\n  component,\n  count(*) AS total_checks,\n  count(*) FILTER (WHERE is_healthy = false) AS unhealthy_checks,\n  round(100.0 * count(*) FILTER (WHERE is_healthy = false) / count(*), 2) AS unhealthy_rate_pct,\n  round(avg(latency_ms)) AS avg_latency_ms\nFROM system_health_checks\nWHERE checked_at >= DATE '2025-11-01'\n  AND checked_at < DATE '2026-01-01'\n  AND component IN ('checkout', 'storefront')\nGROUP BY date_trunc('hour', checked_at), component\nHAVING 100.0 * count(*) FILTER (WHERE is_healthy = false) / count(*) >= 50\nORDER BY checked_hour ASC, component ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: checked_hour, component, total_checks, unhealthy_checks, unhealthy_rate_pct, avg_latency_ms"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  date_trunc('hour', checked_at) AS checked_hour,\n  component,\n  count(*) AS total_checks,\n  count(*) FILTER (WHERE is_healthy = false) AS unhealthy_checks,\n  round(100.0 * count(*) FILTER (WHERE is_healthy = false) / count(*), 2) AS unhealthy_rate_pct,\n  round(avg(latency_ms)) AS avg_latency_ms\nFROM system_health_checks\nWHERE checked_at >= DATE '2025-11-01'\n  AND checked_at < DATE '2026-01-01'\n  AND component IN ('checkout', 'storefront')\nGROUP BY date_trunc('hour', checked_at), component\nHAVING 100.0 * count(*) FILTER (WHERE is_healthy = false) / count(*) >= 50\nORDER BY checked_hour ASC, component ASC",
+  "note": "system_health_checks carries tenant_id, but the request did not ask for a per-tenant breakdown, so checks are aggregated across all tenants per hour/component as specified. If this table is tenant-scoped and Nov 28 outage was specific to one or few tenants, a tenant-level cut may be worth a follow-up report.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per hour+component (Nov 1–Dec 31, 2025, checkout/storefront only) where unhealthy_rate_pct >= 50, ordered by hour then component, so Lucas can see at a glance whether Nov 28 was isolated or part of a recurring pattern."
+ }
+]

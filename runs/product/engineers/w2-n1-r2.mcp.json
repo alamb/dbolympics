@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cart bleed trend by month, 2025",
+    "--question",
+    "Is the cart-stage drop-off getting better, worse, or staying flat over the past year?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Viktor\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per calendar month of cart creation, 2025\", \"columns_requested\": [\"month\", \"carts created\", \"overall cart-to-order conversion pct\", \"pct resolved within 1 hour\", \"pct resolved in 1-7 days\", \"median days to convert (converted carts only)\"], \"details\": \"Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-12-31, grouped by calendar month (use calendar_days or month_label-style grouping). overall_conversion_pct = share of carts in the month with status='converted', rounded 1 decimal. pct_resolved_within_1_hour and pct_resolved_1_7_days use the same resolution_time definition as the duration-bucket reports (coalesce(converted_at, abandoned_at, expires_at) - created_at), rounded 1 decimal. median_days_to_convert = median of (converted_at - created_at) in days, among carts with status='converted' in that month, rounded 1 decimal. Order rows by month ascending, January through December 2025.\", \"builds_on\": [\"Cart abandonment timing by tenant, Q4 2025 (retail merchants)\", \"Cart abandonment: cliff or slow bleed, Q4 2025 (non-subscription merchants)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

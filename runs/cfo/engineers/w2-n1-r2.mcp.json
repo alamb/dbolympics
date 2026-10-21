@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Refund Attribution Lag: Purchase Quarter vs Refund Quarter, 2025",
+    "--question",
+    "Does the 16-40% quarterly gap between payments-based and order_returns-based refund totals come from refunds simply landing in a later quarter than the original purchase, rather than from missing or double-counted data?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Bea\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one lag category, for order_returns refunded in 2025\", \"columns_requested\": [\"lag_category ('same quarter as purchase', 'purchase 1 quarter earlier', 'purchase 2+ quarters earlier', 'no matching payment found')\", \"return_count\", \"refund_amount_eur\", \"pct_of_total_2025_refund_amount\", \"avg_lag_days (refunded_at minus the originating payment's captured_at)\"], \"details\": \"Source: order_returns with status='refunded' and refunded_at in calendar year 2025, LEFT JOIN orders on order_returns.order_id, LEFT JOIN payments on payments.order_id = orders.id (if an order has multiple payments, use the earliest captured_at). Convert order_returns.refund_total to EUR via exchange_rates (base_code='EUR', quote_code=order_returns.currency_code, as_of=date(refunded_at)). Compute the calendar quarter of refunded_at and the calendar quarter of the matched payment's captured_at; bucket into the four lag_category values based on how many quarters apart they are (or 'no matching payment found' if the join fails). avg_lag_days is the average of (refunded_at - captured_at) in days within each bucket (null for the no-match bucket). Order by return_count descending.\", \"builds_on\": [\"Refund Figures Cross-Check: Payments vs Order Returns, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

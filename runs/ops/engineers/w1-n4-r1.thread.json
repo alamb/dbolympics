@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  s.name AS supplier_name,\n  s.lead_time_days AS lead_time_days_contracted,\n  agg.pos_ordered,\n  agg.pos_received,\n  ROUND(agg.avg_actual_lead_days, 1) AS avg_actual_lead_days,\n  ROUND(agg.pct_received_late, 1) AS pct_received_late,\n  ROUND(agg.avg_days_late, 1) AS avg_days_late\nFROM suppliers s\nJOIN (\n  SELECT\n    po.supplier_id,\n    COUNT(*) AS pos_ordered,\n    COUNT(po.received_at) AS pos_received,\n    AVG(CASE WHEN po.received_at IS NOT NULL THEN (po.received_at::date - po.ordered_at::date) END) AS avg_actual_lead_days,\n    100.0 * SUM(CASE WHEN po.expected_at IS NOT NULL AND po.received_at IS NOT NULL AND po.received_at > po.expected_at THEN 1 ELSE 0 END)\n      / NULLIF(SUM(CASE WHEN po.expected_at IS NOT NULL AND po.received_at IS NOT NULL THEN 1 ELSE 0 END), 0) AS pct_received_late,\n    AVG(CASE WHEN po.expected_at IS NOT NULL AND po.received_at IS NOT NULL AND po.received_at > po.expected_at\n             THEN (po.received_at::date - po.expected_at::date) END) AS avg_days_late\n  FROM purchase_orders po\n  WHERE po.ordered_at >= DATE '2025-01-01' AND po.ordered_at < DATE '2026-01-01'\n  GROUP BY po.supplier_id\n  HAVING COUNT(*) >= 10\n) agg ON agg.supplier_id = s.id\nORDER BY agg.pos_ordered DESC, s.name ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: supplier_name, lead_time_days_contracted, pos_ordered, pos_received, avg_actual_lead_days, pct_received_late, avg_days_late"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  s.name AS supplier_name,\n  s.lead_time_days AS lead_time_days_contracted,\n  agg.pos_ordered,\n  agg.pos_received,\n  ROUND(agg.avg_actual_lead_days, 1) AS avg_actual_lead_days,\n  ROUND(agg.pct_received_late, 1) AS pct_received_late,\n  ROUND(agg.avg_days_late, 1) AS avg_days_late\nFROM suppliers s\nJOIN (\n  SELECT\n    po.supplier_id,\n    COUNT(*) AS pos_ordered,\n    COUNT(po.received_at) AS pos_received,\n    AVG(CASE WHEN po.received_at IS NOT NULL THEN (po.received_at::date - po.ordered_at::date) END) AS avg_actual_lead_days,\n    100.0 * SUM(CASE WHEN po.expected_at IS NOT NULL AND po.received_at IS NOT NULL AND po.received_at > po.expected_at THEN 1 ELSE 0 END)\n      / NULLIF(SUM(CASE WHEN po.expected_at IS NOT NULL AND po.received_at IS NOT NULL THEN 1 ELSE 0 END), 0) AS pct_received_late,\n    AVG(CASE WHEN po.expected_at IS NOT NULL AND po.received_at IS NOT NULL AND po.received_at > po.expected_at\n             THEN (po.received_at::date - po.expected_at::date) END) AS avg_days_late\n  FROM purchase_orders po\n  WHERE po.ordered_at >= DATE '2025-01-01' AND po.ordered_at < DATE '2026-01-01'\n  GROUP BY po.supplier_id\n  HAVING COUNT(*) >= 10\n) agg ON agg.supplier_id = s.id\nORDER BY agg.pos_ordered DESC, s.name ASC\nLIMIT 50",
+  "note": "pct_received_late and avg_days_late are computed only over POs that have both expected_at and received_at populated (per the request's definition); POs missing either timestamp are excluded from those two measures but still count toward pos_ordered/pos_received.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per supplier (suppliers with ≥10 POs ordered in 2025), with contracted lead time, PO volume, actual vs. contracted lead time, and the late-delivery rate/severity — ordered by PO volume so the highest-traffic suppliers surface first, tie-broken alphabetically."
+ }
+]

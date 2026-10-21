@@ -1,0 +1,11 @@
+/target
+/systems/*/target
+/tmp
+__pycache__/
+/.claude
+/data
+/rendered
+/.venv
+/bench/containers
+/bench/out
+/site/out/

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Albion Parcel performance by origin warehouse, baseline vs collapse",
+    "--question",
+    "Is Albion Parcel's November-December breakdown concentrated in a specific warehouse/hub (or the merchants it serves), or did it hit all origins roughly equally?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per origin warehouse and period, for Albion Parcel shipments only\", \"columns_requested\": [\"warehouse_name\", \"tenant_name\", \"period ('baseline' = shipped_at 2025-01-01 to 2025-10-31; 'collapse' = shipped_at 2025-11-01 to 2025-12-31)\", \"shipments_shipped\", \"avg_transit_days\", \"pct_within_3_days\", \"share_of_period_shipments_pct (this warehouse's shipments / all Albion shipments in that period, x100)\"], \"details\": \"Tables: shipments (carrier='Albion Parcel', shipped_at, delivered_at) joined via fulfillments (fulfillment_id, warehouse_id) -> warehouses (name, tenant_id) -> tenants (name). Same transit_days definition as the destination-country report. Round avg_transit_days to 2 decimals, pct columns to 1 decimal. Include only warehouses with at least 10 shipments in at least one of the two periods. Order by warehouse_name ascending, then period (baseline before collapse).\", \"builds_on\": [\"Albion Parcel transit performance by month, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

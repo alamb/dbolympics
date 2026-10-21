@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order economics behind the 'Subscription delivery (prepaid)' discount",
+    "--question",
+    "Is the 'Subscription delivery (prepaid)' discount a real zero-margin giveaway, or does the €0 order revenue reflect that these customers actually pay via a separate subscription invoice?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Viktor\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per tenant, restricted to orders carrying the 'Subscription delivery (prepaid)' discount\", \"columns_requested\": [\"tenant name\", \"order count\", \"distinct customers\", \"avg order subtotal (EUR)\", \"avg discount_total on the order (EUR)\", \"avg shipping_total (EUR)\", \"avg tax_total (EUR)\", \"avg grand_total (EUR)\", \"% of these orders with grand_total = 0\", \"% of these customers with an active subscription (subscriptions.status in ('trialing','active','past_due')) overlapping the order's placed_at date\"], \"details\": \"Source: order_discounts joined to discounts (filter discounts.name = 'Subscription delivery (prepaid)') and orders (subtotal, discount_total, tax_total, shipping_total, grand_total, placed_at, currency_code, user_id, tenant_id, status != 'cancelled'), tenants for name. Time window: orders.placed_at in 2025-01-01 to 2025-12-31. Convert all money columns to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at date). For the subscription-overlap check, join subscriptions on user_id and tenant_id where subscriptions.started_at <= order.placed_at and (ended_at is null or ended_at >= order.placed_at). Order by order_count descending, tenant name as tie-break. Note total row count (expect ~6-10 tenants); print all.\", \"builds_on\": [\"Discount cost vs. order volume/revenue by discount, 2025\", \"Discount spend concentration by tenant and vertical, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

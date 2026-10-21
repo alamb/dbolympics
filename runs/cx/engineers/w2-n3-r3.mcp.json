@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Urgent-ticket resolution-time distribution, slow merchants vs a fast baseline",
+    "--question",
+    "Is the big three's inflated average urgent resolution time caused by a handful of extreme-delay tickets, or by generally slow handling across the board?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per tenant, for Cragsley Outfitters, Marrowby & Vane, Studio Vrij, Grind Collective, and Wiesgrund Wohnen (included as a fast-performing baseline), urgent-priority tickets only, 2025\", \"columns_requested\": [\"merchant name\", \"urgent tickets evaluated\", \"% resolved within 8h (meets target)\", \"% resolved 8-24h\", \"% resolved 1-3 days\", \"% resolved 3-7 days\", \"% resolved after 7 days or still unresolved as of 2025-12-31\"], \"details\": \"Source: tickets (priority='urgent') joined to sla_policies via tickets.sla_policy_id, filtered to the five named tenants. Window: tickets.created_at in 2025-01-01 through 2025-12-31, excluding tickets with null sla_policy_id (same evaluable definition as prior reports). resolution_hours = extract(epoch from resolved_at - created_at)/3600 for tickets with resolved_at not null; tickets with resolved_at null as of 2025-12-31 fall into the last bucket ('after 7 days or still unresolved') regardless of elapsed time. Bucket boundaries: <=8h, >8-24h, >24-72h (1-3 days), >72-168h (3-7 days), >168h or unresolved. Each tenant's five percentages should sum to ~100 (rounded to 1 decimal each). Order by merchant name ascending. Expect exactly 5 rows.\", \"builds_on\": [\"Urgent-ticket SLA target vs actual resolution time, by merchant\", \"Quarterly urgent-ticket performance, hotspot merchants vs comparison peer\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

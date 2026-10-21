@@ -1,0 +1,59 @@
+{
+ "notes": "Report 1 shows points liability growing almost monotonically (~491k EUR outstanding by Dec-2025) with redemption running only ~20-30% of issuance most months - a real, uncapped cost worth flagging, but referral payouts are tiny (~20-60 EUR/mo, only ~60-70 redemptions in 3 years total) - the referral program barely moves money. Report 3's referred-customer sample (n=60) is too small to trust on its own but is itself a finding: referral uptake is negligible. The big surprise is Report 2: loyalty members look WORSE than non-members on every volume/spend metric (fewer orders, roughly 45% less lifetime revenue, lower AOV, shorter tenure) and have more than DOUBLE the refund rate (32.4% vs 15.5%). That directly contradicts the 'our best customers join' hypothesis and raises a real red flag on program economics and on refund-rate skew (Tobias's #2). Before telling Aisha/Tobias 'membership is bad for us,' I need to rule out confounds: (a) members might simply be newer/shorter-tenure accounts overall skewing the averages, and (b) the refund gap might be a timing artifact (e.g., people enroll right after a return, or refund behavior is front-loaded before they ever really engage post-enrollment) rather than something enrollment causes. I'm also chasing Aisha's #5 red-flag ask on the referral side given how thin participation is - checking whether what little referral activity exists is concentrated among a few accounts (possible gaming) rather than broad-based. Deferring participation-rate-over-time (#4) and the B2B payment-terms question (Tobias #3) to night 3 once the core behavior story is clearer.",
+ "requests": [
+  {
+   "title": "Loyalty member vs non-member behavior by account tenure",
+   "question": "Does the loyalty-member gap in orders, revenue, AOV and refunds from last night's report persist once we control for how long the customer has had an account, or is it just that members and non-members differ in account age?",
+   "grain": "one row per combination of account-tenure band and loyalty segment (member vs non-member)",
+   "columns": [
+    "tenure_band",
+    "segment",
+    "customer_count",
+    "avg_lifetime_orders",
+    "avg_lifetime_revenue_eur",
+    "avg_order_value_eur",
+    "refund_rate_pct"
+   ],
+   "details": "Same population and definitions as last night's 'Loyalty member vs non-member customer behavior' report: all users (is_staff = false) across all tenants with at least one order between 2023-01-01 and 2025-12-31; segment = 'loyalty member' if present in loyalty_accounts (any tenant/program), else 'non-member'. Tenure band = time from users.created_at to 2025-12-31, bucketed as: 'under 6 months', '6 to 12 months', '12 to 24 months', 'over 24 months'. Revenue/AOV use non-cancelled orders converted to EUR via exchange_rates (order currency_code to EUR, rate as_of COALESCE(placed_at, created_at)). avg_lifetime_orders and refund_rate_pct use all orders (any status), same as before (refund = payments.amount_refunded greater than 0 OR an order_returns row). Order rows by tenure_band (youngest to oldest), then segment ('loyalty member' before 'non-member').",
+   "builds_on": [
+    "Loyalty member vs non-member customer behavior"
+   ]
+  },
+  {
+   "title": "Loyalty member order behavior before vs after enrollment",
+   "question": "For the same loyalty members, does their own order frequency, spend and refund rate actually change after they enroll, compared to their behavior before they joined - or is the elevated refund rate already present pre-enrollment?",
+   "grain": "one row per relative period: 'pre-enrollment' vs 'post-enrollment', aggregated across all loyalty members' own orders",
+   "columns": [
+    "period",
+    "distinct_customers",
+    "total_orders",
+    "avg_order_value_eur",
+    "orders_per_customer_per_year",
+    "refund_rate_pct"
+   ],
+   "details": "Population: users with a row in loyalty_accounts; use the earliest enrolled_at per user if they have multiple program enrollments. For each such user, split their orders (any status, placed_at not null) into 'pre-enrollment' (placed_at before enrolled_at) and 'post-enrollment' (placed_at on or after enrolled_at). total_orders and distinct_customers are simple counts within each period. avg_order_value_eur uses non-cancelled orders, grand_total converted to EUR via exchange_rates (as_of placed_at). refund_rate_pct = share of orders in that period with payments.amount_refunded greater than 0 OR an order_returns row. orders_per_customer_per_year = total_orders in the period divided by (sum across customers of their exposed days in that period divided by 365); exposed days pre-enrollment = enrolled_at minus the customer's first order placed_at (or users.created_at if no earlier order) for that customer; exposed days post-enrollment = (customer's last order placed_at, or 2025-12-31 if still active) minus enrolled_at; floor exposed days at 1 to avoid division by zero. Order rows: 'pre-enrollment' first, then 'post-enrollment'.",
+   "builds_on": [
+    "Loyalty member vs non-member customer behavior"
+   ]
+  },
+  {
+   "title": "Referral redemption concentration by referrer",
+   "question": "Is referral activity concentrated among a small number of referrers in a way that looks like gaming rather than broad-based word-of-mouth, and are the top referrers themselves genuine, active customers?",
+   "grain": "one row per referrer (referrer_user_id) who has at least one referral redemption",
+   "columns": [
+    "referrer_user_id",
+    "tenant_name",
+    "redemption_count",
+    "distinct_referred_customers",
+    "total_reward_paid_eur",
+    "share_of_all_redemptions_pct",
+    "referrer_lifetime_order_count",
+    "referrer_lifetime_revenue_eur"
+   ],
+   "details": "Source: referral_redemptions joined to referrals (for referrer_user_id) and tenants (for tenant_name). redemption_count = count of referral_redemptions rows for that referrer across the full history (2023-01-01 to 2025-12-31). distinct_referred_customers = count of distinct referred_user_id for that referrer. total_reward_paid_eur = sum of referral_redemptions.reward_amount converted to EUR via exchange_rates (as_of redeemed_at). share_of_all_redemptions_pct = that referrer's redemption_count divided by total redemptions across all referrers, as a percentage. referrer_lifetime_order_count and referrer_lifetime_revenue_eur = the referrer's own order count (any status) and EUR revenue (non-cancelled orders, grand_total converted to EUR as_of placed_at) over the same history, to check whether top referrers are genuine active customers. Order by redemption_count descending, then referrer_user_id ascending; cap at 50 rows (note total referrer count and total redemption count in the report notes if more rows exist).",
+   "builds_on": [
+    "Referred vs non-referred customer early behavior"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Payout reconciliation to gross, fees and refunds",
+    "--question",
+    "Do payouts consistently reconcile as net = gross minus fee, and do refunds actually reduce what we pay out, or could refunds be double-counted or missing from the payout math?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Viktor\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"calendar month, 2023-01 through 2025-12, based on payout paid_at month\", \"columns_requested\": [\"month\", \"payout_gross_eur\", \"payout_fee_eur\", \"payout_net_eur\", \"net_check_diff_eur\", \"refunds_processed_eur\", \"net_minus_refunds_diff_eur\"], \"details\": \"Scope: all tenants combined. Group by month of payouts.paid_at (fall back to arrival_date if paid_at is null). payout_gross_eur = sum of payouts.gross_amount, converted to EUR. payout_fee_eur = sum of payouts.fee_amount, converted to EUR. payout_net_eur = sum of payouts.net_amount, converted to EUR. net_check_diff_eur = payout_net_eur minus (payout_gross_eur minus payout_fee_eur); should be ~0 if gross/fee/net are internally consistent. refunds_processed_eur = sum of payment_refunds.amount where status='succeeded', grouped by month of processed_at, converted to EUR. net_minus_refunds_diff_eur = payout_net_eur minus (payout_gross_eur minus payout_fee_eur minus refunds_processed_eur); tests whether refunds are already reflected in the payout gross/net figures. Convert all amounts via their own currency_code using exchange_rates (EUR amount = local / rate) as of the relevant date. Tables: payouts, payment_refunds, exchange_rates. Order by month ascending.\", \"builds_on\": [\"Monthly revenue by source\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

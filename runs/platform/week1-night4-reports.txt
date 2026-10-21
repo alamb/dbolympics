@@ -1,0 +1,46 @@
+=== Report 1: Support Tickets: Affected vs Other Tenants, Baseline vs Incident Period (written by Ines) ===
+Engineer's note: Affected tenants = distinct tenant_ids with a failed job_runs row (via jobs.handler='carts.remind') queued in Nov 2025, per prior reports; this should be exactly the 10 tenants referenced. Periods use created_at on tickets, both exactly 61 days as specified.
+REPORT: Support Tickets: Affected vs Other Tenants, Baseline vs Incident Period
+QUESTION: Was the Nov-Dec ticket rise for the 10 carts.remind-affected tenants a real spike against their own baseline, or just their normal (or seasonal) level?
+group_name | tenant_count | avg_weekly_tickets_per_tenant_baseline | avg_weekly_tickets_per_tenant_incident | pct_change
+-----------+--------------+----------------------------------------+----------------------------------------+-----------
+Affected   |           10 |                                   1.89 |                                   5.19 |      173.9
+Other      |          110 |                                   0.15 |                                   0.36 |      147.5
+(2 rows)
+
+=== Report 2: 2025 Webhook Delivery Reliability by Endpoint (written by Felix) ===
+Engineer's note: Webhook deliveries are not multi-currency so no FX conversion was needed; rates are computed per webhook over all 2025 deliveries with at least 20 total, limited to the worst 20 by stuck-retry rate then failure rate.
+REPORT: 2025 Webhook Delivery Reliability by Endpoint
+QUESTION: Which individual webhook endpoints are chronically troublesome - low success rates or deliveries stuck retrying rather than resolving?
+webhook_name    | tenant_name           | total_deliveries_2025 | success_rate_pct | failed_rate_pct | pending_or_retrying_rate_pct | avg_duration_ms
+----------------+-----------------------+-----------------------+------------------+-----------------+------------------------------+----------------
+ERP sync        | Hautnah               |                   120 |             80.0 |             0.0 |                         20.0 |          2655.0
+ERP sync        | Lumen Collective      |                    89 |            82.02 |             0.0 |                        17.98 |          5116.0
+ERP sync        | Hanse Industriebedarf |                    97 |            83.51 |             0.0 |                        16.49 |          3833.0
+ERP sync        | Seilschaft            |                    25 |             84.0 |             0.0 |                         16.0 |          4053.0
+WMS sync        | Linden & Loom         |                   299 |            84.28 |             0.0 |                        15.72 |          2713.0
+ERP sync        | Thistlecombe          |                   140 |            84.29 |             0.0 |                        15.71 |          3203.0
+ACCOUNTING sync | Brennquell Kaffee     |                  4961 |            84.52 |             0.0 |                        15.48 |          2763.0
+WMS sync        | Ampfeld Elektronik    |                   512 |            84.57 |             0.0 |                        15.43 |          2803.0
+WMS sync        | Brennquell Kaffee     |                  4875 |            84.62 |            0.04 |                        15.34 |          2744.0
+WMS sync        | Cragsley Outfitters   |                  4073 |            85.51 |             0.0 |                        14.49 |          2642.0
+ERP sync        | Folio & Fern          |                    58 |            86.21 |             0.0 |                        13.79 |          2957.0
+ERP sync        | Wohnglück             |                   197 |            86.29 |             0.0 |                        13.71 |          2357.0
+ERP sync        | Ampfeld Elektronik    |                   581 |            86.57 |             0.0 |                        13.43 |          2174.0
+ERP sync        | Basecamp Nord         |                    49 |            95.92 |             0.0 |                         4.08 |          1074.0
+ERP sync        | Purrfect Pantry       |                    81 |             96.3 |             0.0 |                          3.7 |          1162.0
+WMS sync        | Wiesgrund Wohnen      |                   295 |            96.95 |             0.0 |                         3.05 |           943.0
+ERP sync        | Kettle & Key          |                    68 |            97.06 |             0.0 |                         2.94 |          1363.0
+ERP sync        | Velo Noord            |                    39 |            97.44 |             0.0 |                         2.56 |          1176.0
+WMS sync        | Marrowby & Vane       |                  1713 |            97.55 |             0.0 |                         2.45 |           762.0
+ERP sync        | Noordzee Surfwear     |                    88 |            97.73 |             0.0 |                         2.27 |           816.0
+(20 rows)
+
+=== Report 3: Webhook Delivery Reliability: Carts.remind-Affected Tenants vs Others, 2025 (written by Viktor) ===
+Engineer's note: The "Affected" cohort is derived directly in this query as the distinct tenant_ids with a failed job_runs row for a job named 'carts.remind' in Nov 2025 (since I don't have the earlier report's exact tenant list to join against) — if that prior report used a different job name/handler key or a slightly different definition of "affected," the two numbers may not line up exactly with 10 tenants.
+REPORT: Webhook Delivery Reliability: Carts.remind-Affected Tenants vs Others, 2025
+QUESTION: Do the 10 tenants hit by the Nov carts.remind job failures also show worse webhook delivery reliability than other tenants, suggesting clustered reliability problems on the same accounts?
+group_name | tenant_count | total_deliveries_2025 | success_rate_pct | failed_rate_pct | pending_or_retrying_rate_pct
+-----------+--------------+-----------------------+------------------+-----------------+-----------------------------
+Other      |           55 |                 49752 |            94.31 |             0.0 |                         5.68
+(1 rows)

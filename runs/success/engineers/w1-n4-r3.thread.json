@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t0.id AS tenant_id,\n  t0.name AS merchant_name,\n  t0.industry AS industry,\n  t1.distinct_customers AS distinct_customers,\n  COALESCE(t2.repeat_customers, 0) AS repeat_customers,\n  ROUND(COALESCE(t2.repeat_customers, 0) * 100.0 / t1.distinct_customers, 1) AS repeat_purchase_rate_pct,\n  COALESCE(t3.total_orders, 0) AS total_orders_last_12_months,\n  ROUND(COALESCE(t3.total_orders, 0) * 1.0 / t1.distinct_customers, 2) AS avg_orders_per_customer\nFROM tenants t0\nINNER JOIN (\n  SELECT o.tenant_id, COUNT(DISTINCT o.user_id) AS distinct_customers\n  FROM orders o\n  WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n    AND o.status <> 'cancelled'\n  GROUP BY o.tenant_id\n) t1 ON t1.tenant_id = t0.id\nLEFT JOIN (\n  SELECT x.tenant_id, COUNT(*) AS repeat_customers\n  FROM (\n    SELECT o.tenant_id, o.user_id, COUNT(*) AS order_count\n    FROM orders o\n    WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n      AND o.status <> 'cancelled'\n    GROUP BY o.tenant_id, o.user_id\n  ) x\n  WHERE x.order_count >= 2\n  GROUP BY x.tenant_id\n) t2 ON t2.tenant_id = t0.id\nLEFT JOIN (\n  SELECT o.tenant_id, COUNT(*) AS total_orders\n  FROM orders o\n  WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n    AND o.status <> 'cancelled'\n  GROUP BY o.tenant_id\n) t3 ON t3.tenant_id = t0.id\nORDER BY distinct_customers DESC, repeat_purchase_rate_pct DESC, t0.id ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_id, merchant_name, industry, distinct_customers, repeat_customers, repeat_purchase_rate_pct, total_orders_last_12_months, avg_orders_per_customer"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t0.id AS tenant_id,\n  t0.name AS merchant_name,\n  t0.industry AS industry,\n  t1.distinct_customers AS distinct_customers,\n  COALESCE(t2.repeat_customers, 0) AS repeat_customers,\n  ROUND(COALESCE(t2.repeat_customers, 0) * 100.0 / t1.distinct_customers, 1) AS repeat_purchase_rate_pct,\n  COALESCE(t3.total_orders, 0) AS total_orders_last_12_months,\n  ROUND(COALESCE(t3.total_orders, 0) * 1.0 / t1.distinct_customers, 2) AS avg_orders_per_customer\nFROM tenants t0\nINNER JOIN (\n  SELECT o.tenant_id, COUNT(DISTINCT o.user_id) AS distinct_customers\n  FROM orders o\n  WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n    AND o.status <> 'cancelled'\n  GROUP BY o.tenant_id\n) t1 ON t1.tenant_id = t0.id\nLEFT JOIN (\n  SELECT x.tenant_id, COUNT(*) AS repeat_customers\n  FROM (\n    SELECT o.tenant_id, o.user_id, COUNT(*) AS order_count\n    FROM orders o\n    WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n      AND o.status <> 'cancelled'\n    GROUP BY o.tenant_id, o.user_id\n  ) x\n  WHERE x.order_count >= 2\n  GROUP BY x.tenant_id\n) t2 ON t2.tenant_id = t0.id\nLEFT JOIN (\n  SELECT o.tenant_id, COUNT(*) AS total_orders\n  FROM orders o\n  WHERE o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\n    AND o.status <> 'cancelled'\n  GROUP BY o.tenant_id\n) t3 ON t3.tenant_id = t0.id\nORDER BY distinct_customers DESC, repeat_purchase_rate_pct DESC, t0.id ASC\nLIMIT 50",
+  "note": "Used placed_at between 2025-01-01 and 2026-01-01 (calendar year 2025, the warehouse's last full 12 months) as the \"last 12 months\" window, excluding cancelled orders as specified; merchants with zero orders in the period are omitted since repeat/average rates would be undefined for them.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per merchant (tenant) with name, industry, distinct customers, repeat customers, repeat purchase rate %, total orders, and average orders per customer for calendar year 2025, excluding cancelled orders, ordered by distinct customers then repeat rate then tenant_id, capped at 50 rows."
+ }
+]

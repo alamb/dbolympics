@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "EUR exchange rate movement by currency, 2023 vs 2025",
+    "--question",
+    "How much have the currencies our merchants transact in moved against EUR over the three years of history, and is that movement large enough to distort revenue trends when we roll up multi-currency figures over time?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Omar\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"currency code\", \"columns_requested\": [\"currency_code\", \"tenant_count\", \"orders_2025_total_eur\", \"rate_eur_to_currency_2023_01_02\", \"rate_eur_to_currency_2025_12_31\", \"pct_rate_change\"], \"details\": \"Scope: every currency_code that appears in orders.currency_code across the full history. tenant_count is the count of distinct tenants whose default_currency_code equals this currency. orders_2025_total_eur is the sum of orders.grand_total for non-cancelled orders placed in 2025, converted to EUR via exchange_rates using the order's currency_code and placed_at date. rate_eur_to_currency_2023_01_02 is exchange_rates.rate where base_code is EUR, quote_code is this currency, and as_of is 2023-01-02, falling back to the earliest available date in January 2023 if that exact date is missing. rate_eur_to_currency_2025_12_31 is the same lookup for as_of 2025-12-31. pct_rate_change is the late rate minus the early rate, divided by the early rate, times 100, rounded to 1 decimal. Tables: orders, tenants, exchange_rates. Order by orders_2025_total_eur descending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,78 @@
+=== Report 1: Quarterly all-priority ticket performance vs load, hotspot merchants (written by Omar) ===
+Engineer's note: Grain is tenant x 2025 quarter (by tickets.created_at), all priorities, for the four named merchants; breach rate = tickets with >=1 sla_breaches row / tickets created that quarter, same definition as the prior monthly trend report. 16 rows as expected.
+REPORT: Quarterly all-priority ticket performance vs load, hotspot merchants
+QUESTION: Does the load-correlation pattern found for urgent tickets (worse performance in the quarter each merchant's ticket-per-agent ratio spiked) also hold across all tickets, not just urgent ones?
+merchant_name       | quarter | tickets_created | avg_resolution_hours | median_resolution_hours | sla_breach_rate_pct
+--------------------+---------+-----------------+----------------------+-------------------------+--------------------
+Cragsley Outfitters | 2025-Q1 |              76 |                 64.9 |                    21.2 |                60.5
+Cragsley Outfitters | 2025-Q2 |              81 |                 21.0 |                    14.7 |                53.1
+Cragsley Outfitters | 2025-Q3 |              92 |                 28.7 |                    17.5 |                54.3
+Cragsley Outfitters | 2025-Q4 |             151 |                 42.4 |                    27.6 |                70.2
+Grind Collective    | 2025-Q1 |              12 |                  9.5 |                     3.5 |                 8.3
+Grind Collective    | 2025-Q2 |              25 |                 16.9 |                    12.7 |                12.0
+Grind Collective    | 2025-Q3 |              15 |                 15.4 |                    10.9 |                13.3
+Grind Collective    | 2025-Q4 |              70 |                103.6 |                    58.4 |                70.0
+Marrowby & Vane     | 2025-Q1 |              46 |                115.0 |                    31.2 |                71.7
+Marrowby & Vane     | 2025-Q2 |              37 |                 14.4 |                    14.1 |                40.5
+Marrowby & Vane     | 2025-Q3 |              43 |                 16.4 |                    13.5 |                41.9
+Marrowby & Vane     | 2025-Q4 |             105 |                131.3 |                    62.6 |                72.4
+Studio Vrij         | 2025-Q1 |              13 |                 20.8 |                    17.3 |                53.8
+Studio Vrij         | 2025-Q2 |              96 |                198.0 |                    94.9 |                66.7
+Studio Vrij         | 2025-Q3 |              18 |                 41.7 |                    19.5 |                38.9
+Studio Vrij         | 2025-Q4 |              39 |                 16.0 |                     9.9 |                41.0
+(16 rows)
+
+=== Report 2: Merchant profile snapshot: industry, size, and order volume (written by Ines) ===
+Engineer's note: Grain is one row per tenant among the 22 tenants with >=20 tickets created in 2025. Order grand_total is converted to EUR via exchange_rates joined on as_of = order date (quote_code = order currency, base_code = EUR); exchange_rates already carries weekend rows forward from the prior business day, so no extra weekend logic was needed. Tenants with no 2025 orders will show 0 orders and a null avg order value.
+REPORT: Merchant profile snapshot: industry, size, and order volume
+QUESTION: Before calling 'respond faster' the headline fix, do the three hotspot merchants simply differ in business profile (vertical, size, order volume) in ways that would naturally explain more support load, independent of staffing or speed?
+merchant_name                 | industry                  | employee_count | orders_placed_2025 | avg_order_value_eur_2025
+------------------------------+---------------------------+----------------+--------------------+-------------------------
+Brennquell Kaffee             | Food & Coffee             |            442 |               4195 |                    27.31
+Cragsley Outfitters           | Apparel & Footwear        |           2819 |               3635 |                    199.4
+Marrowby & Vane               | Apparel & Footwear        |           1179 |               1758 |                   164.34
+Grind Collective              | Food & Coffee             |            190 |               1111 |                    23.05
+Spice Route Box               | Food & Coffee             |            199 |                780 |                    21.94
+Petalcourt Beauty             | Beauty                    |            337 |                706 |                    89.95
+Kibblewick                    | Pet Supplies              |            242 |                672 |                    35.42
+Studio Vrij                   | Apparel & Footwear        |            486 |                631 |                   179.94
+Honeycomb Larder              | Food & Coffee             |            115 |                620 |                    28.51
+Ampfeld Elektronik            | Consumer Electronics      |           1309 |                449 |                  1140.33
+Fennel & Flint                | Home & Living             |            458 |                389 |                   169.06
+Ballycorran Industrial Supply | Industrial Supplies (B2B) |            202 |                344 |                  1625.44
+Cinder Peak Sports Co.        | Sports & Outdoor          |            285 |                338 |                    369.1
+Sourdough Club                | Food & Coffee             |             92 |                320 |                    93.95
+Wiesgrund Wohnen              | Home & Living             |            125 |                296 |                   129.84
+Linden & Loom                 | Home & Living             |            186 |                263 |                   146.29
+Gratlinie Outdoor             | Sports & Outdoor          |            396 |                232 |                   414.99
+Rue Lafayette Studio          | Apparel & Footwear        |            165 |                187 |                   156.95
+Oakhurst Tailoring            | Apparel & Footwear        |            100 |                165 |                    153.4
+Coastline Interiors           | Home & Living             |             69 |                155 |                   138.51
+Kayak Corner                  | Sports & Outdoor          |             89 |                109 |                   372.48
+Thistlecombe                  | Apparel & Footwear        |            219 |                 92 |                   136.64
+(22 rows)
+
+=== Report 3: Agent-level ticket performance within the three hotspot merchants (written by Bea) ===
+Engineer's note: Grain is (merchant, agent), scoped to the three named tenants, tickets.created_at in 2025, assignee_agent_id not null, per the request. Avg/median resolution hours computed only over that agent's tickets with resolved_at not null; agents with zero resolved tickets will show 0.0 rather than null. SLA breach rate = distinct tickets with >=1 sla_breaches row / tickets handled, as specified.
+REPORT: Agent-level ticket performance within the three hotspot merchants
+QUESTION: Within Cragsley, Marrowby, and Studio Vrij, is slow/stuck-ticket handling spread evenly across the support team, or concentrated in one or two agents?
+merchant_name       | agent_display_name | tickets_handled_2025 | avg_resolution_hours | median_resolution_hours | sla_breach_rate_pct
+--------------------+--------------------+----------------------+----------------------+-------------------------+--------------------
+Cragsley Outfitters | Benjamin           |                   56 |                 47.6 |                    17.4 |                48.2
+Cragsley Outfitters | Logan              |                   44 |                 47.2 |                    22.7 |                68.2
+Cragsley Outfitters | Lucy               |                   46 |                 43.4 |                    31.6 |                69.6
+Cragsley Outfitters | Ethan              |                   53 |                 41.4 |                    26.3 |                69.8
+Cragsley Outfitters | Fatima             |                   58 |                 40.6 |                    19.8 |                65.5
+Cragsley Outfitters | Ashley             |                   51 |                 32.1 |                    19.1 |                58.8
+Cragsley Outfitters | Lucas              |                   49 |                 31.3 |                    15.5 |                55.1
+Cragsley Outfitters | Rachel             |                   41 |                 27.5 |                    18.3 |                53.7
+Marrowby & Vane     | Sean               |                   37 |                106.3 |                    29.7 |                75.7
+Marrowby & Vane     | Lucy               |                   42 |                 99.6 |                    26.3 |                69.0
+Marrowby & Vane     | Joshua             |                   43 |                 85.9 |                    20.8 |                51.2
+Marrowby & Vane     | Joshua             |                   56 |                 72.9 |                    19.9 |                58.9
+Marrowby & Vane     | Henry              |                   47 |                 68.8 |                    18.2 |                51.1
+Studio Vrij         | Roos               |                   44 |                145.8 |                    18.6 |                50.0
+Studio Vrij         | Lisa               |                   41 |                139.0 |                    20.9 |                53.7
+Studio Vrij         | Yara               |                   40 |                121.2 |                    31.2 |                60.0
+Studio Vrij         | Koen               |                   41 |                 93.2 |                    31.3 |                63.4
+(17 rows)

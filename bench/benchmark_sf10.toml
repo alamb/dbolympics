@@ -1,0 +1,32 @@
+# The benchmark at scale factor 10 (about 10 GB of CSV, 1.6 GB of Parquet), on 4 instance shapes
+# of the AWS c8a family (2 GiB per vCPU, one physical core per vCPU). See docs/RUNNER.md for the
+# fields and the procedure. Every system of systems/.
+repetitions   = 1
+query_timeout = 5               # seconds per query
+grace_period  = 5               # seconds past the timeout before a run fails as stuck
+load_timeout  = 600             # seconds per load, its statements together
+keys          = "none"
+
+[[config]]
+name          = "sf10-c8a.xlarge"
+sf            = 10
+threads       = 4
+memory        = "8GB"
+
+[[config]]
+name          = "sf10-c8a.2xlarge"
+sf            = 10
+threads       = 8
+memory        = "16GB"
+
+[[config]]
+name          = "sf10-c8a.4xlarge"
+sf            = 10
+threads       = 16
+memory        = "32GB"
+
+[[config]]
+name          = "sf10-c8a.8xlarge"
+sf            = 10
+threads       = 32
+memory        = "64GB"

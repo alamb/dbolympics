@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH order_items_agg AS (\n  SELECT order_id, SUM(quantity) AS item_qty\n  FROM order_items\n  GROUP BY order_id\n),\norder_returns_flag AS (\n  SELECT DISTINCT order_id FROM order_returns\n),\nbase AS (\n  SELECT\n    o.id AS order_id,\n    t.industry AS industry,\n    CASE WHEN o.discount_total > 0 THEN 'discounted' ELSE 'full price' END AS order_group,\n    o.status AS status,\n    o.grand_total AS grand_total,\n    o.currency_code AS currency_code,\n    o.placed_at AS placed_at,\n    COALESCE(oi.item_qty, 0) AS item_qty,\n    COALESCE(er.rate, CASE WHEN o.currency_code = 'EUR' THEN 1 END) AS eur_rate\n  FROM orders o\n  JOIN tenants t ON t.id = o.tenant_id\n  LEFT JOIN order_items_agg oi ON oi.order_id = o.id\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.placed_at >= DATE '2025-01-01'\n    AND o.placed_at < DATE '2026-01-01'\n)\nSELECT\n  b.industry AS industry,\n  b.order_group AS order_group,\n  COUNT(*) AS orders_count,\n  ROUND(AVG(b.grand_total / b.eur_rate), 0) AS avg_order_value_eur,\n  ROUND(AVG(b.item_qty), 1) AS avg_items_per_order,\n  ROUND(100.0 * SUM(CASE WHEN rf.order_id IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct,\n  ROUND(100.0 * SUM(CASE WHEN b.status = 'cancelled' THEN 1 ELSE 0 END) / COUNT(*), 1) AS cancelled_rate_pct\nFROM base b\nLEFT JOIN order_returns_flag rf ON rf.order_id = b.order_id\nGROUP BY b.industry, b.order_group\nORDER BY b.industry ASC, b.order_group ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: industry, order_group, orders_count, avg_order_value_eur, avg_items_per_order, return_rate_pct, cancelled_rate_pct"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH order_items_agg AS (\n  SELECT order_id, SUM(quantity) AS item_qty\n  FROM order_items\n  GROUP BY order_id\n),\norder_returns_flag AS (\n  SELECT DISTINCT order_id FROM order_returns\n),\nbase AS (\n  SELECT\n    o.id AS order_id,\n    t.industry AS industry,\n    CASE WHEN o.discount_total > 0 THEN 'discounted' ELSE 'full price' END AS order_group,\n    o.status AS status,\n    o.grand_total AS grand_total,\n    o.currency_code AS currency_code,\n    o.placed_at AS placed_at,\n    COALESCE(oi.item_qty, 0) AS item_qty,\n    COALESCE(er.rate, CASE WHEN o.currency_code = 'EUR' THEN 1 END) AS eur_rate\n  FROM orders o\n  JOIN tenants t ON t.id = o.tenant_id\n  LEFT JOIN order_items_agg oi ON oi.order_id = o.id\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.placed_at >= DATE '2025-01-01'\n    AND o.placed_at < DATE '2026-01-01'\n)\nSELECT\n  b.industry AS industry,\n  b.order_group AS order_group,\n  COUNT(*) AS orders_count,\n  ROUND(AVG(b.grand_total / b.eur_rate), 0) AS avg_order_value_eur,\n  ROUND(AVG(b.item_qty), 1) AS avg_items_per_order,\n  ROUND(100.0 * SUM(CASE WHEN rf.order_id IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct,\n  ROUND(100.0 * SUM(CASE WHEN b.status = 'cancelled' THEN 1 ELSE 0 END) / COUNT(*), 1) AS cancelled_rate_pct\nFROM base b\nLEFT JOIN order_returns_flag rf ON rf.order_id = b.order_id\nGROUP BY b.industry, b.order_group\nORDER BY b.industry ASC, b.order_group ASC",
+  "note": "Industry comes from tenants.industry (free-text field set per merchant), so groupings reflect whatever values merchants have on file rather than a fixed vertical taxonomy; EUR conversion uses the exchange rate as of each order's placed_at date (EUR/EUR treated as rate 1).",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups orders by `tenants.industry` × discounted/full-price, computing EUR-converted AOV, average items per order, return rate, and cancellation rate for 2025 orders — matching the prior night's methodology but crossed with vertical."
+ }
+]

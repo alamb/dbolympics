@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Castell Fasteners open invoices in detail",
+    "--question",
+    "What are Castell Fasteners' actual open invoices, so we can reconcile my €14,481 open-receivables figure against Merchant Success's reported €5,080 and present one consistent number to the board?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Bea\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"invoice\", \"columns_requested\": [\"invoice_number\", \"status\", \"currency_code\", \"total\", \"amount_due\", \"issued_at\", \"due_at\", \"days_overdue\"], \"details\": \"Population: all invoices belonging to the tenant 'Castell Fasteners' (join via billing_profiles or invoices.tenant_id directly to tenants where tenants.name = 'Castell Fasteners') with status in ('open','past_due') and amount_due > 0, as of the snapshot date 2025-12-31. Show the native currency_code and amounts as stored (no EUR conversion needed since this is a single-tenant, single-currency drill-down - but include currency_code so I can confirm). days_overdue = 2025-12-31 minus due_at, in days (0 or negative shown as 0 if not yet due). Tables: invoices, tenants (and billing_profiles if needed for the tenant join). Order by amount_due descending.\", \"builds_on\": [\"B2B wholesale tenants identified by CRM deal activity, with revenue and receivables\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,1316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DB Olympics</title>
+<meta name="description" content="Taking SQL benchmarking to the agentic era.">
+<link rel="preload" href="fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+<!--HEAD-->
+<link rel="stylesheet" href="style.css">
+<style>
+/* Hero figure */
+.hero { margin-top: 26px; }
+.hero-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 24px; font-size: 15px; margin-bottom: 6px; }
+.hero-svg { display: block; width: 100%; height: auto; }
+.hero .v-narrow { display: none; }
+.hero[data-marks="best"] .m-all, .hero[data-marks="all"] .m-best { display: none !important; }
+.hero-svg :is(.xscale, .yscale) { cursor: pointer; text-decoration: underline dashed; text-decoration-color: var(--rule-strong); }
+.hero-svg :is(.xscale, .yscale):hover { fill: var(--ink-2); }
+.hero-svg text { font-family: var(--serif); font-variant-numeric: lining-nums; }
+.hero-svg .tick, .hero-svg .axt { fill: var(--muted); font-size: 14px; }
+.hero-svg .lb { fill: var(--ink-2); font-size: 15px; stroke: var(--paper); stroke-width: 4px; paint-order: stroke; stroke-linejoin: round; cursor: default; }
+.hero-svg .grid { stroke: var(--rule); }
+#dist-chart svg { display: block; overflow: visible; }
+#dist-chart .lbl { fill: var(--ink); font-size: 14px; }
+#dist-chart .n { font-size: 11.5px; font-variant-numeric: lining-nums tabular-nums; pointer-events: none; }
+#dist-chart .pct { font-size: 11.5px; fill: var(--muted); font-variant-numeric: lining-nums tabular-nums; pointer-events: none; }
+.hero-svg .axis { stroke: var(--rule-strong); }
+.hero .opts { display: inline-flex; gap: 16px; }
+.hero-svg .front { fill: none; stroke: var(--muted); stroke-dasharray: 3 3; }
+.hero-svg .pr { stroke: var(--rule-strong); }
+.hero-svg .leader { stroke: var(--rule-strong); stroke-width: 0.8; }
+.hero-svg .halo { fill: var(--paper); }
+.hero-svg .mk { color: var(--ink); }
+/* a system's other configurations on the Pareto front, next to its most efficient one */
+.hero-svg .mk.extra { color: var(--muted); }
+.hero-svg circle.hit { fill: transparent; }
+.hero svg:has(.hit:hover) .mk { color: var(--rule-strong); }
+.hero svg:has(.hit:hover) .lb { fill: var(--muted); }
+/*HERO_CSS*/
+@media (max-width: 640px) {
+  .hero .v-wide { display: none; }
+  .hero .v-narrow { display: block; }
+  .hero-svg .tick, .hero-svg .axt { font-size: 12px; }
+  .hero-svg .lb { font-size: 12.5px; stroke-width: 3px; }
+}
+
+.aside { font-size: 15px; color: var(--ink-2); margin: 22px 0 0; }
+.aside b { color: var(--ink); font-weight: 600; }
+
+/* Settings */
+.settings {
+  position: sticky; top: 0; z-index: 5; background: var(--paper);
+  display: flex; flex-wrap: wrap; gap: 8px 36px; align-items: baseline;
+  margin: 72px 0 0; padding: 14px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule);
+  font-size: 15px;
+}
+/* the label, then its options, which wrap next to it: a second line starts under the first option */
+.setting { display: flex; gap: 14px; align-items: baseline; flex-wrap: nowrap; }
+.setting > .label { flex: none; }
+.setting > :not(.label) { flex: 0 1 auto; min-width: 0; }
+.setting .label { color: var(--muted); }
+.opt {
+  font: inherit; color: var(--ink-2); background: none; border: 0; padding: 0 0 1px; cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+.opt:hover { color: var(--ink); }
+.opt[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.opt small { color: var(--muted); font-size: 13px; }
+/* the chip floats at the right of the bar's first row instead of wrapping onto a row of its own (which, hidden, would
+   still take the row's height); its padding is taken back by the margin */
+.chip {
+  position: absolute; right: 0; top: 14px; margin: -3px 0; font: inherit; font-size: 14px; line-height: inherit; color: var(--accent);
+  background: var(--accent-wash); border: 0; border-radius: 999px; padding: 3px 12px; cursor: pointer;
+}
+.chip.off { visibility: hidden; }
+.chip:hover { text-decoration: line-through; }
+
+/* Leaderboard */
+table.board { width: 100%; border-collapse: collapse; font-size: 15px; }
+.board th {
+  font-weight: 400; color: var(--muted); text-align: left; padding: 0 10px 8px 0;
+  border-bottom: 1px solid var(--ink); font-variant-caps: all-small-caps; letter-spacing: 0.06em; font-size: 15px;
+  white-space: nowrap;
+}
+.board td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.board tr:last-child td { border-bottom: 1px solid var(--ink); }
+.board tbody tr { cursor: pointer; }
+.board tbody tr:hover td, .board tbody tr.sel td { background: var(--accent-wash); }
+.board .rank { width: 28px; color: var(--muted); font-variant-numeric: lining-nums tabular-nums; }
+.board .sys { width: 170px; white-space: nowrap; }
+.board .sys .glyph { margin-right: 9px; vertical-align: -1px; color: var(--ink-2); }
+.board .r { text-align: right; font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; padding-left: 18px; }
+.board .barcell { width: 40%; }
+.bar { position: relative; height: 7px; }
+.bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink-2); border-radius: 0 2px 2px 0; }
+.bar.fail i { background: none; }
+/* the bar with its value at its end; the longest bar leaves room for the label */
+.barx { display: flex; align-items: center; gap: 7px; }
+.barx i { display: block; flex: none; height: 7px; background: var(--ink-2); border-radius: 0 2px 2px 0; }
+.barx span { font-size: 14.5px; color: var(--ink-2); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+.frac { display: inline-block; width: 44px; height: 3px; background: var(--rule); vertical-align: middle; margin-left: 8px; position: relative; top: -1px; }
+.frac i { display: block; height: 100%; background: var(--ink-2); }
+.board .note { color: var(--muted); font-style: italic; font-size: 14px; }
+.board th.r { text-align: right; padding-right: 10px; }
+
+/* Barcode */
+.barcode-wrap { position: relative; }
+@media (max-width: 860px) { .barcode-wrap { overflow-x: auto; } }  /* the figure scrolls once it is wider than the page */
+.barcode-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 24px; margin-bottom: 12px; font-size: 15px; }
+canvas { display: block; }
+.vs-wrap { position: relative; }
+#lens, #vs-lens {
+  position: absolute; left: 0; top: 0; pointer-events: none; display: none; will-change: transform;
+  outline: 1px solid var(--rule-strong); box-shadow: 0 3px 14px rgba(0, 0, 0, 0.14);
+}
+.legend { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 13.5px; color: var(--ink-2); margin-top: 12px; align-items: center; }
+.legend .ramp { display: inline-flex; vertical-align: middle; margin: 0 6px; }
+.legend .ramp i { width: 18px; height: 9px; display: block; }
+.legend .sw { display: inline-block; width: 9px; height: 9px; margin-right: 6px; vertical-align: -0.5px; }
+
+/* Cue that the selected query is shown further down */
+.below {
+  position: fixed; left: 50%; bottom: 22px; z-index: 10; transform: translate(-50%, 12px); opacity: 0; pointer-events: none;
+  font: 14px/1 var(--serif); color: var(--paper); background: var(--ink); border: 0; border-radius: 999px; padding: 9px 16px 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12); cursor: pointer; transition: opacity .2s, transform .2s;
+}
+.below.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.below .arrow { display: inline-block; margin-right: 7px; animation: nudge 1.1s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(3px); } }
+/* pointing up (from Figure 4), at the top, just below the sticky settings bar (its top set when it shows) */
+.below.up { bottom: auto; transform: translate(-50%, -12px); }
+.below.up.on { transform: translate(-50%, 0); }
+.below.up .arrow { animation-name: nudge-up; }
+@keyframes nudge-up { 0%, 100% { transform: translateY(1px); } 50% { transform: translateY(-3px); } }
+.query.flash { animation: flash 1.2s ease-out; }
+@keyframes flash { from { background: var(--accent-wash); } to { background: transparent; } }
+@media (prefers-reduced-motion: reduce) { .below .arrow, .query.flash { animation: none; } }
+
+/* Query detail */
+.query { scroll-margin-top: 64px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 40px; border-top: 1px solid var(--rule); padding-top: 26px; }
+.qid { color: var(--muted); font-size: 14px; display: flex; gap: 16px; align-items: baseline; }
+.qid button { font: inherit; background: none; border: 0; color: var(--ink-2); cursor: pointer; padding: 0; }
+.qid button { transition: color .12s; }
+.qid button:hover, .qid button:focus-visible { color: var(--wrong); }
+.qid .keys { font-size: 13px; color: var(--muted); }
+.query h3 { font-weight: 500; font-size: 18px; line-height: 1.3; margin: 6px 0 12px; }
+.query blockquote { margin: 0 0 14px; font-style: italic; color: var(--ink-2); }
+.query .who { font-size: 14px; color: var(--muted); margin: 0 0 18px; }
+.tables { font-size: 14px; color: var(--ink-2); margin: 0 0 16px; line-height: 1.7; }
+.tables code { font-family: var(--mono); font-size: 12.5px; }
+.result { grid-column: 1 / -1; min-width: 0; margin-top: -8px; }
+.result .cap { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
+.result-wrap { overflow: auto; max-height: 340px; background: var(--code-bg); border-radius: 3px; }
+.result table { border-collapse: collapse; font: 12.5px/1.6 var(--mono); color: var(--ink); white-space: nowrap; }
+.result td { padding: 2px 16px 2px 0; border-bottom: 1px solid var(--rule); }
+.result td:first-child { padding-left: 16px; }
+.result tr:last-child td { border-bottom: 0; }
+.result td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.result td.null { color: var(--muted); font-style: italic; }
+/* Small charts */
+.svgchart text { font-family: var(--serif); font-size: 12.5px; fill: var(--muted); font-variant-numeric: lining-nums; }
+.svgchart .lbl { fill: var(--ink-2); font-size: 13px; stroke: var(--paper); stroke-width: 4px; paint-order: stroke; stroke-linejoin: round; }
+.svgchart .grid { stroke: var(--rule); stroke-width: 1; }
+.vs-pick { margin: 4px 0 10px; gap: 10px; }
+.vs-pick select { max-width: 33vw; font: inherit; color: var(--ink); background: var(--paper); border: 0; border-bottom: 1px solid var(--rule-strong); padding: 2px 0; cursor: pointer; }
+.vs-pick .opt { color: var(--muted); }
+.svgchart .tval { font-size: 11.5px; stroke: var(--paper); stroke-width: 3px; paint-order: stroke; stroke-linejoin: round; font-variant-numeric: lining-nums tabular-nums; }
+.svgchart .pick, #growth-chart svg { cursor: pointer; }
+.svgchart .axis { stroke: var(--rule-strong); }
+
+/* Method */
+.method dl { margin: 12px 0 0; display: grid; grid-template-columns: 8.5em 1fr; gap: 10px 20px; }
+.method dt { color: var(--muted); font-variant-caps: all-small-caps; letter-spacing: 0.06em; padding-top: 1px; }
+.method dd { margin: 0; color: var(--ink-2); }
+.method .more { margin-top: 22px; }
+@media (max-width: 560px) { .method dl { grid-template-columns: 1fr; gap: 2px; } .method dd { margin-bottom: 10px; } }
+
+@media (max-width: 720px) {
+  /* a compact bar: the machines' cores and memory are in Figure 1's caption */
+  .settings { padding: 10px 0; gap: 6px 24px; }
+  .settings .opt small { display: none; }
+  .chip { top: 10px; }
+  body { font-size: 16px; }
+  /* compact above Figure 1, so that the figure fits on a phone's first screen: little space above
+     the page, a smaller title and tagline; the space between the elements as on larger screens */
+  .page { padding: 6px 16px 64px; }
+  .topbar.home { min-height: 0; }
+  h1 { font-size: 36px; }
+  .title { gap: 14px; }
+  .title .logo { height: 40px; width: auto; }
+  .tagline { font-size: 17px; }
+  .query { grid-template-columns: 1fr; gap: 24px; }
+  /* on a phone the table scrolls sideways: system, slowdown (its bar small, as the correct-bar on a large
+     screen), QPS and cost fit the screen, the rest follows; the names stay where they are */
+  .board-wrap { overflow-x: auto; margin-right: -16px; padding-right: 16px; }
+  .board { font-size: 14px; width: max-content; min-width: 100%; }
+  .board .rank { display: none; }
+  .board .sys { position: sticky; left: 0; z-index: 1; background: var(--paper); white-space: nowrap; }
+  .board tbody tr:hover td.sys, .board tbody tr.sel td.sys { background: linear-gradient(var(--accent-wash), var(--accent-wash)), var(--paper); }
+  .board th:nth-child(2) { position: sticky; left: 0; z-index: 1; background: var(--paper); }
+  .board .r { padding-left: 14px; }
+  .board .barcell { width: 72px; min-width: 72px; }
+  .board th .long { display: none; }
+  .barx { gap: 5px; }
+  .barx i { height: 3px; }
+  .barx span { font-size: 13.5px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!--TOPBAR-->
+<header>
+  <div class="title"><!--LOGO--><h1>DB Olympics</h1></div>
+  <p class="tagline">Taking SQL benchmarking to the agentic era.</p>
+  <p class="abstract measure">We simulated an e-commerce platform, Tidewick Commerce, with AI agents role-playing
+    its people: the CEO, data analysts, engineers and more. This report shows how fast databases answer
+    <a href="queries/index.html">the queries they asked</a>.</p>
+</header>
+
+<figure class="hero" data-sf="/*DEFAULT_SF*/" data-marks="best" data-yscale="lin" data-xscale="lin">
+  <div class="hero-head">
+    <div class="setting"><span class="label hn" tabindex="0" data-note="The approximate size of the data in CSV form.">Scale factor</span>
+      <span class="opts"><!--SF_BUTTONS--></span></div>
+    <div class="setting"><span class="label">Machines</span>
+      <span class="opts"><button class="opt" data-marks="best">most efficient</button><button class="opt" data-marks="all">all</button></span></div>
+  </div>
+  <!--HERO-->
+  <figcaption><b>Figure 1.</b>
+    <span class="hn" tabindex="0" data-note="The dashed line is the Pareto front: the marks that no other mark beats on both speed and cost.">Up and to the left is better.</span>
+    Queries per second against what it costs to run
+    all 409 queries.
+    <!--HERO_MACHINES-->
+    Pricing based on <span class="hn" tabindex="0" data-note="<!--PRICE_NOTE-->">AWS</span>.
+    <span class="hn" tabindex="0" data-note="A timed-out query counts as taking the full timeout ({{TIMEOUT}}); a failed or wrong one as taking twice the slowest correct time of that query.">Timeouts and errors are penalized</span>.</figcaption>
+</figure>
+
+<nav class="settings" aria-label="Configuration">
+  <div class="setting"><span class="label hn" tabindex="0" data-note="The approximate size of the data in CSV form.">Scale factor</span><span id="opt-sf"></span></div>
+  <div class="setting"><span class="label">Machine</span><span id="opt-machine"></span></div>
+  <button class="chip off" id="sel-chip" type="button" aria-hidden="true" tabindex="-1">× none</button>
+</nav>
+
+<section id="overall">
+  <h2><span class="n">1</span>Performance</h2>
+  <figure>
+    <div class="board-wrap"><table class="board">
+      <thead><tr>
+        <th class="rank"></th><th>System</th><th class="barcell">Slowdown<span class="long">, relative to the fastest</span></th>
+        <th class="r fig1">QPS</th><th class="r fig1">Cost</th><th class="r">Correct</th><th class="r load">Load</th>
+      </tr></thead>
+      <tbody id="board"></tbody>
+    </table></div>
+    <figcaption><b>Table 1.</b> Systems ranked by the geometric mean, over all 409 queries, of each query's time relative to the
+      fastest correct system (plus 10&#8202;ms), the bar on a log scale. A timed-out query counts as taking the full timeout
+      ({{TIMEOUT}}); a failed or wrong one as taking twice the slowest correct time of that query.
+      <i>QPS</i> (queries per second) and <i>Cost</i> as in Figure 1. <i>Correct</i> is out of 409 after the last load. <i>Load</i> is the
+      total of all five loads.
+      <b id="unchecked" hidden>There are no reference results at this scale factor yet: every result that came back counts
+      as correct, without being checked.</b></figcaption>
+  </figure>
+  <p class="aside measure"><b>Figure 1 and Table 1 can rank systems differently.</b> Figure 1 rewards robustness:
+    being consistently fast and having no unusually slow queries. Table 1 rewards all-round speed: being close to the
+    fastest on every query. The difference comes from how each combines the queries: Figure 1 adds up their times,
+    Table 1 multiplies their factors. Take a system that runs two queries in
+    100&#8202;ms and 1000&#8202;ms. Making either one twice as fast, to 50&#8202;ms and 1000&#8202;ms or to
+    100&#8202;ms and 500&#8202;ms, improves Table 1's geometric mean about equally. Only the second saves real time in
+    Figure 1's sum: 500&#8202;ms instead of 50&#8202;ms.</p>
+</section>
+
+<!--SECTION:distribution-->
+<section id="distribution">
+  <h2><span class="n">{{SEC_DISTRIBUTION}}</span>Query runtime distribution</h2>
+  <figure>
+    <div class="legend" id="dist-legend" style="margin:0 0 12px"></div>
+    <div id="dist-chart" class="svgchart"></div>
+    <figcaption><b>Figure {{SEC_DISTRIBUTION}}.</b> How long the 409 queries take after the last load, one row per system: the density of
+      the times of the correct results on a log scale, its area in proportion to their number, with the median dashed. Between the guides, the share of all 409 queries that took that long; on the right, the
+      share without a correct result: timed out, failed or wrong.</figcaption>
+  </figure>
+</section>
+<!--/SECTION:distribution-->
+
+<section id="queries">
+  <h2><span class="n">{{SEC_QUERIES}}</span>Queries</h2>
+  <figure>
+    <div class="barcode-head">
+      <div class="setting"><span class="label">Order queries by</span><span id="opt-order"></span></div>
+    </div>
+    <div class="barcode-wrap"><canvas id="barcode"></canvas><canvas id="lens" aria-hidden="true"></canvas></div>
+    <div class="legend" id="legend"></div>
+    <figcaption><b>Figure {{SEC_QUERIES}}.</b> One row per system, one column per query, colored by the time relative to the fastest
+      correct system. Select a column to see the query.</figcaption>
+  </figure>
+
+  <div class="query" id="query" style="margin-top:36px"></div>
+</section>
+
+<!--SECTION:versus-->
+<section id="versus">
+  <h2><span class="n">{{SEC_VERSUS}}</span>System against system</h2>
+  <div class="setting vs-pick"><select id="vs-a" aria-label="First system"></select>
+    <button class="opt" id="vs-swap" type="button" title="Swap the two systems">against</button>
+    <select id="vs-b" aria-label="Second system"></select></div>
+  <figure>
+    <div class="vs-wrap"><canvas id="vs"></canvas><canvas id="vs-lens" class="lens" aria-hidden="true"></canvas></div>
+    <figcaption><b>Figure {{SEC_VERSUS}}.</b> Every query both systems answer correctly, by how many times faster the one is than
+      the other, sorted by that factor (a log scale); at the ends the queries only one of them answers correctly. Select
+      a query to see it.</figcaption>
+  </figure>
+</section>
+<!--/SECTION:versus-->
+
+<!--SECTION:growth-->
+<section id="growth">
+  <h2><span class="n">{{SEC_GROWTH}}</span>As the data grows</h2>
+  <figure>
+    <div id="growth-chart" class="svgchart"></div>
+    <figcaption><b>Figure {{SEC_GROWTH}}.</b> Geometric mean query time after each of the five loads (2024-Q4 to 2025-Q4), relative to
+      the time after the first load, over the queries a system answered after every load. Grey lines are the other systems.</figcaption>
+  </figure>
+</section>
+<!--/SECTION:growth-->
+
+<section id="method" class="method">
+  <h2><span class="n">{{SEC_METHOD}}</span>Methodology</h2>
+  <dl class="measure">
+    <dt>The data</dt>
+    <dd>Tidewick Commerce in 251 tables, at scale factors 1, 10, 100 and 1000: from 6.1 million to 4.1 billion
+      rows.</dd>
+    <dt>The run</dt>
+    <dd>A fresh system loads everything through 2024, then 2025 one quarter at a time. After every load it answers
+      all 409 queries {{REPS}}, and it is never restarted. The figures show the run after the last load.</dd>
+    <dt>Correctness</dt>
+    <dd>After the last load, every result is compared by value with a reference result. Integers must match exactly;
+      other numbers may differ by at most 0.0001 + 0.0001 × |expected|. A wrong result counts as a
+      failed query.</dd>
+    <dt>Failures</dt>
+    <dd>A query still running after its timeout ({{TIMEOUT}}) is aborted. In every measure of speed, a timed-out query
+      counts as taking the full timeout, and a failed or wrong one as taking twice the slowest correct time of that
+      query.</dd>
+    <dt>Figure 1</dt>
+    <dd><i>Queries per second</i> is 409 over the time all queries take together after the last load. The <i>cost</i> is
+      that time at the machine's price per hour (methodology, Machines).</dd>
+  </dl>
+  <p class="more measure"><a href="methodology.html">The full methodology</a>: machines, systems, isolation, how
+    results are checked, and how to run it yourself.</p>
+</section>
+
+<footer>
+  <span>DB Olympics · <a href="https://db.in.tum.de/~birler/">Altan Birler</a> · <a href="https://db.in.tum.de/~schmidt/">Tobias Schmidt</a></span>
+  <span><a href="queries/index.html">Queries</a> · <a href="methodology.html">Methodology</a> · <a href="add-a-system.html">Add a system</a> · <a href="#">Source</a></span>
+</footer>
+</div>
+
+<div class="tip" id="tip"></div>
+<button class="below" id="below" type="button"><span class="arrow" id="below-arrow">↓</span><span id="below-q"></span> <span id="below-where">below</span></button>
+
+<script src="data.js?v=/*DATA_VERSION*/"></script>
+<script>
+const D = window.DATA;
+const Q = D.queries;
+const NAMES = /*NAMES*/;
+// Cores and memory of every machine, from the benchmark configurations that ran on it.
+const PRICES = /*PRICES*/;  // USD per hour of every machine, as in Figure 1
+const MACHINES = Object.fromEntries(Object.values(D.configs).map(c =>
+  [c.machine, `${c.threads} ${c.threads === 1 ? "core" : "cores"} · ${c.memory.replace(/(\d)([A-Z])/, "$1 $2")}`]));
+const GLYPHS = /*GLYPHS*/;
+const glyph = (name, size) => `<svg class="glyph" viewBox="0 0 16 16" width="${size}" height="${size}" aria-hidden="true">${GLYPHS[name] || ""}</svg>`;
+const PERIODS = ["2024-Q4", "2025-Q1", "2025-Q2", "2025-Q3", "2025-Q4"];
+const STATUS = ["ok", "wrong result", "error", "timeout", "not run"];
+
+const state = { sf: /*DEFAULT_SF*/, marks: "best", machine: null, order: "id", sel: null, query: 0, keys: false };
+const cfg = () => Object.values(D.configs).find(c => c.sf === state.sf && c.machine === state.machine);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmtT = s => s == null ? "–" : s < 1 ? `${(s * 1000).toPrecision(s < 0.01 ? 2 : 3)} ms` : `${s.toPrecision(3)} s`;
+// two significant digits: 0.20, 16, 180; $0.00097, $0.012
+const fmtN = x => x >= 99.5 ? String(Math.round(x)) : x.toPrecision(2);
+// Table 1's cost: at least two decimals, more where a cost is below a dime, so that it keeps two significant digits
+// ($0.36, $1.04, $0.019, $0.00093) instead of rounding to $0.00
+const fmtUsd = x => `$${x.toFixed(x > 0 ? Math.max(2, 1 - Math.floor(Math.log10(x))) : 2)}`;
+const fmtX = x => x < 10 ? x.toFixed(2) : x < 100 ? x.toFixed(1) : Math.round(x).toString();
+const fmtTick = s => s < 1 ? `${+(s * 1000).toPrecision(3)} ms` : `${+s.toPrecision(3)} s`;
+const ranked = () => Object.entries(cfg().systems).sort((a, b) => a[1].score - b[1].score);
+const machines = () => Object.values(D.configs).filter(c => c.sf === state.sf).map(c => c.machine)
+  .sort((a, b) => parseInt(MACHINES[a]) - parseInt(MACHINES[b]));  // by cores
+state.machine = machines().at(-1);  // the largest machine
+
+// ---------- settings ----------
+function options(el, items, cur, set) {
+  el.innerHTML = "";
+  el.style.display = "inline-flex"; el.style.gap = "6px 16px"; el.style.flexWrap = "wrap";
+  for (const it of items) {
+    const b = document.createElement("button");
+    b.className = "opt"; b.setAttribute("aria-pressed", it.v === cur);
+    b.innerHTML = it.label;
+    b.onclick = () => set(it.v);
+    el.appendChild(b);
+  }
+}
+function setSF(v) {
+  state.sf = v;
+  const ms = machines();
+  if (!ms.includes(state.machine)) state.machine = ms.at(-1);
+  render();
+}
+function renderSettings() {
+  const hero = document.querySelector(".hero");
+  hero.dataset.sf = state.sf;
+  hero.dataset.marks = state.marks;
+  showHero();
+  if (state.sel) hero.dataset.sel = state.sel; else delete hero.dataset.sel;
+  raiseSelected();
+  const chip = document.getElementById("sel-chip");
+  chip.classList.toggle("off", !state.sel);
+  chip.setAttribute("aria-hidden", !state.sel); chip.tabIndex = state.sel ? 0 : -1;
+  if (state.sel) { chip.textContent = `× ${NAMES[state.sel]}`; chip.title = "Clear the highlight"; }
+  hero.querySelectorAll("[data-sf]").forEach(b => b.tagName === "BUTTON" && b.setAttribute("aria-pressed", +b.dataset.sf === state.sf));
+  hero.querySelectorAll("button[data-marks]").forEach(b => b.setAttribute("aria-pressed", b.dataset.marks === state.marks));
+  options(document.getElementById("opt-sf"), [...new Set(Object.values(D.configs).map(c => c.sf))].sort((a, b) => a - b)
+    .map(v => ({ v, label: `${v} GB` })), state.sf, setSF);
+  options(document.getElementById("opt-machine"),
+    machines().map(m => ({ v: m, label: `${m} <small>${MACHINES[m]}</small>` })), state.machine,
+    v => { state.machine = v; render(); });
+  // with a system selected, also by its time
+  if (state.order.startsWith("sel") && !state.sel) state.order = "id";
+  options(document.getElementById("opt-order"), [
+    { v: "id", label: "number" }, { v: "difficulty", label: "difficulty" }, { v: "role", label: "author" },
+    ...(state.sel ? [{ v: "sel", label: `${NAMES[state.sel]}'s time` }, { v: "selrel", label: `${NAMES[state.sel]}'s time relative to the fastest` }] : []),
+  ], state.order, v => { state.order = v; renderSettings(); drawBarcode(); });
+}
+document.querySelectorAll(".hero button[data-sf]").forEach(b => b.onclick = () => setSF(+b.dataset.sf));
+document.querySelectorAll(".hero button[data-marks]").forEach(b => b.onclick = () => { state.marks = b.dataset.marks; renderSettings(); });
+document.getElementById("sel-chip").onclick = () => select(null);
+// Figure 1's tooltips sit in a corner of the plot, the bottom left if they cover none of the hovered system's marks
+// there, else the first other corner that does: on a linear axis, or with a slow and cheap system, a mark can be anywhere
+function heroCorner(el) {
+  const svg = el.closest("svg"), [l, t, rt, b] = svg.dataset.frame.split(" ").map(Number);
+  const r = svg.getBoundingClientRect(), k = r.width / svg.viewBox.baseVal.width;
+  const name = [...el.classList].find(c => c.startsWith("s-"));
+  // the hovered system's marks as they are seen (in the view of the most efficient machine, the one shown)
+  const marks = [...svg.querySelectorAll(`.mk.${name}`)].filter(m => getComputedStyle(m).visibility !== "hidden")
+    .map(m => m.getBoundingClientRect());
+  return { left: r.left + l * k, top: r.top + t * k, right: r.left + rt * k, bottom: r.top + b * k, x: r.left, under: r.bottom + 4,
+           width: r.width, marks: marks.length ? marks : [el.getBoundingClientRect()] };
+}
+// Figure 1's view (scale factor, machines, the scale of each axis) is a pair of SVGs, for a large screen and a phone:
+// the first view is in the page, every other loaded when first shown (build.py, hero) and kept
+const heroPlot = document.getElementById("hero-plot"), heroViews = { [heroPlot.dataset.key]: heroPlot.innerHTML };
+const heroKey = () => { const h = document.querySelector(".hero"); return `${state.sf}-${state.marks}-${h.dataset.xscale}-${h.dataset.yscale}`; };
+async function showHero() {
+  const key = heroKey();
+  if (heroPlot.dataset.key === key) return;
+  if (!(key in heroViews)) {
+    const [wide, narrow] = await Promise.all(["wide", "narrow"].map(w =>
+      fetch(`fig1/${key}-${w}.svg?v=/*DATA_VERSION*/`).then(r => r.ok ? r.text() : Promise.reject(r.status))));
+    heroViews[key] = wide + narrow;
+  }
+  if (key !== heroKey()) return;  // another view was asked for meanwhile
+  heroPlot.innerHTML = heroViews[key];
+  heroPlot.dataset.key = key;
+  bindHero();
+}
+// a system drawn on top in Figure 1: its lines, marks and label last in their groups (SVG paints in order); the
+// hovered one, else the selected one. `raised` keeps a move under the pointer from raising it again and again.
+let raised = null;
+function raise(name) {
+  if (!name || name === raised) return;
+  raised = name;
+  heroPlot.querySelectorAll(`.s-${name}`).forEach(el => el.parentNode.appendChild(el));
+}
+function raiseSelected() { raised = null; raise(state.sel); }
+function bindHero() {
+  raiseSelected();
+  heroPlot.querySelectorAll("[data-tip]").forEach(el => {
+    el.addEventListener("mousemove", e => tip(e, el.dataset.tip, null, heroCorner(el)));
+    el.addEventListener("mouseleave", hideTip);
+  });
+  heroPlot.querySelectorAll(".hit").forEach(el => {
+    const name = [...el.classList].find(c => c.startsWith("s-")).slice(2);
+    el.addEventListener("click", () => select(name));
+    el.addEventListener("mouseenter", () => raise(name));
+    el.addEventListener("mouseleave", e => { if (!e.relatedTarget?.closest?.(`.s-${name}`)) raiseSelected(); });
+  });
+  // an axis title's "(log)" or "(linear)" switches the scale of that axis: queries per second, or cost
+  for (const axis of ["x", "y"])
+    heroPlot.querySelectorAll(`.${axis}scale`).forEach(el => el.addEventListener("click", () => {
+      const hero = document.querySelector(".hero"), key = `${axis}scale`;
+      hero.dataset[key] = hero.dataset[key] === "log" ? "lin" : "log";
+      showHero();
+    }));
+}
+bindHero();
+
+// ---------- selection: one system highlighted in every figure ----------
+function select(name) {
+  state.sel = name && state.sel !== name ? name : null;
+  // the selected system is Figure 4's first; if it was the second, the two change places
+  if (state.sel && state.vsA !== state.sel) {
+    if (state.vsB === state.sel) state.vsB = state.vsA;
+    state.vsA = state.sel;
+  }
+  render();
+}
+
+// ---------- leaderboard ----------
+// what ended a run early, in words: "crashed at q049 in the first round"
+const ROUNDS = ["first", "second", "third", "fourth", "fifth"];
+function failure(f) {
+  // above the system's scale limit: disabled, and why (its system file's scale_limit_message)
+  if (f.status === "disabled") return `disabled: ${f.message}`;
+  const what = { failed_crash: "crashed", failed_oom: "ran out of memory", failed_stuck: "stopped responding",
+                 failed_load: "load failed", failed_load_timeout: "load took too long",
+                 failed_setup: "could not be set up" }[f.status] || "failed";
+  const at = f.query && f.query !== "load" ? ` at ${f.query}` : "";
+  return `${what}${at} in the ${ROUNDS[f.run - 1] || `${f.run}th`} round`;
+}
+function renderBoard() {
+  // a run that did not finish has no last round to rank: it goes below the others, with what ended it;
+  // a system disabled at this scale factor goes last
+  const last = s => !s.failed ? 0 : s.failed.status === "disabled" ? 2 : 1;
+  const rows = ranked().sort((a, b) => last(a[1]) - last(b[1]));
+  const max = Math.log(Math.max(...rows.filter(r => !r[1].failed).map(r => r[1].score)));
+  const tb = document.getElementById("board");
+  tb.innerHTML = "";
+  document.getElementById("unchecked").hidden = !cfg().unchecked;
+  rows.forEach(([name, s], i) => {
+    const tr = document.createElement("tr");
+    if (state.sel === name) tr.className = "sel";
+    const failed = !!s.failed;
+    const w = Math.max(0.5, (Math.log(s.score) / max) * 100);
+    // a run that did not finish all five loads has no comparable load time
+    const loaded = s.load.every(v => v != null) && !s.failed;
+    // as in Figure 1: all queries once after the last load, a timeout as the timeout, a failed or wrong query as twice
+    // the slowest correct time of that query; the cost at the machine's price per hour
+    const c = cfg();
+    const secs = Q.reduce((sum, _, k) => sum + (s.status[k] === 0 ? s.times[k] : s.status[k] === 3 ? c.timeout : 2 * c.worst[k]), 0);
+    const qps = Q.length / secs, usd = PRICES[c.machine] / 3600 * secs;
+    tr.innerHTML = `
+      <td class="rank">${failed ? "" : i + 1}</td>
+      <td class="sys">${glyph(name, 13)}${NAMES[name] || name}</td>
+      ${failed
+        // what ended the run, across the columns it leaves without a value
+        ? `<td class="barcell" colspan="3"><span class="note">${failure(s.failed)}</span></td>`
+        : `<td class="barcell"><div class="barx"><i style="width:max(2px, calc((100% - 50px) * ${(w / 100).toFixed(4)}))"></i><span>${fmtX(s.score)}×</span></div></td>
+      <td class="r fig1">${fmtN(qps)}</td>
+      <td class="r fig1">${fmtUsd(usd)}</td>`}
+      <td class="r">${s.correct}<span class="frac"><i style="width:${s.correct / 409 * 100}%"></i></span></td>
+      <td class="r load">${loaded ? `${s.load.reduce((a, b) => a + b, 0).toFixed(0)} s` : "–"}</td>`;
+    tr.onclick = () => select(name);
+    tr.onmousemove = e => tip(e, `<div class="t">${NAMES[name]}</div>
+      <div>${s.correct} correct · ${s.wrong} wrong · ${s.error} error · ${s.timeout} timeout</div>
+      <div class="m">first load ${fmtT(s.load[0])}</div>`);
+    tr.onmouseleave = hideTip;
+    tb.appendChild(tr);
+  });
+}
+
+// ---------- barcode ----------
+const LABEL_W = 150, ROW_H = 14, ROW_GAP = 5, TOP = 20;
+let layout = null;
+function order() {
+  const c = cfg(), idx = Q.map((_, i) => i);
+  if (state.order === "difficulty") {
+    const v = i => c.best[i] ?? 1e9;
+    idx.sort((a, b) => v(a) - v(b));
+  } else if (state.order === "role") {
+    const roles = Object.keys(D.roles);
+    idx.sort((a, b) => roles.indexOf(Q[a].role) - roles.indexOf(Q[b].role) || a - b);
+  } else if (state.order.startsWith("sel") && c.systems[state.sel]) {
+    // what each query costs the selected system, as in Table 1: its time, a timeout the timeout, a failed or wrong
+    // query twice the slowest correct time of that query; by itself or relative to the fastest correct system (both
+    // plus 10 ms), the costliest last. A query no system answers has no fastest: at the very end
+    const s = c.systems[state.sel];
+    const cost = i => s.status[i] === 0 ? s.times[i] : s.status[i] === 3 ? c.timeout : 2 * c.worst[i];
+    const key = state.order === "selrel" ? i => c.best[i] == null ? Infinity : (cost(i) + 0.01) / (c.best[i] + 0.01) : cost;
+    idx.sort((a, b) => key(a) - key(b) || a - b);
+  }
+  return idx;
+}
+// The colours the canvases paint with, read from the style sheet once per render (reading them per cell is slow).
+const PAL = {};
+function readPalette() {
+  for (const n of ["paper", "ink", "ink-2", "muted", "rule", "rule-strong", "accent", "wrong", "timeout", "error", "s1", "s2", "s3", "s4", "s5", "s6", "serif"])
+    PAL[n] = css(`--${n}`);
+  PAL.ramp = [null, PAL.s1, PAL.s2, PAL.s3, PAL.s4, PAL.s5, PAL.s6];
+}
+function cellColor(s, i, c) {
+  const st = s.status[i];
+  if (st === 1) return PAL.wrong;
+  if (st === 3) return PAL.timeout;
+  if (st === 2) return PAL.error;
+  if (st === 4) return null;
+  const r = (s.times[i] + 0.01) / (c.best[i] + 0.01);
+  return PAL.ramp[r < 1.1 ? 1 : r < 1.5 ? 2 : r < 2 ? 3 : r < 4 ? 4 : r < 10 ? 5 : 6];
+}
+function drawBarcode() {
+  const cv = document.getElementById("barcode");
+  const wrap = cv.parentElement;
+  const W = Math.max(wrap.clientWidth, LABEL_W + 409 * 1.5);
+  // the systems that ran at least one query: one whose load failed has no row (Table 1 says why)
+  const rows = ranked().filter(([, s]) => s.status.some(st => st !== 4));
+  const H = TOP + rows.length * (ROW_H + ROW_GAP);
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px";
+  const g = cv.getContext("2d");
+  g.scale(dpr, dpr);
+  g.clearRect(0, 0, W, H);
+  const c = cfg(), idx = order();
+  const cw = (W - LABEL_W) / idx.length;
+  layout = { idx, cw, rows, W, H, version: (layout ? layout.version : 0) + 1 };
+  g.font = `14px ${PAL["serif"]}`;
+  g.textBaseline = "middle";
+  // role group labels
+  if (state.order === "role") {
+    g.font = `11.5px ${PAL["serif"]}`;
+    let start = 0;
+    for (let j = 1; j <= idx.length; j++) {
+      if (j === idx.length || Q[idx[j]].role !== Q[idx[start]].role) {
+        const x0 = LABEL_W + start * cw, x1 = LABEL_W + j * cw;
+        g.fillStyle = PAL["muted"];
+        const label = Q[idx[start]].role;
+        if (g.measureText(label).width < x1 - x0 - 2) g.fillText(label, x0 + 1, 8);
+        g.fillStyle = PAL["rule-strong"];
+        g.fillRect(x0, 14, 1, H - 14);
+        start = j;
+      }
+    }
+  }
+  rows.forEach(([name, s], r) => {
+    const y = TOP + r * (ROW_H + ROW_GAP);
+    g.font = `${state.sel === name ? 600 : 400} 14px ${PAL["serif"]}`;
+    g.fillStyle = state.sel && state.sel !== name ? PAL["muted"] : PAL["ink"];
+    g.fillText(NAMES[name], 0, y + ROW_H / 2 + 1);
+    idx.forEach((qi, j) => {
+      const col = cellColor(s, qi, c);
+      if (!col) return;
+      g.fillStyle = col;
+      g.fillRect(LABEL_W + j * cw, y, Math.ceil(cw + 0.01), ROW_H);
+    });
+    if (state.sel && state.sel !== name) {
+      g.fillStyle = PAL["paper"]; g.globalAlpha = 0.55;
+      g.fillRect(LABEL_W, y, W - LABEL_W, ROW_H); g.globalAlpha = 1;
+    }
+  });
+  // selected query marker
+  const j = idx.indexOf(state.query);
+  if (j >= 0) {
+    const x = LABEL_W + j * cw + cw / 2;
+    g.fillStyle = PAL["ink"];
+    g.beginPath(); g.moveTo(x - 4, TOP - 9); g.lineTo(x + 4, TOP - 9); g.lineTo(x, TOP - 3); g.fill();
+  }
+}
+function barcodeRow(e) {  // the system whose name is under the cursor, if any
+  const b = cvEl.getBoundingClientRect();
+  const x = e.clientX - b.left, y = e.clientY - b.top;
+  const r = Math.floor((y - TOP) / (ROW_H + ROW_GAP));
+  if (!layout || x >= LABEL_W || r < 0 || r >= layout.rows.length || (y - TOP) % (ROW_H + ROW_GAP) > ROW_H + 2) return null;
+  return layout.rows[r][0];
+}
+function barcodeHit(e) {
+  const cv = document.getElementById("barcode");
+  const b = cv.getBoundingClientRect();
+  const x = e.clientX - b.left, y = e.clientY - b.top;
+  if (!layout || x < LABEL_W) return null;
+  const j = Math.floor((x - LABEL_W) / layout.cw);
+  const r = Math.floor((y - TOP) / (ROW_H + ROW_GAP));
+  if (j < 0 || j >= layout.idx.length) return null;
+  return { qi: layout.idx[j], r: r >= 0 && r < layout.rows.length ? r : null };
+}
+const cvEl = document.getElementById("barcode");
+let hoverEvent = null;
+cvEl.addEventListener("mousemove", e => {
+  if (!hoverEvent) requestAnimationFrame(hover);
+  hoverEvent = e;
+});
+function hover() {
+  const e = hoverEvent; hoverEvent = null;
+  if (!e) return;
+  const h = barcodeHit(e);
+  if (!h) { hideLens(); hideTip(); cvEl.style.cursor = barcodeRow(e) ? "pointer" : "default"; return; }
+  cvEl.style.cursor = "pointer";
+  const lens = moveLens(e, h);
+  const q = Q[h.qi];
+  let line = `<div class="m">fastest correct: ${fmtT(cfg().best[h.qi])}</div>`;
+  if (h.r != null) {
+    const [name, s] = layout.rows[h.r];
+    const st = s.status[h.qi];
+    line = `<div>${NAMES[name]}: ${st === 0 ? fmtT(s.times[h.qi]) : STATUS[st]}</div>` + line;
+  }
+  tip(e, `<div class="m">${q.id}</div><div class="t">${q.title}</div>${line}`, lens);
+}
+cvEl.addEventListener("mouseleave", () => { hoverEvent = null; hideLens(); hideTip(); });
+// On a touch screen nothing reports that the finger left: a tap elsewhere or a scroll closes the tooltip and the lens.
+addEventListener("pointerdown", e => {
+  if (!e.target.closest("#barcode, [data-tip], #board tr, #growth-chart svg")) { hideLens(); hideTip(); }
+});
+addEventListener("scroll", () => { if (tipHTML !== null) { hideLens(); hideTip(); } }, { passive: true });
+cvEl.addEventListener("click", e => {
+  const row = barcodeRow(e);
+  if (row) return select(row);
+  const h = barcodeHit(e);
+  if (!h) return;
+  state.query = h.qi; state.keys = true; drawBarcode(); renderQuery(); drawVersus();
+  if (!queryInView) showBelow();
+});
+
+// The magnifier: a lens as high as the figure, centred on the cursor, showing the columns around it enlarged.
+// Its canvas covers just the lens; it is repainted when the column under the cursor changes and otherwise only moved.
+const LENS_COLS = 15, LENS_CELL = 11;  // columns shown, and their width in the lens
+const LENS_W = LENS_COLS * LENS_CELL + 8;  // with a margin of 4 on both sides
+const lensEl = document.getElementById("lens");
+let lensKey = null;
+function hideLens() { lensEl.style.display = "none"; lensKey = null; }
+function paintLens(jc) {
+  const { idx, rows, H } = layout, c = cfg(), half = (LENS_COLS - 1) / 2;
+  const dpr = window.devicePixelRatio || 1, LH = H - 2;
+  if (lensEl.width !== LENS_W * dpr || lensEl.height !== LH * dpr) {
+    lensEl.width = LENS_W * dpr; lensEl.height = LH * dpr;
+    lensEl.style.width = LENS_W + "px"; lensEl.style.height = LH + "px";
+  }
+  const g = lensEl.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = PAL.paper; g.fillRect(0, 0, LENS_W, LH);
+  g.translate(4, -1);  // lens coordinates: the first column at 0, rows where the figure has them
+  rows.forEach(([name, s], r) => {
+    const y = TOP + r * (ROW_H + ROW_GAP);
+    for (let k = -half; k <= half; k++) {
+      const j = jc + k;
+      if (j < 0 || j >= idx.length) continue;
+      const col = cellColor(s, idx[j], c);
+      if (!col) continue;
+      g.fillStyle = col;
+      g.fillRect((k + half) * LENS_CELL + 1, y, LENS_CELL - 2, ROW_H);
+    }
+    if (state.sel && state.sel !== name) {
+      g.fillStyle = PAL.paper; g.globalAlpha = 0.55;
+      g.fillRect(0, y, LENS_COLS * LENS_CELL, ROW_H); g.globalAlpha = 1;
+    }
+  });
+  // the column under the cursor, outlined, with its query above
+  const xc = half * LENS_CELL;
+  g.strokeStyle = PAL.ink; g.lineWidth = 1.2;
+  g.strokeRect(xc + 0.5, TOP - 2.5, LENS_CELL - 1, H - TOP + 1);
+  g.fillStyle = PAL.ink; g.font = `12px ${PAL.serif}`; g.textAlign = "center"; g.textBaseline = "alphabetic";
+  g.fillText(Q[idx[jc]].id, xc + LENS_CELL / 2, TOP - 6);
+}
+function moveLens(e, h) {
+  const jc = layout.idx.indexOf(h.qi);
+  const key = `${layout.version}|${jc}|${state.sel}`;
+  if (key !== lensKey) { paintLens(jc); lensKey = key; }
+  const b = cvEl.getBoundingClientRect();
+  const x = e.clientX - b.left - ((LENS_COLS - 1) / 2 + 0.5) * LENS_CELL - 4;  // the centre column under the cursor
+  lensEl.style.transform = `translate(${x}px, 1px)`;
+  lensEl.style.display = "block";
+  return { top: b.top + 1, bottom: b.top + layout.H - 1 };
+}
+
+// After a column is selected, the arrow keys step through the queries in the order the figure shows them.
+function stepQuery(d) {
+  const idx = layout ? layout.idx : Q.map((_, i) => i);
+  const j = idx.indexOf(state.query);
+  state.query = idx[(j + d + idx.length) % idx.length];
+  // with Figure 4 on the screen, it stays in place
+  const r = vsCv && vsCv.getBoundingClientRect(), seen = r && r.bottom > 0 && r.top < innerHeight;
+  const redraw = () => { drawBarcode(); renderQuery(); drawVersus(); };
+  seen ? keepInPlace(vsCv, redraw) : redraw();
+}
+addEventListener("keydown", e => {
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  if (e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
+  if (e.key === "Escape") {
+    state.keys = false;
+    if (state.sel) select(null);
+  } else if (state.keys && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+    e.preventDefault();
+    stepQuery(e.key === "ArrowLeft" ? -1 : 1);
+  }
+});
+
+// When the selected query is out of sight, a small button points down to it until it scrolls into view.
+const belowEl = document.getElementById("below"), queryEl = document.getElementById("query");
+let queryInView = false;
+new IntersectionObserver(([en]) => {
+  queryInView = en.isIntersecting;
+  if (queryInView) belowEl.classList.remove("on");
+}, { threshold: 0.25 }).observe(queryEl);
+// `up`: the figure clicked is below the panel (Figure 4), so the panel is above it; Figure 3 is above the panel
+function showBelow(up = false) {
+  document.getElementById("below-q").textContent = Q[state.query].id;
+  document.getElementById("below-arrow").textContent = up ? "↑" : "↓";
+  belowEl.classList.toggle("up", up);
+  // at the top: below the sticky settings bar where it sticks, else 22 px from the top
+  const bar = document.querySelector(".settings").getBoundingClientRect();
+  belowEl.style.top = up ? `${Math.max(22, bar.bottom + 12)}px` : "";
+  document.getElementById("below-where").textContent = up ? "above" : "below";
+  belowEl.classList.add("on");
+}
+belowEl.onclick = () => {
+  belowEl.classList.remove("on");
+  queryEl.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  queryEl.classList.remove("flash"); void queryEl.offsetWidth; queryEl.classList.add("flash");
+};
+
+function renderLegend() {
+  document.getElementById("legend").innerHTML = `
+    <span>fastest<span class="ramp">${[1, 2, 3, 4, 5, 6].map(k => `<i style="background:var(--s${k})"></i>`).join("")}</span>10× slower or more</span>
+    <span><span class="sw" style="background:var(--wrong)"></span>wrong result</span>
+    <span><span class="sw" style="background:var(--timeout)"></span>timeout</span>
+    <span><span class="sw" style="background:var(--error)"></span>error</span>`;
+}
+
+// ---------- query detail ----------
+const SQL_KW = new Set(("select from where join left right full outer inner cross on using group by order having limit offset as and or not in " +
+  "is null case when then else end with recursive distinct all union intersect except over partition rows range between unbounded " +
+  "preceding following current row filter within asc desc nulls first last like ilike exists any some date timestamp interval cast " +
+  "true false lateral values extract epoch").split(" "));
+function highlightSQL(src) {
+  const esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const re = /(--[^\n]*)|('(?:[^']|'')*')|(\{\{|\}\})|\b(\d+(?:\.\d+)?)\b|([A-Za-z_][A-Za-z0-9_]*)(\s*\()?/g;
+  let out = "", last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index)); last = re.lastIndex;
+    if (m[1]) out += `<span class="com">${esc(m[1])}</span>`;
+    else if (m[2]) out += `<span class="str">${esc(m[2])}</span>`;
+    else if (m[3]) out += `<span class="com">${m[3]}</span>`;
+    else if (m[4]) out += `<span class="num">${m[4]}</span>`;
+    else if (SQL_KW.has(m[5].toLowerCase())) out += `<span class="kw">${m[5]}</span>${m[6] || ""}`;
+    else if (m[6]) out += `<span class="fn">${m[5]}</span>${m[6]}`;
+    else out += m[5];
+  }
+  return out + esc(src.slice(last));
+}
+function renderQuery() {
+  const q = Q[state.query], c = cfg();
+  const rows = ranked().filter(([, s]) => s.status[state.query] !== 4);
+  const el = document.getElementById("query");
+  el.innerHTML = `
+    <div>
+      <div class="qid"><span><span class="sc">Selected query</span> · <span class="num">${q.id}</span></span>
+        <button id="q-prev" aria-label="Previous query" aria-keyshortcuts="ArrowLeft">←</button><button id="q-next" aria-label="Next query" aria-keyshortcuts="ArrowRight">→</button>
+        ${state.keys ? `<span class="keys">or the arrow keys</span>` : ""}</div>
+      <h3>${q.title}</h3>
+      <blockquote>“${q.question}”</blockquote>
+      <p class="who">Asked by the ${D.roles[q.role] || q.role}</p>
+      <p class="tables"><span class="sc" style="color:var(--muted)">Tables</span>&ensp;${q.tables.map(t => `<code>${t}</code>`).join(", ")}</p>
+      <p class="tables"><a href="queries/${q.id}.html">How this question came about →</a></p>
+    </div>
+    <div class="svgchart" id="dots"></div>
+    <pre class="sql" aria-label="SQL of ${q.id}">${highlightSQL(q.sql)}</pre>
+    <div class="result" id="q-result"></div>`;
+  document.getElementById("below-q").textContent = q.id;
+  document.getElementById("q-prev").onclick = () => { state.keys = true; stepQuery(-1); };
+  document.getElementById("q-next").onclick = () => { state.keys = true; stepQuery(1); };
+  drawDots(rows);
+  renderResult();
+}
+// The query's reference result at the selected scale factor (workload/results), its first rows: results/sf<sf>/qNNN.json,
+// fetched when first shown
+const RESULTS = new Map();
+function renderResult() {
+  const q = Q[state.query], sf = state.sf, key = `sf${sf}/${q.id}`;
+  const show = r => {
+    const el = document.getElementById("q-result");
+    if (el && Q[state.query] === q && state.sf === sf) el.innerHTML = resultHTML(q, sf, r);
+  };
+  if (RESULTS.has(key)) return show(RESULTS.get(key));
+  fetch(`results/${key}.json?v=/*DATA_VERSION*/`).then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(r => { RESULTS.set(key, r); show(r); }, () => show(null));
+}
+function resultHTML(q, sf, r) {
+  if (!r) return `<p class="cap">No reference result at ${sf} GB.</p>`;
+  const esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const csv = `{{GITHUB}}/blob/main/workload/results/sf${sf}/through-2025-Q4/${q.id}.csv`;
+  const n = r.total.toLocaleString("en-US");
+  const cap = `<p class="cap">The reference result at ${sf} GB, after the last load: ${n} ${r.total === 1 ? "row" : "rows"}` +
+    (r.total > r.rows.length ? `, the first ${r.rows.length} shown` : "") + ` · <a href="${csv}">CSV</a></p>`;
+  if (!r.total) return cap;
+  // numbers right-aligned; long fractions shortened, the exact value on hover
+  const cell = v => {
+    if (v === null) return `<td class="null">NULL</td>`;
+    if (!/^-?\d+(\.\d+)?$/.test(v)) return `<td>${esc(v)}</td>`;
+    const x = Number(v), short = (v.split(".")[1] || "").length > 4 ? (Math.abs(x) >= 0.01 ? x.toFixed(4) : x.toPrecision(3)) : v;
+    return short === v ? `<td class="n">${v}</td>` : `<td class="n" title="${v}">${short}</td>`;
+  };
+  return cap + `<div class="result-wrap"><table>${r.rows.map(row => `<tr>${row.map(cell).join("")}</tr>`).join("")}</table></div>`;
+}
+function drawDots(rows) {
+  const host = document.getElementById("dots");
+  const TIMEOUT = cfg().timeout;  // seconds: a timed-out query runs to here
+  const timeouts = rows.some(([, s]) => s.status[state.query] === 3);
+  // on the right as much room as the query needs: half of the last tick label, the timeout label, or
+  // the time next to a circle near the right end (labels: about 6.2 px a character)
+  const W = host.clientWidth || 440, L = 140, RH = 22, T = 6;
+  let R = timeouts ? 96 : 30;
+  const H = T + rows.length * RH + 30;
+  const ts = rows.map(([, s]) => s.times[state.query]).filter(t => t != null).concat(timeouts ? [TIMEOUT] : []);
+  let lo = Math.log10(Math.min(...ts, 5)), hi = Math.log10(Math.max(...ts, 0.001));
+  // with a timeout the axis ends at the timeout, which no query exceeds; otherwise at the next power of ten
+  lo = Math.floor(lo); hi = timeouts ? Math.log10(TIMEOUT) : Math.max(Math.ceil(hi), lo + 1);
+  const x = t => L + (Math.log10(t) - lo) / (hi - lo) * (W - L - R);
+  // more room while a time would stick out past the right edge (a wider margin moves the circles left)
+  const tw = t => 9 + fmtT(t).length * 6.2;
+  for (let i = 0; i < 4; i++) {
+    const over = Math.max(0, ...rows.filter(([, st]) => st.status[state.query] === 0).map(([, st]) => x(st.times[state.query]) + tw(st.times[state.query]) - W));
+    if (over <= 0) break;
+    R += over + 2;
+  }
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Times per system">`;
+  const gridAt = [];
+  for (let e = lo; e <= hi; e++) gridAt.push(10 ** e);
+  if (timeouts) gridAt.push(TIMEOUT);
+  // every grid line, but a tick label only where it does not run into the next one to its right
+  const shown = new Set();
+  let right = Infinity;
+  for (const v of [...gridAt].reverse()) {
+    const w = fmtTick(v).length * 6.5;
+    if (x(v) + w / 2 + 6 <= right) { shown.add(v); right = x(v) - w / 2; }
+  }
+  for (const v of gridAt) {
+    const xx = x(v);
+    s += `<line class="grid" x1="${xx}" x2="${xx}" y1="${T}" y2="${H - 24}"/>`;
+    if (shown.has(v)) s += `<text x="${xx}" y="${H - 8}" text-anchor="middle">${fmtTick(v)}</text>`;
+  }
+  rows.forEach(([name, st], r) => {
+    const y = T + r * RH + RH / 2;
+    const k = st.status[state.query];
+    const dim = state.sel && state.sel !== name;
+    s += `<text class="lbl pick" data-sys="${name}" x="0" y="${y + 4}" style="${dim ? "fill:var(--muted)" : state.sel === name ? "fill:var(--accent);font-weight:600" : ""}">${NAMES[name]}</text>`;
+    if (k === 0) {
+      const t = st.times[state.query], cx = x(t), label = fmtT(t);
+      s += `<line x1="${L}" x2="${cx}" y1="${y}" y2="${y}" stroke="var(--rule)" />`;
+      s += `<circle cx="${cx}" cy="${y}" r="4" fill="${dim ? "var(--muted)" : "var(--ink)"}"/>`;
+      // the time right next to the circle
+      s += `<text class="tval" x="${cx + 9}" y="${y + 4}" style="fill:${dim ? "var(--muted)" : "var(--ink-2)"}">${label}</text>`;
+    } else if (k === 3) {
+      s += `<line x1="${L}" x2="${x(TIMEOUT)}" y1="${y}" y2="${y}" stroke="var(--timeout)" stroke-width="2.5"/>`;
+      s += `<text x="${x(TIMEOUT) + 7}" y="${y + 4}" style="fill:var(--timeout);font-style:italic">timeout (${fmtTick(TIMEOUT)})</text>`;
+    } else {
+      const col = k === 1 ? "var(--wrong)" : "var(--muted)";
+      s += `<text x="${L}" y="${y + 4}" style="fill:${col};font-style:italic">${STATUS[k]}</text>`;
+    }
+  });
+  host.innerHTML = s + "</svg>";
+  host.querySelectorAll(".pick").forEach(el => el.onclick = () => select(el.dataset.sys));
+}
+
+// ---------- system against system ----------
+// For two systems, every query by the factor between their times (B's over A's: above 1 A is faster), sorted by it;
+// drawn like Figure 3: a lens enlarges the bars around the cursor, a click selects the query, an arrow marks it.
+let vs = null;  // the layout of the last drawing: the queries in their order, the scale, the size
+function drawVersus() {
+  if (!document.getElementById("vs")) return;  // the section is switched off (build.py, SHOW)
+  const c = cfg(), names = ranked().map(([n]) => n);
+  if (!names.includes(state.vsA)) state.vsA = names.includes(state.sel) ? state.sel : names[0];
+  if (!names.includes(state.vsB) || state.vsB === state.vsA) state.vsB = names.find(n => n !== state.vsA);
+  for (const [id, key] of [["vs-a", "vsA"], ["vs-b", "vsB"]]) {
+    const el = document.getElementById(id);
+    el.innerHTML = names.map(n => `<option value="${n}"${n === state[key] ? " selected" : ""}>${NAMES[n]}</option>`).join("");
+    el.onchange = () => { state[key] = el.value; drawVersus(); };
+  }
+  document.getElementById("vs-swap").onclick = () => { [state.vsA, state.vsB] = [state.vsB, state.vsA]; drawVersus(); };
+  const A = c.systems[state.vsA], B = c.systems[state.vsB];
+  // per query: log10 of B's time over A's; +Infinity: only A answers correctly, -Infinity: only B
+  const pts = [];
+  Q.forEach((q, i) => {
+    const a = A.status[i] === 0 ? A.times[i] : null, b = B.status[i] === 0 ? B.times[i] : null;
+    if (a == null && b == null) return;
+    pts.push({ i, a, b, v: a == null ? -Infinity : b == null ? Infinity : Math.log10(b / a) });
+  });
+  pts.sort((p, q) => p.v - q.v || p.i - q.i);
+  const finite = pts.filter(p => isFinite(p.v)).map(p => p.v);
+  // the axis: on each side up to the next power of ten above its largest factor, 10 to 1000
+  const UP = Math.min(3, Math.max(1, Math.ceil(Math.max(0, ...finite)))), DN = Math.min(3, Math.max(1, Math.ceil(-Math.min(0, ...finite))));
+  const cv = document.getElementById("vs"), W = cv.parentElement.clientWidth || 600, narrow = W < 560;
+  const H = narrow ? 240 : 290, L = 46, R = 8, T = 30, Bm = 24, n = pts.length, w = (W - L - R) / n;
+  const Y = v => T + (UP - Math.max(-DN, Math.min(UP, v))) / (UP + DN) * (H - T - Bm);
+  vs = { pts, w, L, T, H, Y, version: (vs ? vs.version : 0) + 1 };
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px";
+  const g = cv.getContext("2d");
+  g.scale(dpr, dpr); g.clearRect(0, 0, W, H);
+  g.font = `12px ${PAL.serif}`; g.textBaseline = "middle"; g.textAlign = "right";
+  for (let e = -DN; e <= UP; e++) {
+    g.fillStyle = e === 0 ? PAL["ink-2"] : PAL.rule;
+    g.fillRect(L, Math.round(Y(e)), W - L - R, 1);
+    g.fillStyle = PAL.muted;
+    g.fillText(e === 0 ? "1" : `${10 ** Math.abs(e)}×`, L - 6, Y(e));
+  }
+  pts.forEach((p, k) => paintVsBar(g, p, L + k * w, w, Y, p.i === state.query));
+  // who is faster how often
+  const fa = pts.filter(p => p.v > 0).length, fb = pts.filter(p => p.v < 0).length;
+  const oa = pts.filter(p => p.v === Infinity).length, ob = pts.filter(p => p.v === -Infinity).length;
+  const side = (x, y, align, name, cnt, only) => {
+    g.textAlign = align; g.fillStyle = PAL["ink-2"];
+    const rest = ` faster on ${cnt}${only ? ` (${only} only it answers)` : ""}`;
+    g.font = `600 13px ${PAL.serif}`; const nw = g.measureText(NAMES[name]).width;
+    g.font = `13px ${PAL.serif}`; const rw = g.measureText(rest).width;
+    const x0 = align === "right" ? x - nw - rw : x;
+    g.textAlign = "left"; g.font = `600 13px ${PAL.serif}`; g.fillText(NAMES[name], x0, y);
+    g.font = `13px ${PAL.serif}`; g.fillText(rest, x0 + nw, y);
+  };
+  side(W - R, 12, "right", state.vsA, fa, oa);
+  side(L, H - 8, "left", state.vsB, fb, ob);
+  // the selected query: an arrow above its bar
+  const k = pts.findIndex(p => p.i === state.query);
+  if (k >= 0) {
+    const x = L + k * w + w / 2;
+    g.fillStyle = PAL.ink;
+    g.beginPath(); g.moveTo(x - 4, T - 9); g.lineTo(x + 4, T - 9); g.lineTo(x, T - 3); g.fill();
+  }
+}
+
+// one bar: from 1 to its factor; a query only one system answers, hatched to the end of the axis
+function paintVsBar(g, p, x, w, Y, selected) {
+  const y = Y(p.v), y0 = Y(0), top = Math.min(y, y0), h = Math.max(Math.abs(y - y0), 1);
+  const col = selected ? PAL.wrong : PAL["ink-2"];  // the selected query in red
+  // whole pixels wide, as in Figure 3, so that no light seams run between the bars
+  const bw = Math.ceil(w + 0.01);
+  if (isFinite(p.v)) { g.fillStyle = col; g.fillRect(x, top, bw, h); return; }
+  g.save(); g.beginPath(); g.rect(x, top, bw, h); g.clip();
+  g.fillStyle = col; g.globalAlpha = 0.18; g.fillRect(x, top, bw, h); g.globalAlpha = 1;
+  g.strokeStyle = col; g.lineWidth = 1;
+  for (let d = -h; d < w + h; d += 5) { g.beginPath(); g.moveTo(x + d, top + h); g.lineTo(x + d + h, top); g.stroke(); }
+  g.restore();
+}
+
+// The lens, as for Figure 3: the bars around the cursor enlarged, the one under it outlined with its query above.
+const vsCv = document.getElementById("vs"), vsLens = document.getElementById("vs-lens");
+let vsLensKey = null;
+function vsHit(e) {
+  if (!vs) return null;
+  const b = vsCv.getBoundingClientRect(), k = Math.floor((e.clientX - b.left - vs.L) / vs.w);
+  return k >= 0 && k < vs.pts.length ? k : null;
+}
+function hideVsLens() { vsLens.style.display = "none"; vsLensKey = null; }
+function vsMoveLens(e, k) {
+  const { pts, Y, T, H } = vs, half = (LENS_COLS - 1) / 2, dpr = window.devicePixelRatio || 1, LH = H - 2;
+  const key = `${vs.version}|${k}|${state.query}`;
+  if (key !== vsLensKey) {
+    vsLensKey = key;
+    if (vsLens.width !== LENS_W * dpr || vsLens.height !== LH * dpr) {
+      vsLens.width = LENS_W * dpr; vsLens.height = LH * dpr; vsLens.style.width = LENS_W + "px"; vsLens.style.height = LH + "px";
+    }
+    const g = vsLens.getContext("2d");
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.fillStyle = PAL.paper; g.fillRect(0, 0, LENS_W, LH);
+    g.translate(4, -1);
+    g.fillStyle = PAL["ink-2"]; g.fillRect(0, Math.round(Y(0)), LENS_COLS * LENS_CELL, 1);
+    for (let d = -half; d <= half; d++) {
+      const j = k + d;
+      if (j < 0 || j >= pts.length) continue;
+      paintVsBar(g, pts[j], (d + half) * LENS_CELL + 1, LENS_CELL - 2, Y, pts[j].i === state.query);
+    }
+    const xc = half * LENS_CELL;
+    g.strokeStyle = PAL.ink; g.lineWidth = 1.2;
+    g.strokeRect(xc + 0.5, T - 2.5, LENS_CELL - 1, H - T - 20);
+    g.fillStyle = PAL.ink; g.font = `12px ${PAL.serif}`; g.textAlign = "center"; g.textBaseline = "alphabetic";
+    g.fillText(Q[pts[k].i].id, xc + LENS_CELL / 2, T - 6);
+  }
+  const b = vsCv.getBoundingClientRect();
+  const x = e.clientX - b.left - (half + 0.5) * LENS_CELL - 4;
+  vsLens.style.transform = `translate(${x}px, 1px)`;
+  vsLens.style.display = "block";
+  return { top: b.top + 1, bottom: b.top + H - 1 };
+}
+let vsHoverEvent = null;
+if (vsCv) {  // only where the section is shown
+  vsCv.addEventListener("mousemove", e => {
+    if (!vsHoverEvent) requestAnimationFrame(() => {
+      const e = vsHoverEvent; vsHoverEvent = null;
+      const k = vsHit(e);
+      if (k == null) { hideVsLens(); hideTip(); vsCv.style.cursor = "default"; return; }
+      vsCv.style.cursor = "pointer";
+      const lens = vsMoveLens(e, k), p = vs.pts[k], q = Q[p.i];
+      const c = cfg(), A = c.systems[state.vsA], B = c.systems[state.vsB];
+      const ratio = !isFinite(p.v) ? `only ${NAMES[p.v > 0 ? state.vsA : state.vsB]} answers correctly`
+        : p.v >= 0 ? `${NAMES[state.vsA]} ${(10 ** p.v).toPrecision(3)}× faster` : `${NAMES[state.vsB]} ${(10 ** -p.v).toPrecision(3)}× faster`;
+      tip(e, `<div class="m">${q.id}</div><div class="t">${q.title}</div><div>${ratio}</div>`
+        + `<div class="m">${NAMES[state.vsA]} ${p.a == null ? STATUS[A.status[p.i]] : fmtT(p.a)} · ${NAMES[state.vsB]} ${p.b == null ? STATUS[B.status[p.i]] : fmtT(p.b)}</div>`, lens);
+    });
+    vsHoverEvent = e;
+  });
+  vsCv.addEventListener("mouseleave", () => { vsHoverEvent = null; hideVsLens(); hideTip(); });
+  addEventListener("pointerdown", e => { if (!e.target.closest("#vs")) hideVsLens(); });
+  addEventListener("scroll", () => hideVsLens(), { passive: true });
+  vsCv.addEventListener("click", e => {
+    const k = vsHit(e);
+    if (k == null) return;
+    state.query = vs.pts[k].i; state.keys = true;
+    keepInPlace(vsCv, () => { drawBarcode(); renderQuery(); drawVersus(); });
+    vsLensKey = null;
+    if (!queryInView) showBelow(true);
+  });
+}
+
+// The query panel changes height with its query; a figure below it (Figure 4) stays where it is on the screen
+// while the panel changes (browsers do this themselves when the page grows above, Safari does not).
+function keepInPlace(el, change) {
+  const before = el.getBoundingClientRect().top;
+  change();
+  const d = el.getBoundingClientRect().top - before;
+  if (d) scrollBy({ top: d, behavior: "instant" });
+}
+
+// ---------- growth ----------
+// ---------- runtime distribution ----------
+// the bands of a query after the last load: its time (between the guides), or why it has none
+const BANDS = [["under 10 ms"], ["10–100 ms"], ["0.1–1 s"], ["1 s and more"],
+               ["timeout", "timeout"], ["error", "error"], ["wrong result", "wrong"], ["not run", "rule"]];
+function band(s, i) {
+  const st = s.status[i];
+  if (st !== 0) return { 1: 6, 2: 5, 3: 4, 4: 7 }[st];
+  const t = s.times[i];
+  return t < 0.01 ? 0 : t < 0.1 ? 1 : t < 1 ? 2 : 3;
+}
+function drawDist() {
+  const host = document.getElementById("dist-chart");
+  if (!host) return;  // the section is switched off (build.py, SHOW)
+  const rows = ranked(), n = Q.length;
+  const counts = rows.map(([, s]) => { const k = BANDS.map(() => 0); for (let i = 0; i < n; i++) k[band(s, i)]++; return k; });
+  const sw = b => `<span><span class="sw" style="background:var(--${BANDS[b][1]})"></span>${BANDS[b][0]}</span>`;
+  document.getElementById("dist-legend").innerHTML = `<span><span class="sw" style="background:none;border-top:1.5px solid var(--ink);height:0;width:14px"></span>correct results, by time</span>`
+    + `<span><span class="sw" style="background:none;border-left:1px dashed var(--ink);width:0;height:11px"></span>median</span>`
+    + [4, 5, 6, 7].filter(b => counts.some(k => k[b] > 0)).map(sw).join("");
+  drawDensities(host, rows, counts);
+}
+
+// one density per system: of log10 of the correct results' times, its area the share of correct results
+function drawDensities(host, rows, counts) {
+  const n = Q.length, c = cfg();
+  const lo = -3, hi = Math.log10(c.timeout), K = 120, BWD = 0.1;  // 1 ms to the timeout, in decades; kernel width
+  // on a narrow screen the names go above the rows, and "no correct result" over two lines
+  const W = host.clientWidth, narrow = W < 560;
+  // a name sits next to its own curve: more room above it than below
+  const LBL = narrow ? 0 : 150, FW = narrow ? 64 : 130, NH = narrow ? 13 : 0, RH = 34, LS = 14, GAP = narrow ? 16 : 4, AX = narrow ? 32 : 22;
+  const P = NH + RH + LS + GAP;  // a row: its name on a narrow screen, the curve, the strip of shares below it, a gap
+  const X0 = LBL, X1 = W - FW - 18;
+  const px = v => X0 + (v - lo) / (hi - lo) * (X1 - X0);
+  const dens = rows.map(([, s]) => {
+    const ts = [];
+    for (let i = 0; i < n; i++) if (s.status[i] === 0) ts.push(Math.min(hi, Math.max(lo, Math.log10(Math.max(s.times[i], 1e-6)))));
+    const d = Array.from({ length: K + 1 }, (_, k) => {
+      const x = lo + (hi - lo) * k / K;
+      let a = 0;
+      for (const t of ts) a += Math.exp(-0.5 * ((x - t) / BWD) ** 2);
+      return a / (n * BWD * Math.sqrt(2 * Math.PI));
+    });
+    ts.sort((a, b) => a - b);
+    return { d, med: ts.length ? ts[Math.floor((ts.length - 1) / 2)] : null };
+  });
+  const peak = Math.max(...dens.flatMap(v => v.d)) || 1;
+  const half = RH - 6;  // the height of the highest density
+  // the time labels above and below the rows, the rows between them
+  let s = `<svg width="${W}" height="${rows.length * P + 2 * AX}" role="img" aria-label="Density of query times, per system">`;
+  for (const v of [-3, -2, -1, 0, Math.log10(c.timeout)]) {
+    s += `<line class="grid" x1="${px(v).toFixed(1)}" x2="${px(v).toFixed(1)}" y1="${AX - 4}" y2="${rows.length * P + AX}" stroke="var(--rule)"/>`;
+    for (const y of [AX - 8, rows.length * P + AX + 15])
+      s += `<text class="n" x="${px(v).toFixed(1)}" y="${y}" text-anchor="middle" fill="var(--muted)">${fmtTick(10 ** v)}</text>`;
+  }
+  for (const y of [AX - 8, rows.length * P + AX + 15])
+    s += narrow ? `<text class="n" x="${W - FW}" y="${y < AX ? y - 12 : y}" fill="var(--muted)"><tspan x="${W - FW}">no correct</tspan><tspan x="${W - FW}" dy="12">result</tspan></text>`
+                : `<text class="n" x="${W - FW}" y="${y}" fill="var(--muted)">no correct result</text>`;
+  s += `<g transform="translate(0,${AX})">`;
+  rows.forEach(([name], r) => {
+    const cy = r * P + NH + RH / 2, dim = state.sel && state.sel !== name, { d, med } = dens[r];
+    s += `<g data-sys="${name}" style="${dim ? "opacity:.4" : ""}">`;
+    s += `<rect x="0" y="${cy - RH / 2 - NH}" width="${W}" height="${NH + RH + LS}" fill="transparent"/>`;
+    s += `<text class="lbl" x="0" y="${narrow ? cy - RH / 2 + 1 : cy + 5}" style="${state.sel === name ? "font-weight:600" : ""}">${NAMES[name]}</text>`;
+    // the density above a zero line at the bottom of the row
+    const base = cy + RH / 2 - 2;
+    s += `<line x1="${X0}" x2="${X1}" y1="${base}" y2="${base}" stroke="var(--rule-strong)"/>`;
+    const pts = d.map((v, k) => [px(lo + (hi - lo) * k / K), v / peak * half]);
+    if (pts.some(([, h]) => h > 0.2))
+      s += `<path d="${pts.map(([x, h], k) => `${k ? "L" : "M"}${x.toFixed(1)},${(base - h).toFixed(1)}`).join("")}" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/>`;
+    // the bars' bands, between the guides: their share of all queries, in the strip below the zero line
+    const pct = k => k === 0 ? "" : k / n < 0.005 ? "<1%" : `${Math.round(100 * k / n)}%`;
+    [[lo, -2], [-2, -1], [-1, 0], [0, hi]].forEach(([a, b], j) => {
+      const label = pct(counts[r][j]);
+      if (label) s += `<text class="pct" x="${((px(a) + px(b)) / 2).toFixed(1)}" y="${base + 11}" text-anchor="middle">${label}</text>`;
+    });
+    if (med != null) {
+      const h = d[Math.round((med - lo) / (hi - lo) * K)] / peak * half;
+      s += `<line x1="${px(med).toFixed(1)}" x2="${px(med).toFixed(1)}" y1="${base}" y2="${(base - h).toFixed(1)}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="2 2"/>`;
+    }
+    let x = W - FW;
+    for (const b of [4, 5, 6, 7]) {
+      const k = counts[r][b];
+      if (!k) continue;
+      const w = k / n * FW;
+      s += `<rect x="${x.toFixed(1)}" y="${cy - 9}" width="${Math.max(w - 0.5, 0.5).toFixed(1)}" height="18" fill="var(--${BANDS[b][1]})"/>`;
+      x += w;
+    }
+    const failed = counts[r][4] + counts[r][5] + counts[r][6] + counts[r][7];
+    if (failed) s += `<text class="pct" x="${(Math.min(x, W - 34) + 4).toFixed(1)}" y="${cy + 4}">${pct(failed)}</text>`;
+    s += `</g>`;
+  });
+  host.innerHTML = s + "</g></svg>";
+  host.querySelectorAll("g[data-sys]").forEach(g => {
+    const name = g.dataset.sys, r = rows.findIndex(([nm]) => nm === name), k = counts[r], med = dens[r].med;
+    g.onmousemove = e => tip(e, `<div class="t">${NAMES[name]}</div>`
+      + `<div><span class="m">correct</span> ${k[0] + k[1] + k[2] + k[3]} of ${n}${med != null ? ` · median ${fmtT(10 ** med)}` : ""}</div>`
+      + BANDS.map(([label], j) => j >= 4 && k[j] ? `<div><span class="m">${label}</span> ${k[j]}</div>` : "").join(""));
+    g.onmouseleave = hideTip;
+    g.onclick = () => select(name);
+  });
+}
+
+function drawGrowth() {
+  const host = document.getElementById("growth-chart");
+  if (!host) return;  // the section is switched off (build.py, SHOW)
+  const rows = ranked().filter(([, s]) => s.per_run.every(v => v != null) && s.per_run_n > 20);
+  const idx = st => st.per_run.map(v => v / st.per_run[0]);
+  const all = rows.flatMap(([, s]) => idx(s));
+  const lo = Math.min(0.8, ...all), hi = Math.max(...all);
+  const cols = host.clientWidth < 560 ? 2 : 4, gap = 28;
+  const PW = (host.clientWidth - gap * (cols - 1)) / cols, PH = 112, T = 26, B = 16, L = 4, R = 44;
+  const x = i => L + i / 4 * (PW - L - R);
+  const y = v => T + (1 - (Math.log(v) - Math.log(lo)) / (Math.log(hi) - Math.log(lo))) * (PH - T - B);
+  const path = st => idx(st).map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+  host.style.display = "grid";
+  host.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  host.style.gap = `18px ${gap}px`;
+  host.innerHTML = rows.map(([name, st]) => {
+    const v = idx(st), last = v[4];
+    const dim = state.sel && state.sel !== name;
+    let s = `<svg width="${PW}" height="${PH}" viewBox="0 0 ${PW} ${PH}" data-sys="${name}" role="img" aria-label="${NAMES[name]}: ${last.toFixed(2)} times the first-load time after the last load" style="${dim ? "opacity:.45" : ""}">`;
+    s += `<text class="lbl" x="${L}" y="13" style="fill:var(--ink);${state.sel === name ? "font-weight:600" : ""}">${NAMES[name]}</text>`;
+    s += `<line class="grid" x1="${L}" x2="${PW - R}" y1="${y(1)}" y2="${y(1)}"/>`;
+    s += `<line class="axis" x1="${L}" x2="${PW - R}" y1="${PH - B}" y2="${PH - B}"/>`;
+    for (const [n, o] of rows) if (n !== name) s += `<path d="${path(o)}" fill="none" stroke="var(--rule)" stroke-width="1"/>`;
+    s += `<path d="${path(st)}" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round"/>`;
+    s += `<circle cx="${x(4)}" cy="${y(last)}" r="2.6" fill="var(--ink)"/>`;
+    s += `<text x="${x(4) + 7}" y="${y(last) + 4}" style="fill:var(--ink-2)">${last.toFixed(2)}×</text>`;
+    v.forEach((vv, i) => s += `<rect x="${x(i) - (PW - L - R) / 8}" y="${T}" width="${(PW - L - R) / 4}" height="${PH - T}" fill="transparent" data-i="${i}"/>`);
+    return s + "</svg>";
+  }).join("");
+  host.querySelectorAll("svg").forEach(svg => {
+    const name = svg.dataset.sys, st = cfg().systems[name];
+    svg.onmousemove = e => {
+      const i = +(e.target.dataset.i ?? 4);
+      tip(e, `<div class="t">${NAMES[name]}</div><div><span class="m">after loading ${PERIODS[i]}</span> ${fmtT(st.per_run[i])}</div>
+        <div class="m">${(st.per_run[i] / st.per_run[0]).toFixed(2)}× the first load · over ${st.per_run_n} queries</div>`);
+    };
+    svg.onmouseleave = hideTip;
+    svg.onclick = () => select(name);
+  });
+}
+
+// ---------- tooltip ----------
+const tipEl = document.getElementById("tip");
+let tipHTML = null, tipW = 0, tipH = 0;
+function tip(e, html, lens, corner) {
+  if (html !== tipHTML || tipEl.style.display !== "block") {
+    tipEl.innerHTML = html; tipEl.style.display = "block";
+    tipHTML = html; tipW = tipEl.offsetWidth; tipH = tipEl.offsetHeight;
+  }
+  const w = tipW, h = tipH;
+  let x, y;
+  if (corner) {  // in a corner of a plot clear of the hovered marks, or below a plot too narrow for it; kept on screen
+    const below = w > corner.width / 2;
+    const spots = [[corner.left + 10, corner.bottom - h - 10], [corner.right - w - 10, corner.top + 10],
+                   [corner.right - w - 10, corner.bottom - h - 10], [corner.left + 10, corner.top + 10]];
+    const clear = ([sx, sy]) => corner.marks.every(m => m.right + 6 < sx || m.left - 6 > sx + w || m.bottom + 6 < sy || m.top - 6 > sy + h);
+    [x, y] = below ? [corner.x, corner.under] : spots.find(clear) || spots[0];
+    y = Math.max(8, Math.min(y, innerHeight - h - 8));
+  } else if (lens) {  // above the lens, centred on the cursor, or below it when there is no room above
+    x = Math.max(8, Math.min(e.clientX - w / 2, innerWidth - w - 8));
+    y = lens.top - h - 8 >= 8 ? lens.top - h - 8 : lens.bottom + 8;
+  } else {
+    x = e.clientX + 14; y = e.clientY + 14;
+    if (x + w > innerWidth - 8) x = e.clientX - w - 14;
+    if (y + h > innerHeight - 8) y = e.clientY - h - 14;
+  }
+  // always on the screen, also on a phone where it does not fit beside the finger
+  x = Math.max(8, Math.min(x, innerWidth - w - 8));
+  y = Math.max(8, Math.min(y, innerHeight - h - 8));
+  tipEl.style.transform = `translate(${x}px, ${y}px)`;
+}
+function hideTip() { tipEl.style.display = "none"; tipHTML = null; }
+
+// Hover notes: a dashed underline whose note shows on hover, on keyboard focus, or on a tap
+document.querySelectorAll(".hn").forEach(el => {
+  const html = () => `<div>${el.dataset.note.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</div>`;
+  const at = () => { const r = el.getBoundingClientRect(); return { clientX: r.left, clientY: r.bottom - 6 }; };
+  el.addEventListener("mousemove", e => tip(e, html()));
+  el.addEventListener("mouseleave", hideTip);
+  el.addEventListener("focus", () => tip(at(), html()));
+  el.addEventListener("blur", hideTip);
+  el.addEventListener("click", e => { e.stopPropagation(); tip(e, html()); });
+});
+addEventListener("click", e => { if (!e.target.closest(".hn, .hit")) hideTip(); });
+
+// A link to one query (index.html#q042) opens it in the query panel.
+function openFromHash() {
+  const m = location.hash.match(/^#(q\d{3})$/);
+  const i = m ? Q.findIndex(q => q.id === m[1]) : -1;
+  if (i < 0) return false;
+  state.query = i; state.keys = true;
+  return true;
+}
+addEventListener("hashchange", () => { if (openFromHash()) { drawBarcode(); renderQuery(); drawVersus(); queryEl.scrollIntoView({ block: "start" }); } });
+
+function render() { readPalette(); lensKey = null; renderSettings(); renderBoard(); drawDist(); renderLegend(); drawBarcode(); renderQuery(); drawVersus(); drawGrowth(); }
+const fromHash = openFromHash();
+document.fonts.ready.then(render);
+render();
+if (fromHash) requestAnimationFrame(() => queryEl.scrollIntoView({ block: "start" }));
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 100); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+addEventListener("themechange", render);  // the light/dark button in the top line
+</script>
+</body>
+</html>

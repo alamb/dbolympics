@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Shopper satisfaction (CSAT) by merchant, 2025",
+    "--question",
+    "Which merchants have the weakest shopper satisfaction, and how much does it vary across the platform?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per tenant (merchant), among tenants with at least 10 CSAT responses in 2025\", \"columns_requested\": [\"merchant name\", \"CSAT responses, 2025\", \"avg score (1-5)\", \"median score (1-5)\", \"% satisfied (score >= 4)\", \"% dissatisfied (score <= 2)\"], \"details\": \"Source: csat_responses joined to tenants (for name). Window: submitted_at in 2025-01-01 through 2025-12-31. Only include tenants with >=10 CSAT responses in 2025 to avoid noisy small samples. avg/median score over csat_responses.score. '% satisfied' = score>=4 count / total responses that tenant-year, percentage rounded to 1 decimal; '% dissatisfied' = score<=2 count / total, percentage rounded to 1 decimal. Round avg score to 2 decimals, median to 1 decimal. Order by avg score ascending (worst first, so the weakest spots surface at the top), tie-break by merchant name ascending. Cap at 50 printed rows per house standard; note total qualifying tenant count in the footer. I will cross-reference merchant names against the existing 'Response & resolution times by merchant, 2025' report rather than re-querying resolution time here, to keep this report single-purpose.\", \"builds_on\": [\"Shopper satisfaction (CSAT) trend, monthly\", \"Response & resolution times by merchant, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

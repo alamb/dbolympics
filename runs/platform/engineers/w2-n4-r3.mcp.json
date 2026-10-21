@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Payment Attempts During the Nov 28 2025 Outage Window",
+    "--question",
+    "Did payment processing itself fail or stall during the same 14:00-16:00 UTC window, confirming a full checkout-path outage rather than just the reminder-email job?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Felix\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per hour of the day, for 2025-11-28 (UTC)\", \"columns_requested\": [\"hour\", \"total_payment_attempts\", \"captured_or_authorized_count\", \"failed_count\", \"failure_rate_pct\"], \"details\": \"Table payment_attempts, filtered to attempted_at on 2025-11-28 (all 24 hours UTC). Group by hour of attempted_at. captured_or_authorized_count = count where status in ('authorized','captured'); failed_count = count where status='failed'; failure_rate_pct = failed_count / total_payment_attempts * 100, rounded 2dp. Order by hour ascending (0-23); hours with zero attempts simply won't appear, note the gap if any in the report.\", \"builds_on\": [\"Order Volume by Hour on Black Friday 2025 (Nov 28)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

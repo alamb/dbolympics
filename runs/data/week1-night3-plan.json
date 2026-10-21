@@ -1,0 +1,52 @@
+{
+ "notes": "Night 2 gave three follow-ups worth running tonight. (1) The order-status breakdown showed \"refunded\" orders at a near-total 99.8% gap and \"fulfilled\" orders at a persistent 22% gap — I suspect both are partly a filter artifact: my captured-payment match only counted payments.status='captured', but a payment that was later refunded moves to status 'refunded'/'partially_refunded' and would be invisible to that filter even though money genuinely changed hands. I want to re-run with a status-inclusive filter to see how much of the gap is this artifact vs a real reconciliation hole, especially for 'fulfilled' orders where there's no reason to expect any gap at all. (2) The payment-linked payout/refund check got noisier, not cleaner, than the calendar-month version (swinging -16.6% to +17.7% with no consistent sign) — payout_items has a unique constraint on payment_id (one row per payment, ever), so a refund processed after a payment's payout has already settled has no slot in that payout to be reflected in; it would have to hit some later, differently-linked settlement, breaking the clean per-payout linkage I assumed. I want to directly test how often refunds are processed after their payment's payout already settled, since that would explain the noise and is itself a traceability gap worth flagging to Tobias. (3) Rosa's customer-count question (#4) hasn't been touched yet and we're entering the back half of the week, so I'm using tonight's third slot to get a first cut at how many \"customers\" we have under different plausible definitions, to see if that's a quick certify or another can of worms for night 4.",
+ "requests": [
+  {
+   "title": "Order-to-payment gap re-measured with refund-inclusive payment status",
+   "question": "How much of the gap between order value and 'captured' payments is really just that refunded/partially-refunded payments were excluded by my status filter, versus a genuine hole where money was never collected?",
+   "grain": "order status",
+   "columns": [
+    "order_status",
+    "order_count",
+    "orders_grand_total_eur",
+    "orders_with_money_collected_count",
+    "gross_collected_eur",
+    "net_collected_eur",
+    "gap_vs_gross_eur",
+    "gap_vs_gross_pct"
+   ],
+   "details": "Same population as the prior order-status report: orders with placed_at between 2023-01-01 and 2025-06-30 inclusive. Group by orders.status. order_count and orders_grand_total_eur as before (grand_total converted to EUR via exchange_rates using orders.currency_code and placed_at date). orders_with_money_collected_count = count of those orders with at least one linked payments row (payments.order_id = orders.id) whose status is in ('captured','refunded','partially_refunded') - i.e. any payment that was successfully captured at some point, whether or not it was later refunded. gross_collected_eur = sum of payments.amount for those linked payments (the original captured amount, before any refund), converted to EUR via payments.currency_code and captured_at date. net_collected_eur = sum of (payments.amount - payments.amount_refunded) for those same linked payments, converted the same way - this is what the merchant actually kept after refunds. gap_vs_gross_eur = orders_grand_total_eur - gross_collected_eur. gap_vs_gross_pct = gap_vs_gross_eur / orders_grand_total_eur * 100, rounded to 1 decimal. Tables: orders, payments, exchange_rates. Order by orders_grand_total_eur descending.",
+   "builds_on": [
+    "Order-to-payment gap by order status, aged cohort"
+   ]
+  },
+  {
+   "title": "Refund timing relative to payout settlement",
+   "question": "When a payment is refunded, does the refund happen before its payout settles (so it can cleanly reduce that payout) or after (so the clawback has no clean home in the payout data), and how much money is affected?",
+   "grain": "timing bucket (before payout settled / after payout settled / payment not yet in any payout)",
+   "columns": [
+    "timing_bucket",
+    "refund_count",
+    "refund_amount_eur",
+    "pct_of_total_refund_amount",
+    "avg_days_lag"
+   ],
+   "details": "Population: all payment_refunds with status='succeeded' across full history (2023-01-01 to 2025-12-31). For each refund, find the payout (if any) that settled its payment via payout_items (payout_items.payment_id = payment_refunds.payment_id) joined to payouts (payout_items.payout_id = payouts.id). Bucket each refund as: 'refund before payout paid_at' when payment_refunds.processed_at <= payouts.paid_at; 'refund after payout paid_at' when payment_refunds.processed_at > payouts.paid_at; 'payment not yet settled in any payout' when no matching payout_items row exists for that payment_id. refund_count = count of refunds in the bucket. refund_amount_eur = sum of payment_refunds.amount converted to EUR via payment_refunds.currency_code and processed_at date. pct_of_total_refund_amount = refund_amount_eur / total refund_amount_eur across all buckets * 100, rounded to 1 decimal. avg_days_lag = average of (payment_refunds.processed_at - payouts.paid_at) in days for the 'after' bucket only (NULL for the other two buckets), rounded to 1 decimal. Tables: payment_refunds, payout_items, payouts, exchange_rates. Order by refund_amount_eur descending.",
+   "builds_on": [
+    "Payout net formula check via payment-linked refunds"
+   ]
+  },
+  {
+   "title": "Customer headcount by definition",
+   "question": "Do different reasonable definitions of 'how many customers we have' or 'how many are active' give meaningfully different headcounts?",
+   "grain": "customer count definition",
+   "columns": [
+    "definition",
+    "user_count",
+    "pct_of_all_customers"
+   ],
+   "details": "Scope: all tenants combined, non-staff users only (users.is_staff = false). As-of date for all 'current state' columns: the data cutoff 2025-12-31. Rows (definitions), each counting distinct users.id: (1) 'All customers (ever created)' - all non-staff users with created_at <= 2025-12-31; this is the denominator for pct_of_all_customers. (2) 'Status = active' - users.status = 'active'. (3) 'Placed at least one order, ever' - distinct users.id appearing in orders (any status) with placed_at <= 2025-12-31. (4) 'Placed at least one order in trailing 12 months' - distinct users.id with an order placed_at between 2025-01-01 and 2025-12-31. (5) 'Has an active or trialing subscription' - distinct users.id with a subscriptions row where status in ('active','trialing'). (6) 'Logged in within last 90 days of data' - users.last_login_at >= 2025-10-03. pct_of_all_customers = user_count / (count from definition 1) * 100, rounded to 1 decimal. Tables: users, orders, subscriptions. Order by user_count descending.",
+   "builds_on": []
+  }
+ ]
+}

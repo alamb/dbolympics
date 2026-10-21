@@ -1,0 +1,48 @@
+=== Report 1: Are discounted orders healthier across verticals, or just in B2B? (written by Ines) ===
+Engineer's note: Industry comes from tenants.industry (free-text field set per merchant), so groupings reflect whatever values merchants have on file rather than a fixed vertical taxonomy; EUR conversion uses the exchange rate as of each order's placed_at date (EUR/EUR treated as rate 1).
+REPORT: Are discounted orders healthier across verticals, or just in B2B?
+QUESTION: Does the 'discounted orders have higher AOV, bigger baskets, and fewer returns' pattern hold in consumer verticals, or is it mainly an artifact of B2B wholesale contract pricing?
+industry                  | order_group | orders_count | avg_order_value_eur | avg_items_per_order | return_rate_pct | cancelled_rate_pct
+--------------------------+-------------+--------------+---------------------+---------------------+-----------------+-------------------
+Apparel & Footwear        | discounted  |         1131 |               172.0 |                 2.9 |            39.0 |                5.3
+Apparel & Footwear        | full price  |         6044 |               186.0 |                 2.6 |            34.5 |                4.4
+Beauty                    | discounted  |          346 |                68.0 |                 2.8 |             7.8 |                4.6
+Beauty                    | full price  |         1220 |               104.0 |                 2.6 |             4.1 |                4.7
+Books & Stationery        | discounted  |            8 |                35.0 |                 3.4 |             0.0 |                0.0
+Books & Stationery        | full price  |          151 |                53.0 |                 3.0 |             6.0 |                3.3
+Consumer Electronics      | discounted  |          155 |               813.0 |                 2.7 |            17.4 |                1.9
+Consumer Electronics      | full price  |          421 |              1135.0 |                 2.4 |            10.7 |                4.3
+Food & Coffee             | discounted  |         4365 |                 6.0 |                 1.3 |             0.3 |                0.3
+Food & Coffee             | full price  |         2868 |                67.0 |                 2.1 |             1.8 |                3.9
+Home & Living             | discounted  |          284 |               146.0 |                 2.7 |            18.0 |                3.2
+Home & Living             | full price  |         1379 |               150.0 |                 2.3 |            12.8 |                4.1
+Industrial Supplies (B2B) | discounted  |          632 |              2223.0 |                44.3 |             9.7 |                1.6
+Industrial Supplies (B2B) | full price  |          142 |               419.0 |                 8.1 |             2.8 |                1.4
+Jewelry & Accessories     | discounted  |           15 |               212.0 |                 2.5 |            13.3 |                0.0
+Jewelry & Accessories     | full price  |           35 |               220.0 |                 2.6 |            14.3 |                5.7
+Office Supplies (B2B)     | discounted  |          381 |              3834.0 |                32.3 |             4.5 |                1.0
+Office Supplies (B2B)     | full price  |          146 |               922.0 |                 7.3 |             2.7 |                4.1
+Pet Supplies              | discounted  |          679 |                 8.0 |                 1.5 |             0.1 |                0.9
+Pet Supplies              | full price  |          774 |                62.0 |                 2.2 |             2.5 |                4.9
+Sports & Outdoor          | discounted  |          212 |               359.0 |                 2.6 |            25.9 |                2.8
+Sports & Outdoor          | full price  |          805 |               368.0 |                 2.3 |            19.6 |                4.6
+(22 rows)
+
+=== Report 2: Email/campaign engagement baseline by channel (written by Grace) ===
+Engineer's note: Platform-wide (no tenant filter), filtered on campaign_messages.created_at in 2025 as requested. Delivered/open/click rates use delivered_at-not-null as the denominator basis (open and click also require delivered_at not null per spec); bounce and unsubscribe rates use sent_at-not-null as denominator.
+REPORT: Email/campaign engagement baseline by channel
+QUESTION: How much campaign messaging goes out, and is anyone opening or clicking — is this a strength or a weak spot across the platform?
+channel | messages_sent | delivered_rate_pct | open_rate_pct | click_rate_pct | bounce_rate_pct | unsubscribe_rate_pct
+--------+---------------+--------------------+---------------+----------------+-----------------+---------------------
+email   |        106141 |               99.5 |          29.9 |            2.4 |             0.3 |                  0.2
+(1 rows)
+
+=== Report 3: Do loyalty program members behave differently from other shoppers? (written by Felix) ===
+Engineer's note: Grand_total converted to EUR via exchange_rates(base_code='EUR', quote_code=order currency, as_of=order date); EUR-denominated orders are treated as rate 1 when no explicit EUR/EUR row exists. If a non-EUR order's date is missing a rate row, that order is excluded from the EUR average/sum (but still counted in users_count/orders_count_2025).
+REPORT: Do loyalty program members behave differently from other shoppers?
+QUESTION: Among shoppers who actually place orders, do loyalty-program members order more often or spend more per order than non-members?
+segment        | users_count | orders_count_2025 | avg_orders_per_user | avg_order_value_eur | total_revenue_eur
+---------------+-------------+-------------------+---------------------+---------------------+------------------
+loyalty member |         862 |              2232 |                2.59 |                 191 |            427047
+non-member     |        5297 |             19961 |                3.77 |                 281 |           5618101
+(2 rows)

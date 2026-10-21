@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Payments With No Ledger Entries, by Merchant, 2025",
+    "--question",
+    "Is the 'payment with zero ledger entries' gap concentrated in a few merchants, or spread thinly across many?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Ines\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one tenant (merchant), for 2025\", \"columns_requested\": [\"merchant_name\", \"total_payments_2025\", \"payments_without_ledger_entries\", \"pct_without_ledger_entries\", \"amount_at_risk_eur (sum of payment_amount for payments with no ledger entries, converted to EUR)\"], \"details\": \"Source: payments with status in a captured/refunded/partially_refunded state and captured_at in 2025, LEFT JOIN to a per-payment count of ledger_entries via payment_id. Convert payment amounts to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=date(captured_at)). Group by tenant_id/merchant_name. Only include tenants with at least 1 payment that has zero linked ledger_entries. Order by amount_at_risk_eur descending, tie-break merchant_name ascending; print up to 30 rows and note in the report how many tenants in total had at least one such gap.\", \"builds_on\": [\"Audit Sample: End-to-End Transaction Walkthrough, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

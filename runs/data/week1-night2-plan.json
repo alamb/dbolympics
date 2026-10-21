@@ -1,0 +1,60 @@
+{
+ "notes": "Night 1 surfaced three things worth running down before I widen scope further: (1) orders_booked_revenue is consistently 15-40% above captured payments, and critically this gap does NOT shrink for old cohorts (e.g. 2023-04 orders are 2.5 years old and still show a 39% gap, 2025-01 orders are a year old and still show 15.5%) — that rules out simple timing lag and points to a structural cause (orders that never convert to a captured payment, e.g. abandoned/declined/cancelled), which matters a lot for \"revenue\" certification if orders.grand_total is ever quoted as revenue. I want to confirm this is explained by order status rather than something stranger. (2) invoice_paid_revenue is much smaller than order revenue and I'm not yet sure whether it's incremental (subscription billing on top of orders) or overlapping (already counted inside order revenue) — that changes whether we're under- or double-counting. (3) Report 3's net_check_diff_eur (net vs gross-fee) is large and growing, but shrinks a lot once refunds are subtracted too, suggesting the true formula is net ≈ gross - fee - refunds and refunds aren't double-counted — but I matched refunds by calendar month only, which is a loose proxy and leaves real noise (-6k to +21k swings). I want the structural, payment-linked version of that reconciliation via payout_items to see if the noise disappears, which would let us certify the payout formula with confidence rather than a caveat.",
+ "requests": [
+  {
+   "title": "Order-to-payment gap by order status, aged cohort",
+   "question": "Is the 20-40% gap between order value and captured payments explained by order status (i.e. structural - many orders simply never get paid), or does it look like something else, once we only look at orders old enough that timing lag can't be the excuse?",
+   "grain": "order status",
+   "columns": [
+    "order_status",
+    "order_count",
+    "pct_of_orders",
+    "orders_grand_total_eur",
+    "orders_with_captured_payment_count",
+    "matched_captured_payment_eur",
+    "gap_eur",
+    "gap_pct"
+   ],
+   "details": "Population: orders with placed_at between 2023-01-01 and 2025-06-30 inclusive (at least 6 months old as of the 2025-12-31 data cutoff, so any legitimate capture lag has had time to resolve). Group by orders.status (pending, confirmed, paid, partially_fulfilled, fulfilled, cancelled, refunded). order_count = count of orders in that status. pct_of_orders = order_count / total orders in the population, as a percentage rounded to 1 decimal. orders_grand_total_eur = sum of grand_total converted to EUR (via exchange_rates, base_code='EUR', rate matched to placed_at date and orders.currency_code). orders_with_captured_payment_count = count of those orders with at least one linked payments row (payments.order_id = orders.id) with status='captured'. matched_captured_payment_eur = sum of those linked captured payments.amount, converted to EUR using payments.currency_code and captured_at date. gap_eur = orders_grand_total_eur minus matched_captured_payment_eur. gap_pct = gap_eur / orders_grand_total_eur * 100, rounded to 1 decimal. Tables: orders, payments, exchange_rates. Order by orders_grand_total_eur descending.",
+   "builds_on": [
+    "Orders traced into captured payments"
+   ]
+  },
+  {
+   "title": "Invoice revenue: order-linked vs subscription-only",
+   "question": "Is invoice revenue additional revenue on top of what we already count in orders, or does some of it double-count order revenue we've already booked?",
+   "grain": "calendar month, 2023-01 through 2025-12, based on invoice paid_at month",
+   "columns": [
+    "month",
+    "invoice_paid_total_eur",
+    "invoice_order_linked_eur",
+    "invoice_subscription_only_eur",
+    "invoice_other_eur",
+    "pct_order_linked"
+   ],
+   "details": "Population: invoices with status='paid', grouped by month of paid_at. invoice_paid_total_eur = sum of invoices.total, converted to EUR via exchange_rates (base_code='EUR', rate matched to paid_at date and invoices.currency_code). invoice_order_linked_eur = sum of invoices.total where invoices.order_id is not null (these invoices are tied directly to an order and may already be reflected in orders.grand_total). invoice_subscription_only_eur = sum of invoices.total where invoices.order_id is null and invoices.subscription_id is not null (recurring billing with no linked order - likely incremental revenue not in the orders table at all). invoice_other_eur = sum of invoices.total where both order_id and subscription_id are null. pct_order_linked = invoice_order_linked_eur / invoice_paid_total_eur * 100, rounded to 1 decimal. Tables: invoices, exchange_rates. Order by month ascending.",
+   "builds_on": [
+    "Monthly revenue by source"
+   ]
+  },
+  {
+   "title": "Payout net formula check via payment-linked refunds",
+   "question": "Once refunds are matched to the actual payments inside each payout (not just by calendar month), does net = gross - fee - refunds hold cleanly, confirming refunds are reflected once and only once in what we pay merchants?",
+   "grain": "calendar month, 2023-01 through 2025-12, based on payout paid_at month",
+   "columns": [
+    "month",
+    "payout_gross_eur",
+    "payout_fee_eur",
+    "payout_net_eur",
+    "linked_refunds_eur",
+    "implied_net_eur",
+    "diff_eur",
+    "diff_pct"
+   ],
+   "details": "For each payout, identify its settled payments via payout_items (payout_items.payout_id = payouts.id, payout_items.payment_id = payments.id). linked_refunds_eur for a month = sum of payment_refunds.amount (status='succeeded') where payment_refunds.payment_id is one of the payments settled in a payout whose paid_at falls in that month, converted to EUR via exchange_rates using payment_refunds.currency_code and processed_at date (refunds counted regardless of when they were processed, i.e. a refund processed any time against a payment that ended up in this month's payout). payout_gross_eur/payout_fee_eur/payout_net_eur = sum of payouts.gross_amount/fee_amount/net_amount for payouts with paid_at in that month, converted to EUR via payouts.currency_code and paid_at date. implied_net_eur = payout_gross_eur - payout_fee_eur - linked_refunds_eur. diff_eur = payout_net_eur - implied_net_eur. diff_pct = diff_eur / payout_net_eur * 100, rounded to 1 decimal. Tables: payouts, payout_items, payments, payment_refunds, exchange_rates. Order by month ascending.",
+   "builds_on": [
+    "Payout reconciliation to gross, fees and refunds"
+   ]
+  }
+ ]
+}

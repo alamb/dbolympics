@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "CSAT score by ticket resolution-time bucket",
+    "--question",
+    "Does a slower ticket resolution actually translate into a lower satisfaction score?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per resolution-time bucket, platform-wide, across all tickets 2023-2025 that have both a resolution and a CSAT response\", \"columns_requested\": [\"resolution time bucket\", \"tickets (count)\", \"avg CSAT score (1-5)\", \"% satisfied (score >= 4)\", \"% dissatisfied (score <= 2)\"], \"details\": \"Source: tickets joined to csat_responses on tickets.id = csat_responses.ticket_id. Only include tickets with resolved_at not null and a matching csat_responses row. resolution_hours = extract(epoch from resolved_at - created_at)/3600. Bucket into: '<4h', '4-24h', '1-3 days' (24-72h), '3-7 days' (72-168h), '>7 days' (168h+). Window: tickets.created_at 2023-01-01 through 2025-12-31 (full history, to get a reliable sample size per bucket). avg score over csat_responses.score for tickets in that bucket, rounded to 2 decimals. '% satisfied'/'% dissatisfied' as in the other CSAT reports, rounded to 1 decimal. Order by the bucket's natural time order (use a numeric sort key for the lower bound of each bucket, e.g. 0, 4, 24, 72, 168), not alphabetically. Expect exactly 5 rows.\", \"builds_on\": [\"Shopper satisfaction (CSAT) trend, monthly\", \"Support response & resolution time trend, monthly\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

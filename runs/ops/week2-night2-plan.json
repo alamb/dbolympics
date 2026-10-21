@@ -1,0 +1,60 @@
+{
+ "notes": "Night 1 resolved priority #1 cleanly, and the answer is more nuanced than \"weak carrier = weak carrier\": (a) Albion Parcel's collapse is NOT localized -- it hit both countries it serves (UK and Ireland) and literally every origin warehouse/merchant it ships for, uniformly, the moment November started (pct-within-3-days fell from ~70-93% to ~0-40% everywhere at once, transit days jumping from ~2-2.5 to 8-17 days across the board). That rules out \"one bad depot\" or \"one bad merchant\" and points to a systemic capacity failure at Albion itself -- useful to know before the carrier conversation, but it's a harder story (a carrier that broke under load everywhere), not an easy single-fix. (b) Landfall Freight is uniformly bad across all 18 countries it serves (14-38% within 3 days everywhere, no bright spots) -- genuinely a \"this carrier can't be trusted\" case. (c) Lowlands Express is the interesting exception: it's actually solid on its home turf (Netherlands 79.9%, Belgium 69.3%, France 63.0% within 3 days -- 64.5% of its volume) but poor everywhere else (15-36% within 3 days on the remaining 35.5%). That's a lane-reassignment fix, not a carrier breakup. Tonight I'm covering priority #2 (the reliability ceiling, using a clean full-year carrier table so I can compute the weighted improvement by hand) and starting on #3 (a non-censored PO view, restricting to purchase orders old enough to have fully played out) and #4 (whether the apparel/footwear picking discrepancies Fatima's team flagged show up in delivery shortfalls, not just inventory accounting).",
+ "requests": [
+  {
+   "title": "Carrier performance, full year 2025 (complete)",
+   "question": "What is each carrier's full-year transit reliability and volume share, so I can estimate how much overall unreliability would disappear if the weak carriers matched the good ones?",
+   "grain": "one row per carrier, full year 2025",
+   "columns": [
+    "carrier",
+    "shipments_shipped (shipped_at in 2025)",
+    "shipments_delivered",
+    "avg_transit_days",
+    "median_transit_days",
+    "pct_within_3_days",
+    "share_of_total_shipments_pct (this carrier's shipments / all carriers' shipments in 2025, x100)"
+   ],
+   "details": "Table: shipments. Scope: shipped_at between 2025-01-01 and 2025-12-31, all carriers, grouped by carrier (no row cap needed -- return every carrier, expect ~14 rows). transit_days = DATEDIFF(day, shipped_at, delivered_at), delivered subset only. Round day metrics to 2 decimals, pct columns to 1 decimal. Order by shipments_shipped descending, tie-break by carrier ascending.",
+   "builds_on": [
+    "Carrier transit performance, Q4 2025 (complete)",
+    "Carrier transit performance by quarter, 2025"
+   ]
+  },
+  {
+   "title": "Purchase order replenishment performance by quarter, 2025 (mature POs only, non-censored)",
+   "question": "Once we only look at purchase orders old enough to have fully played out, are we genuinely behind on restocking, or was the Q4 backlog just a year-end timing artifact?",
+   "grain": "one row per calendar quarter of ordered_at, 2025",
+   "columns": [
+    "quarter (e.g. 2025-Q1)",
+    "pos_ordered_total (all POs with ordered_at in that quarter, for reference)",
+    "pos_matured (subset of pos_ordered_total with ordered_at <= 2025-11-01, i.e. at least 60 days elapsed before the 2025-12-31 cutoff)",
+    "pos_matured_received (matured subset with received_at not null)",
+    "pct_matured_still_open (matured subset with received_at null and status in ('submitted','partially_received') -- a true backlog signal, not a recency artifact)",
+    "avg_actual_lead_days (DATEDIFF(day, ordered_at, received_at), matured+received subset only)",
+    "pct_received_late (matured subset with both expected_at and received_at set, where received_at > expected_at)",
+    "avg_days_late (matured, late subset only)"
+   ],
+   "details": "Table: purchase_orders. Scope: ordered_at between 2025-01-01 and 2025-12-31, grouped by calendar quarter of ordered_at. The 60-day maturity threshold (ordered_at <= 2025-11-01) is chosen because the longest contracted supplier lead time we've seen is ~43 days, so 60 days gives real buffer for a PO to have resolved one way or the other by the data cutoff; note in the report that Q4's matured subset will only reflect POs ordered in October (since November/December POs aren't yet mature), which is expected and intentional. Round day metrics to 1 decimal, pct columns to 1 decimal. Order by quarter ascending. Expect 4 rows.",
+   "builds_on": [
+    "Purchase order replenishment performance by quarter, 2025"
+   ]
+  },
+  {
+   "title": "Fulfillment shortfall and delivery speed by merchant vertical, 2025",
+   "question": "Do apparel/footwear merchants, where picking discrepancies are concentrated, actually see more orders go unfulfilled or delivered slowly -- or is that purely an inventory/accounting issue with no customer-facing effect?",
+   "grain": "one row per merchant industry/vertical (tenants.industry), 2025",
+   "columns": [
+    "industry",
+    "orders_placed_2025 (orders with placed_at in 2025 and a terminal status: fulfilled, cancelled, or refunded)",
+    "pct_orders_with_fulfillment_shortfall (share of those orders where SUM(order_items.quantity_fulfilled) < SUM(order_items.quantity) for the order)",
+    "orders_fully_delivered (subset of those orders where status='fulfilled' and every linked shipment, via fulfillments, has a non-null delivered_at)",
+    "avg_delivery_days (placed_at to max linked shipment delivered_at, fully-delivered subset only)",
+    "pct_within_5_days (fully-delivered subset only)"
+   ],
+   "details": "Tables: orders, order_items, fulfillments, shipments, tenants (industry). Scope: orders.placed_at between 2025-01-01 and 2025-12-31, status in ('fulfilled','cancelled','refunded') for the shortfall calculation (terminal orders only, so the shortfall flag is a final-state fact, not an in-progress one). Group by tenants.industry. Round pct columns to 1 decimal, avg_delivery_days to 2 decimals. Order by pct_orders_with_fulfillment_shortfall descending, tie-break by industry ascending. Expect under 12 rows (one per distinct industry value).",
+   "builds_on": [
+    "Fulfillment performance by warehouse, 2025"
+   ]
+  }
+ ]
+}

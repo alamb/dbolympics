@@ -1,0 +1,40 @@
+{
+ "notes": "Night 3 results round out the picture nicely:\n\nReport 1 (pre-2023 anomaly): change_history (2 outlier rows out of ~31,099) and compliance_events (1 outlier row out of 9) are clearly negligible noise. data_subject_requests is different: 12 of 60 total rows (20%) predate 2023-01-01 (1 in 2020, 4 in 2021, 7 in 2022) — not negligible. Reassuringly, the 2023-2025 rows sum to exactly 48 (10+23+15), matching the \"~48 requests since 2023\" figure I've already reported, so that number is internally consistent and unaffected — but I want to quickly check whether any of those 12 pre-2023 rows represent unresolved/backlog risk before I close this out, since they're sitting entirely outside the window I've been reporting on.\n\nReports 2 and 3 (Feb 2025 pattern + quarterly history) make the spike's character much clearer: 17/11/8 distinct user agents at the three merchants respectively with no single user agent dominating (~25-27% share) — not bot-like; and the quarterly history shows every other quarter at all three merchants sits at a stable 4.8-7.3% fail rate, with Q1 2025 alone spiking to 61-68% — a clean, isolated one-quarter event, not a recurring problem. One more thing worth nailing down before I write the memo: at each merchant individually, ~74-75% of failures cluster in just 3 days — I want to check whether it's the *same* 3 days across all three merchants, which would point to one shared platform-level cause rather than three coincidentally-timed separate issues, and whether access_denied logging was silent specifically on those days (not just the month overall).\n\nThis is the last night, so I'm keeping it tight: (1) a quick status check on the 12 pre-2023 DSAR rows, to close out any residual backlog question; (2) a day-by-day breakdown for February 2025 across the three merchants (failed logins per merchant plus access_denied events) to test the shared-cause hypothesis precisely. I'm leaving the third slot unused — I have what I need to write a confident memo and don't have a well-justified third question tonight.",
+ "requests": [
+  {
+   "title": "Pre-2023 data subject requests: status and completion check",
+   "question": "Do the 12 data_subject_requests rows with received_at before 2023-01-01 represent any hidden backlog or unresolved risk, outside the window we've otherwise been reporting on?",
+   "grain": "one row per status value, restricted to data_subject_requests rows with received_at < 2023-01-01",
+   "columns": [
+    "status",
+    "count",
+    "count_with_completed_at",
+    "min_received_at",
+    "max_received_at"
+   ],
+   "details": "Source: data_subject_requests, filtered to received_at < 2023-01-01 (expect 12 rows total across statuses). Purpose: these rows predate the system's stated 2023-01-01 history start and are likely migration/seed artifacts, but before treating them as pure noise I want to confirm none of them show an open/unresolved status that would be backlog we haven't accounted for. Order by status.",
+   "builds_on": [
+    "Row counts by year for tables with pre-2023 timestamps"
+   ]
+  },
+  {
+   "title": "Daily failed-login and access-denied alignment for the 3 merchants in February 2025",
+   "question": "Did the February 2025 failure spike hit the same calendar days across all three affected merchants (pointing to one shared platform cause), and was access-denied logging silent specifically on those spike days?",
+   "grain": "one row per calendar day in February 2025 (28 rows)",
+   "columns": [
+    "date",
+    "cragsley_failed_logins",
+    "marrowby_vane_failed_logins",
+    "studio_vrij_failed_logins",
+    "total_failed_logins_3_merchants",
+    "access_denied_events_3_merchants (audit_log UNION audit_log_archive, action='access_denied', tenant_id in these 3 tenants, occurred_at on this date)"
+   ],
+   "details": "Source: login_attempts (succeeded=false, Feb 2025, split by tenant into the three named columns) and audit_log/audit_log_archive (action='access_denied', same 3 tenant_ids, same days). Purpose: last night's report showed each merchant independently has ~74-75% of its failures in its own top-3 days; this checks whether those days coincide across merchants (shared root cause) and whether access_denied events ticked up at all on those specific days or stayed flat (confirming the detection gap at daily, not just monthly, granularity). Order by date ascending.",
+   "builds_on": [
+    "February 2025 failed login concentration by merchant",
+    "February 2025 failed-login pattern diagnostics for the 3 affected merchants",
+    "Audit log volume and actor identification by month"
+   ]
+  }
+ ]
+}

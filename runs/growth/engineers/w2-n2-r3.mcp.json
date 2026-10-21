@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Referral reach and value by vertical",
+    "--question",
+    "Which verticals already have the most referral-driven customers relative to their size, and does the referrer revenue advantage seen platform-wide hold within each vertical too?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per industry and segment ('referrer' vs 'non-referrer')\", \"columns_requested\": [\"industry - tenants.industry\", \"segment - 'referrer' (user_id appears in referrals.referrer_user_id) or 'non-referrer'\", \"users_count - distinct users in that segment who placed >=1 order with placed_at in 2025 in this industry\", \"share_of_industry_users_pct - users_count / total active 2025 shoppers in that industry * 100, rounded in 2 decimals\", \"avg_orders_per_user - average count of 2025 orders per user in that segment, rounded to 2 decimals\", \"avg_order_value_eur - average grand_total (EUR) of that segment's 2025 orders in this industry, rounded to 0 decimals\"], \"details\": \"Source: orders joined to tenants (industry) and referrals (referrer match on user_id+tenant_id = referrer_user_id). Filter placed_at in 2025, all tenants (no restriction to loyalty-only tenants here, since referrals is a separate feature). Convert grand_total to EUR using exchange_rates as of placed_at date (EUR=rate 1). Order by industry ascending, then segment ascending ('non-referrer' then 'referrer', or vice versa \\u2014 pick one consistent order and state it: 'referrer' before 'non-referrer'). Expect roughly 9-10 industries x 2 rows.\", \"builds_on\": [\"Do referred or referring shoppers spend differently than everyone else?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Background Job Reliability by Month",
+    "--question",
+    "How did background job failure rates and run durations trend across 2025?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Omar\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per calendar month of 2025\", \"columns_requested\": [\"month\", \"total_job_runs\", \"failed_runs\", \"failure_rate_pct\", \"cancelled_runs\", \"cancelled_rate_pct\", \"avg_duration_seconds\", \"p95_duration_seconds\"], \"details\": \"Table job_runs. Filter queued_at in 2025. Group by month of queued_at. failure_rate_pct = failed_runs/total_job_runs*100 rounded 2dp. Duration = finished_at-started_at in seconds where both set, avg rounded 1dp, p95 via percentile_cont(0.95) rounded to whole seconds. Platform-wide, all tenants combined. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

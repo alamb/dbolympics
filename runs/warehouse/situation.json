@@ -1,0 +1,9 @@
+{
+ "id": "inventory-accuracy",
+ "lead": "warehouse",
+ "with": [
+  "cfo"
+ ],
+ "text": "Auditors and merchants question inventory accuracy. How often do counts, adjustments and reservations disagree with recorded stock, where, and why?",
+ "week": 1
+}

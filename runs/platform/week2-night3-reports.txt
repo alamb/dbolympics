@@ -1,0 +1,54 @@
+=== Report 1: Checkout/Storefront Outage Timeline, Nov 28 2025 (written by Ines) ===
+Engineer's note: system_health_checks has no tenant filter requested, so this aggregates health checks across all tenants for the checkout/storefront components in the given window, as specified.
+REPORT: Checkout/Storefront Outage Timeline, Nov 28 2025
+QUESTION: Exactly when did the checkout/storefront outage start and end on Nov 28 2025?
+interval_start      | component  | total_checks | unhealthy_checks | unhealthy_rate_pct | avg_latency_ms
+--------------------+------------+--------------+------------------+--------------------+---------------
+2025-11-28 14:00:00 | checkout   |          111 |              111 |              100.0 |        10000.0
+2025-11-28 14:00:00 | storefront |          111 |              111 |              100.0 |        10000.0
+2025-11-28 16:00:00 | checkout   |          111 |                3 |                2.7 |          451.0
+2025-11-28 16:00:00 | storefront |          111 |                0 |                0.0 |          101.0
+(4 rows)
+
+=== Report 2: Order Volume by Hour on Black Friday 2025 (Nov 28) (written by Felix) ===
+Engineer's note: Converted each order's grand_total to EUR by dividing by the EUR→order-currency exchange_rates.rate on 2025-11-28 (since rate is quoted as currency units per 1 EUR), then summed and rounded per hour. Hours with zero orders (if any) will not appear as rows since this is a GROUP BY over actual order placements.
+REPORT: Order Volume by Hour on Black Friday 2025 (Nov 28)
+QUESTION: Did order placement actually drop during the checkout outage window on Nov 28 2025, compared to the rest of that same (peak traffic) day?
+hour | total_orders_placed | distinct_tenants_with_orders | total_revenue_eur
+-----+---------------------+------------------------------+------------------
+   0 |                   3 |                            1 |             542.0
+   1 |                   3 |                            2 |            1076.0
+   2 |                   1 |                            1 |             141.0
+   3 |                   2 |                            1 |             514.0
+   4 |                   4 |                            4 |             406.0
+   5 |                   1 |                            1 |               0.0
+   6 |                   1 |                            1 |             143.0
+   7 |                   2 |                            2 |             189.0
+   8 |                   7 |                            5 |             952.0
+   9 |                   6 |                            5 |            1153.0
+  10 |                   2 |                            2 |             177.0
+  11 |                   5 |                            4 |            3119.0
+  12 |                  11 |                            7 |            1467.0
+  13 |                  10 |                            5 |             994.0
+  14 |                   1 |                            1 |             103.0
+  16 |                  10 |                            7 |            1657.0
+  17 |                   7 |                            6 |             935.0
+  18 |                   3 |                            3 |             281.0
+  19 |                  11 |                            8 |            1400.0
+  20 |                  11 |                            7 |            1545.0
+  21 |                  11 |                            5 |            1383.0
+  22 |                  11 |                            4 |            3144.0
+  23 |                   5 |                            4 |             988.0
+(23 rows)
+
+=== Report 3: Black Friday 2025 Sales vs Surrounding Fridays and Black Friday 2024 (written by Ines) ===
+Engineer's note: Revenue is sum of grand_total across all orders placed that UTC day, converted to EUR via exchange_rates (orders already in EUR use rate=1 since exchange_rates may not carry an EUR/EUR row). No order-status filter was applied since the request said "total orders/sales" without specifying a status; all orders placed that day are counted, including cancelled ones if any.
+REPORT: Black Friday 2025 Sales vs Surrounding Fridays and Black Friday 2024
+QUESTION: Despite the checkout outage, how did total Black Friday 2025 sales compare to the Fridays immediately before/after it and to Black Friday 2024 - was the day's performance meaningfully dented?
+date       | label             | total_orders | total_revenue_eur
+-----------+-------------------+--------------+------------------
+2024-11-29 | Black Friday 2024 |          227 |           54186.0
+2025-11-21 | Prior Friday      |           82 |           22302.0
+2025-11-28 | Black Friday 2025 |          201 |           40166.0
+2025-12-05 | Following Friday  |          119 |           15088.0
+(4 rows)

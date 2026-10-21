@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale Opportunities: Won vs Lost Characteristics",
+    "--question",
+    "Among closed B2B wholesale opportunities, what reliably differs between the ones we won and the ones we lost — deal size, touches/activities before close, days open, or how concentrated they are among accounts and reps?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Ines\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per closed outcome (won or lost)\", \"columns_requested\": [\"outcome (won / lost)\", \"opportunities (count)\", \"average amount in EUR\", \"median amount in EUR\", \"average activities per opportunity before close\", \"average days open (closed_at - created_at)\", \"distinct accounts involved\", \"distinct owning reps (owner_user_id) involved\"], \"details\": \"Scope to the same B2B wholesale tenants as the other two reports (industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'). Use opportunities where is_closed = true, split into is_won = true (won) vs is_won = false (lost), across all history through 2025-12-31. Convert opportunity amount to EUR using exchange_rates (base_code='EUR', quote_code = opportunity currency_code, rate as_of the opportunity's closed_at date, or nearest prior business day if a weekend) before averaging across tenants/currencies, per house standards. 'Activities before close' = count of rows in activities where activities.opportunity_id = opportunities.id and activities.occurred_at <= opportunities.closed_at, averaged per opportunity within each outcome group. Distinct accounts/reps are counts of distinct account_id / owner_user_id among opportunities in that outcome group. Order rows with 'won' first, then 'lost'.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Refund Figures Cross-Check: Payments vs Order Returns, 2025",
+    "--question",
+    "Do the payments-table refund amounts we've been reporting agree with the independent order_returns (RMA) records, or is one source overstating/understating refunds?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one calendar quarter, 2025\", \"columns_requested\": [\"quarter\", \"amount_refunded_eur_from_payments\", \"refund_total_eur_from_order_returns\", \"difference_eur\", \"difference_pct_of_payments_figure\"], \"details\": \"Compute two independent quarterly totals for 2025, both converted to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=date of the relevant event, dividing by the matched rate): (1) sum of payments.amount_refunded for payments with captured_at in that quarter (same definition used in this week's other refund reports); (2) sum of order_returns.refund_total for returns with status='refunded' and refunded_at in that quarter. Report both totals side by side per quarter along with the absolute and percentage difference between them. Order chronologically 2025-Q1 to 2025-Q4 (4 rows).\", \"builds_on\": [\"Company-Wide Refund Rate Trend by Quarter, 2024-2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

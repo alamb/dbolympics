@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Where orders stall after checkout, Q4 2025 — retail merchants only (corrected)",
+    "--question",
+    "For the real one-off retail merchants (excluding subscription-box sellers), is the drop-off between order creation and payment a single cliff or a slow bleed, and at which status does it happen?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Omar\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per order status\", \"columns_requested\": [\"status\", \"orders reaching this status (count)\", \"pct of total orders in window\", \"median hours from order creation to reaching this status\"], \"details\": \"This repeats the night-2 'status-transition funnel' request but with the explicit tenant list I should have given the first time (the earlier run substituted a top-order-count proxy that was dominated by automated subscription merchants and isn't usable). Restrict to tenant_id for exactly: Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik (look up by name in tenants). Base population: orders with created_at in 2025-10-01 to 2025-12-31 for these tenants only. total_orders = count of distinct such orders. For each status in (pending, confirmed, paid, partially_fulfilled, fulfilled, cancelled, refunded): orders_reaching_status = count of distinct orders with at least one order_status_history row where to_status = that status; pct_of_total_orders = that count / total_orders * 100, rounded 1 decimal; median_hours_from_order_creation = median of (first order_status_history.created_at with that to_status) minus orders.created_at, in hours, rounded 1 decimal (NULL if no order ever reached it). Include all 7 statuses even if zero. Order rows by pct_of_total_orders descending, tie-break by status name.\", \"builds_on\": [\"Where orders stall after checkout: status-transition funnel, Q4 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

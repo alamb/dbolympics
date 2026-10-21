@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Role grant and revocation activity over time",
+    "--question",
+    "Is staff access actively granted and revoked over time (evidence of ongoing access management), and can we attribute those changes to an identifiable actor?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Grace\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per calendar month (occurred_at), combining audit_log and audit_log_archive, filtered to entity_table = 'user_roles', from 2023-01 through 2025-12\", \"columns_requested\": [\"month (YYYY-MM)\", \"role_grants_created (count where action = 'create')\", \"role_grants_removed (count where action = 'delete')\", \"net_change (created minus removed)\", \"distinct_actor_user_id (count of distinct non-null actor_user_id performing these changes in the month)\", \"pct_actor_user_id_null (share of these change rows where actor_user_id is null)\"], \"details\": \"Sources: audit_log UNION audit_log_archive (same shape; last night's report showed 2023 activity lives only in the archive table, so both must be combined to avoid a false gap), filtered to entity_table = 'user_roles'. This checks whether role access is a living, actively-managed process (grants and removals happening continuously, ideally net_change roughly stable / removals present) versus a static set that was configured once and never touched \\u2014 and whether changes tie back to a real actor rather than an anonymous/system process. Order by month ascending.\", \"builds_on\": [\"Audit log volume and actor identification by month\", \"Staff access currency by account status\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

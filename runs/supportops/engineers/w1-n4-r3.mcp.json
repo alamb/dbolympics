@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "CSAT score by resolution speed bucket",
+    "--question",
+    "Does customer satisfaction after a resolved ticket track with how fast it was resolved and whether it breached SLA, or does something else seem to drive it?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Felix\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per resolution-time bucket, for tickets created in 2025 that have both a resolved_at timestamp and a csat_responses score\", \"columns_requested\": [\"resolution_time_bucket (Under 4h, 4-24h, 1-3 days, 3-7 days, Over 7 days, based on resolved_at - created_at)\", \"ticket_count\", \"avg_csat_score\", \"pct_resolution_sla_breached (share of tickets in the bucket with a sla_breaches row of breach_kind = 'resolution')\", \"avg_resolution_minutes (actual average within the bucket, as a sanity check on the bucket boundaries)\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31, resolved_at not null, joined to csat_responses on ticket_id (one response per ticket per the unique constraint). Source tables: tickets, csat_responses, sla_breaches. Order rows from fastest to slowest bucket (Under 4h first, Over 7 days last). Round avg_csat_score to 2 decimals, pct to 1 decimal percent, minutes to whole numbers.\", \"builds_on\": [\"SLA breach_kind code audit and validation\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

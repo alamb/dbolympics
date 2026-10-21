@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Consent purpose audit: full history and the analytics_cookies anomaly",
+    "--question",
+    "Across the full history, how many consent purposes do we actually track, and is the analytics_cookies 'always 100% opted in, zero withdrawals' pattern unique or does it appear elsewhere?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Felix\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per distinct consent_records.purpose value, full history, no date filter\", \"columns_requested\": [\"purpose\", \"total records\", \"distinct users\", \"granted count\", \"withdrawn count\", \"expired count\", \"pct of distinct users with at least one withdrawn or expired record ever\", \"earliest occurred_at\", \"latest occurred_at\"], \"details\": \"Source: consent_records, platform-wide, full history (not restricted to 2023-2025, in case any purpose has pre-2023 rows similar to what we just found in data_subject_requests). Group by purpose. This confirms whether there are really only 2 purposes in the system (as the row counts implied last week) and gives a definitive, auditable answer on whether 'never withdrawn' is isolated to analytics_cookies or a broader pattern that would undermine describing our consent capture as reliable to a regulator. Order by total records descending.\", \"builds_on\": [\"Consent trend by purpose and month: grants, withdrawals, and net opt-in rate\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

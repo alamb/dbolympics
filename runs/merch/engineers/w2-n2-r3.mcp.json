@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchants Using Bundles: Raw Profile",
+    "--question",
+    "Among the handful of merchants that actually use product bundles, is there anything descriptively distinctive about them compared to the typical merchant?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per merchant (tenant) that has at least one active product_bundle (is_active = true)\", \"columns_requested\": [\"merchant_name\", \"industry\", \"active_bundle_count\", \"pct_active_products_in_a_bundle\", \"active_product_count\", \"avg_variants_per_product\", \"revenue_eur_last_12mo\", \"avg_order_value_eur_last_12mo\"], \"details\": \"Filter to tenants with at least one product_bundles row where is_active = true. active_bundle_count, pct_active_products_in_a_bundle, active_product_count, avg_variants_per_product, revenue_eur_last_12mo and avg_order_value_eur_last_12mo all use the same definitions as the earlier Collections and Bundles Adoption by Merchant and Merchant Catalog Profile reports (orders placed 2025-01-01 to 2025-12-31, status not cancelled, EUR conversion via exchange_rates as of placed_at date), so figures are directly comparable. No row cap expected to matter (likely well under 50 merchants) but apply the standard 50-row cap and note total rows returned. Order by pct_active_products_in_a_bundle descending, tie-break by revenue_eur_last_12mo descending.\", \"builds_on\": [\"Collections and Bundles Adoption by Merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

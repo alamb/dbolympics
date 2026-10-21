@@ -1,0 +1,26 @@
+# CedarDB, from its image, in a container next to the system's own.
+name = "cedardb"
+# the version, kept with the results (by hand)
+version = "v2026-10-08"
+# disabled from this scale factor on, and why (shown on the website)
+scale_limit = 1000
+scale_limit_message = "Exceeds CedarDB's license limit at SF1000."
+arrays = "text"
+
+
+[load]
+statement = "COPY {table} FROM '{file}' (FORMAT parquet)"
+
+[dialect.functions]
+# to_char takes a timestamp, not a date
+"year_month(x)" = "to_char(CAST({x} AS timestamp), 'YYYY-MM')"
+# no DISTINCT in window aggregates: the distinct non-NULL values from two dense ranks
+"count_distinct_over(x, window)" = "(DENSE_RANK() OVER ({window} ORDER BY {x} ASC NULLS FIRST) + DENSE_RANK() OVER ({window} ORDER BY {x} DESC NULLS LAST) - 1 - MAX(CASE WHEN {x} IS NULL THEN 1 ELSE 0 END) OVER ({window}))"
+
+[[container]]
+name = "db"
+image = "docker.io/cedardb/cedardb:v2026-10-08"
+# CedarDB takes its settings from the environment. By default it uses 45% of the machine's
+# memory for its buffers and 45% for queries; here the same shares of the configured memory.
+env = { CEDAR_PASSWORD = "Dbolympics-Bench-2026!", PARALLEL = "{threads}", BUFFERSIZE = "{memory_mb%45}M", WORKMEMSIZE = "{memory_mb%45}M" }
+ulimits = ["nofile=524288:524288"]

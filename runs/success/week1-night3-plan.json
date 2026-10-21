@@ -1,0 +1,23 @@
+{
+ "notes": "Debugging a submission issue - testing with one real report.",
+ "requests": [
+  {
+   "title": "Merchant size and recent growth trend",
+   "question": "How big is each merchant's business on Tidewick, and is it growing, flat, or shrinking over the last quarter?",
+   "grain": "one row per merchant (tenant)",
+   "columns": [
+    "merchant name",
+    "industry",
+    "employee count",
+    "orders last 90 days",
+    "gross revenue EUR last 90 days",
+    "orders prior 90 days",
+    "gross revenue EUR prior 90 days",
+    "revenue growth pct",
+    "order growth pct"
+   ],
+   "details": "Tables: orders, tenants, exchange_rates. Last 90 days is placed_at from 2025-10-03 through 2025-12-31. Prior 90 days is placed_at from 2025-07-05 through 2025-10-02. Exclude cancelled orders. Order by last 90 day revenue descending, tie-break tenant_id ascending. Cap 50 rows.",
+   "builds_on": []
+  }
+ ]
+}

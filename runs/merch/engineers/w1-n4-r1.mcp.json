@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Poorly-Rated Product Concentration by Merchant",
+    "--question",
+    "Which merchants have the largest share of their reviewed catalog sitting at genuinely poor ratings, rather than a few isolated bad products?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per merchant (tenant), same top-50-by-revenue set used in the Merchant Catalog Profile report\", \"columns_requested\": [\"merchant_name\", \"industry\", \"products_with_5plus_reviews\", \"poor_rated_product_count\", \"pct_poor_rated_products\", \"revenue_eur_last_12mo\"], \"details\": \"Tables: products, tenants, product_reviews (is_approved = true). For each merchant, products_with_5plus_reviews = count of distinct products with at least 5 approved reviews (all-time). poor_rated_product_count = count of those products whose average approved-review rating is below 3.0. pct_poor_rated_products = poor_rated_product_count / products_with_5plus_reviews * 100, rounded to 1 decimal (blank if denominator is 0). revenue_eur_last_12mo reuses the same definition as the Merchant Catalog Profile report (orders placed 2025-01-01 to 2025-12-31, status not cancelled, EUR conversion via exchange_rates as of placed_at date) so it can be cross-referenced with that report. Order by poor_rated_product_count descending, tie-break by pct_poor_rated_products descending then merchant_name; print up to 50 rows and note the total returned.\", \"builds_on\": [\"Lowest-Rated Products Platform-Wide With Sufficient Review Volume\", \"Merchant Catalog Profile\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

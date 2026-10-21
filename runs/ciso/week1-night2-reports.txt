@@ -1,0 +1,93 @@
+=== Report 1: Platform-wide MFA adoption trend by month, staff vs. shoppers (written by Grace) ===
+Engineer's note: MFA presence is defined as any mfa_devices row with confirmed_at <= month end (one or more confirmed devices), regardless of whether the device was later removed, since mfa_devices has no deletion/status column; this matches the requested "confirmed MFA" definition.
+REPORT: Platform-wide MFA adoption trend by month, staff vs. shoppers
+QUESTION: What is the actual company-wide MFA adoption rate today for staff and for shoppers, and has it been improving or flat over the past year?
+month_label | staff_users | staff_users_with_mfa | staff_mfa_rate_pct | shopper_users | shopper_users_with_mfa | shopper_mfa_rate_pct
+------------+-------------+----------------------+--------------------+---------------+------------------------+---------------------
+2025-01     |         462 |                  251 |               54.3 |          7741 |                      0 |                  0.0
+2025-02     |         464 |                  263 |               56.7 |          7941 |                      0 |                  0.0
+2025-03     |         468 |                  266 |               56.8 |          8188 |                      0 |                  0.0
+2025-04     |         472 |                  268 |               56.8 |          8426 |                      0 |                  0.0
+2025-05     |         483 |                  273 |               56.5 |          8749 |                      0 |                  0.0
+2025-06     |         496 |                  278 |               56.0 |          8997 |                      0 |                  0.0
+2025-07     |         507 |                  282 |               55.6 |          9268 |                      0 |                  0.0
+2025-08     |         520 |                  285 |               54.8 |          9537 |                      0 |                  0.0
+2025-09     |         531 |                  291 |               54.8 |          9837 |                      0 |                  0.0
+2025-10     |         539 |                  295 |               54.7 |         10208 |                      0 |                  0.0
+2025-11     |         545 |                  299 |               54.9 |         10632 |                      0 |                  0.0
+2025-12     |         547 |                  300 |               54.8 |         11207 |                      0 |                  0.0
+(12 rows)
+
+=== Report 2: Login attempts by tenant during the week of 2025-11-24 spike (written by Felix) ===
+Engineer's note: Grain is one row per tenant with at least one login attempt in the 2025-11-24 to 2025-11-30 window; with ~120 tenants on the platform this should return well under the 50-row cap, but the exact row count will be visible on the printed report (dry runs can't confirm counts against real data).
+REPORT: Login attempts by tenant during the week of 2025-11-24 spike
+QUESTION: The week of 2025-11-24 showed a 41% jump in total login attempts platform-wide versus the prior week — is that jump broad-based across many merchants (consistent with Black Friday/Cyber Monday shopping traffic) or concentrated in one or a few tenants with elevated failure rates or IP concentration (consistent with a credential-stuffing attempt)?
+tenant_name                   | tenant_status | total_login_attempts | successful_logins | failed_logins | failure_rate_pct | distinct_emails_attempted | distinct_ip_addresses | max_attempts_single_ip | pct_of_platform_total
+------------------------------+---------------+----------------------+-------------------+---------------+------------------+---------------------------+-----------------------+------------------------+----------------------
+Cragsley Outfitters           | active        |                  425 |               390 |            35 |              8.2 |                       353 |                   343 |                     24 |                  17.6
+Marrowby & Vane               | active        |                  178 |               170 |             8 |              4.5 |                       154 |                   148 |                     11 |                   7.4
+Brennquell Kaffee             | active        |                  133 |               124 |             9 |              6.8 |                       110 |                   103 |                     14 |                   5.5
+Ampfeld Elektronik            | active        |                   99 |                91 |             8 |              8.1 |                        84 |                    78 |                      9 |                   4.1
+Petalcourt Beauty             | active        |                   89 |                79 |            10 |             11.2 |                        70 |                    67 |                     10 |                   3.7
+Studio Vrij                   | active        |                   76 |                74 |             2 |              2.6 |                        68 |                    63 |                      8 |                   3.1
+Fennel & Flint                | active        |                   72 |                66 |             6 |              8.3 |                        58 |                    52 |                     14 |                   3.0
+Cinder Peak Sports Co.        | active        |                   51 |                49 |             2 |              3.9 |                        44 |                    40 |                      6 |                   2.1
+Kibblewick                    | active        |                   47 |                44 |             3 |              6.4 |                        32 |                    27 |                     15 |                   1.9
+Gratlinie Outdoor             | active        |                   41 |                39 |             2 |              4.9 |                        32 |                    31 |                      7 |                   1.7
+Wiesgrund Wohnen              | active        |                   40 |                40 |             0 |              0.0 |                        37 |                    34 |                      5 |                   1.7
+Grind Collective              | past_due      |                   39 |                38 |             1 |              2.6 |                        35 |                    29 |                      8 |                   1.6
+Oakhurst Tailoring            | active        |                   39 |                39 |             0 |              0.0 |                        31 |                    30 |                      4 |                   1.6
+Sourdough Club                | active        |                   35 |                32 |             3 |              8.6 |                        27 |                    26 |                      3 |                   1.4
+Linden & Loom                 | active        |                   30 |                30 |             0 |              0.0 |                        26 |                    23 |                      8 |                   1.2
+Nordic Bloom Cosmetics        | active        |                   30 |                29 |             1 |              3.3 |                        23 |                    19 |                      8 |                   1.2
+Coastline Interiors           | active        |                   27 |                25 |             2 |              7.4 |                        22 |                    20 |                      7 |                   1.1
+Honeycomb Larder              | active        |                   27 |                23 |             4 |             14.8 |                        18 |                    16 |                      5 |                   1.1
+Rue Lafayette Studio          | active        |                   24 |                24 |             0 |              0.0 |                        22 |                    21 |                      2 |                   1.0
+Spice Route Box               | active        |                   24 |                22 |             2 |              8.3 |                        18 |                    16 |                      5 |                   1.0
+Willow & Wren                 | active        |                   22 |                22 |             0 |              0.0 |                        18 |                    18 |                      2 |                   0.9
+Juniper Apothecary            | active        |                   21 |                20 |             1 |              4.8 |                        16 |                    16 |                      3 |                   0.9
+Hus & Hem                     | active        |                   20 |                13 |             7 |             35.0 |                        10 |                     7 |                     12 |                   0.8
+Kontor24 Bürobedarf           | active        |                   19 |                17 |             2 |             10.5 |                        13 |                    12 |                      4 |                   0.8
+Noordzee Surfwear             | active        |                   19 |                17 |             2 |             10.5 |                        14 |                    12 |                      6 |                   0.8
+Sorella Skin                  | active        |                   19 |                17 |             2 |             10.5 |                        13 |                    11 |                      7 |                   0.8
+Wohnglück                     | active        |                   19 |                18 |             1 |              5.3 |                        13 |                    10 |                     10 |                   0.8
+Ballycorran Industrial Supply | active        |                   18 |                16 |             2 |             11.1 |                        16 |                    16 |                      3 |                   0.7
+Saffron & Sage                | past_due      |                   18 |                15 |             3 |             16.7 |                        14 |                    12 |                      3 |                   0.7
+Kettle & Key                  | active        |                   17 |                17 |             0 |              0.0 |                        12 |                    10 |                      8 |                   0.7
+Thistlecombe                  | active        |                   17 |                13 |             4 |             23.5 |                        12 |                    12 |                      3 |                   0.7
+Velvet Ash                    | active        |                   17 |                17 |             0 |              0.0 |                        12 |                    11 |                      5 |                   0.7
+Ampere & Co.                  | active        |                   16 |                13 |             3 |             18.8 |                        11 |                    11 |                      3 |                   0.7
+Maison Clair                  | active        |                   16 |                16 |             0 |              0.0 |                        14 |                    14 |                      2 |                   0.7
+Silverthread                  | suspended     |                   16 |                11 |             5 |             31.3 |                         9 |                     8 |                      5 |                   0.7
+Ostwind Mode                  | active        |                   15 |                15 |             0 |              0.0 |                        12 |                    10 |                      5 |                   0.6
+Fell & Fjell                  | active        |                   14 |                14 |             0 |              0.0 |                        12 |                    10 |                      4 |                   0.6
+Lamplight Living              | active        |                   14 |                12 |             2 |             14.3 |                        11 |                    11 |                      3 |                   0.6
+Pfotenglück                   | active        |                   14 |                12 |             2 |             14.3 |                        10 |                     9 |                      4 |                   0.6
+Tail Wag Supply               | active        |                   14 |                13 |             1 |              7.1 |                        10 |                     8 |                      6 |                   0.6
+Atelier Nouveau               | active        |                   13 |                13 |             0 |              0.0 |                        11 |                    11 |                      2 |                   0.5
+Kayak Corner                  | active        |                   13 |                13 |             0 |              0.0 |                        12 |                    12 |                      2 |                   0.5
+The Balm Room                 | active        |                   13 |                13 |             0 |              0.0 |                        11 |                     9 |                      5 |                   0.5
+Folio & Fern                  | active        |                   12 |                12 |             0 |              0.0 |                         7 |                     5 |                      8 |                   0.5
+Hautnah                       | active        |                   12 |                12 |             0 |              0.0 |                         9 |                     9 |                      2 |                   0.5
+Inkwell & Quire               | active        |                   12 |                10 |             2 |             16.7 |                         7 |                     7 |                      5 |                   0.5
+Midland Safety Wear           | active        |                   12 |                12 |             0 |              0.0 |                        10 |                     8 |                      3 |                   0.5
+Mirelle                       | active        |                   12 |                10 |             2 |             16.7 |                         7 |                     7 |                      3 |                   0.5
+Ridgeback Gear                | active        |                   12 |                12 |             0 |              0.0 |                        11 |                    10 |                      2 |                   0.5
+Strandgut                     | active        |                   12 |                11 |             1 |              8.3 |                         7 |                     6 |                      5 |                   0.5
+(110 rows, first 50 printed)
+
+=== Report 3: Privileged role landscape by role name, company-wide (written by Omar) ===
+Engineer's note: Excluded role_name = 'Owner' per the question's framing (it was the subject of the prior per-tenant report); the remaining population is the same qualifying set (role instances with ≥1 permission and ≥1 non-deleted assigned user), now aggregated by role name. The printed report's row-count footer will show how many distinct role names qualified in total.
+REPORT: Privileged role landscape by role name, company-wide
+QUESTION: Beyond the default 'Owner' role (which filled the entire first page of the prior report), what other roles across merchants carry significant permissions, how widely are they assigned, and how dormant are the users holding them?
+role_name     | tenant_count | pct_is_system | avg_permission_count | max_permission_count | total_users_assigned | total_users_dormant | dormant_rate_pct
+--------------+--------------+---------------+----------------------+----------------------+----------------------+---------------------+-----------------
+Support Agent |          120 |         100.0 |                  6.0 |                    6 |                  234 |                  10 |              4.3
+Administrator |          120 |         100.0 |                 25.0 |                   25 |                  122 |                   8 |              6.6
+Warehouse     |           33 |         100.0 |                  4.0 |                    4 |                   37 |                   0 |              0.0
+Marketing     |           18 |         100.0 |                  5.0 |                    5 |                   19 |                   0 |              0.0
+Read-only     |            8 |           0.0 |                  4.0 |                    4 |                   10 |                   0 |              0.0
+Merchandiser  |            8 |         100.0 |                  4.0 |                    4 |                    8 |                   0 |              0.0
+Finance       |            4 |         100.0 |                  5.0 |                    5 |                    4 |                   0 |              0.0
+Sales Rep     |            3 |         100.0 |                  5.0 |                    5 |                    3 |                   0 |              0.0
+(8 rows)

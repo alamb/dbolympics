@@ -1,0 +1,62 @@
+{
+ "notes": "Big win on refunds: Q3 data confirms Kofi's example precisely — OfficeHub Nordic's refund rate jumped from a 2.99% baseline to 20.98% in Q3 (€23,268 refunded on just 45 orders), and it's already back to 0% by Q4, so it reads as a resolved one-off incident, not a trend. Combined with Q4's pattern (big Apparel merchants Cragsley/Marrowby actually improved), I'm confident the refund story is \"a few concentrated incidents in small/mid merchants,\" not a broad trend — ready to write this up. On receivables, the aging report confirms ~€196.9k total outstanding, concentrated almost entirely in 7 B2B wholesalers, with Kontor24 Bürobedarf alone at €116.7k (59% of it, half of that in one single €49.4k invoice) — a much bigger story than Castell Fasteners alone. I also noticed something important for the \"at risk\" question: tenants.status itself (past_due/suspended/churned) looks like it reflects whether a merchant is behind on paying *us* (platform billing), distinct from the receivables report (which is their own customers owing *them*) — worth pulling directly as the cleanest churn signal. Separately, the cost-driver inventory showed Deskline Supplies at ~€1,038/shipment vs. Cragsley at ~€4/shipment — a 237x gap within similar/different verticals that's too extreme to use in a cost model without checking whether it's a real freight-cost pattern or a data outlier. Tonight: (1) the platform-billing-risk list, (2) a sanity check on the Deskline shipping-cost outlier, (3) a first directional vertical-level unit-economics rollup using only the inputs I already trust (fee revenue, shipping cost, refunds, tickets), explicitly caveated as a first pass.",
+ "requests": [
+  {
+   "title": "Platform billing risk: merchants past_due, suspended or churned",
+   "question": "Which merchants are currently behind on paying us or already cut off, and how big/active are they — our clearest churn-risk signal?",
+   "grain": "one row per merchant (tenant), filtered to status in ('past_due','suspended','churned')",
+   "columns": [
+    "merchant name",
+    "vertical",
+    "tenant status",
+    "tenure (days since created_at, as of 2026-01-05)",
+    "days since last order placed",
+    "days since last settled ('paid') payout",
+    "fee revenue trailing 12 months (EUR)"
+   ],
+   "details": "Source: tenants filtered to status in ('past_due','suspended','churned') and deleted_at is null, left joined to orders (max placed_at per tenant_id, any status) and payouts (max paid_at per tenant_id where status='paid') for recency, and to payouts again for fee revenue (status='paid', paid_at in [2025-01-01,2026-01-01), converted to EUR via exchange_rates as_of paid_at date, matching the validated methodology). This is meant to be read as the platform-billing-health complement to last night's customer-receivables report (that one was about merchants' own customers owing them money; this one is about whether the merchant itself is behind with Tidewick). Order by tenant status (churned first, then suspended, then past_due), tie-break by fee revenue descending. Note total row count.",
+   "builds_on": [
+    "Merchant status and payout activity, today",
+    "Receivables aging: who owes us and for how long"
+   ]
+  },
+  {
+   "title": "Deskline Supplies shipping cost breakdown by carrier",
+   "question": "Is Deskline Supplies' unusually high average shipping cost (~€1,038/shipment vs. ~€4-30/shipment for comparable merchants) a real freight-cost pattern or a data outlier?",
+   "grain": "one row per carrier and service_level, for Deskline Supplies shipments only",
+   "columns": [
+    "carrier",
+    "service_level",
+    "shipment count (2025)",
+    "total shipping cost (EUR)",
+    "average shipping cost per shipment (EUR)",
+    "minimum shipping cost (EUR)",
+    "maximum shipping cost (EUR)"
+   ],
+   "details": "Source: shipments joined to fulfillments->orders to filter to Deskline Supplies' tenant_id only, shipped_at in [2025-01-01,2026-01-01), shipping_cost converted to EUR via exchange_rates as_of shipped_at date. Group by carrier and service_level. I want to see whether the high average is spread evenly (suggesting a genuine bulk-freight cost structure for this B2B merchant) or driven by one or two extreme max values in an otherwise normal-looking carrier lane (suggesting a data entry error or currency mismatch). Order by total shipping cost EUR descending.",
+   "builds_on": [
+    "Cost-driver volume inventory by merchant, 2025"
+   ]
+  },
+  {
+   "title": "Directional unit economics by vertical, 2025 (first pass)",
+   "question": "Using only the revenue and cost signals we currently trust, which verticals look directionally profitable to grow versus costly to serve?",
+   "grain": "one row per merchant vertical (tenants.industry)",
+   "columns": [
+    "vertical",
+    "merchant count",
+    "fee revenue (EUR, 2025, our validated processing-fee figure)",
+    "shipping cost (EUR, 2025)",
+    "refund amount (EUR, 2025)",
+    "support ticket count (2025)",
+    "rough net contribution (EUR, = fee revenue − shipping cost − refund amount)",
+    "net contribution as % of fee revenue"
+   ],
+   "details": "Source: aggregate the same underlying data as the validated 'Revenue by vertical' report (payouts, status='paid', paid_at in 2025, EUR via exchange_rates) and the 'Cost-driver volume inventory by merchant' report (shipments, order_returns-linked payment_refunds, tickets), rolled up from merchant to tenants.industry. This is explicitly a first-pass, directional view, not a final cost-to-serve model: 'rough net contribution' nets only the cost signals we have EUR amounts for (shipping, refunds) against fee revenue, and deliberately excludes support cost, carrier-performance penalties, engineering-reliability cost, and the still-missing platform-plan revenue line — please label it as such in the report notes. Group null/blank industry into 'Unspecified'. Order by rough net contribution EUR descending, tie-break by vertical name ascending.",
+   "builds_on": [
+    "Revenue by vertical, trailing 12 months (corrected)",
+    "Cost-driver volume inventory by merchant, 2025"
+   ]
+  }
+ ]
+}

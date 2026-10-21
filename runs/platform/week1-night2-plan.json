@@ -1,0 +1,61 @@
+{
+ "notes": "Big surprise from night 1: Report 1 only returned 3 rows (Oct/Nov/Dec 2025) even though I asked for the full year — job_runs apparently has no rows before 2025-10-01 (clean month boundary, growing row counts, no gaps), which looks like a rolling retention window rather than a data error. Report 3 similarly only returned Nov-Dec 2025 for system_health_checks. So \"year-long trend\" isn't deliverable from these raw tables as asked — I'll say so plainly in the memo and work within the window that actually exists (Oct-Dec for jobs, Nov-Dec for health checks), at finer (weekly) grain to still show a trend. Also, Report 2's tenant ranking was a dead end for Diego's #2: every one of the ~10 \"large\" tenants had exactly 2 failed runs and the rest had 0 — that's too uniform to be a real merchant-specific signal, and likely means failures are tied to a specific job type that happens to run for every large tenant, not to anything particular about the merchant. So tonight I pivot #2 from \"which tenant\" to \"which job type,\" which better serves Diego's investment-priority question, and I still owe Diego the \"late\" half of #1 (my first report only measured run duration, not delay/lateness) and a first test of #3 (does health-check trouble line up with job failures, in the one window where both exist).",
+ "requests": [
+  {
+   "title": "2025 Q4 Weekly Job Reliability and Lateness",
+   "question": "Within the window job_runs actually covers (Oct-Dec 2025), how did failure rates and job lateness (queue delay, not just run duration) trend week by week?",
+   "grain": "one row per ISO week (week_start date), Oct 1 - Dec 31 2025",
+   "columns": [
+    "week_start",
+    "total_job_runs",
+    "failed_runs",
+    "failure_rate_pct",
+    "avg_queue_delay_seconds",
+    "p95_queue_delay_seconds",
+    "pct_jobs_queue_delay_over_5min",
+    "avg_duration_seconds"
+   ],
+   "details": "Table job_runs. Filter queued_at >= 2025-10-01 and < 2026-01-01 (the full range the table holds, per night-1 Report 1). Group by ISO week of queued_at (use calendar_days.week_start joined on date(queued_at)). queue_delay = started_at - queued_at in seconds, only where both non-null; avg rounded 1dp, p95 via percentile_cont(0.95) rounded to whole seconds. pct_jobs_queue_delay_over_5min = share of runs (with both timestamps set) where queue_delay > 300 seconds, rounded 1dp - this is the 'ran late' measure Diego asked about, distinct from execution duration. avg_duration_seconds as in the prior report (finished_at - started_at, both set). Platform-wide, all tenants. Order by week_start ascending.",
+   "builds_on": [
+    "2025 Background Job Reliability by Month"
+   ]
+  },
+  {
+   "title": "2025 Job Failures by Job Type (Handler)",
+   "question": "Are job failures concentrated in a small number of job types/handlers rather than spread evenly across tenants?",
+   "grain": "one row per job handler (job type), aggregated across all tenants whose jobs use that handler",
+   "columns": [
+    "handler",
+    "total_runs",
+    "failed_runs",
+    "failure_rate_pct",
+    "distinct_tenants_run",
+    "distinct_tenants_failed",
+    "avg_duration_seconds_failed"
+   ],
+   "details": "Tables job_runs joined to jobs on job_id to get jobs.handler (the shared job-type identifier, since jobs.name/jobs table rows are per-tenant but handler denotes the same underlying job type across tenants). Filter queued_at >= 2025-10-01 and < 2026-01-01 (the available window). Group by handler. distinct_tenants_run = count distinct tenant_id among all runs for that handler; distinct_tenants_failed = count distinct tenant_id among failed runs for that handler. avg_duration_seconds_failed computed over failed runs only where started_at and finished_at are both set. Order by failed_runs descending, tie-break by handler ascending.",
+   "builds_on": [
+    "Merchants Hit Hardest by Job Failures, 2025"
+   ]
+  },
+  {
+   "title": "2025 Q4 Weekly Job Failures vs Health Check Alerts",
+   "question": "In the window where we have both job_runs and system_health_checks data, did weeks with more unhealthy health checks line up with weeks of more job failures?",
+   "grain": "one row per ISO week (week_start date), Nov 1 - Dec 31 2025 (the overlap window both tables cover)",
+   "columns": [
+    "week_start",
+    "total_job_runs",
+    "failed_job_runs",
+    "job_failure_rate_pct",
+    "total_health_checks",
+    "unhealthy_health_checks",
+    "health_check_unhealthy_rate_pct"
+   ],
+   "details": "Two sources aggregated to the same week grain and joined: job_runs (queued_at) and system_health_checks (checked_at), both filtered to >= 2025-11-01 and < 2026-01-01, the window confirmed present in both tables from night-1 Reports 1 and 3. Group each by ISO week (calendar_days.week_start) then join on week_start; platform-wide (all tenants/components combined), no tenant filter. job_failure_rate_pct and health_check_unhealthy_rate_pct rounded to 2 decimals. Order by week_start ascending.",
+   "builds_on": [
+    "2025 Background Job Reliability by Month",
+    "2025 Internal Health Check Reliability by Month"
+   ]
+  }
+ ]
+}

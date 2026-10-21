@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  w.name as webhook_name,\n  t.name as tenant_name,\n  count(*) as total_deliveries_2025,\n  round(100.0 * sum(case when wd.status = 'success' then 1 else 0 end) / count(*), 2) as success_rate_pct,\n  round(100.0 * sum(case when wd.status = 'failed' then 1 else 0 end) / count(*), 2) as failed_rate_pct,\n  round(100.0 * sum(case when wd.status in ('pending','retrying') then 1 else 0 end) / count(*), 2) as pending_or_retrying_rate_pct,\n  round(avg(wd.duration_ms)) as avg_duration_ms\nfrom webhook_deliveries wd\njoin webhooks w on w.id = wd.webhook_id\njoin tenants t on t.id = w.tenant_id\nwhere wd.created_at >= date '2025-01-01' and wd.created_at < date '2026-01-01'\ngroup by w.id, w.name, t.name\nhaving count(*) >= 20\norder by pending_or_retrying_rate_pct desc, failed_rate_pct desc, webhook_name asc\nlimit 20",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: webhook_name, tenant_name, total_deliveries_2025, success_rate_pct, failed_rate_pct, pending_or_retrying_rate_pct, avg_duration_ms"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and matches the requested grain and columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "select\n  w.name as webhook_name,\n  t.name as tenant_name,\n  count(*) as total_deliveries_2025,\n  round(100.0 * sum(case when wd.status = 'success' then 1 else 0 end) / count(*), 2) as success_rate_pct,\n  round(100.0 * sum(case when wd.status = 'failed' then 1 else 0 end) / count(*), 2) as failed_rate_pct,\n  round(100.0 * sum(case when wd.status in ('pending','retrying') then 1 else 0 end) / count(*), 2) as pending_or_retrying_rate_pct,\n  round(avg(wd.duration_ms)) as avg_duration_ms\nfrom webhook_deliveries wd\njoin webhooks w on w.id = wd.webhook_id\njoin tenants t on t.id = w.tenant_id\nwhere wd.created_at >= date '2025-01-01' and wd.created_at < date '2026-01-01'\ngroup by w.id, w.name, t.name\nhaving count(*) >= 20\norder by pending_or_retrying_rate_pct desc, failed_rate_pct desc, webhook_name asc\nlimit 20",
+  "note": "Webhook deliveries are not multi-currency so no FX conversion was needed; rates are computed per webhook over all 2025 deliveries with at least 20 total, limited to the worst 20 by stuck-retry rate then failure rate.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns the 20 webhook endpoints with the highest stuck-in-retry rates (tie-broken by failure rate) among those with at least 20 deliveries in 2025, with success/failed/pending-or-retrying rates and average delivery duration per endpoint."
+ }
+]

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-level delivery reliability: weak carriers vs rest, 2025",
+    "--question",
+    "In the same order-level metric I've already reported to Priya (pct within 5 days), how much better would our overall delivery reliability be if the three weak carriers matched everyone else?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per carrier_group: 'Weak three' (Albion Parcel, Landfall Freight, Lowlands Express) vs 'All other carriers'\", \"columns_requested\": [\"carrier_group\", \"orders_fully_delivered\", \"avg_delivery_days (placed_at to delivered_at)\", \"pct_within_5_days\", \"share_of_orders_pct\"], \"details\": \"Scope: orders with placed_at in 2025-01-01 through 2025-12-31, status='fulfilled', restricted to orders with exactly one row in fulfillments and that fulfillment linked to exactly one row in shipments, with that shipment's delivered_at not null (clean single-carrier attribution). delivery_days = DATEDIFF(day, orders.placed_at, shipments.delivered_at). carrier_group = 'Weak three' if shipments.carrier in ('Albion Parcel','Landfall Freight','Lowlands Express'), else 'All other carriers'. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order by carrier_group ascending. Expect 2 rows.\", \"builds_on\": [\"Carrier performance, full year 2025 (complete)\", \"Delivery time trend, monthly (2024-2025)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Access still open on churned tenants, by surface",
+    "--question",
+    "Beyond Owner/Administrator accounts, how much other access (ordinary staff logins, open sessions, active API keys, active webhooks) is still live on tenants that have already churned?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per churned tenant (tenants.status = 'churned')\", \"columns_requested\": [\"tenant name\", \"total users (excluding deleted_at rows)\", \"users with status = 'active'\", \"sessions never revoked (revoked_at is null, regardless of expiry)\", \"active API keys (status = 'active')\", \"active webhooks (is_active = true)\", \"service accounts (count, for context; no activity field exists for this table)\"], \"details\": \"Source: tenants where status = 'churned', joined to users (tenant_id, status, deleted_at), sessions (tenant_id, revoked_at), api_keys (tenant_id, status), webhooks (tenant_id, is_active), service_accounts (tenant_id). Count each measure per tenant independently (not a single multi-join to avoid fan-out; use separate aggregated subqueries per tenant_id). Include every churned tenant, even if all counts are zero. Order by 'users with status = active' descending, tenant name as tie-break. Expect a small number of rows (well under 50) \\u2014 note total churned tenant count.\", \"builds_on\": [\"Dormant users holding Owner or Administrator access\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "No-Ledger-Entries Gap Trend by Month, 2025",
+    "--question",
+    "Is the small 'payment with zero ledger entries' gap an ongoing issue in current operations, or was it confined to earlier in the year and since resolved?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Grace\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one calendar month, 2025\", \"columns_requested\": [\"month\", \"total_payments\", \"payments_without_ledger_entries\", \"pct_without_ledger_entries\", \"amount_at_risk_eur\"], \"details\": \"Source: payments with status captured/refunded/partially_refunded and captured_at in 2025, LEFT JOIN to a per-payment count of linked ledger_entries via payment_id. Convert payment amounts to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=date(captured_at)). Group by calendar month of captured_at. amount_at_risk_eur sums payment_amount_eur only for payments with zero linked ledger_entries. Order chronologically 2025-01 to 2025-12 (12 rows).\", \"builds_on\": [\"Payments With No Ledger Entries, by Merchant, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

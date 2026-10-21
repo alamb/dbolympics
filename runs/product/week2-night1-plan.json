@@ -1,0 +1,57 @@
+{
+ "notes": "Jonas's email has an implicit priority: Q1 (what's in a stalled cart) and Q2 (is the bleed trending worse) are \"my main ask for this week\"; Q3 (organic recovery) is also wanted but reads as a natural follow-up once we understand the shape; Q4 is explicitly \"a quick gut-check... no need for deep investigation.\" So tonight I'm doing Q1, Q2, and a lightweight version of Q4, saving Q3 for night 2 since it benefits from what we learn tonight (e.g., whether stalled carts later convert with a discount attached is itself a clue about organic recovery).\n\nDesign notes:\n- For Q1, carts.item_count and carts.subtotal are populated regardless of cart status, so I can compare basket size across ALL carts by duration bucket. Discount/coupon presence, however, only exists on the order side (order_discounts/coupon_redemptions) — there's nothing on an abandoned cart to show a discount was being attempted. So I've scoped the discount question to \"among carts that did convert, how often did the resulting order carry a discount, by how long the cart took to convert\" — flagged clearly as a narrower sub-question, not a true stalled-vs-fast comparison on discounts.\n- For Q2, I'm using the same 5 duration buckets from last week's cart-timing reports, by month across all of 2025, to see if the mix is shifting (e.g., more carts falling into the 1-7 day \"bleed\" bucket recently) or if the overall cart→order conversion rate itself is moving. I'll also watch for anything around November 2025, since Platform Engineering flagged a cart-reminder email bug that week — relevant context, not something I'm acting on yet.\n- For Q4 (\"gut check\"), I'm testing the blind-spot-vs-behavior question directly: for the 4 subscription merchants, do customers have tracked sessions *before* their first order (proving tracking works) but little or none *after* (suggesting they genuinely stop browsing once subscribed) — vs. near-zero sessions even before the first order (which would point to a tracking gap instead).\n\nAll three use the 6 retail tenants (Q1, Q2) or 4 subscription tenants (Q4) established in last week's work, so the engineer has a concrete, named population to filter on rather than re-deriving \"top merchants.\"",
+ "requests": [
+  {
+   "title": "Cart contents: stalled vs. fast-converting carts, 2025",
+   "question": "Does basket size, price point, or discount usage differ between carts that convert quickly and carts that stall for hours or days?",
+   "grain": "one row per cart duration bucket",
+   "columns": [
+    "duration bucket",
+    "cart count",
+    "avg item count",
+    "avg subtotal (EUR)",
+    "median subtotal (EUR)",
+    "pct of bucket that converted to an order",
+    "pct of converted carts (in this bucket) whose order has a discount or coupon applied"
+   ],
+   "details": "Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-12-31. Buckets (same definitions as last week): resolution_time = coalesce(converted_at, abandoned_at, expires_at) - created_at in hours; '<1 hour', '1-24 hours', '1-7 days', '>7 days', 'unresolved/still active' (no resolution timestamp). avg/median subtotal: carts.subtotal converted to EUR via exchange_rates (base_code='EUR', quote_code=carts.currency_code, as_of = carts.created_at date; amount_eur = subtotal / rate). avg item count = carts.item_count. pct_converted = share of carts in the bucket with status='converted'. Discount/coupon presence can only be observed on carts that converted (abandoned carts never reach checkout, so there's no discount record) — compute it only among converted carts in each bucket, as the % whose resulting order (orders.cart_id = carts.id) has at least one row in order_discounts. Order rows in the fixed sequence: '<1 hour', '1-24 hours', '1-7 days', '>7 days', 'unresolved/still active'.",
+   "builds_on": [
+    "Cart abandonment timing by tenant, Q4 2025 (retail merchants)"
+   ]
+  },
+  {
+   "title": "Cart bleed trend by month, 2025",
+   "question": "Is the cart-stage drop-off getting better, worse, or staying flat over the past year?",
+   "grain": "one row per calendar month of cart creation, 2025",
+   "columns": [
+    "month",
+    "carts created",
+    "overall cart-to-order conversion pct",
+    "pct resolved within 1 hour",
+    "pct resolved in 1-7 days",
+    "median days to convert (converted carts only)"
+   ],
+   "details": "Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-12-31, grouped by calendar month (use calendar_days or month_label-style grouping). overall_conversion_pct = share of carts in the month with status='converted', rounded 1 decimal. pct_resolved_within_1_hour and pct_resolved_1_7_days use the same resolution_time definition as the duration-bucket reports (coalesce(converted_at, abandoned_at, expires_at) - created_at), rounded 1 decimal. median_days_to_convert = median of (converted_at - created_at) in days, among carts with status='converted' in that month, rounded 1 decimal. Order rows by month ascending, January through December 2025.",
+   "builds_on": [
+    "Cart abandonment timing by tenant, Q4 2025 (retail merchants)",
+    "Cart abandonment: cliff or slow bleed, Q4 2025 (non-subscription merchants)"
+   ]
+  },
+  {
+   "title": "Subscription merchants: do customers browse before vs. after their first order?",
+   "question": "Is the near-zero web-session count for subscription merchants a tracking blind spot, or does it reflect real behavior — customers browsing once to sign up and then never browsing again?",
+   "grain": "one row per subscription-merchant tenant",
+   "columns": [
+    "tenant name",
+    "customers (distinct users with at least one order)",
+    "pct of customers with any session before their first order",
+    "pct of customers with any session after their first order",
+    "avg sessions after first order, per customer"
+   ],
+   "details": "Tenants: the 4 Food & Coffee subscription merchants (Brennquell Kaffee, Spice Route Box, Grind Collective, Honeycomb Larder). For each tenant, customers = distinct users (tenant_id, user_id) with at least one order (any status) in orders. For each customer, first_order_at = min(orders.placed_at). pct_with_session_before = % of customers with at least one web_sessions row where started_at <= first_order_at. pct_with_session_after = % of customers with at least one web_sessions row where started_at > first_order_at (any time after, through 2025-12-31). avg_sessions_after_first_order_per_customer = average count of web_sessions rows with started_at > first_order_at, across all customers (including those with zero). Round percentages to 1 decimal and the average to 2 decimals. Order rows by tenant name.",
+   "builds_on": [
+    "Session-tracking coverage vs order volume for top merchants, 2025"
+   ]
+  }
+ ]
+}

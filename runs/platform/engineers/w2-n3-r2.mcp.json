@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order Volume by Hour on Black Friday 2025 (Nov 28)",
+    "--question",
+    "Did order placement actually drop during the checkout outage window on Nov 28 2025, compared to the rest of that same (peak traffic) day?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Felix\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per hour of the day, for 2025-11-28 (UTC)\", \"columns_requested\": [\"hour\", \"total_orders_placed\", \"distinct_tenants_with_orders\", \"total_revenue_eur\"], \"details\": \"Table orders, filtered to placed_at on 2025-11-28 (all 24 hours UTC). Group by hour of placed_at. total_revenue_eur = sum of grand_total converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=2025-11-28), rounded to whole number. distinct_tenants_with_orders = count distinct tenant_id. Order by hour ascending (0-23).\", \"builds_on\": [\"Checkout/Storefront Outage Timeline, Nov 28 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

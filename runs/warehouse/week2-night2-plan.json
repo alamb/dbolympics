@@ -1,0 +1,62 @@
+{
+ "notes": "Night 1 settled #1 and #2 confidently, so I'm moving to #3 and #4 tonight.\n\n#1 resolved: events_per_active_location hovers in a tight 4.6-5.9 band all year with no upward drift (Jan ~5.2-5.4, Dec ~5.2-5.3) — essentially flat. The raw event count rise tracks almost exactly with new warehouses coming online (23 new warehouses opened across the year, cumulative matches the ~85→111 growth in active locations). So the \"24% rise\" is a scale effect from warehouse rollout, not a genuine per-location worsening, and there's no identifiable step-change moment — I'm confident in this and will write it up without more slots.\n\n#2 resolved, and more decisively than expected: pct_theft_of_own_adjustments sits in a tight band (~15-23%) across essentially every one of the 35 staff identities and every warehouse, and — tellingly — each named staff member's total_adjustments_logged exactly equals one specific warehouse's total (Christopher Evans = 1,506 = Atlanta's total; Omar Taylor = 1,058 = Reading's total, etc.). That's a 1:1 staff-to-warehouse mapping, not real distributed rosters, and distinct_staff_logging_theft_here is never more than 1 per site. Combined with avg_hour_of_day clustering at ~11-12 (UTC) for nearly everyone regardless of which country their warehouse is in, this looks like a systematic/automated tagging pattern, not incident-by-incident human investigation. I'm flagging this as a data-provenance caveat for the memo rather than spending more slots on it.\n\nTonight: one report for #3 (does the B2B/bulk segment get routine counts at all, or only the Dec-31 catch-up — using the \"pick-only\" finding and the 8 B2B tenants identified from last week's correction report as the test group), and two reports for #4 (is the apparel concentration driven by genuine elevated rate per location or just by warehouse size, and which specific products/variants are actually driving it at the three standout sites: Atlanta/Cragsley, Reading/Marrowby & Vane, Den Haag/Studio Vrij — notably the same three merchants Support Ops flagged as generating 34% of all support tickets).",
+ "requests": [
+  {
+   "title": "Do B2B wholesale merchants get routine stock counts, or only the annual catch-up?",
+   "question": "Do the B2B wholesale/office-supply merchants behind the December 31 correction run any routine, day-to-day stock-count activity during the year, or does their stock sit untouched in bulk storage until a single year-end true-up?",
+   "grain": "tenant, restricted to the 8 merchants identified in last week's 'Which merchants drove the December 31 correction' report (Deskline Supplies, OfficeHub Nordic, Kontor24 Bürobedarf, Hanse Industriebedarf, Castell Fasteners, Midland Safety Wear, Ballycorran Industrial Supply, Polder Packaging)",
+   "columns": [
+    "tenant_name",
+    "total_stock_locations (count of stock_locations across this tenant's warehouses)",
+    "pct_locations_kind_bulk (% of those locations with kind='bulk')",
+    "pct_locations_kind_pick (% of those locations with kind='pick')",
+    "routine_stock_adjustments_2025 (count of stock_adjustments rows at this tenant's locations, created_at in 2025)",
+    "distinct_variants_with_routine_adjustment",
+    "dec31_correction_abs_units (sum of abs(quantity) from stock_movements where kind='adjustment' and occurred_at::date = '2025-12-31', at this tenant's locations)",
+    "dec31_correction_distinct_variants"
+   ],
+   "details": "Join stock_locations to warehouses (warehouse_id) and warehouses to tenants (tenant_id), filtered to the 8 named tenants. routine_stock_adjustments_2025: stock_adjustments where created_at between 2025-01-01 and 2025-12-31 (half-open bound), joined via stock_location_id to the tenant's locations. dec31_correction columns: stock_movements where kind='adjustment' and occurred_at falls on 2025-12-31 specifically (the date of the batch identified previously), joined via stock_location_id. Order by dec31_correction_abs_units descending, tie-break by tenant_name.",
+   "builds_on": [
+    "Which merchants drove the December 31 bulk stock correction",
+    "Stock-count discrepancies by storage-location kind, company-wide"
+   ]
+  },
+  {
+   "title": "Apparel/footwear discrepancies by warehouse: scale effect or genuine elevated rate?",
+   "question": "Is the apparel/footwear concentration in stock-count discrepancies explained by those warehouses simply being bigger (more pick locations), or do specific apparel sites show a genuinely higher discrepancy rate per location?",
+   "grain": "warehouse, restricted to tenants where tenants.industry = 'Apparel & Footwear'",
+   "columns": [
+    "warehouse_name",
+    "tenant_name",
+    "distinct_pick_locations (count of this warehouse's stock_locations with kind='pick')",
+    "total_routine_adjustments_2025 (count of stock_adjustments rows at this warehouse, created_at in 2025)",
+    "events_per_pick_location (total_routine_adjustments_2025 / distinct_pick_locations, rounded 2dp)",
+    "distinct_variants_affected",
+    "avg_hour_of_day_of_entries (average hour 0-23 extracted from created_at across this warehouse's stock_adjustments rows, rounded 1dp)"
+   ],
+   "details": "Join stock_locations -> warehouses -> tenants, filtered to tenants.industry = 'Apparel & Footwear'. stock_adjustments joined via stock_location_id to warehouses within that filtered set, created_at between 2025-01-01 and 2025-12-31 (half-open bound). Group by warehouse. Order by events_per_pick_location descending (to surface genuinely elevated sites first, not just the biggest ones), tie-break by total_routine_adjustments_2025 descending, then warehouse_name. Cap at 50 rows and note the total distinct apparel warehouse count even if it exceeds 50.",
+   "builds_on": [
+    "Where 'Missing - suspected theft' tags concentrate: by warehouse",
+    "Trend of stock-count discrepancies within 2025: steady climb or step change?"
+   ]
+  },
+  {
+   "title": "Which specific products drive discrepancies at the three standout apparel sites",
+   "question": "At Atlanta (Cragsley Outfitters), Reading (Marrowby & Vane) and Den Haag (Studio Vrij) — the three sites with by far the most stock-count discrepancies — is the problem spread across the catalog, or concentrated in a handful of specific products/size-color variants?",
+   "grain": "product variant, restricted to stock_adjustments rows at these three specific warehouses in 2025: Atlanta Fulfilment Centre, Reading Fulfilment Centre, Den Haag Fulfilment Centre",
+   "columns": [
+    "warehouse_name",
+    "product_name",
+    "sku",
+    "variant_name (product_variants.name, which typically encodes size/color)",
+    "adjustment_count (count of stock_adjustments rows for this variant at this warehouse)",
+    "pct_theft_reason (% of this variant's adjustments at this warehouse tagged 'Missing - suspected theft', rounded 1dp)",
+    "distinct_days_affected (count of distinct calendar dates with >=1 adjustment for this variant at this warehouse)"
+   ],
+   "details": "Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound), joined to stock_locations (filtered to the 3 named warehouses by name) and to product_variants (via variant_id) and products (for product_name). Group by warehouse, product, sku, variant_name. Order by adjustment_count descending, tie-break by warehouse_name, then sku. Cap at 50 rows and note the total distinct variant count even if it exceeds 50.",
+   "builds_on": [
+    "Where 'Missing - suspected theft' tags concentrate: by warehouse"
+   ]
+  }
+ ]
+}

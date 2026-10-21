@@ -1,0 +1,57 @@
+{
+ "requests": [
+  {
+   "title": "B2B Wholesale Pipeline: Opportunities by Merchant and Stage",
+   "question": "Across our B2B wholesale merchants, at which pipeline stage do the most opportunities get stuck or lost — i.e. which stage is the graveyard?",
+   "grain": "one row per wholesale merchant (tenant) and pipeline stage",
+   "columns": [
+    "merchant (tenants.name)",
+    "pipeline name",
+    "stage name",
+    "stage order (sort_position)",
+    "default win probability (win_probability)",
+    "opportunities currently open at this stage (is_closed = false)",
+    "opportunities closed won with this as final stage_id",
+    "opportunities closed lost with this as final stage_id",
+    "average opportunity amount at this stage (in the opportunity's own currency)",
+    "currency_code"
+   ],
+   "details": "Scope to B2B wholesale merchants only: tenants where industry ILIKE '%industrial%' OR industry ILIKE '%office equipment%' OR industry ILIKE '%wholesal%' (per the company briefing's 'industrial supplies, office equipment' wholesalers). Use opportunities joined to opportunity_stages (stage_id) and pipelines, and tenants for the merchant name. For each (tenant, stage) pair count: opportunities where is_closed = false (currently sitting there), opportunities where is_closed = true and is_won = true and stage_id = this stage, and opportunities where is_closed = true and is_won = false (lost) and stage_id = this stage. Include avg(amount) per currency_code — do not convert currencies here since the grain is per-tenant so no cross-currency summing occurs. This is an all-time snapshot (all opportunities ever created through 2025-12-31), not time-windowed. Order by merchant name, then stage order (sort_position) ascending. Flag in the report notes if any wholesale tenant has zero opportunities or zero stages, since that would indicate the industry filter missed a merchant or the merchant doesn't use the CRM module.",
+   "builds_on": []
+  },
+  {
+   "title": "B2B Wholesale Deal Cycle Time Trend by Month",
+   "question": "From an opportunity being opened to it closing (won or lost), how long does that take for our B2B wholesale merchants, and is that cycle time getting longer or shorter over the last three years?",
+   "grain": "one row per calendar month (based on the opportunity's closed_at month)",
+   "columns": [
+    "month (YYYY-MM)",
+    "opportunities closed (count)",
+    "closed won (count)",
+    "closed lost (count)",
+    "win rate (closed won / opportunities closed, %)",
+    "average cycle days (closed_at - created_at)",
+    "median cycle days (closed_at - created_at)"
+   ],
+   "details": "Scope to the same B2B wholesale tenants as the stage report: tenants where industry ILIKE '%industrial%' OR industry ILIKE '%office equipment%' OR industry ILIKE '%wholesal%'. Use opportunities where is_closed = true, closed_at is not null, for the full history 2023-01-01 through 2025-12-31. Cycle time = DATE_PART('day', closed_at - created_at) per opportunity; this is a proxy for the full lead-to-close journey since opportunities have no direct FK back to the originating lead — note this as a known limitation in the report. Group by month of closed_at (use calendar_days.month_label or an equivalent truncation). Round average and median cycle days to 1 decimal. Order by month ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "B2B Wholesale Opportunities: Won vs Lost Characteristics",
+   "question": "Among closed B2B wholesale opportunities, what reliably differs between the ones we won and the ones we lost — deal size, touches/activities before close, days open, or how concentrated they are among accounts and reps?",
+   "grain": "one row per closed outcome (won or lost)",
+   "columns": [
+    "outcome (won / lost)",
+    "opportunities (count)",
+    "average amount in EUR",
+    "median amount in EUR",
+    "average activities per opportunity before close",
+    "average days open (closed_at - created_at)",
+    "distinct accounts involved",
+    "distinct owning reps (owner_user_id) involved"
+   ],
+   "details": "Scope to the same B2B wholesale tenants as the other two reports (industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'). Use opportunities where is_closed = true, split into is_won = true (won) vs is_won = false (lost), across all history through 2025-12-31. Convert opportunity amount to EUR using exchange_rates (base_code='EUR', quote_code = opportunity currency_code, rate as_of the opportunity's closed_at date, or nearest prior business day if a weekend) before averaging across tenants/currencies, per house standards. 'Activities before close' = count of rows in activities where activities.opportunity_id = opportunities.id and activities.occurred_at <= opportunities.closed_at, averaged per opportunity within each outcome group. Distinct accounts/reps are counts of distinct account_id / owner_user_id among opportunities in that outcome group. Order rows with 'won' first, then 'lost'.",
+   "builds_on": []
+  }
+ ],
+ "notes": "Night 1: going straight at Patrick's top three priorities (graveyard stage, cycle-time trend, won-vs-lost drivers), which also cover most of Samuel's three questions (stage friction, what separates wins/losses, implicitly sets up stale-pipeline-risk follow-up for night 2). All three reports scope to B2B wholesale tenants via an industry-text heuristic (industrial supplies / office equipment / wholesale) since there's no explicit 'B2B wholesaler' flag on tenants — I've asked the report to surface the merchant list so I can sanity-check the filter caught the right handful of tenants before going further. Kept each report to one grain: (tenant x stage) for the funnel, (month) for cycle time, and (won/lost) for the comparison, per the one-question-one-report rule. Held back Samuel's 'stale pipeline = risk' question and Patrick's #4 (merchant/rep dispersion) and #5 (terms/size correlation) for later nights once I see where the real friction shows up — no point spending slots on dispersion or terms analysis if the stage report shows everyone dying at the same place for the same reason."
+}

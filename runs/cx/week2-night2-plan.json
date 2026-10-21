@@ -1,0 +1,55 @@
+{
+ "notes": "Night 1 results: the staffing report shows Cragsley (50.0 tickets/agent), Marrowby (46.2) and Studio Vrij (41.5) are the three highest ratios in the entire qualifying book, well ahead of the next closest (Grind Collective, 40.7, then a drop to 34.3) - so understaffing-relative-to-volume looks like a real, differentiating factor, not noise (unassigned-ticket rates are near-zero everywhere, so it's not a triage problem). Channel mix, by contrast, looks like a dead end: the three hotspots' email/chat/phone split is unremarkable - several merchants with much heavier email reliance (e.g. Coastline at 52.4% email) actually had the best SLA performance last week, so I don't think channel explains the gap. The urgent-ticket report is the more worrying one: Marrowby (66.7%), Cragsley (66.0%) and Studio Vrij (63.6%) are bad, but several smaller merchants (Honeycomb Larder 100%, Sourdough Club 85.7%, Ampfeld Elektronik 83.3%) are worse - so urgent-SLA failure is NOT concentrated in the three hotspots, it's spread broadly across the book, and nearly every merchant's urgent miss rate is well above their own all-priority miss rate. That pattern (urgent specifically failing everywhere) makes me suspect the urgent SLA *target itself* may be set unrealistically tight platform-wide, rather than this being pure execution failure merchant-by-merchant - worth testing directly before concluding it's \"everyone is bad at urgent tickets.\" Tonight I'm testing: (1) whether hotspot tickets are genuinely more complex (more back-and-forth) rather than just higher volume, (2) whether urgent SLA targets are achievable given typical actual resolution times, and (3) whether the hotspots' staffing gap has been widening over 2025 (useful for both the \"why\" question and, incidentally, for planning ahead of Nov/Dec later).",
+ "requests": [
+  {
+   "title": "Ticket complexity proxy (messages and tags per ticket), by merchant",
+   "question": "Do Cragsley, Marrowby, and Studio Vrij get harder/more complex tickets than the rest of the book, or just more of them?",
+   "grain": "one row per tenant (merchant), among tenants with at least 20 tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "tickets created, 2025",
+    "avg messages per ticket (all)",
+    "avg public (customer-visible) messages per ticket",
+    "avg distinct tags per ticket"
+   ],
+   "details": "Source: tickets joined to tenants, ticket_messages (count per ticket, and count where is_public=true), and ticket_tags_map (count distinct support_tag_id per ticket). Window: tickets.created_at 2025-01-01 through 2025-12-31. 'avg messages per ticket' = total ticket_messages rows for that tenant's 2025 tickets ÷ number of those tickets. 'avg public messages per ticket' = same but counting only is_public=true rows. 'avg distinct tags per ticket' = total ticket_tags_map rows for those tickets ÷ number of those tickets (a ticket with 0 tags counts as 0). Round all three averages to 2 decimals. Only include tenants with >=20 tickets created in 2025 (same threshold as last night's staffing/channel reports, for a consistent peer set). Order by avg messages per ticket descending, tie-break merchant name ascending. Cap at 50 rows; note total qualifying tenant count.",
+   "builds_on": [
+    "Support agent staffing vs ticket volume, by merchant",
+    "Ticket channel mix, by merchant"
+   ]
+  },
+  {
+   "title": "Urgent-ticket SLA target vs actual resolution time, by merchant",
+   "question": "Is the broad urgent-ticket resolution failure driven by unrealistically tight SLA targets, or are merchants genuinely resolving urgent tickets slower than a reasonable target?",
+   "grain": "one row per tenant (merchant), among tenants with at least 5 evaluable urgent-priority tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "urgent resolution target (hours)",
+    "urgent tickets evaluated, 2025",
+    "median actual resolution hours (urgent)",
+    "avg actual resolution hours (urgent)",
+    "urgent miss rate (%)"
+   ],
+   "details": "Source: tickets (priority='urgent') joined to sla_policies via tickets.sla_policy_id, and tenants (name). Window: tickets.created_at 2025-01-01 through 2025-12-31, excluding tickets with a null sla_policy_id (same 'evaluable' definition as last night's urgent-miss-rate report). 'urgent resolution target (hours)' = sla_policies.resolution_target_minutes / 60 for that tenant's urgent policy; if a tenant's evaluated urgent tickets reference more than one distinct resolution_target_minutes value, report the ticket-count-weighted average target in hours and note in the report that the tenant has more than one urgent SLA policy in effect. 'median/avg actual resolution hours' = extract(epoch from resolved_at - created_at)/3600 over evaluable urgent tickets with resolved_at not null (tickets still unresolved as of 2025-12-31 are excluded from the actual-hours average/median but still count as a miss in the miss-rate numerator, consistent with last night's definition). 'urgent miss rate (%)' = same definition as last night's report (missing if unresolved as of cutoff, or resolved later than target), rounded to 1 decimal. Round target and actual hours to 1 decimal. Only include tenants with >=5 evaluable urgent tickets. Order by urgent miss rate descending, tie-break merchant name ascending. Cap at 50 rows; note total qualifying tenant count.",
+   "builds_on": [
+    "Urgent-priority ticket resolution failure, by merchant"
+   ]
+  },
+  {
+   "title": "Ticket load per agent over 2025, hotspot merchants vs a comparable peer",
+   "question": "Has the staffing gap at Cragsley, Marrowby, and Studio Vrij been widening over the course of 2025 (ticket volume outpacing agent headcount), or has it been consistently stretched all year?",
+   "grain": "one row per tenant and calendar quarter in 2025, for Cragsley Outfitters, Marrowby & Vane, Studio Vrij, and Grind Collective (the next-highest tickets-per-agent merchant, included as a comparison peer)",
+   "columns": [
+    "merchant name",
+    "quarter (2025-Q1..Q4)",
+    "tickets created that quarter",
+    "distinct agents who handled a ticket that quarter",
+    "tickets per active agent that quarter"
+   ],
+   "details": "Source: tickets joined to tenants, filtered to the four named tenants (Cragsley Outfitters, Marrowby & Vane, Studio Vrij, Grind Collective). Grain the quarter on tickets.created_at (2025-01-01 through 2025-12-31, 4 quarters). 'distinct agents who handled a ticket' = count distinct tickets.assignee_agent_id (excluding null) for that tenant/quarter. 'tickets per active agent' = tickets that quarter ÷ distinct agents that quarter, rounded to 1 decimal (NULL if zero agents). Order by merchant name ascending, then quarter ascending. Expect exactly 16 rows (4 merchants × 4 quarters).",
+   "builds_on": [
+    "Support agent staffing vs ticket volume, by merchant"
+   ]
+  }
+ ]
+}

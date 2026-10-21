@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Product review ratings trend, monthly",
+    "--question",
+    "What are shoppers' product review ratings telling us, and does the pattern echo the dips we see in support CSAT?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one calendar month, platform-wide\", \"columns_requested\": [\"month (YYYY-MM)\", \"reviews submitted\", \"avg rating (1-5)\", \"median rating (1-5)\", \"% low rating (1-2 stars)\", \"% high rating (4-5 stars)\", \"% verified purchase\"], \"details\": \"Source: product_reviews. Grain the month on created_at. Window: 2023-01-01 through 2025-12-31 (36 months). Only include is_approved = true reviews (published ones actually shown to shoppers). avg/median rating over product_reviews.rating. '% low rating' = rating in (1,2) count / total reviews that month, percentage rounded to 1 decimal; '% high rating' = rating in (4,5) count / total, percentage rounded to 1 decimal. '% verified purchase' = is_verified_purchase=true count / total reviews that month, percentage rounded to 1 decimal. Round avg rating to 2 decimals, median to 1 decimal. Order by month ascending.\", \"builds_on\": [\"Shopper satisfaction (CSAT) trend, monthly\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

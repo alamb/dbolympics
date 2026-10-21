@@ -1,0 +1,21 @@
+# The part every query program shares (lib.rs): the runner's protocol, the loop that serves it and
+# the timer that cancels a statement at its deadline. No dependencies; with the feature `pg`, the
+# PostgreSQL protocol (pg.rs) for the systems that speak it.
+[package]
+name = "dbo"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[features]
+pg = ["dep:tokio", "dep:tokio-postgres"]
+
+[dependencies]
+tokio = { version = "1", optional = true, default-features = false, features = ["rt", "net", "io-util"] }
+tokio-postgres = { version = "=0.7.18", optional = true }
+
+# not a member of the repository's workspace
+[workspace]

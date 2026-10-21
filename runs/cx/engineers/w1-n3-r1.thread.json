@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  to_char(o.placed_at, 'YYYY-MM') as month,\n  SUM(CASE WHEN s.tenant_id = sv.id THEN 1 ELSE 0 END) as sv_shipments_delivered,\n  ROUND(AVG(CASE WHEN s.tenant_id = sv.id THEN extract(epoch from (s.delivered_at - o.placed_at))/86400 END)::numeric,1) as sv_avg_days_placed_to_delivered,\n  ROUND(100.0 * SUM(CASE WHEN s.tenant_id = sv.id AND extract(epoch from (s.delivered_at - o.placed_at))/86400 > 7 THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN s.tenant_id = sv.id THEN 1 ELSE 0 END),0), 1) as sv_pct_over_7_days,\n  SUM(CASE WHEN s.tenant_id <> sv.id THEN 1 ELSE 0 END) as platform_shipments_delivered,\n  ROUND(AVG(CASE WHEN s.tenant_id <> sv.id THEN extract(epoch from (s.delivered_at - o.placed_at))/86400 END)::numeric,1) as platform_avg_days_placed_to_delivered,\n  ROUND(100.0 * SUM(CASE WHEN s.tenant_id <> sv.id AND extract(epoch from (s.delivered_at - o.placed_at))/86400 > 7 THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN s.tenant_id <> sv.id THEN 1 ELSE 0 END),0), 1) as platform_pct_over_7_days\nFROM shipments s\nJOIN fulfillments f ON f.id = s.fulfillment_id AND f.tenant_id = s.tenant_id\nJOIN orders o ON o.id = f.order_id AND o.tenant_id = f.tenant_id\nCROSS JOIN (SELECT id FROM tenants WHERE name = 'Studio Vrij') sv\nWHERE s.delivered_at IS NOT NULL\n  AND o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\nGROUP BY month\nORDER BY month",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Catalog Error: Scalar Function with name to_char does not exist!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  strftime(o.placed_at, '%Y-%m') as month,\n  SUM(CASE WHEN s.tenant_id = sv.id THEN 1 ELSE 0 END) as sv_shipments_delivered,\n  ROUND(AVG(CASE WHEN s.tenant_id = sv.id THEN extract(epoch from (s.delivered_at - o.placed_at))/86400 END)::numeric,1) as sv_avg_days_placed_to_delivered,\n  ROUND(100.0 * SUM(CASE WHEN s.tenant_id = sv.id AND extract(epoch from (s.delivered_at - o.placed_at))/86400 > 7 THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN s.tenant_id = sv.id THEN 1 ELSE 0 END),0), 1) as sv_pct_over_7_days,\n  SUM(CASE WHEN s.tenant_id <> sv.id THEN 1 ELSE 0 END) as platform_shipments_delivered,\n  ROUND(AVG(CASE WHEN s.tenant_id <> sv.id THEN extract(epoch from (s.delivered_at - o.placed_at))/86400 END)::numeric,1) as platform_avg_days_placed_to_delivered,\n  ROUND(100.0 * SUM(CASE WHEN s.tenant_id <> sv.id AND extract(epoch from (s.delivered_at - o.placed_at))/86400 > 7 THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN s.tenant_id <> sv.id THEN 1 ELSE 0 END),0), 1) as platform_pct_over_7_days\nFROM shipments s\nJOIN fulfillments f ON f.id = s.fulfillment_id AND f.tenant_id = s.tenant_id\nJOIN orders o ON o.id = f.order_id AND o.tenant_id = f.tenant_id\nCROSS JOIN (SELECT id FROM tenants WHERE name = 'Studio Vrij') sv\nWHERE s.delivered_at IS NOT NULL\n  AND o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\nGROUP BY month\nORDER BY month",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, sv_shipments_delivered, sv_avg_days_placed_to_delivered, sv_pct_over_7_days, platform_shipments_delivered, platform_avg_days_placed_to_delivered, platform_pct_over_7_days"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles with the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  strftime(o.placed_at, '%Y-%m') as month,\n  SUM(CASE WHEN s.tenant_id = sv.id THEN 1 ELSE 0 END) as sv_shipments_delivered,\n  ROUND(AVG(CASE WHEN s.tenant_id = sv.id THEN extract(epoch from (s.delivered_at - o.placed_at))/86400 END)::numeric,1) as sv_avg_days_placed_to_delivered,\n  ROUND(100.0 * SUM(CASE WHEN s.tenant_id = sv.id AND extract(epoch from (s.delivered_at - o.placed_at))/86400 > 7 THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN s.tenant_id = sv.id THEN 1 ELSE 0 END),0), 1) as sv_pct_over_7_days,\n  SUM(CASE WHEN s.tenant_id <> sv.id THEN 1 ELSE 0 END) as platform_shipments_delivered,\n  ROUND(AVG(CASE WHEN s.tenant_id <> sv.id THEN extract(epoch from (s.delivered_at - o.placed_at))/86400 END)::numeric,1) as platform_avg_days_placed_to_delivered,\n  ROUND(100.0 * SUM(CASE WHEN s.tenant_id <> sv.id AND extract(epoch from (s.delivered_at - o.placed_at))/86400 > 7 THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN s.tenant_id <> sv.id THEN 1 ELSE 0 END),0), 1) as platform_pct_over_7_days\nFROM shipments s\nJOIN fulfillments f ON f.id = s.fulfillment_id AND f.tenant_id = s.tenant_id\nJOIN orders o ON o.id = f.order_id AND o.tenant_id = f.tenant_id\nCROSS JOIN (SELECT id FROM tenants WHERE name = 'Studio Vrij') sv\nWHERE s.delivered_at IS NOT NULL\n  AND o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01'\nGROUP BY month\nORDER BY month",
+  "note": "Note for the analyst: Oct-Dec 2025 (and to a lesser extent Sep) cohorts are right-censored — orders placed late in the year may not yet have a recorded delivered_at, since the warehouse only holds data through 2025-12-31, so those months' avg-days and %-over-7-days will understate true delivery times until later shipments complete.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report pairs Studio Vrij vs. the rest of the platform by month for 2025, with delivered-shipment counts, average placed-to-delivered days, and the share over 7 days for each group — which should let Mateo see directly whether Studio Vrij's actual delivery times/late-share worsened in May/June relative to the platform baseline, or stayed flat (pointing to a support-side-only issue)."
+ }
+]

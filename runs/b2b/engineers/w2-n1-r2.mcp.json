@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Youssef Meijer: Individual New-Business Opportunities",
+    "--question",
+    "Looking at Youssef Meijer's own deals one by one — which accounts, what sizes, how long open — does his low win rate look like a few bad accounts/territory, or a pattern across all his work?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Grace\", \"situation\": \"b2b-pipeline-review\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per opportunity owned by Youssef Meijer\", \"columns_requested\": [\"account_name\", \"outcome (won / lost)\", \"amount_eur\", \"currency_code\", \"days_open (closed_at - created_at)\", \"created_at\", \"closed_at\"], \"details\": \"Filter to opportunities where owner_user_id matches the user named 'Youssef Meijer' at Polder Packaging (join users on full_name = 'Youssef Meijer' and tenant_id = Polder Packaging's tenant_id, to avoid any name collision at another tenant), pipeline_id = Polder Packaging's 'New business' pipeline, is_closed = true (we've confirmed all his opportunities are closed; this report should return all of them, won and lost, expected around 7 rows per last week's rep-level report). Join accounts for account_name via opportunities.account_id. Convert amount to EUR: if currency_code = 'EUR', amount_eur = amount directly; otherwise amount_eur = amount / rate from exchange_rates (base_code='EUR', quote_code=currency_code, as_of nearest date on or before closed_at). Order by closed_at ascending, tie-break by account_name ascending, so the report reads as a chronological case file.\", \"builds_on\": [\"B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business) \\u2014 Corrected\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT id, name FROM tenants WHERE name ILIKE '%cragsley%' OR name ILIKE '%marrowby%' OR name ILIKE '%studio vrij%'",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: id, name"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH target_tenants AS (\n  SELECT id, name\n  FROM tenants\n  WHERE name ILIKE '%cragsley%' OR name ILIKE '%marrowby%' OR name ILIKE '%studio vrij%'\n),\ndays AS (\n  SELECT calendar_date\n  FROM calendar_days\n  WHERE calendar_date >= DATE '2025-02-01' AND calendar_date <= DATE '2025-02-28'\n),\nfailed_logins AS (\n  SELECT\n    la.tenant_id,\n    DATE(la.occurred_at) AS login_date,\n    COUNT(*) AS failed_count\n  FROM login_attempts la\n  JOIN target_tenants tt ON tt.id = la.tenant_id\n  WHERE la.succeeded = false\n    AND la.occurred_at >= TIMESTAMP '2025-02-01'\n    AND la.occurred_at < TIMESTAMP '2025-03-01'\n  GROUP BY la.tenant_id, DATE(la.occurred_at)\n),\naccess_denied_all AS (\n  SELECT tenant_id, occurred_at\n  FROM audit_log\n  WHERE action = 'access_denied'\n    AND occurred_at >= TIMESTAMP '2025-02-01'\n    AND occurred_at < TIMESTAMP '2025-03-01'\n  UNION ALL\n  SELECT tenant_id, occurred_at\n  FROM audit_log_archive\n  WHERE action = 'access_denied'\n    AND occurred_at >= TIMESTAMP '2025-02-01'\n    AND occurred_at < TIMESTAMP '2025-03-01'\n),\naccess_denied_daily AS (\n  SELECT\n    DATE(ad.occurred_at) AS event_date,\n    COUNT(*) AS access_denied_count\n  FROM access_denied_all ad\n  JOIN target_tenants tt ON tt.id = ad.tenant_id\n  GROUP BY DATE(ad.occurred_at)\n)\nSELECT\n  d.calendar_date AS date,\n  COALESCE(SUM(CASE WHEN tt.name ILIKE '%cragsley%' THEN fl.failed_count END), 0) AS cragsley_failed_logins,\n  COALESCE(SUM(CASE WHEN tt.name ILIKE '%marrowby%' THEN fl.failed_count END), 0) AS marrowby_vane_failed_logins,\n  COALESCE(SUM(CASE WHEN tt.name ILIKE '%studio vrij%' THEN fl.failed_count END), 0) AS studio_vrij_failed_logins,\n  COALESCE(SUM(fl.failed_count), 0) AS total_failed_logins_3_merchants,\n  COALESCE(MAX(adn.access_denied_count), 0) AS access_denied_events_3_merchants\nFROM days d\nLEFT JOIN failed_logins fl ON fl.login_date = d.calendar_date\nLEFT JOIN target_tenants tt ON tt.id = fl.tenant_id\nLEFT JOIN access_denied_daily adn ON adn.event_date = d.calendar_date\nGROUP BY d.calendar_date\nORDER BY d.calendar_date ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: date, cragsley_failed_logins, marrowby_vane_failed_logins, studio_vrij_failed_logins, total_failed_logins_3_merchants, access_denied_events_3_merchants"
+ },
+ {
+  "kind": "text",
+  "text": "This matches the requested grain (one row per day, Feb 2025) and columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH target_tenants AS (\n  SELECT id, name\n  FROM tenants\n  WHERE name ILIKE '%cragsley%' OR name ILIKE '%marrowby%' OR name ILIKE '%studio vrij%'\n),\ndays AS (\n  SELECT calendar_date\n  FROM calendar_days\n  WHERE calendar_date >= DATE '2025-02-01' AND calendar_date <= DATE '2025-02-28'\n),\nfailed_logins AS (\n  SELECT\n    la.tenant_id,\n    DATE(la.occurred_at) AS login_date,\n    COUNT(*) AS failed_count\n  FROM login_attempts la\n  JOIN target_tenants tt ON tt.id = la.tenant_id\n  WHERE la.succeeded = false\n    AND la.occurred_at >= TIMESTAMP '2025-02-01'\n    AND la.occurred_at < TIMESTAMP '2025-03-01'\n  GROUP BY la.tenant_id, DATE(la.occurred_at)\n),\naccess_denied_all AS (\n  SELECT tenant_id, occurred_at\n  FROM audit_log\n  WHERE action = 'access_denied'\n    AND occurred_at >= TIMESTAMP '2025-02-01'\n    AND occurred_at < TIMESTAMP '2025-03-01'\n  UNION ALL\n  SELECT tenant_id, occurred_at\n  FROM audit_log_archive\n  WHERE action = 'access_denied'\n    AND occurred_at >= TIMESTAMP '2025-02-01'\n    AND occurred_at < TIMESTAMP '2025-03-01'\n),\naccess_denied_daily AS (\n  SELECT\n    DATE(ad.occurred_at) AS event_date,\n    COUNT(*) AS access_denied_count\n  FROM access_denied_all ad\n  JOIN target_tenants tt ON tt.id = ad.tenant_id\n  GROUP BY DATE(ad.occurred_at)\n)\nSELECT\n  d.calendar_date AS date,\n  COALESCE(SUM(CASE WHEN tt.name ILIKE '%cragsley%' THEN fl.failed_count END), 0) AS cragsley_failed_logins,\n  COALESCE(SUM(CASE WHEN tt.name ILIKE '%marrowby%' THEN fl.failed_count END), 0) AS marrowby_vane_failed_logins,\n  COALESCE(SUM(CASE WHEN tt.name ILIKE '%studio vrij%' THEN fl.failed_count END), 0) AS studio_vrij_failed_logins,\n  COALESCE(SUM(fl.failed_count), 0) AS total_failed_logins_3_merchants,\n  COALESCE(MAX(adn.access_denied_count), 0) AS access_denied_events_3_merchants\nFROM days d\nLEFT JOIN failed_logins fl ON fl.login_date = d.calendar_date\nLEFT JOIN target_tenants tt ON tt.id = fl.tenant_id\nLEFT JOIN access_denied_daily adn ON adn.event_date = d.calendar_date\nGROUP BY d.calendar_date\nORDER BY d.calendar_date ASC",
+  "note": "Tenants are matched by name via ILIKE ('%cragsley%', '%marrowby%', '%studio vrij%') since no tenant IDs were supplied; please confirm these resolve to exactly the intended 3 tenants with no unintended matches.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. One note for awareness: since the request named merchants by name rather than `tenant_id`, I matched them via `ILIKE` on `tenants.name` ('cragsley', 'marrowby', 'studio vrij') — flagged this in the submit note so the analyst can confirm those patterns uniquely resolve to the intended three tenants."
+ }
+]

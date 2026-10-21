@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-level delivery reliability: Albion Parcel vs rest, baseline vs collapse, 2025",
+    "--question",
+    "How much of the November-December delivery slowdown is specifically attributable to Albion Parcel, versus everything else?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per carrier_group ('Albion Parcel' vs 'All other carriers') and period ('baseline': placed_at Jan-Oct 2025; 'collapse': placed_at Nov-Dec 2025)\", \"columns_requested\": [\"carrier_group\", \"period\", \"orders_fully_delivered\", \"avg_delivery_days\", \"pct_within_5_days\", \"share_of_period_orders_pct\"], \"details\": \"Same scoping and single-carrier attribution rule as the weak-carriers-vs-rest report (orders placed_at in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null). period is based on orders.placed_at (baseline = 2025-01-01 to 2025-10-31; collapse = 2025-11-01 to 2025-12-31). carrier_group = 'Albion Parcel' if shipments.carrier = 'Albion Parcel', else 'All other carriers'. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order by period ascending, then carrier_group ascending. Expect 4 rows.\", \"builds_on\": [\"Albion Parcel performance by destination country, baseline vs collapse\", \"Albion Parcel performance by origin warehouse, baseline vs collapse\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

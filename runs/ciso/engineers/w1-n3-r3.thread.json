@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  a.action AS action_type,\n  COUNT(*) AS total_events,\n  COUNT(*) FILTER (WHERE a.occurred_at >= TIMESTAMP '2025-10-05' AND a.occurred_at < TIMESTAMP '2026-01-01') AS events_last_90_days,\n  COUNT(DISTINCT a.tenant_id) AS distinct_tenants,\n  ROUND(100.0 * COUNT(DISTINCT a.tenant_id) / t.tenant_count, 1) AS pct_of_tenants,\n  COUNT(DISTINCT a.actor_user_id) AS distinct_actor_users,\n  MIN(a.occurred_at) AS earliest_occurred_at,\n  MAX(a.occurred_at) AS most_recent_occurred_at\nFROM audit_log a\nCROSS JOIN (SELECT COUNT(*) AS tenant_count FROM tenants) t\nWHERE a.occurred_at >= TIMESTAMP '2023-01-01' AND a.occurred_at < TIMESTAMP '2026-01-01'\nGROUP BY a.action, t.tenant_count\nORDER BY total_events DESC, action_type ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: action_type, total_events, events_last_90_days, distinct_tenants, pct_of_tenants, distinct_actor_users, earliest_occurred_at, most_recent_occurred_at"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  a.action AS action_type,\n  COUNT(*) AS total_events,\n  COUNT(*) FILTER (WHERE a.occurred_at >= TIMESTAMP '2025-10-05' AND a.occurred_at < TIMESTAMP '2026-01-01') AS events_last_90_days,\n  COUNT(DISTINCT a.tenant_id) AS distinct_tenants,\n  ROUND(100.0 * COUNT(DISTINCT a.tenant_id) / t.tenant_count, 1) AS pct_of_tenants,\n  COUNT(DISTINCT a.actor_user_id) AS distinct_actor_users,\n  MIN(a.occurred_at) AS earliest_occurred_at,\n  MAX(a.occurred_at) AS most_recent_occurred_at\nFROM audit_log a\nCROSS JOIN (SELECT COUNT(*) AS tenant_count FROM tenants) t\nWHERE a.occurred_at >= TIMESTAMP '2023-01-01' AND a.occurred_at < TIMESTAMP '2026-01-01'\nGROUP BY a.action, t.tenant_count\nORDER BY total_events DESC, action_type ASC",
+  "note": "Tenant denominator is computed live as COUNT(*) FROM tenants rather than hardcoded 120, so the % column will self-correct if the actual tenant count differs; please flag if you want it pinned to exactly 120 instead.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `audit_log` by action type over the full 2023-01-01 to 2025-12-31 history, with a trailing-90-day window (2025-10-05 to 2025-12-31) for recency, distinct tenant and actor counts, and earliest/latest timestamps. One deviation worth noting: I computed the tenant-share denominator dynamically from `COUNT(*) FROM tenants` instead of hardcoding 120, per the request's own caveat to check that assumption — flagged this in the submit note for Noah."
+ }
+]

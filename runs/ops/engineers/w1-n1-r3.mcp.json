@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Peak season weekly fulfillment performance (Oct-Dec 2025)",
+    "--question",
+    "Did delivery speed and reliability hold up during the most recent peak season, and did any backlog build up or clear by year-end?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per ISO week (week_start), based on order placement week\", \"columns_requested\": [\"week_start\", \"orders_placed (all orders placed that week, any status)\", \"orders_delivered (of those, count fully delivered by 2025-12-31)\", \"avg_delivery_days (for the fully-delivered subset)\", \"pct_within_5_days (share of fully-delivered orders in that week where delivery_days <= 5)\", \"orders_still_undelivered (placed that week, status not 'fulfilled' or missing a delivered_at as of 2025-12-31 cutoff)\"], \"details\": \"Grain: one row per week_start (Monday, from calendar_days.week_start) for orders.placed_at between 2025-10-01 and 2025-12-31 inclusive. orders_placed = count of all orders placed in that week regardless of status. delivery_days defined exactly as in the monthly trend report (placed_at to max linked shipment.delivered_at via fulfillments, only counted when all shipments for that order are delivered). orders_still_undelivered = orders placed in that week whose status is not 'fulfilled', or status is 'fulfilled' but no delivered_at could be resolved by the 2025-12-31 data cutoff -- this flags backlog/slippage, understanding the most recent weeks will naturally show more undelivered due to right-censoring (transit time), which is expected and should just be noted in the report, not treated as a defect. Order by week_start ascending. Expect about 13 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

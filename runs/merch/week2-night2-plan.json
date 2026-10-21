@@ -1,0 +1,64 @@
+{
+ "notes": "Night 1 findings on Cragsley: the poor ratings concentrate in soft-goods categories (Loungewear 66.7%/40.0% poor, Outerwear 50.0%/28.6%, Shirts 50.0%, Tops/Trousers 37-40%) while Boots, Knitwear, Scarves & Hats, Sandals are clean (0-17%) — looks like a fit/fabric-quality issue in specific garment types, not catalog-wide. Note: category names repeat (Tops, Loungewear, Outerwear, Trousers, Knitwear each appear twice) — likely duplicate category records, a data-quality wrinkle worth flagging separately but not urgent. The rating trend shows this is NOT new: pct_1_2_star spikes every December (25.0% in 2023, 22.1% in 2024, 25.7% in 2025) alongside every November/December order surge — a recurring seasonal pattern, not a 2025-specific crisis, which tempers how I should frame the Dec 2025 dip for Cragsley specifically. The sales-trajectory report shows the poor-tier's absolute revenue did grow (896→6,177 EUR/month) but its *share* of Cragsley's total shrank from ~23% to ~6% as the rest of the catalog scaled much faster — so it's 'stagnating while the business grows around it,' not yet a demand collapse. That closes out the Cragsley thread well enough for the memo. Tonight I'm moving to the other three asks: (1) test the shipping/carrier hypothesis for the Dec rating dip by looking at delivery performance alongside review sentiment for Fennel & Flint and Wiesgrund Wohnen specifically, since COO's team flagged an Albion Parcel carrier breakdown in exactly this window; (2) test whether zero-image products are systematically older/draft/different-vertical rather than just under-photographed, by looking at age, status and vertical mix by image bucket without restricting to active products only (the earlier report did, which could have hidden this); (3) get a raw, merchant-level profile of the handful of merchants that actually use bundles, to look for descriptive patterns before even thinking about a pilot design.",
+ "requests": [
+  {
+   "title": "Fennel & Flint and Wiesgrund Wohnen: Review Sentiment vs Delivery Performance, Monthly",
+   "question": "Did delivery delays coincide with the rating dip at the two Home & Living merchants flagged last week, consistent with the platform-wide carrier breakdown?",
+   "grain": "one row per merchant per calendar month, for Fennel & Flint and Wiesgrund Wohnen only, July through December 2025",
+   "columns": [
+    "merchant_name",
+    "month",
+    "review_count",
+    "avg_rating",
+    "pct_1_2_star",
+    "shipments_count",
+    "pct_delivered_within_5_days",
+    "pct_shipped_via_albion_parcel"
+   ],
+   "details": "Filter to tenants named Fennel & Flint and Wiesgrund Wohnen. review_count/avg_rating/pct_1_2_star from approved product_reviews with created_at in that month (same definitions as prior review-trend reports). shipments_count = count of shipments (via fulfillments -> orders -> tenant) with shipped_at in that month. pct_delivered_within_5_days = share of those shipments where delivered_at minus shipped_at is 5 days or less (exclude shipments with no delivered_at from the denominator and numerator, but note how many are excluded). pct_shipped_via_albion_parcel = share of that month's shipments with carrier = 'Albion Parcel' (match carrier name as stored). Round rating to 2 decimals, percentages to 1 decimal. Order by merchant_name, then month ascending.",
+   "builds_on": [
+    "Home & Living December 2025 Rating Dip: Merchant Breakdown"
+   ]
+  },
+  {
+   "title": "Image-Count Buckets: Product Age, Status, and Vertical Mix",
+   "question": "Are zero-image product listings systematically different from one-plus-image listings (older, more likely draft/archived, or concentrated in certain verticals), rather than the image count itself being the driver?",
+   "grain": "one row per product image-count bucket (0, 1, 2-3, 4-6, 7+), across ALL products regardless of status (not just active ones, to test the status hypothesis)",
+   "columns": [
+    "image_count_bucket",
+    "product_count",
+    "avg_days_since_created",
+    "pct_status_draft",
+    "pct_status_archived",
+    "pct_status_active",
+    "pct_apparel_footwear_industry",
+    "pct_b2b_industry (Office Supplies + Industrial Supplies combined)",
+    "avg_variants_per_product"
+   ],
+   "details": "Tables: products (all statuses, all deleted_at values included this time), product_media (kind='image', counted per product to form the bucket), tenants (for industry), product_variants. avg_days_since_created = average of (2025-12-31 minus products.created_at) in days. pct_status_draft/archived/active = share of products in that bucket with that products.status value. pct_apparel_footwear_industry and pct_b2b_industry = share of products in the bucket belonging to tenants with that industry. avg_variants_per_product = average count of product_variants (any status) per product in the bucket. Round averages to 1 decimal, percentages to 1 decimal. Order by image_count_bucket in natural ascending order (0, 1, 2-3, 4-6, 7+).",
+   "builds_on": [
+    "Catalog Richness vs Sales Performance by Image Count Bucket",
+    "Image-Richness vs Sales Within Apparel & Footwear"
+   ]
+  },
+  {
+   "title": "Merchants Using Bundles: Raw Profile",
+   "question": "Among the handful of merchants that actually use product bundles, is there anything descriptively distinctive about them compared to the typical merchant?",
+   "grain": "one row per merchant (tenant) that has at least one active product_bundle (is_active = true)",
+   "columns": [
+    "merchant_name",
+    "industry",
+    "active_bundle_count",
+    "pct_active_products_in_a_bundle",
+    "active_product_count",
+    "avg_variants_per_product",
+    "revenue_eur_last_12mo",
+    "avg_order_value_eur_last_12mo"
+   ],
+   "details": "Filter to tenants with at least one product_bundles row where is_active = true. active_bundle_count, pct_active_products_in_a_bundle, active_product_count, avg_variants_per_product, revenue_eur_last_12mo and avg_order_value_eur_last_12mo all use the same definitions as the earlier Collections and Bundles Adoption by Merchant and Merchant Catalog Profile reports (orders placed 2025-01-01 to 2025-12-31, status not cancelled, EUR conversion via exchange_rates as of placed_at date), so figures are directly comparable. No row cap expected to matter (likely well under 50 merchants) but apply the standard 50-row cap and note total rows returned. Order by pct_active_products_in_a_bundle descending, tie-break by revenue_eur_last_12mo descending.",
+   "builds_on": [
+    "Collections and Bundles Adoption by Merchant"
+   ]
+  }
+ ]
+}

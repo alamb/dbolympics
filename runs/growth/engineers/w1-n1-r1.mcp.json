@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Website traffic channel mix, 2025 vs 2024",
+    "--question",
+    "Which acquisition channels bring the most site traffic across all merchants, and how has that mix shifted versus a year ago?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per traffic channel (utm_source, bucketed)\", \"columns_requested\": [\"channel - web_sessions.utm_source, with null/blank coalesced to 'direct/none'\", \"sessions_2025 - count of web_sessions with started_at in 2025-01-01..2025-12-31\", \"share_of_2025_sessions_pct - sessions_2025 / total 2025 sessions across all channels * 100, rounded to 1 decimal\", \"sessions_2024 - count of web_sessions with started_at in 2024-01-01..2024-12-31, same channel bucketing\", \"yoy_change_pct - (sessions_2025 - sessions_2024) / nullif(sessions_2024,0) * 100, rounded to 1 decimal\", \"bounce_rate_2025_pct - share of 2025 sessions for that channel where is_bounce is true, *100, rounded to 1 decimal\", \"avg_page_views_2025 - average page_view_count for 2025 sessions in that channel, rounded to 1 decimal\"], \"details\": \"Source: web_sessions only, no tenant filter (aggregate across all merchants). Bucket channel as coalesce(nullif(trim(utm_source),''), 'direct/none'). Compute 2025 and 2024 metrics in the same row per channel. Rank by sessions_2025 descending and limit to the top 12 channels by that metric; break remaining ties by channel name ascending for a deterministic order. This is a single-grain (channel) summary, not a time series, to stay well under the row limit while still showing both current mix and year-over-year direction.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Purchase order replenishment performance by quarter, 2025 (mature POs only, non-censored)",
+    "--question",
+    "Once we only look at purchase orders old enough to have fully played out, are we genuinely behind on restocking, or was the Q4 backlog just a year-end timing artifact?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per calendar quarter of ordered_at, 2025\", \"columns_requested\": [\"quarter (e.g. 2025-Q1)\", \"pos_ordered_total (all POs with ordered_at in that quarter, for reference)\", \"pos_matured (subset of pos_ordered_total with ordered_at <= 2025-11-01, i.e. at least 60 days elapsed before the 2025-12-31 cutoff)\", \"pos_matured_received (matured subset with received_at not null)\", \"pct_matured_still_open (matured subset with received_at null and status in ('submitted','partially_received') -- a true backlog signal, not a recency artifact)\", \"avg_actual_lead_days (DATEDIFF(day, ordered_at, received_at), matured+received subset only)\", \"pct_received_late (matured subset with both expected_at and received_at set, where received_at > expected_at)\", \"avg_days_late (matured, late subset only)\"], \"details\": \"Table: purchase_orders. Scope: ordered_at between 2025-01-01 and 2025-12-31, grouped by calendar quarter of ordered_at. The 60-day maturity threshold (ordered_at <= 2025-11-01) is chosen because the longest contracted supplier lead time we've seen is ~43 days, so 60 days gives real buffer for a PO to have resolved one way or the other by the data cutoff; note in the report that Q4's matured subset will only reflect POs ordered in October (since November/December POs aren't yet mature), which is expected and intentional. Round day metrics to 1 decimal, pct columns to 1 decimal. Order by quarter ascending. Expect 4 rows.\", \"builds_on\": [\"Purchase order replenishment performance by quarter, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

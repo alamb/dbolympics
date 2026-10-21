@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Top merchants: year-over-year holiday-quarter growth",
+    "--question",
+    "For the biggest merchants, is Oct-Dec revenue really growing year over year, or is the recent growth just holiday seasonality?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"industry\", \"revenue EUR Oct-Dec 2025\", \"revenue EUR Oct-Dec 2024\", \"revenue YoY growth pct\", \"orders Oct-Dec 2025\", \"orders Oct-Dec 2024\", \"order YoY growth pct\"], \"details\": \"Tables orders, tenants, exchange_rates. Window A is placed_at Oct 1 to Dec 31 2025. Window B is placed_at Oct 1 to Dec 31 2024. Exclude cancelled orders. Convert to EUR using daily exchange_rates matched to placed_at date. growth pct equals A minus B divided by B, blank if B is zero. Order by window A revenue descending, tie-break tenant_id. Cap 50 rows.\", \"builds_on\": [\"Merchant size and recent growth trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

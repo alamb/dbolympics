@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH staff_totals AS (\n  SELECT count(*) AS total_staff\n  FROM users\n  WHERE is_staff = true AND deleted_at IS NULL\n),\ncat_users AS (\n  SELECT DISTINCT p.category, u.id AS user_id, u.status\n  FROM permissions p\n  JOIN role_permissions rp ON rp.permission_id = p.id\n  JOIN user_roles ur ON ur.role_id = rp.role_id\n  JOIN users u ON u.id = ur.user_id\n  WHERE u.is_staff = true AND u.deleted_at IS NULL\n),\ncat_perm_counts AS (\n  SELECT category, count(DISTINCT code) AS distinct_permission_codes\n  FROM permissions\n  GROUP BY category\n)\nSELECT\n  cu.category,\n  count(*) AS staff_users_with_category,\n  round(100.0 * count(*) / st.total_staff, 2) AS pct_of_all_staff,\n  count(*) FILTER (WHERE cu.status = 'active') AS active_count,\n  count(*) FILTER (WHERE cu.status IN ('invited','suspended','deactivated')) AS non_active_count,\n  cpc.distinct_permission_codes\nFROM cat_users cu\nCROSS JOIN staff_totals st\nJOIN cat_perm_counts cpc ON cpc.category = cu.category\nGROUP BY cu.category, st.total_staff, cpc.distinct_permission_codes\nORDER BY staff_users_with_category DESC, cu.category",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: category, staff_users_with_category, pct_of_all_staff, active_count, non_active_count, distinct_permission_codes"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH staff_totals AS (\n  SELECT count(*) AS total_staff\n  FROM users\n  WHERE is_staff = true AND deleted_at IS NULL\n),\ncat_users AS (\n  SELECT DISTINCT p.category, u.id AS user_id, u.status\n  FROM permissions p\n  JOIN role_permissions rp ON rp.permission_id = p.id\n  JOIN user_roles ur ON ur.role_id = rp.role_id\n  JOIN users u ON u.id = ur.user_id\n  WHERE u.is_staff = true AND u.deleted_at IS NULL\n),\ncat_perm_counts AS (\n  SELECT category, count(DISTINCT code) AS distinct_permission_codes\n  FROM permissions\n  GROUP BY category\n)\nSELECT\n  cu.category,\n  count(*) AS staff_users_with_category,\n  round(100.0 * count(*) / st.total_staff, 2) AS pct_of_all_staff,\n  count(*) FILTER (WHERE cu.status = 'active') AS active_count,\n  count(*) FILTER (WHERE cu.status IN ('invited','suspended','deactivated')) AS non_active_count,\n  cpc.distinct_permission_codes\nFROM cat_users cu\nCROSS JOIN staff_totals st\nJOIN cat_perm_counts cpc ON cpc.category = cu.category\nGROUP BY cu.category, st.total_staff, cpc.distinct_permission_codes\nORDER BY staff_users_with_category DESC, cu.category",
+  "note": "Grain is one row per permissions.category, counting distinct is_staff=true/non-deleted users who hold at least one role granting a permission in that category (via user_roles -> role_permissions -> permissions). This is a current-state snapshot (no time dimension in users/roles to bound as of 2025-12-31, so it reflects the latest replicated state). distinct_permission_codes counts all permission codes defined in that category, independent of whether staff currently hold them.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per permission category with the distinct staff headcount holding it, its share of all staff, the active vs. non-active (invited/suspended/deactivated) split, and the category's total distinct permission codes for context — ordered by staff_users_with_category descending, which should make it easy for Claire/Aylin to spot sensitive categories (billing, security, admin, user-management) with meaningful non_active_count as the stale-access signal."
+ }
+]

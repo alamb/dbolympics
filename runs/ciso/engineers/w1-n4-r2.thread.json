@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "with active_keys as (\n  select\n    id,\n    tenant_id,\n    created_at,\n    last_used_at,\n    date '2026-01-05' - created_at::date as age_days\n  from api_keys\n  where status = 'active'\n),\nbucketed as (\n  select\n    *,\n    case\n      when age_days < 90 then '1 - under 90 days'\n      when age_days < 365 then '2 - 90 days-1 year'\n      when age_days < 730 then '3 - 1-2 years'\n      when age_days < 1460 then '4 - 2-4 years'\n      else '5 - 4+ years'\n    end as bucket_sort\n  from active_keys\n),\ntotals as (\n  select count(*) as total_active from bucketed\n)\nselect\n  case b.bucket_sort\n    when '1 - under 90 days' then 'under 90 days'\n    when '2 - 90 days-1 year' then '90 days-1 year'\n    when '3 - 1-2 years' then '1-2 years'\n    when '4 - 2-4 years' then '2-4 years'\n    when '5 - 4+ years' then '4+ years'\n  end as age_bucket,\n  count(*) as active_key_count,\n  round(100.0 * count(*) / t.total_active, 1) as share_pct,\n  count(distinct b.tenant_id) as distinct_tenants,\n  max(b.age_days) as oldest_key_age_days,\n  count(*) filter (where b.last_used_at is null) as never_used_count,\n  count(*) filter (where b.last_used_at is not null and b.last_used_at < timestamp '2025-10-05') as unused_90d_plus_count\nfrom bucketed b\ncross join totals t\ngroup by b.bucket_sort, t.total_active\norder by b.bucket_sort",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: age_bucket, active_key_count, share_pct, distinct_tenants, oldest_key_age_days, never_used_count, unused_90d_plus_count"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "with active_keys as (\n  select\n    id,\n    tenant_id,\n    created_at,\n    last_used_at,\n    date '2026-01-05' - created_at::date as age_days\n  from api_keys\n  where status = 'active'\n),\nbucketed as (\n  select\n    *,\n    case\n      when age_days < 90 then '1 - under 90 days'\n      when age_days < 365 then '2 - 90 days-1 year'\n      when age_days < 730 then '3 - 1-2 years'\n      when age_days < 1460 then '4 - 2-4 years'\n      else '5 - 4+ years'\n    end as bucket_sort\n  from active_keys\n),\ntotals as (\n  select count(*) as total_active from bucketed\n)\nselect\n  case b.bucket_sort\n    when '1 - under 90 days' then 'under 90 days'\n    when '2 - 90 days-1 year' then '90 days-1 year'\n    when '3 - 1-2 years' then '1-2 years'\n    when '4 - 2-4 years' then '2-4 years'\n    when '5 - 4+ years' then '4+ years'\n  end as age_bucket,\n  count(*) as active_key_count,\n  round(100.0 * count(*) / t.total_active, 1) as share_pct,\n  count(distinct b.tenant_id) as distinct_tenants,\n  max(b.age_days) as oldest_key_age_days,\n  count(*) filter (where b.last_used_at is null) as never_used_count,\n  count(*) filter (where b.last_used_at is not null and b.last_used_at < timestamp '2025-10-05') as unused_90d_plus_count\nfrom bucketed b\ncross join totals t\ngroup by b.bucket_sort, t.total_active\norder by b.bucket_sort",
+  "note": "Age is computed as 2026-01-05 minus created_at (date), per the fixed reference date in the request. \"Unused 90+ days\" counts keys with a non-null last_used_at before 2025-10-05; never-used keys are reported separately in their own column rather than folded into this count.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report buckets currently-active API keys into the five fixed age ranges (youngest to oldest), with count, share of total, distinct tenants, oldest age in the bucket, never-used count, and count unused 90+ days — computed against the fixed reference date 2026-01-05 as requested."
+ }
+]

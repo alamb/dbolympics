@@ -1,0 +1,60 @@
+{
+ "notes": "Night 2 findings: MFA is flat and low — staff MFA has hovered at 54-57% all year (not improving, not declining — a plateau, which itself is a finding: nobody is pushing adoption), and shopper MFA is a literal 0.0% in every single month across ~11,200 shopper accounts, confirming it isn't sampling noise from report 1 — shoppers simply have no MFA option in use at all. The Nov 24 week spike is now explained: it's broad-based across ~110 tenants with the largest tenant (Cragsley Outfitters) naturally taking the biggest share, distinct-IPs tracking distinct-emails roughly 1:1, and failure rates in line with baseline — looks like ordinary Black Friday/Cyber Monday traffic, not a credential-stuffing event, so I'm closing that thread. The role-landscape report revealed something important report 3 (night 1) didn't show: every tenant also has an 'Administrator' system role carrying almost as many permissions as Owner (25 vs 26), with 122 holders platform-wide and a 6.6% dormancy rate — higher than what we saw for Owner — so Administrator, not just Owner, is the second pool of truly powerful access worth naming individuals in.\n\nWith two nights left before Friday's memo, I'm using tonight to (1) get the concrete, named list of dormant Owner/Administrator accounts for the access-governance finding, and open the two untouched topics Henrik raised — (2) API key/service account hygiene and (3) audit trail completeness — so night 4 can go deeper on whichever of those looks worst rather than starting cold.",
+ "requests": [
+  {
+   "title": "Dormant users holding Owner or Administrator access",
+   "question": "Specifically which accounts currently hold the two most powerful roles (Owner, Administrator) but haven't logged in recently — the concrete list of privileged accounts that look stale?",
+   "grain": "one row per user who holds a role named 'Owner' or 'Administrator' and is dormant",
+   "columns": [
+    "tenant name",
+    "tenant status",
+    "role name",
+    "user email",
+    "user status",
+    "last login (timestamp, or 'never')",
+    "days since last login (as of 2026-01-05; treat never-logged-in as the maximum/oldest)",
+    "account age in days (2026-01-05 minus users.created_at)"
+   ],
+   "details": "Source: user_roles joined to roles (name in ('Owner','Administrator')) joined to users (exclude deleted_at is not null) joined to tenants. Dormant = users.status = 'active' and (last_login_at is null or last_login_at < 2025-10-05). Compute days_since_last_login as 2026-01-05 minus last_login_at in days (null last_login_at should sort as the most stale, e.g. treat as a very large number or order nulls first — make this explicit and consistent in the ORDER BY). Compute account_age_days as 2026-01-05 minus users.created_at. Order by days_since_last_login descending (most stale first, nulls/never first), tenant name as tie-break. Cap at 50 rows; note total qualifying rows if more.",
+   "builds_on": [
+    "Privileged roles per merchant: grant size and dormancy",
+    "Privileged role landscape by role name, company-wide"
+   ]
+  },
+  {
+   "title": "API key hygiene by merchant",
+   "question": "How many API keys does each merchant have, how many are active, and how many of those active keys look abandoned (never used, or unused for a long time)?",
+   "grain": "one row per tenant",
+   "columns": [
+    "tenant name",
+    "tenant status",
+    "total api keys",
+    "active api keys",
+    "revoked or expired api keys",
+    "active keys never used (last_used_at is null)",
+    "active keys unused 90+ days (last_used_at < 2025-10-05)",
+    "oldest active key age in days (2026-01-05 minus created_at)",
+    "service accounts count (from service_accounts table, for context)"
+   ],
+   "details": "Source: api_keys (tenant_id, status, created_at, last_used_at, expires_at) joined to tenants; service_accounts counted separately per tenant (that table has no usage timestamp, so it's included only as a headcount for context, not an activity measure). 'Active' = status = 'active'. Use 2026-01-05 as the fixed reference date for all day-based calculations (per house standards, no CURRENT_DATE). Include every tenant that has at least one api_keys row. Order by 'active keys never used' descending, then 'active keys unused 90+ days' descending, then tenant name as tie-break, so the most abandoned-looking merchants surface first. Cap at 50 rows, note total tenant rows with at least one key.",
+   "builds_on": []
+  },
+  {
+   "title": "Audit log coverage by action type",
+   "question": "Is the audit trail (audit_log) consistently capturing sensitive actions across all merchants and over time, or are some action types thin, recent-only, or concentrated in a handful of tenants — could we credibly reconstruct 'who did what, when' if asked?",
+   "grain": "one row per audit_log action type (the 7 enum values: create, update, delete, login, logout, export, access_denied)",
+   "columns": [
+    "action type",
+    "total events (2023-01-01 through 2025-12-31)",
+    "events in the last 90 days (2025-10-05 through 2025-12-31)",
+    "distinct tenants with at least one such event",
+    "share of all 120 tenants represented (%)",
+    "distinct actor users recorded",
+    "earliest occurred_at",
+    "most recent occurred_at"
+   ],
+   "details": "Source: audit_log (tenant_id, action, actor_user_id, occurred_at), full history available (2023-01-01 to 2025-12-31). Group by action. 'Share of all 120 tenants' = distinct tenants with that action / 120, rounded to 1 decimal percent (note if the tenant count assumption of 120 needs adjusting based on what's actually in the tenants table). Order by total events descending, action type as tie-break (only 7 rows expected, well under the cap).",
+   "builds_on": []
+  }
+ ]
+}

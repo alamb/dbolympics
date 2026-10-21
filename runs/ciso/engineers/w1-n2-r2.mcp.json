@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Login attempts by tenant during the week of 2025-11-24 spike",
+    "--question",
+    "The week of 2025-11-24 showed a 41% jump in total login attempts platform-wide versus the prior week — is that jump broad-based across many merchants (consistent with Black Friday/Cyber Monday shopping traffic) or concentrated in one or a few tenants with elevated failure rates or IP concentration (consistent with a credential-stuffing attempt)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per tenant, for login_attempts occurring 2025-11-24 00:00 through 2025-11-30 23:59:59 UTC only\", \"columns_requested\": [\"tenant name\", \"tenant status\", \"total login attempts\", \"successful logins\", \"failed logins\", \"failure rate (%)\", \"distinct emails attempted\", \"distinct IP addresses\", \"max attempts from a single IP\", \"this tenant's share of platform total attempts that week (%)\"], \"details\": \"Source: login_attempts joined to tenants, filtered to occurred_at between 2025-11-24 00:00:00 and 2025-11-30 23:59:59 inclusive (the ISO week that showed the spike in the prior weekly report). Compute each tenant's counts plus its percentage share of the platform-wide total attempts in that window (rounded to 1 decimal). Include every tenant with at least one attempt in the window. Order by total login attempts descending, tenant name as tie-break; note total tenant rows returned vs. the 50-row cap.\", \"builds_on\": [\"Weekly sign-in attempt volume and failure pattern\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

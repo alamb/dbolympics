@@ -1,0 +1,5 @@
+[
+ "📋 We know WHEN any order changed status, but never WHO did it: across 150,000+ status changes (all merchants, all time), the \"changed by\" field is blank 0% of the time — literally never recorded.",
+ "🔑 Two merchants who've already left Tidewick still have a live, full-access API key quietly syncing their data every night — access that should've been shut off when they churned.",
+ "🔐 Shopper security gap confirmed: 88% of shopper accounts (~9,900) rely on a password alone, with no backup protection of any kind."
+]

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Compliance event resolution health by severity",
+    "--question",
+    "When compliance_events flags something (suspicious access, retention overruns, failed DSAR SLAs, etc.), is it actually getting resolved, or are flagged incidents piling up unresolved — is existing monitoring a real control or just theoretical?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per severity level in compliance_events\", \"columns_requested\": [\"severity\", \"total events (all-time, 2023-01-01 through 2025-12-31)\", \"resolved count\", \"unresolved count\", \"resolution rate (%)\", \"oldest unresolved event age in days (2026-01-05 minus occurred_at, unresolved only)\", \"most recent event occurred_at\"], \"details\": \"Source: compliance_events (severity, resolved, occurred_at, resolved_at). Group by severity. resolution_rate = resolved count / total events, rounded to 1 decimal percent. 'Oldest unresolved event age in days' computed only over rows where resolved = false, as 2026-01-05 minus occurred_at (fixed reference date, no CURRENT_DATE); null if no unresolved rows in that severity. Order by unresolved count descending, severity as tie-break.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "December Rating Dip by Vertical: 2024 vs 2025",
+    "--question",
+    "Which merchant vertical drove the platform-wide rating dip and spike in negative reviews seen in December 2025?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per tenant industry (vertical)\", \"columns_requested\": [\"industry\", \"dec2024_review_count\", \"dec2024_avg_rating\", \"dec2025_review_count\", \"dec2025_avg_rating\", \"rating_change_pts\", \"dec2025_pct_1_2_star\"], \"details\": \"Join product_reviews (is_approved = true) to products to tenants for industry. Compare the full calendar months of December 2024 (2024-12-01 to 2024-12-31) and December 2025 (2025-12-01 to 2025-12-31) based on product_reviews.created_at. dec2024_review_count / dec2024_avg_rating and dec2025_review_count / dec2025_avg_rating are the review count and mean rating for that industry in each month. rating_change_pts = dec2025_avg_rating minus dec2024_avg_rating, rounded to 2 decimals (negative means it got worse). dec2025_pct_1_2_star = share of that industry's Dec 2025 approved reviews rated 1 or 2, rounded to 1 decimal. Order by rating_change_pts ascending so the vertical with the biggest decline is first.\", \"builds_on\": [\"Monthly Review Volume and Rating Trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

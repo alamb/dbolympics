@@ -1,0 +1,75 @@
+=== Report 1: Tenant Size vs Carts.remind Job Failure Exposure, 2025 (written by Omar) ===
+Engineer's note: Ranking and revenue cover all tenants (not just those with 2025 orders, which are coalesced to 0) so the 10 affected tenants can be compared against the full field; the report returns the 10 Nov carts.remind-failure tenants plus the ~20 next-largest unaffected tenants by 2025 EUR revenue.
+REPORT: Tenant Size vs Carts.remind Job Failure Exposure, 2025
+QUESTION: Were the 10 tenants hit by the November carts.remind job failures large/top-tier accounts, or did exposure look unrelated to merchant size?
+tenant_name            | total_orders_2025 | total_revenue_eur_2025 | revenue_rank | was_affected_by_nov_carts_remind_failure
+-----------------------+-------------------+------------------------+--------------+-----------------------------------------
+Cragsley Outfitters    |              3635 |              724835.93 |            1 | Yes                                     
+Marrowby & Vane        |              1758 |              288909.93 |            4 | Yes                                     
+Cinder Peak Sports Co. |               338 |              124756.84 |            6 | Yes                                     
+Fennel & Flint         |               389 |               65764.13 |            7 | Yes                                     
+Petalcourt Beauty      |               706 |               63508.22 |            8 | Yes                                     
+Kibblewick             |               672 |               23801.41 |           14 | Yes                                     
+Ampfeld Elektronik     |                 0 |                    0.0 |           58 | Yes                                     
+Brennquell Kaffee      |                 0 |                    0.0 |           58 | Yes                                     
+Gratlinie Outdoor      |                 0 |                    0.0 |           58 | Yes                                     
+Studio Vrij            |                 0 |                    0.0 |           58 | Yes                                     
+OfficeHub Nordic       |               170 |              428472.93 |            2 | No                                      
+Castell Fasteners      |               159 |              387619.54 |            3 | No                                      
+Deskline Supplies      |                75 |              285178.35 |            5 | No                                      
+Kayak Corner           |               109 |               40600.69 |            9 | No                                      
+Fell & Fjell           |                85 |               36717.18 |           10 | No                                      
+Grind Collective       |              1111 |               25610.52 |           11 | No                                      
+Oakhurst Tailoring     |               165 |               25311.11 |           12 | No                                      
+Velvet Ash             |               134 |               24443.06 |           13 | No                                      
+Circuit Harbor         |                19 |               22953.82 |           15 | No                                      
+Coastline Interiors    |               155 |               21468.31 |           16 | No                                      
+Willow & Wren          |                97 |                19084.7 |           17 | No                                      
+Nordic Bloom Cosmetics |               151 |                19074.7 |           18 | No                                      
+Juniper Apothecary     |               157 |               18018.14 |           19 | No                                      
+Honeycomb Larder       |               620 |               17674.84 |           20 | No                                      
+Bytefield              |                23 |               13014.33 |           21 | No                                      
+The Balm Room          |               104 |               12921.67 |           22 | No                                      
+Thistlecombe           |                92 |               12570.49 |           23 | No                                      
+Meadow Row             |                24 |                9825.26 |           24 | No                                      
+Fjordline Wear         |                57 |                8615.11 |           25 | No                                      
+Courtside Collective   |                20 |                8514.48 |           26 | No                                      
+(30 rows)
+
+=== Report 2: Support Ticket Volume Around the Nov 2025 Carts.remind Incident (written by Omar) ===
+Engineer's note: Affected tenants = the 10 distinct tenant_ids with a failed job_runs row for jobs.handler='carts.remind' queued in Nov 2025, matching the prior request's definition. 'Other' tenant count uses all tenants with a valid status (which covers the whole tenants table) minus the 10 affected.
+REPORT: Support Ticket Volume Around the Nov 2025 Carts.remind Incident
+QUESTION: Did support ticket volume spike for the 10 affected tenants around the week of the carts.remind failures, compared to other tenants?
+week_start | tickets_affected_tenants | avg_tickets_per_affected_tenant | tickets_other_tenants | avg_tickets_per_other_tenant
+-----------+--------------------------+---------------------------------+-----------------------+-----------------------------
+2025-10-27 |                       10 |                             1.0 |                     6 |                         0.05
+2025-11-03 |                       22 |                             2.2 |                    26 |                         0.24
+2025-11-10 |                       31 |                             3.1 |                    26 |                         0.24
+2025-11-17 |                       54 |                             5.4 |                    43 |                         0.39
+2025-11-24 |                       58 |                             5.8 |                    40 |                         0.36
+2025-12-01 |                      113 |                            11.3 |                    79 |                         0.72
+2025-12-08 |                       87 |                             8.7 |                    81 |                         0.74
+2025-12-15 |                       31 |                             3.1 |                    27 |                         0.25
+2025-12-22 |                       35 |                             3.5 |                    14 |                         0.13
+2025-12-29 |                       11 |                             1.1 |                     7 |                         0.06
+(10 rows)
+
+=== Report 3: 2025 Webhook Delivery Reliability Trend (written by Viktor) ===
+Engineer's note: Filtered on created_at as requested; the query only returns months that actually have webhook_deliveries rows within 2025 (no synthetic zero-filled months), so the row count itself shows the real coverage window.
+REPORT: 2025 Webhook Delivery Reliability Trend
+QUESTION: How reliable were webhook deliveries to merchants' own systems across 2025, and what time window does the data actually cover?
+month      | total_deliveries | success_count | success_rate_pct | failed_count | failure_rate_pct | avg_duration_ms | distinct_webhooks
+-----------+------------------+---------------+------------------+--------------+------------------+-----------------+------------------
+2025-01-01 |             4438 |          4181 |            94.21 |            1 |             0.02 |          1329.0 |                61
+2025-02-01 |             3088 |          2912 |             94.3 |            0 |              0.0 |          1355.0 |                60
+2025-03-01 |             3551 |          3317 |            93.41 |            0 |              0.0 |          1531.0 |                60
+2025-04-01 |             3434 |          3231 |            94.09 |            0 |              0.0 |          1422.0 |                63
+2025-05-01 |             3810 |          3581 |            93.99 |            0 |              0.0 |          1443.0 |                63
+2025-06-01 |             3413 |          3231 |            94.67 |            0 |              0.0 |          1233.0 |                63
+2025-07-01 |             3702 |          3495 |            94.41 |            0 |              0.0 |          1285.0 |                65
+2025-08-01 |             3308 |          3135 |            94.77 |            0 |              0.0 |          1185.0 |                65
+2025-09-01 |             3724 |          3502 |            94.04 |            0 |              0.0 |          1429.0 |                65
+2025-10-01 |             4110 |          3893 |            94.72 |            0 |              0.0 |          1267.0 |                68
+2025-11-01 |             5720 |          5343 |            93.41 |            1 |             0.02 |          1332.0 |                70
+2025-12-01 |             7454 |          7101 |            95.26 |            0 |              0.0 |          1181.0 |                71
+(12 rows)

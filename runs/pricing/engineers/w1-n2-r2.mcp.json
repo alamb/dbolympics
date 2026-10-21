@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Coupons with a configured usage cap: actual breaches of usage_limit or per_customer_limit",
+    "--question",
+    "Among coupons that actually have a usage_limit or per_customer_limit configured, which ones have been redeemed beyond that stated cap?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Omar\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per coupon (coupons.id)\", \"columns_requested\": [\"coupon code\", \"tenant name\", \"status\", \"usage_limit\", \"per_customer_limit\", \"times_redeemed (actual count from coupon_redemptions)\", \"redemptions over usage_limit (times_redeemed - usage_limit, floor 0)\", \"max redemptions by a single customer\", \"distinct customers whose redemptions exceed per_customer_limit\", \"total discount redeemed (EUR)\"], \"details\": \"Source: coupons joined to tenants (name) and coupon_redemptions (for actual counts, distinct user_id, per-user redemption counts) and orders (currency_code, placed_at) for EUR conversion via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=redeemed_at date). Filter to coupons where usage_limit IS NOT NULL OR per_customer_limit IS NOT NULL. Use full history (redeemed_at 2023-01-01 to 2025-12-31) since a cap can be breached across the coupon's whole life, not just 2025. Order by 'redemptions over usage_limit' descending, then 'distinct customers whose redemptions exceed per_customer_limit' descending, coupon code ascending as final tie-break. Note total row count; print top 50.\", \"builds_on\": [\"Coupon redemption patterns: repeat use, limit breaches and post-expiry usage, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

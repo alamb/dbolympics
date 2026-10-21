@@ -1,0 +1,57 @@
+{
+ "notes": "Aylin flagged the Feb-2025 login spike as her top worry this week and split it into two distinct questions (concentration vs. near-miss outcome), so I'm giving it two of tonight's three slots since they're different grains (merchant-level vs. account-outcome-level) and shouldn't be bundled. For the third slot I'm taking a cheap, low-risk shot at the DSAR rejection-timing question using a completely different, simpler path than the one that broke twice last week: data_subject_requests.updated_at itself, with no JSON/change_history involved — if these 3 records weren't touched again after rejection, updated_at is a reasonable (if imperfect) proxy for \"when was this decided,\" and it avoids re-spending slots on the broken query. I'm holding incidents (#3) and the retention-exposure check (#4) for night 2, since we have 4 nights this week and the spike is clearly the most time-sensitive item. Keeping outputs aggregate (merchant names are fine, per other teams' precedent; no individual emails/usernames).",
+ "requests": [
+  {
+   "title": "February 2025 failed login concentration by merchant",
+   "question": "Did the February 2025 failed-login spike concentrate in a handful of merchants (and within them, a handful of emails or IPs), or was it spread evenly across the platform?",
+   "grain": "one row per tenant (merchant), restricted to login_attempts with occurred_at between 2025-02-01 and 2025-02-28 inclusive (UTC)",
+   "columns": [
+    "tenant_name",
+    "total_attempts_feb",
+    "failed_attempts_feb",
+    "pct_failed_feb",
+    "distinct_emails_with_any_failed_attempt",
+    "distinct_ips_with_any_failed_attempt",
+    "max_failed_attempts_single_ip",
+    "max_failed_attempts_single_email"
+   ],
+   "details": "Source: login_attempts joined to tenants for the name. Filter strictly to February 2025. Order by failed_attempts_feb descending so the most-affected merchants sort to the top; note the total number of tenants with any February login activity even if only the top 50 are printed. Purpose: see whether the spike is a handful of merchants/accounts/sources (a likely credential-stuffing or targeted-account event) versus a platform-wide even rise (more consistent with a client bug or outage).",
+   "builds_on": [
+    "Failed login attempts and suspicious access patterns by month"
+   ]
+  },
+  {
+   "title": "February 2025 repeat-failure accounts: did they succeed afterward?",
+   "question": "Among the accounts with 5+ failed logins in February 2025, how many went on to log in successfully afterward, and how soon — i.e. was this a near-miss or just noise?",
+   "grain": "one row per outcome bucket, computed over the cohort of distinct emails with >=5 failed login_attempts rows in February 2025 (previously counted at 102)",
+   "columns": [
+    "outcome_bucket (succeeded_within_1h / succeeded_within_24h / succeeded_later_in_month / never_succeeded_in_month)",
+    "email_count",
+    "pct_of_cohort",
+    "avg_failed_attempts_before_success (for buckets with a success; blank for never_succeeded)",
+    "distinct_tenants_affected"
+   ],
+   "details": "Source: login_attempts. Define the cohort as distinct email values with >=5 failed (succeeded=false) rows in Feb 2025. For each such email, find its last failed attempt in Feb 2025, then look for the first subsequent succeeded=true attempt by that same email within February 2025; bucket by the time gap (within 1h, within 24h, later in the month) or 'never_succeeded_in_month' if none found. Report only the aggregated bucket counts — do not print individual email addresses. Order buckets: succeeded_within_1h, succeeded_within_24h, succeeded_later_in_month, never_succeeded_in_month.",
+   "builds_on": [
+    "Failed login attempts and suspicious access patterns by month"
+   ]
+  },
+  {
+   "title": "Rejected DSAR timing via the record's own updated_at",
+   "question": "Using a simpler, reliable timestamp (the request record's own updated_at, not JSON history), roughly when were the 3 rejected-without-completed_at DSARs last touched relative to their received and due dates?",
+   "grain": "one row per rejected data_subject_requests record with completed_at is null (expect 3 rows)",
+   "columns": [
+    "request_type",
+    "received_at",
+    "due_at",
+    "updated_at",
+    "days_received_to_updated_at",
+    "within_due_at (updated_at <= due_at)"
+   ],
+   "details": "Source: data_subject_requests only — no change_history or audit_log join this time, to avoid the JSON-casting failure from last week. Treat updated_at as a proxy for 'last touched' (likely the rejection decision, on the assumption nothing else modified these rows afterward); please note this assumption as a caveat on the report rather than presenting it as certain. No subject-identifying columns. Order by received_at ascending.",
+   "builds_on": [
+    "Resolution timing of rejected DSARs via audit trail (retry)"
+   ]
+  }
+ ]
+}

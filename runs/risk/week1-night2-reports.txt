@@ -1,0 +1,76 @@
+=== Report 1: DSAR backlog reconciliation by status and request type (written by Felix) ===
+Engineer's note: oldest_open_received_at is NULL (not blank) for any status/request_type group where every row has a completed_at, since SQL has no blank/empty concept for timestamps. count_overdue_open uses the literal cutoff due_at < 2025-12-31 as requested, not today's date.
+REPORT: DSAR backlog reconciliation by status and request type
+QUESTION: Do the data subject requests that look 'open and overdue' by timestamp actually carry an open status, or is that an artifact of missing completed_at values on closed requests — and is the due_at SLA window itself consistent?
+status      | request_type  | count_requests | count_with_completed_at | count_without_completed_at | count_overdue_open | pct_due_at_null | avg_sla_window_days | oldest_open_received_at   
+------------+---------------+----------------+-------------------------+----------------------------+--------------------+-----------------+---------------------+---------------------------
+completed   | access        |              9 |                       9 |                          0 |                  0 |             0.0 |                30.0 | NULL                      
+completed   | erasure       |             31 |                      31 |                          0 |                  0 |             0.0 |                30.0 | NULL                      
+completed   | rectification |              3 |                       3 |                          0 |                  0 |             0.0 |                30.0 | NULL                      
+in_progress | access        |              1 |                       0 |                          1 |                  0 |             0.0 |                30.0 | 2025-12-29 04:46:25.41114 
+received    | erasure       |              1 |                       0 |                          1 |                  0 |             0.0 |                30.0 | 2025-12-06 01:50:30.669686
+rejected    | erasure       |              3 |                       0 |                          3 |                  3 |             0.0 |                30.0 | 2023-05-26 18:29:11.494494
+(6 rows)
+
+=== Report 2: Elevated access by permission category and staff status (written by Viktor) ===
+Engineer's note: Grain is one row per permissions.category, counting distinct is_staff=true/non-deleted users who hold at least one role granting a permission in that category (via user_roles -> role_permissions -> permissions). This is a current-state snapshot (no time dimension in users/roles to bound as of 2025-12-31, so it reflects the latest replicated state). distinct_permission_codes counts all permission codes defined in that category, independent of whether staff currently hold them.
+REPORT: Elevated access by permission category and staff status
+QUESTION: Which permission categories represent real elevated/admin-type access, how many staff users hold each, and do any non-active (invited/suspended/deactivated) staff still hold them?
+category   | staff_users_with_category | pct_of_all_staff | active_count | non_active_count | distinct_permission_codes
+-----------+---------------------------+------------------+--------------+------------------+--------------------------
+catalog    |                       546 |            99.27 |          544 |                2 |                         2
+orders     |                       524 |            95.27 |          522 |                2 |                         3
+customers  |                       506 |             92.0 |          504 |                2 |                         3
+support    |                       479 |            87.09 |          477 |                2 |                         2
+inventory  |                       290 |            52.73 |          290 |                0 |                         2
+analytics  |                       282 |            51.27 |          282 |                0 |                         1
+marketing  |                       264 |             48.0 |          264 |                0 |                         2
+billing    |                       249 |            45.27 |          249 |                0 |                         2
+crm        |                       248 |            45.09 |          248 |                0 |                         2
+compliance |                       245 |            44.55 |          245 |                0 |                         2
+settings   |                       245 |            44.55 |          245 |                0 |                         5
+(11 rows)
+
+=== Report 3: Role grant and revocation activity over time (written by Grace) ===
+Engineer's note: Combines audit_log and audit_log_archive (entity_table='user_roles', actions create/delete) across all tenants, since the question is about overall access-management practice rather than a specific merchant; months with zero activity are shown via a calendar spine with 0s, and pct_actor_user_id_null is left null for months with no changes (undefined rate) rather than 0.
+REPORT: Role grant and revocation activity over time
+QUESTION: Is staff access actively granted and revoked over time (evidence of ongoing access management), and can we attribute those changes to an identifiable actor?
+month   | role_grants_created | role_grants_removed | net_change | distinct_actor_user_id | pct_actor_user_id_null
+--------+---------------------+---------------------+------------+------------------------+-----------------------
+2023-01 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-02 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-03 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-04 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-05 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-06 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-07 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-08 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-09 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-10 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-11 |                   0 |                   0 |          0 |                      0 |                   NULL
+2023-12 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-01 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-02 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-03 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-04 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-05 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-06 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-07 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-08 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-09 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-10 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-11 |                   0 |                   0 |          0 |                      0 |                   NULL
+2024-12 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-01 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-02 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-03 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-04 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-05 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-06 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-07 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-08 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-09 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-10 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-11 |                   0 |                   0 |          0 |                      0 |                   NULL
+2025-12 |                   0 |                   0 |          0 |                      0 |                   NULL
+(36 rows)

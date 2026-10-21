@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "with flagged_pairs (merchant_name, order_number) as (\n  values\n    ('OfficeHub Nordic', 'SO-100363'),\n    ('Fell & Fjell', '#1179'),\n    ('Courtside Collective', 'CC-100015'),\n    ('Ampfeld Elektronik', '#1727'),\n    ('Ballycorran Industrial Supply', 'SO-100835'),\n    ('Ballycorran Industrial Supply', 'SO-100608'),\n    ('Midland Safety Wear', 'SO-100307'),\n    ('Halden Boots', '#1004'),\n    ('Castell Fasteners', 'SO-100233')\n),\nmatched_orders as (\n  select\n    o.id as order_id,\n    o.order_number,\n    t.name as merchant_name\n  from orders o\n  join tenants t on t.id = o.tenant_id\n  join flagged_pairs fp\n    on fp.merchant_name = t.name\n   and fp.order_number = o.order_number\n),\nmatched_payments as (\n  select\n    p.id as payment_id,\n    mo.order_id,\n    mo.order_number,\n    mo.merchant_name\n  from payments p\n  join matched_orders mo on mo.order_id = p.order_id\n),\nledger_detail as (\n  select\n    mp.merchant_name,\n    mp.order_number,\n    la.name as ledger_account_name,\n    la.account_type,\n    le.direction,\n    le.amount,\n    le.currency_code,\n    le.description,\n    le.entry_group,\n    le.occurred_at\n  from ledger_entries le\n  join matched_payments mp on mp.payment_id = le.payment_id\n  join ledger_accounts la on la.id = le.ledger_account_id\n)\nselect\n  merchant_name,\n  order_number,\n  ledger_account_name,\n  account_type,\n  direction,\n  amount,\n  currency_code,\n  description,\n  entry_group,\n  occurred_at\nfrom ledger_detail\norder by merchant_name, order_number, occurred_at, entry_group",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: merchant_name, order_number, ledger_account_name, account_type, direction, amount, currency_code, description, entry_group, occurred_at"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "with flagged_pairs (merchant_name, order_number) as (\n  values\n    ('OfficeHub Nordic', 'SO-100363'),\n    ('Fell & Fjell', '#1179'),\n    ('Courtside Collective', 'CC-100015'),\n    ('Ampfeld Elektronik', '#1727'),\n    ('Ballycorran Industrial Supply', 'SO-100835'),\n    ('Ballycorran Industrial Supply', 'SO-100608'),\n    ('Midland Safety Wear', 'SO-100307'),\n    ('Halden Boots', '#1004'),\n    ('Castell Fasteners', 'SO-100233')\n),\nmatched_orders as (\n  select\n    o.id as order_id,\n    o.order_number,\n    t.name as merchant_name\n  from orders o\n  join tenants t on t.id = o.tenant_id\n  join flagged_pairs fp\n    on fp.merchant_name = t.name\n   and fp.order_number = o.order_number\n),\nmatched_payments as (\n  select\n    p.id as payment_id,\n    mo.order_id,\n    mo.order_number,\n    mo.merchant_name\n  from payments p\n  join matched_orders mo on mo.order_id = p.order_id\n),\nledger_detail as (\n  select\n    mp.merchant_name,\n    mp.order_number,\n    la.name as ledger_account_name,\n    la.account_type,\n    le.direction,\n    le.amount,\n    le.currency_code,\n    le.description,\n    le.entry_group,\n    le.occurred_at\n  from ledger_entries le\n  join matched_payments mp on mp.payment_id = le.payment_id\n  join ledger_accounts la on la.id = le.ledger_account_id\n)\nselect\n  merchant_name,\n  order_number,\n  ledger_account_name,\n  account_type,\n  direction,\n  amount,\n  currency_code,\n  description,\n  entry_group,\n  occurred_at\nfrom ledger_detail\norder by merchant_name, order_number, occurred_at, entry_group",
+  "note": "Matched the 9 (merchant, order_number) pairs to orders via tenants.name + orders.order_number, then to all payments on those orders, then pulled every ledger_entries row tied to those payment_id(s) (unaggregated, joined to ledger_accounts for name/account_type). If an order had multiple payments, all of their ledger lines are included and distinguished by entry_group/occurred_at.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The query resolves each of the 9 flagged (merchant, order_number) pairs to its order(s) via `tenants.name` + `orders.order_number`, finds the associated payment(s), and returns every `ledger_entries` row for those payments at full grain (joined to `ledger_accounts` for name/account_type), ordered by merchant, order number, timestamp, and entry group so paired debit/credit lines sit together for the CFO's accounting review."
+ }
+]

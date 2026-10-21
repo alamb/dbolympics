@@ -1,0 +1,50 @@
+=== Report 1: Wiesgrund Wohnen December 2025: Product-Level Review Breakdown (written by Felix) ===
+Engineer's note: units_sold_last_12mo uses orders.placed_at in 2025-01-01..2025-12-31 and excludes only 'cancelled' status (other non-fulfilled statuses like pending/refunded are still counted as sold units, per the request's wording "placed ... with status not cancelled").
+REPORT: Wiesgrund Wohnen December 2025: Product-Level Review Breakdown
+QUESTION: Since delivery performance doesn't explain Wiesgrund Wohnen's December dip, which specific products drove it?
+product_name                        | category_name | review_count | avg_rating | pct_1_2_star | units_sold_last_12mo
+------------------------------------+---------------+--------------+------------+--------------+---------------------
+Stainless 24cm Frying Pan           | Cookware      |            2 |        4.0 |          0.0 |                    7
+20cm Chef's Knife                   | Cookware      |            2 |        5.0 |          0.0 |                   26
+Fluted Stoneware Vase               | Decor         |            1 |        1.0 |        100.0 |                   12
+Carbon Steel 26cm Frying Pan        | Cookware      |            1 |        2.0 |        100.0 |                    2
+Fluted Ceramic Vase                 | Decor         |            1 |        2.0 |        100.0 |                    1
+Set of 4 Stoneware Dinner Plate Set | Tableware     |            1 |        2.0 |        100.0 |                   11
+Shallow 28cm Casserole Dish         | Cookware      |            1 |        2.0 |        100.0 |                   18
+Bud Recycled Glass Vase             | Decor         |            1 |        5.0 |          0.0 |                    5
+Plush Bath Towel                    | Towels        |            1 |        5.0 |          0.0 |                   24
+Tumblers Set of 4 Glassware Set     | Glassware     |            1 |        5.0 |          0.0 |                   20
+(10 rows)
+
+=== Report 2: Fennel & Flint and Wiesgrund Wohnen: Historical December Pattern, 2023-2025 (written by Viktor) ===
+Engineer's note: Grain is merchant x year (Dec only, 2023-2025), one row per combination even if no reviews/orders occurred that December (counts show as 0, rating/pct as null). Review metrics use is_approved=true and created_at in December; orders use placed_at in December excluding cancelled status.
+REPORT: Fennel & Flint and Wiesgrund Wohnen: Historical December Pattern, 2023-2025
+QUESTION: Is the December rating dip a recurring yearly pattern for these two merchants (like we found at Cragsley), or something new and specific to 2025?
+merchant_name    | year | dec_review_count | dec_avg_rating | dec_pct_1_2_star | dec_orders_count
+-----------------+------+------------------+----------------+------------------+-----------------
+Fennel & Flint   | 2023 |                7 |           4.43 |             14.3 |               28
+Fennel & Flint   | 2024 |                7 |           3.71 |             14.3 |               45
+Fennel & Flint   | 2025 |               14 |           3.14 |             35.7 |               69
+Wiesgrund Wohnen | 2023 |                7 |           4.00 |             28.6 |               29
+Wiesgrund Wohnen | 2024 |                7 |           3.57 |             14.3 |               53
+Wiesgrund Wohnen | 2025 |               12 |           3.50 |             41.7 |               44
+(6 rows)
+
+=== Report 3: Bundle Adoption Rate by Vertical (written by Grace) ===
+Engineer's note: I didn't have the exact prior report text defining "pct_active_products_in_a_bundle," so I defined it per tenant as: (distinct active products whose variants appear as a component in at least one active bundle) / (distinct active, non-deleted products) * 100 — i.e. how much of the live catalog participates in bundling as a component. Tenants with no active products get a null pct, excluded from the average. Industry is blank-coalesced to 'Unknown' so every non-deleted tenant is represented.
+REPORT: Bundle Adoption Rate by Vertical
+QUESTION: Is bundle adoption really concentrated in specific verticals, and how strong is that pattern across the whole merchant base, not just the list of bundle-users?
+industry                  | merchant_count | merchants_using_bundles | pct_merchants_using_bundles | avg_pct_products_bundled_among_users
+--------------------------+----------------+-------------------------+-----------------------------+-------------------------------------
+Beauty                    |             12 |                      12 |                       100.0 |                                  4.1
+Books & Stationery        |              5 |                       5 |                       100.0 |                                  3.3
+Consumer Electronics      |              8 |                       8 |                       100.0 |                                  4.7
+Food & Coffee             |             11 |                      11 |                       100.0 |                                  5.3
+Home & Living             |             16 |                      16 |                       100.0 |                                  2.1
+Jewelry & Accessories     |              5 |                       5 |                       100.0 |                                  3.3
+Apparel & Footwear        |             22 |                       0 |                         0.0 |                                 NULL
+Industrial Supplies (B2B) |              5 |                       0 |                         0.0 |                                 NULL
+Office Supplies (B2B)     |              4 |                       0 |                         0.0 |                                 NULL
+Pet Supplies              |             10 |                       0 |                         0.0 |                                 NULL
+Sports & Outdoor          |             13 |                       0 |                         0.0 |                                 NULL
+(11 rows)

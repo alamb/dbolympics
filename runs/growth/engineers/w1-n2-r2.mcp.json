@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Do discounted orders look healthy, or just cheaper?",
+    "--question",
+    "Compared to full-price orders, do discounted orders in 2025 have a healthy order value, basket size, and return/cancellation rate, or do they look worse on the metrics that matter?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per order group: 'discounted' (discount_total > 0) vs 'full price' (discount_total = 0)\", \"columns_requested\": [\"order_group - 'discounted' or 'full price'\", \"orders_count - count of orders in that group, placed_at in 2025\", \"avg_order_value_eur - average orders.grand_total converted to EUR, rounded to 0 decimals\", \"avg_items_per_order - average of sum(order_items.quantity) per order for that group, rounded to 1 decimal\", \"return_rate_pct - share of orders in that group with at least one linked order_returns row, *100, rounded to 1 decimal\", \"cancelled_rate_pct - share of orders in that group with status = 'cancelled', *100, rounded to 1 decimal\"], \"details\": \"Source: orders (placed_at in 2025-01-01..2025-12-31, all tenants, no status filter so cancellations are visible) split into exactly two groups by discount_total > 0. Join order_items for item counts (sum quantity per order_id, then average across orders in the group). Join order_returns on order_id to flag any return. Convert grand_total to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=date of placed_at; EUR rate=1). Exactly 2 output rows, ordered 'discounted' then 'full price'.\", \"builds_on\": [\"Discounting baseline: monthly coupon usage and discount rate\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

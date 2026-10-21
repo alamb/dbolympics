@@ -1,0 +1,2051 @@
+run,loaded,query,median_s,status,message
+1,2024-and-earlier,load,0.291342,ok,
+1,2024-and-earlier,q001,0.026820,ok,
+1,2024-and-earlier,q002,0.055862,ok,
+1,2024-and-earlier,q003,0.064820,ok,
+1,2024-and-earlier,q004,0.024603,ok,
+1,2024-and-earlier,q005,0.108576,ok,
+1,2024-and-earlier,q006,0.111746,ok,
+1,2024-and-earlier,q007,0.026999,ok,
+1,2024-and-earlier,q008,0.027058,ok,
+1,2024-and-earlier,q009,0.036977,ok,
+1,2024-and-earlier,q010,0.020999,ok,
+1,2024-and-earlier,q011,0.025913,ok,
+1,2024-and-earlier,q012,0.201802,ok,
+1,2024-and-earlier,q013,0.041959,ok,
+1,2024-and-earlier,q014,0.061012,ok,
+1,2024-and-earlier,q015,0.050343,ok,
+1,2024-and-earlier,q016,0.018134,ok,
+1,2024-and-earlier,q017,0.046065,ok,
+1,2024-and-earlier,q018,0.080407,ok,
+1,2024-and-earlier,q019,0.052666,ok,
+1,2024-and-earlier,q020,0.185816,ok,
+1,2024-and-earlier,q021,0.169895,ok,
+1,2024-and-earlier,q022,0.043631,ok,
+1,2024-and-earlier,q023,0.132236,ok,
+1,2024-and-earlier,q024,0.053940,ok,
+1,2024-and-earlier,q025,0.858198,ok,
+1,2024-and-earlier,q026,0.054768,ok,
+1,2024-and-earlier,q027,0.024572,ok,
+1,2024-and-earlier,q028,0.080647,ok,
+1,2024-and-earlier,q029,0.030021,ok,
+1,2024-and-earlier,q030,0.112343,ok,
+1,2024-and-earlier,q031,0.012814,ok,
+1,2024-and-earlier,q032,0.026769,ok,
+1,2024-and-earlier,q033,0.079117,ok,
+1,2024-and-earlier,q034,0.013419,ok,
+1,2024-and-earlier,q035,0.023863,ok,
+1,2024-and-earlier,q036,0.100230,ok,
+1,2024-and-earlier,q037,0.103750,ok,
+1,2024-and-earlier,q038,0.028497,ok,
+1,2024-and-earlier,q039,0.031839,ok,
+1,2024-and-earlier,q040,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q041,0.033209,ok,
+1,2024-and-earlier,q042,0.151632,ok,
+1,2024-and-earlier,q043,0.019638,ok,
+1,2024-and-earlier,q044,0.022090,ok,
+1,2024-and-earlier,q045,0.020590,ok,
+1,2024-and-earlier,q046,0.024003,ok,
+1,2024-and-earlier,q047,0.044053,ok,
+1,2024-and-earlier,q048,0.079756,ok,
+1,2024-and-earlier,q049,0.121559,ok,
+1,2024-and-earlier,q050,0.042323,ok,
+1,2024-and-earlier,q051,0.029743,ok,
+1,2024-and-earlier,q052,0.032524,ok,
+1,2024-and-earlier,q053,0.027594,ok,
+1,2024-and-earlier,q054,0.023250,ok,
+1,2024-and-earlier,q055,0.021651,ok,
+1,2024-and-earlier,q056,0.038232,ok,
+1,2024-and-earlier,q057,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q058,0.021560,ok,
+1,2024-and-earlier,q059,0.017828,ok,
+1,2024-and-earlier,q060,0.011873,ok,
+1,2024-and-earlier,q061,0.048115,ok,
+1,2024-and-earlier,q062,0.029846,ok,
+1,2024-and-earlier,q063,0.098346,ok,
+1,2024-and-earlier,q064,,error,"Error during planning: Correlated scalar subquery can only be used in Projection, Filter, Aggregate plan nodes"
+1,2024-and-earlier,q065,0.034214,ok,
+1,2024-and-earlier,q066,0.063505,ok,
+1,2024-and-earlier,q067,0.025669,ok,
+1,2024-and-earlier,q068,0.058831,ok,
+1,2024-and-earlier,q069,0.017423,ok,
+1,2024-and-earlier,q070,0.033130,ok,
+1,2024-and-earlier,q071,0.026308,ok,
+1,2024-and-earlier,q072,0.021589,ok,
+1,2024-and-earlier,q073,0.027701,ok,
+1,2024-and-earlier,q074,0.208246,ok,
+1,2024-and-earlier,q075,0.013074,ok,
+1,2024-and-earlier,q076,0.037653,ok,
+1,2024-and-earlier,q077,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q078,1.997586,ok,
+1,2024-and-earlier,q079,0.066879,ok,
+1,2024-and-earlier,q080,0.043172,ok,
+1,2024-and-earlier,q081,0.020044,ok,
+1,2024-and-earlier,q082,0.024656,ok,
+1,2024-and-earlier,q083,0.019436,ok,
+1,2024-and-earlier,q084,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q085,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q086,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q087,0.109609,ok,
+1,2024-and-earlier,q088,0.274397,ok,
+1,2024-and-earlier,q089,0.756547,ok,
+1,2024-and-earlier,q090,0.065628,ok,
+1,2024-and-earlier,q091,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q092,0.042473,ok,
+1,2024-and-earlier,q093,0.187280,ok,
+1,2024-and-earlier,q094,0.840039,ok,
+1,2024-and-earlier,q095,0.113275,ok,
+1,2024-and-earlier,q096,0.204742,ok,
+1,2024-and-earlier,q097,0.061904,ok,
+1,2024-and-earlier,q098,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+1,2024-and-earlier,q099,0.020112,ok,
+1,2024-and-earlier,q100,0.162054,ok,
+1,2024-and-earlier,q101,0.035938,ok,
+1,2024-and-earlier,q102,0.035139,ok,
+1,2024-and-earlier,q103,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q104,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.ip_count'?
+1,2024-and-earlier,q105,0.048134,ok,
+1,2024-and-earlier,q106,0.044504,ok,
+1,2024-and-earlier,q107,0.017742,ok,
+1,2024-and-earlier,q108,0.023701,ok,
+1,2024-and-earlier,q109,0.058895,ok,
+1,2024-and-earlier,q110,0.012655,ok,
+1,2024-and-earlier,q111,0.005013,ok,
+1,2024-and-earlier,q112,0.080887,ok,
+1,2024-and-earlier,q113,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q114,0.008913,ok,
+1,2024-and-earlier,q115,0.031590,ok,
+1,2024-and-earlier,q116,9.891167,ok,
+1,2024-and-earlier,q117,0.003993,ok,
+1,2024-and-earlier,q118,0.017292,ok,
+1,2024-and-earlier,q119,0.013087,ok,
+1,2024-and-earlier,q120,0.007337,ok,
+1,2024-and-earlier,q121,,error,"Error during planning: Plan: [""BoundedWindowAggExec: wdw=[row_number() PARTITION BY [dsr.id] ORDER BY [abs(coalesce(CAST(lh.placed_at AS Date32) - CAST(dsr.received_at AS Date32), Int64(999999))) ASC NULLS LAST, lh.id ASC NULLS LAST] RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW: Field { \""row_n"
+1,2024-and-earlier,q122,0.093735,ok,
+1,2024-and-earlier,q123,0.019043,ok,
+1,2024-and-earlier,q124,0.004417,ok,
+1,2024-and-earlier,q125,0.012240,ok,
+1,2024-and-earlier,q126,0.002434,ok,
+1,2024-and-earlier,q127,0.029458,ok,
+1,2024-and-earlier,q128,0.027164,ok,
+1,2024-and-earlier,q129,0.015982,ok,
+1,2024-and-earlier,q130,0.021020,ok,
+1,2024-and-earlier,q131,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""t"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q132,0.020770,ok,
+1,2024-and-earlier,q133,0.046340,ok,
+1,2024-and-earlier,q134,0.017972,ok,
+1,2024-and-earlier,q135,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""wd"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q136,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q137,0.107114,ok,
+1,2024-and-earlier,q138,0.146120,ok,
+1,2024-and-earlier,q139,0.127656,ok,
+1,2024-and-earlier,q140,0.088806,ok,
+1,2024-and-earlier,q141,0.040597,ok,
+1,2024-and-earlier,q142,0.038336,ok,
+1,2024-and-earlier,q143,0.074528,ok,
+1,2024-and-earlier,q144,0.064650,ok,
+1,2024-and-earlier,q145,0.053011,ok,
+1,2024-and-earlier,q146,0.043633,ok,
+1,2024-and-earlier,q147,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q148,0.201088,ok,
+1,2024-and-earlier,q149,0.029412,ok,
+1,2024-and-earlier,q150,0.277534,ok,
+1,2024-and-earlier,q151,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q152,0.069599,ok,
+1,2024-and-earlier,q153,0.176095,ok,
+1,2024-and-earlier,q154,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+1,2024-and-earlier,q155,0.083836,ok,
+1,2024-and-earlier,q156,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""d"" }), name: ""id"" })"
+1,2024-and-earlier,q157,0.380250,ok,
+1,2024-and-earlier,q158,0.093481,ok,
+1,2024-and-earlier,q159,0.178348,ok,
+1,2024-and-earlier,q160,0.085999,ok,
+1,2024-and-earlier,q161,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q162,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q163,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q164,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q165,0.239554,ok,
+1,2024-and-earlier,q166,0.318284,ok,
+1,2024-and-earlier,q167,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q168,0.062812,ok,
+1,2024-and-earlier,q169,0.360456,ok,
+1,2024-and-earlier,q170,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q171,0.907282,ok,
+1,2024-and-earlier,q172,0.029015,ok,
+1,2024-and-earlier,q173,0.027532,ok,
+1,2024-and-earlier,q174,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q175,,error,Error during planning: Invalid function 'json_value'.
+1,2024-and-earlier,q176,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q177,0.023364,ok,
+1,2024-and-earlier,q178,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q179,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+1,2024-and-earlier,q180,0.019555,ok,
+1,2024-and-earlier,q181,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q182,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q183,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q184,0.462740,ok,
+1,2024-and-earlier,q185,0.439046,ok,
+1,2024-and-earlier,q186,0.478430,ok,
+1,2024-and-earlier,q187,0.017340,ok,
+1,2024-and-earlier,q188,0.432803,ok,
+1,2024-and-earlier,q189,0.025666,ok,
+1,2024-and-earlier,q190,0.352801,ok,
+1,2024-and-earlier,q191,0.344703,ok,
+1,2024-and-earlier,q192,0.012033,ok,
+1,2024-and-earlier,q193,0.012279,ok,
+1,2024-and-earlier,q194,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q195,0.009971,ok,
+1,2024-and-earlier,q196,0.025024,ok,
+1,2024-and-earlier,q197,0.030858,ok,
+1,2024-and-earlier,q198,0.073245,ok,
+1,2024-and-earlier,q199,0.033436,ok,
+1,2024-and-earlier,q200,0.054907,ok,
+1,2024-and-earlier,q201,0.029539,ok,
+1,2024-and-earlier,q202,0.013827,ok,
+1,2024-and-earlier,q203,0.020095,ok,
+1,2024-and-earlier,q204,0.014306,ok,
+1,2024-and-earlier,q205,0.009517,ok,
+1,2024-and-earlier,q206,0.031453,ok,
+1,2024-and-earlier,q207,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q208,0.016782,ok,
+1,2024-and-earlier,q209,0.034897,ok,
+1,2024-and-earlier,q210,0.111347,ok,
+1,2024-and-earlier,q211,0.032912,ok,
+1,2024-and-earlier,q212,0.055669,ok,
+1,2024-and-earlier,q213,0.078906,ok,
+1,2024-and-earlier,q214,0.044129,ok,
+1,2024-and-earlier,q215,0.052560,ok,
+1,2024-and-earlier,q216,0.074784,ok,
+1,2024-and-earlier,q217,0.154255,ok,
+1,2024-and-earlier,q218,0.047038,ok,
+1,2024-and-earlier,q219,0.056135,ok,
+1,2024-and-earlier,q220,0.926837,ok,
+1,2024-and-earlier,q221,0.195060,ok,
+1,2024-and-earlier,q222,0.021554,ok,
+1,2024-and-earlier,q223,0.180028,ok,
+1,2024-and-earlier,q224,0.323201,ok,
+1,2024-and-earlier,q225,0.310806,ok,
+1,2024-and-earlier,q226,1.440247,ok,
+1,2024-and-earlier,q227,0.024758,ok,
+1,2024-and-earlier,q228,0.309709,ok,
+1,2024-and-earlier,q229,0.057843,ok,
+1,2024-and-earlier,q230,0.317280,ok,
+1,2024-and-earlier,q231,0.633909,ok,
+1,2024-and-earlier,q232,0.104204,ok,
+1,2024-and-earlier,q233,0.062915,ok,
+1,2024-and-earlier,q234,0.264562,ok,
+1,2024-and-earlier,q235,0.019383,ok,
+1,2024-and-earlier,q236,0.016928,ok,
+1,2024-and-earlier,q237,0.030925,ok,
+1,2024-and-earlier,q238,0.296886,ok,
+1,2024-and-earlier,q239,0.156978,ok,
+1,2024-and-earlier,q240,0.247411,ok,
+1,2024-and-earlier,q241,0.371894,ok,
+1,2024-and-earlier,q242,0.199407,ok,
+1,2024-and-earlier,q243,0.266836,ok,
+1,2024-and-earlier,q244,0.017099,ok,
+1,2024-and-earlier,q245,0.016631,ok,
+1,2024-and-earlier,q246,0.019528,ok,
+1,2024-and-earlier,q247,0.020554,ok,
+1,2024-and-earlier,q248,0.056311,ok,
+1,2024-and-earlier,q249,0.014511,ok,
+1,2024-and-earlier,q250,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+1,2024-and-earlier,q251,0.023421,ok,
+1,2024-and-earlier,q252,0.022518,ok,
+1,2024-and-earlier,q253,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q254,0.016789,ok,
+1,2024-and-earlier,q255,0.045042,ok,
+1,2024-and-earlier,q256,0.041568,ok,
+1,2024-and-earlier,q257,0.029284,ok,
+1,2024-and-earlier,q258,0.025396,ok,
+1,2024-and-earlier,q259,,error,"Arrow error: Invalid argument error: column types must match schema types, expected Decimal128(38, 6) but found Decimal128(28, 6) at column index 0"
+1,2024-and-earlier,q260,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q261,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q262,0.096284,ok,
+1,2024-and-earlier,q263,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+1,2024-and-earlier,q264,0.015246,ok,
+1,2024-and-earlier,q265,0.017301,ok,
+1,2024-and-earlier,q266,0.021642,ok,
+1,2024-and-earlier,q267,0.019889,ok,
+1,2024-and-earlier,q268,0.061204,ok,
+1,2024-and-earlier,q269,0.318229,ok,
+1,2024-and-earlier,q270,0.104263,ok,
+1,2024-and-earlier,q271,0.439832,ok,
+1,2024-and-earlier,q272,0.795643,ok,
+1,2024-and-earlier,q273,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q274,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q275,0.042098,ok,
+1,2024-and-earlier,q276,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.cnt'?
+1,2024-and-earlier,q277,0.032448,ok,
+1,2024-and-earlier,q278,0.010421,ok,
+1,2024-and-earlier,q279,0.032342,ok,
+1,2024-and-earlier,q280,0.011980,ok,
+1,2024-and-earlier,q281,0.049519,ok,
+1,2024-and-earlier,q282,0.018676,ok,
+1,2024-and-earlier,q283,0.058272,ok,
+1,2024-and-earlier,q284,0.145079,ok,
+1,2024-and-earlier,q285,0.014208,ok,
+1,2024-and-earlier,q286,0.031798,ok,
+1,2024-and-earlier,q287,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q288,0.015552,ok,
+1,2024-and-earlier,q289,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q290,0.018371,ok,
+1,2024-and-earlier,q291,0.020248,ok,
+1,2024-and-earlier,q292,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q293,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q294,0.013825,ok,
+1,2024-and-earlier,q295,0.022690,ok,
+1,2024-and-earlier,q296,0.015714,ok,
+1,2024-and-earlier,q297,0.025344,ok,
+1,2024-and-earlier,q298,0.015823,ok,
+1,2024-and-earlier,q299,0.586114,ok,
+1,2024-and-earlier,q300,0.129152,ok,
+1,2024-and-earlier,q301,0.045416,ok,
+1,2024-and-earlier,q302,0.072457,ok,
+1,2024-and-earlier,q303,0.009133,ok,
+1,2024-and-earlier,q304,1.820379,ok,
+1,2024-and-earlier,q305,0.061329,ok,
+1,2024-and-earlier,q306,0.024578,ok,
+1,2024-and-earlier,q307,0.061390,ok,
+1,2024-and-earlier,q308,0.083739,ok,
+1,2024-and-earlier,q309,0.078190,ok,
+1,2024-and-earlier,q310,0.026975,ok,
+1,2024-and-earlier,q311,0.048831,ok,
+1,2024-and-earlier,q312,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q313,0.066260,ok,
+1,2024-and-earlier,q314,0.134421,ok,
+1,2024-and-earlier,q315,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q316,0.054855,ok,
+1,2024-and-earlier,q317,0.066406,ok,
+1,2024-and-earlier,q318,0.065774,ok,
+1,2024-and-earlier,q319,0.010027,ok,
+1,2024-and-earlier,q320,0.008722,ok,
+1,2024-and-earlier,q321,0.020468,ok,
+1,2024-and-earlier,q322,0.008286,ok,
+1,2024-and-earlier,q323,0.011780,ok,
+1,2024-and-earlier,q324,0.018472,ok,
+1,2024-and-earlier,q325,0.334986,ok,
+1,2024-and-earlier,q326,0.021197,ok,
+1,2024-and-earlier,q327,0.012197,ok,
+1,2024-and-earlier,q328,0.144728,ok,
+1,2024-and-earlier,q329,0.257437,ok,
+1,2024-and-earlier,q330,0.472197,ok,
+1,2024-and-earlier,q331,0.819666,ok,
+1,2024-and-earlier,q332,0.149299,ok,
+1,2024-and-earlier,q333,0.049316,ok,
+1,2024-and-earlier,q334,0.013921,ok,
+1,2024-and-earlier,q335,0.026556,ok,
+1,2024-and-earlier,q336,0.014960,ok,
+1,2024-and-earlier,q337,0.004655,ok,
+1,2024-and-earlier,q338,0.012428,ok,
+1,2024-and-earlier,q339,0.001631,ok,
+1,2024-and-earlier,q340,0.015540,ok,
+1,2024-and-earlier,q341,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+1,2024-and-earlier,q342,0.012392,ok,
+1,2024-and-earlier,q343,0.045643,ok,
+1,2024-and-earlier,q344,0.042150,ok,
+1,2024-and-earlier,q345,0.002369,ok,
+1,2024-and-earlier,q346,0.011172,ok,
+1,2024-and-earlier,q347,0.104100,ok,
+1,2024-and-earlier,q348,0.086074,ok,
+1,2024-and-earlier,q349,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""c"" }), name: ""product_id"" }), subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q350,0.033874,ok,
+1,2024-and-earlier,q351,0.181104,ok,
+1,2024-and-earlier,q352,0.076331,ok,
+1,2024-and-earlier,q353,,error,Schema error: No field named p.id.
+1,2024-and-earlier,q354,0.077380,ok,
+1,2024-and-earlier,q355,0.043065,ok,
+1,2024-and-earlier,q356,0.010280,ok,
+1,2024-and-earlier,q357,0.059107,ok,
+1,2024-and-earlier,q358,,error,Schema error: No field named p.id.
+1,2024-and-earlier,q359,0.296852,ok,
+1,2024-and-earlier,q360,0.454106,ok,
+1,2024-and-earlier,q361,0.293844,ok,
+1,2024-and-earlier,q362,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+1,2024-and-earlier,q363,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+1,2024-and-earlier,q364,,error,Schema error: No field named latest.tenant_id. Did you mean 'latest.user_id'?
+1,2024-and-earlier,q365,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""user_id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""o"" }), name: ""user_id"" })"
+1,2024-and-earlier,q366,0.014918,ok,
+1,2024-and-earlier,q367,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+1,2024-and-earlier,q368,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q369,0.019139,ok,
+1,2024-and-earlier,q370,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q371,0.089144,ok,
+1,2024-and-earlier,q372,0.103829,ok,
+1,2024-and-earlier,q373,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q374,0.248546,ok,
+1,2024-and-earlier,q375,0.925097,ok,
+1,2024-and-earlier,q376,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q377,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q378,0.949404,ok,
+1,2024-and-earlier,q379,,error,Error during planning: Cannot coerce arithmetic expression Duration(µs) * Float64 to valid types
+1,2024-and-earlier,q380,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q381,0.302658,ok,
+1,2024-and-earlier,q382,0.051450,ok,
+1,2024-and-earlier,q383,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q384,0.028110,ok,
+1,2024-and-earlier,q385,0.032384,ok,
+1,2024-and-earlier,q386,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q387,0.019910,ok,
+1,2024-and-earlier,q388,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q389,0.023670,ok,
+1,2024-and-earlier,q390,0.015775,ok,
+1,2024-and-earlier,q391,0.015338,ok,
+1,2024-and-earlier,q392,0.036778,ok,
+1,2024-and-earlier,q393,,error,Schema error: No field named w.id.
+1,2024-and-earlier,q394,0.017873,ok,
+1,2024-and-earlier,q395,0.048889,ok,
+1,2024-and-earlier,q396,,error,"Error during planning: Too many columns! The subquery should only return one column: column1, column2"
+1,2024-and-earlier,q397,0.012931,ok,
+1,2024-and-earlier,q398,0.042706,ok,
+1,2024-and-earlier,q399,,error,Error during planning: Invalid function 'json_value'.
+1,2024-and-earlier,q400,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+1,2024-and-earlier,q401,0.023497,ok,
+1,2024-and-earlier,q402,0.015153,ok,
+1,2024-and-earlier,q403,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+1,2024-and-earlier,q404,0.026724,ok,
+1,2024-and-earlier,q405,0.025224,ok,
+1,2024-and-earlier,q406,0.081830,ok,
+1,2024-and-earlier,q407,0.030069,ok,
+1,2024-and-earlier,q408,0.035538,ok,
+1,2024-and-earlier,q409,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,load,0.328161,ok,
+2,2025-Q1,q001,0.026724,ok,
+2,2025-Q1,q002,0.053733,ok,
+2,2025-Q1,q003,0.065544,ok,
+2,2025-Q1,q004,0.023394,ok,
+2,2025-Q1,q005,0.126687,ok,
+2,2025-Q1,q006,0.131322,ok,
+2,2025-Q1,q007,0.028358,ok,
+2,2025-Q1,q008,0.028440,ok,
+2,2025-Q1,q009,0.037757,ok,
+2,2025-Q1,q010,0.021276,ok,
+2,2025-Q1,q011,0.048440,ok,
+2,2025-Q1,q012,0.230199,ok,
+2,2025-Q1,q013,0.045355,ok,
+2,2025-Q1,q014,0.060926,ok,
+2,2025-Q1,q015,0.051683,ok,
+2,2025-Q1,q016,0.022343,ok,
+2,2025-Q1,q017,0.102114,ok,
+2,2025-Q1,q018,0.192015,ok,
+2,2025-Q1,q019,0.060128,ok,
+2,2025-Q1,q020,0.229067,ok,
+2,2025-Q1,q021,0.204234,ok,
+2,2025-Q1,q022,0.124663,ok,
+2,2025-Q1,q023,0.273075,ok,
+2,2025-Q1,q024,0.105985,ok,
+2,2025-Q1,q025,1.011037,ok,
+2,2025-Q1,q026,0.681283,ok,
+2,2025-Q1,q027,0.021473,ok,
+2,2025-Q1,q028,0.388777,ok,
+2,2025-Q1,q029,0.329813,ok,
+2,2025-Q1,q030,0.387846,ok,
+2,2025-Q1,q031,0.015378,ok,
+2,2025-Q1,q032,0.056994,ok,
+2,2025-Q1,q033,0.537778,ok,
+2,2025-Q1,q034,0.024321,ok,
+2,2025-Q1,q035,0.033007,ok,
+2,2025-Q1,q036,0.102644,ok,
+2,2025-Q1,q037,0.106046,ok,
+2,2025-Q1,q038,0.079020,ok,
+2,2025-Q1,q039,0.075634,ok,
+2,2025-Q1,q040,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q041,0.036410,ok,
+2,2025-Q1,q042,0.178034,ok,
+2,2025-Q1,q043,0.329129,ok,
+2,2025-Q1,q044,,timeout,no result within 30 s
+2,2025-Q1,q045,0.023194,ok,
+2,2025-Q1,q046,,timeout,no result within 30 s
+2,2025-Q1,q047,0.047237,ok,
+2,2025-Q1,q048,0.086010,ok,
+2,2025-Q1,q049,0.132299,ok,
+2,2025-Q1,q050,0.130468,ok,
+2,2025-Q1,q051,0.174976,ok,
+2,2025-Q1,q052,0.145974,ok,
+2,2025-Q1,q053,0.464129,ok,
+2,2025-Q1,q054,0.084239,ok,
+2,2025-Q1,q055,0.542103,ok,
+2,2025-Q1,q056,0.146530,ok,
+2,2025-Q1,q057,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q058,0.134052,ok,
+2,2025-Q1,q059,0.282547,ok,
+2,2025-Q1,q060,0.014919,ok,
+2,2025-Q1,q061,0.063785,ok,
+2,2025-Q1,q062,0.031881,ok,
+2,2025-Q1,q063,0.120539,ok,
+2,2025-Q1,q064,,error,"Error during planning: Correlated scalar subquery can only be used in Projection, Filter, Aggregate plan nodes"
+2,2025-Q1,q065,0.138685,ok,
+2,2025-Q1,q066,0.073525,ok,
+2,2025-Q1,q067,0.028867,ok,
+2,2025-Q1,q068,0.075032,ok,
+2,2025-Q1,q069,0.017931,ok,
+2,2025-Q1,q070,0.035141,ok,
+2,2025-Q1,q071,0.028860,ok,
+2,2025-Q1,q072,0.025985,ok,
+2,2025-Q1,q073,0.030527,ok,
+2,2025-Q1,q074,0.440833,ok,
+2,2025-Q1,q075,0.013248,ok,
+2,2025-Q1,q076,0.035824,ok,
+2,2025-Q1,q077,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q078,2.276735,ok,
+2,2025-Q1,q079,0.113154,ok,
+2,2025-Q1,q080,0.050879,ok,
+2,2025-Q1,q081,0.018198,ok,
+2,2025-Q1,q082,0.020341,ok,
+2,2025-Q1,q083,0.018884,ok,
+2,2025-Q1,q084,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q085,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q086,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q087,,error,Resources exhausted: Failed to allocate additional 1809.9 GB for FinalHashAggregateStream[1] with 0.0 B already allocated for this reservation - 15.4 GB remain available for the total memory pool: fair(pool_size: 76.8 GB)
+2,2025-Q1,q088,0.331375,ok,
+2,2025-Q1,q089,0.981001,ok,
+2,2025-Q1,q090,0.071919,ok,
+2,2025-Q1,q091,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q092,0.049342,ok,
+2,2025-Q1,q093,0.197447,ok,
+2,2025-Q1,q094,0.968372,ok,
+2,2025-Q1,q095,0.131385,ok,
+2,2025-Q1,q096,0.250565,ok,
+2,2025-Q1,q097,0.064411,ok,
+2,2025-Q1,q098,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+2,2025-Q1,q099,0.020809,ok,
+2,2025-Q1,q100,0.232168,ok,
+2,2025-Q1,q101,0.035227,ok,
+2,2025-Q1,q102,0.031974,ok,
+2,2025-Q1,q103,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q104,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.ip_count'?
+2,2025-Q1,q105,0.043472,ok,
+2,2025-Q1,q106,0.044440,ok,
+2,2025-Q1,q107,0.018199,ok,
+2,2025-Q1,q108,0.024173,ok,
+2,2025-Q1,q109,0.055207,ok,
+2,2025-Q1,q110,0.013825,ok,
+2,2025-Q1,q111,0.006198,ok,
+2,2025-Q1,q112,0.085848,ok,
+2,2025-Q1,q113,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q114,0.010164,ok,
+2,2025-Q1,q115,0.031188,ok,
+2,2025-Q1,q116,10.598231,ok,
+2,2025-Q1,q117,0.004634,ok,
+2,2025-Q1,q118,0.012939,ok,
+2,2025-Q1,q119,0.020043,ok,
+2,2025-Q1,q120,0.007742,ok,
+2,2025-Q1,q121,,error,"Error during planning: Plan: [""BoundedWindowAggExec: wdw=[row_number() PARTITION BY [dsr.id] ORDER BY [abs(coalesce(CAST(lh.placed_at AS Date32) - CAST(dsr.received_at AS Date32), Int64(999999))) ASC NULLS LAST, lh.id ASC NULLS LAST] RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW: Field { \""row_n"
+2,2025-Q1,q122,0.137859,ok,
+2,2025-Q1,q123,0.020996,ok,
+2,2025-Q1,q124,0.004403,ok,
+2,2025-Q1,q125,0.012036,ok,
+2,2025-Q1,q126,0.002349,ok,
+2,2025-Q1,q127,0.029905,ok,
+2,2025-Q1,q128,0.030956,ok,
+2,2025-Q1,q129,0.011646,ok,
+2,2025-Q1,q130,0.068427,ok,
+2,2025-Q1,q131,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""t"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+2,2025-Q1,q132,0.110469,ok,
+2,2025-Q1,q133,0.039630,ok,
+2,2025-Q1,q134,0.129212,ok,
+2,2025-Q1,q135,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""wd"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+2,2025-Q1,q136,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q137,0.364767,ok,
+2,2025-Q1,q138,0.148601,ok,
+2,2025-Q1,q139,0.403390,ok,
+2,2025-Q1,q140,0.108765,ok,
+2,2025-Q1,q141,0.043510,ok,
+2,2025-Q1,q142,0.038001,ok,
+2,2025-Q1,q143,0.321045,ok,
+2,2025-Q1,q144,0.104099,ok,
+2,2025-Q1,q145,0.087074,ok,
+2,2025-Q1,q146,0.309647,ok,
+2,2025-Q1,q147,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q148,0.471034,ok,
+2,2025-Q1,q149,,error,"Arrow error: Invalid argument error: Invalid comparison operation: Decimal128(38, 6) == Decimal128(28, 6)"
+2,2025-Q1,q150,0.299397,ok,
+2,2025-Q1,q151,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q152,0.071962,ok,
+2,2025-Q1,q153,1.208298,ok,
+2,2025-Q1,q154,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+2,2025-Q1,q155,0.398273,ok,
+2,2025-Q1,q156,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""d"" }), name: ""id"" })"
+2,2025-Q1,q157,1.154662,ok,
+2,2025-Q1,q158,0.588135,ok,
+2,2025-Q1,q159,0.363850,ok,
+2,2025-Q1,q160,0.096386,ok,
+2,2025-Q1,q161,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q162,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q163,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q164,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q165,0.286282,ok,
+2,2025-Q1,q166,0.385588,ok,
+2,2025-Q1,q167,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q168,0.075590,ok,
+2,2025-Q1,q169,0.681530,ok,
+2,2025-Q1,q170,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q171,1.056882,ok,
+2,2025-Q1,q172,0.031315,ok,
+2,2025-Q1,q173,0.033662,ok,
+2,2025-Q1,q174,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q175,,error,Error during planning: Invalid function 'json_value'.
+2,2025-Q1,q176,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q177,0.024072,ok,
+2,2025-Q1,q178,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q179,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+2,2025-Q1,q180,0.021568,ok,
+2,2025-Q1,q181,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q182,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q183,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q184,0.471953,ok,
+2,2025-Q1,q185,0.386406,ok,
+2,2025-Q1,q186,0.585915,ok,
+2,2025-Q1,q187,0.144803,ok,
+2,2025-Q1,q188,0.455420,ok,
+2,2025-Q1,q189,0.107873,ok,
+2,2025-Q1,q190,0.351230,ok,
+2,2025-Q1,q191,0.467647,ok,
+2,2025-Q1,q192,0.013496,ok,
+2,2025-Q1,q193,0.016546,ok,
+2,2025-Q1,q194,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q195,0.013537,ok,
+2,2025-Q1,q196,0.035581,ok,
+2,2025-Q1,q197,0.079500,ok,
+2,2025-Q1,q198,0.088843,ok,
+2,2025-Q1,q199,0.099212,ok,
+2,2025-Q1,q200,0.075018,ok,
+2,2025-Q1,q201,0.072010,ok,
+2,2025-Q1,q202,0.023483,ok,
+2,2025-Q1,q203,0.067027,ok,
+2,2025-Q1,q204,0.023294,ok,
+2,2025-Q1,q205,0.011961,ok,
+2,2025-Q1,q206,0.101146,ok,
+2,2025-Q1,q207,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q208,0.019066,ok,
+2,2025-Q1,q209,0.042400,ok,
+2,2025-Q1,q210,0.126348,ok,
+2,2025-Q1,q211,0.036218,ok,
+2,2025-Q1,q212,0.077735,ok,
+2,2025-Q1,q213,0.323961,ok,
+2,2025-Q1,q214,0.060031,ok,
+2,2025-Q1,q215,0.171131,ok,
+2,2025-Q1,q216,0.142727,ok,
+2,2025-Q1,q217,0.249244,ok,
+2,2025-Q1,q218,0.094335,ok,
+2,2025-Q1,q219,0.278493,ok,
+2,2025-Q1,q220,3.687066,ok,
+2,2025-Q1,q221,0.266777,ok,
+2,2025-Q1,q222,0.065054,ok,
+2,2025-Q1,q223,0.215936,ok,
+2,2025-Q1,q224,1.897278,ok,
+2,2025-Q1,q225,0.394043,ok,
+2,2025-Q1,q226,1.909005,ok,
+2,2025-Q1,q227,0.283343,ok,
+2,2025-Q1,q228,0.397348,ok,
+2,2025-Q1,q229,0.308529,ok,
+2,2025-Q1,q230,0.618361,ok,
+2,2025-Q1,q231,0.862648,ok,
+2,2025-Q1,q232,0.539759,ok,
+2,2025-Q1,q233,0.289706,ok,
+2,2025-Q1,q234,0.388987,ok,
+2,2025-Q1,q235,0.079721,ok,
+2,2025-Q1,q236,0.018740,ok,
+2,2025-Q1,q237,0.973003,ok,
+2,2025-Q1,q238,0.749491,ok,
+2,2025-Q1,q239,0.592440,ok,
+2,2025-Q1,q240,1.352077,ok,
+2,2025-Q1,q241,1.565811,ok,
+2,2025-Q1,q242,1.072343,ok,
+2,2025-Q1,q243,1.531237,ok,
+2,2025-Q1,q244,0.026757,ok,
+2,2025-Q1,q245,0.029629,ok,
+2,2025-Q1,q246,0.050199,ok,
+2,2025-Q1,q247,0.090083,ok,
+2,2025-Q1,q248,0.129037,ok,
+2,2025-Q1,q249,0.021130,ok,
+2,2025-Q1,q250,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+2,2025-Q1,q251,0.025246,ok,
+2,2025-Q1,q252,0.028463,ok,
+2,2025-Q1,q253,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q254,0.096931,ok,
+2,2025-Q1,q255,0.083619,ok,
+2,2025-Q1,q256,0.542294,ok,
+2,2025-Q1,q257,0.205917,ok,
+2,2025-Q1,q258,0.214393,ok,
+2,2025-Q1,q259,,error,"Arrow error: Invalid argument error: column types must match schema types, expected Decimal128(38, 6) but found Decimal128(28, 6) at column index 0"
+2,2025-Q1,q260,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q261,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q262,0.104920,ok,
+2,2025-Q1,q263,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+2,2025-Q1,q264,0.272223,ok,
+2,2025-Q1,q265,0.235759,ok,
+2,2025-Q1,q266,0.174853,ok,
+2,2025-Q1,q267,0.139950,ok,
+2,2025-Q1,q268,0.064816,ok,
+2,2025-Q1,q269,0.428519,ok,
+2,2025-Q1,q270,0.117239,ok,
+2,2025-Q1,q271,0.660834,ok,
+2,2025-Q1,q272,1.011937,ok,
+2,2025-Q1,q273,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q274,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q275,0.038445,ok,
+2,2025-Q1,q276,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.cnt'?
+2,2025-Q1,q277,0.583951,ok,
+2,2025-Q1,q278,0.011746,ok,
+2,2025-Q1,q279,0.571525,ok,
+2,2025-Q1,q280,0.014285,ok,
+2,2025-Q1,q281,0.049974,ok,
+2,2025-Q1,q282,0.020326,ok,
+2,2025-Q1,q283,0.617941,ok,
+2,2025-Q1,q284,0.249907,ok,
+2,2025-Q1,q285,0.013744,ok,
+2,2025-Q1,q286,0.129000,ok,
+2,2025-Q1,q287,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q288,0.171586,ok,
+2,2025-Q1,q289,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q290,0.020176,ok,
+2,2025-Q1,q291,0.315253,ok,
+2,2025-Q1,q292,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q293,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q294,0.013940,ok,
+2,2025-Q1,q295,0.153111,ok,
+2,2025-Q1,q296,0.092315,ok,
+2,2025-Q1,q297,0.884110,ok,
+2,2025-Q1,q298,0.017449,ok,
+2,2025-Q1,q299,0.711198,ok,
+2,2025-Q1,q300,0.168517,ok,
+2,2025-Q1,q301,0.087567,ok,
+2,2025-Q1,q302,0.111973,ok,
+2,2025-Q1,q303,0.010329,ok,
+2,2025-Q1,q304,2.006002,ok,
+2,2025-Q1,q305,0.087395,ok,
+2,2025-Q1,q306,0.032750,ok,
+2,2025-Q1,q307,0.134534,ok,
+2,2025-Q1,q308,0.179429,ok,
+2,2025-Q1,q309,0.152348,ok,
+2,2025-Q1,q310,0.029851,ok,
+2,2025-Q1,q311,0.049214,ok,
+2,2025-Q1,q312,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q313,0.074455,ok,
+2,2025-Q1,q314,0.163582,ok,
+2,2025-Q1,q315,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q316,0.059274,ok,
+2,2025-Q1,q317,0.084706,ok,
+2,2025-Q1,q318,0.064585,ok,
+2,2025-Q1,q319,0.011267,ok,
+2,2025-Q1,q320,0.009181,ok,
+2,2025-Q1,q321,0.018526,ok,
+2,2025-Q1,q322,0.008744,ok,
+2,2025-Q1,q323,0.011943,ok,
+2,2025-Q1,q324,0.018634,ok,
+2,2025-Q1,q325,0.378026,ok,
+2,2025-Q1,q326,0.021339,ok,
+2,2025-Q1,q327,0.012124,ok,
+2,2025-Q1,q328,0.152041,ok,
+2,2025-Q1,q329,0.280806,ok,
+2,2025-Q1,q330,0.576169,ok,
+2,2025-Q1,q331,0.928535,ok,
+2,2025-Q1,q332,0.190730,ok,
+2,2025-Q1,q333,0.054435,ok,
+2,2025-Q1,q334,0.012543,ok,
+2,2025-Q1,q335,0.090303,ok,
+2,2025-Q1,q336,0.097302,ok,
+2,2025-Q1,q337,0.005898,ok,
+2,2025-Q1,q338,0.094457,ok,
+2,2025-Q1,q339,0.002819,ok,
+2,2025-Q1,q340,0.015927,ok,
+2,2025-Q1,q341,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+2,2025-Q1,q342,0.013380,ok,
+2,2025-Q1,q343,0.056410,ok,
+2,2025-Q1,q344,0.047425,ok,
+2,2025-Q1,q345,0.002650,ok,
+2,2025-Q1,q346,0.011215,ok,
+2,2025-Q1,q347,0.291396,ok,
+2,2025-Q1,q348,0.093619,ok,
+2,2025-Q1,q349,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""c"" }), name: ""product_id"" }), subquery: <subquery>, negated: false })"
+2,2025-Q1,q350,0.033537,ok,
+2,2025-Q1,q351,0.183517,ok,
+2,2025-Q1,q352,0.107480,ok,
+2,2025-Q1,q353,,error,Schema error: No field named p.id.
+2,2025-Q1,q354,0.077527,ok,
+2,2025-Q1,q355,0.042640,ok,
+2,2025-Q1,q356,0.010803,ok,
+2,2025-Q1,q357,0.391821,ok,
+2,2025-Q1,q358,,error,Schema error: No field named p.id.
+2,2025-Q1,q359,0.680934,ok,
+2,2025-Q1,q360,0.496243,ok,
+2,2025-Q1,q361,0.393991,ok,
+2,2025-Q1,q362,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+2,2025-Q1,q363,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+2,2025-Q1,q364,,error,Schema error: No field named latest.tenant_id. Did you mean 'latest.user_id'?
+2,2025-Q1,q365,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""user_id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""o"" }), name: ""user_id"" })"
+2,2025-Q1,q366,0.015847,ok,
+2,2025-Q1,q367,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+2,2025-Q1,q368,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q369,0.136267,ok,
+2,2025-Q1,q370,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q371,0.093554,ok,
+2,2025-Q1,q372,0.115373,ok,
+2,2025-Q1,q373,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q374,0.267594,ok,
+2,2025-Q1,q375,1.071752,ok,
+2,2025-Q1,q376,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q377,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q378,1.034040,ok,
+2,2025-Q1,q379,,error,Error during planning: Cannot coerce arithmetic expression Duration(µs) * Float64 to valid types
+2,2025-Q1,q380,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q381,0.333440,ok,
+2,2025-Q1,q382,0.052087,ok,
+2,2025-Q1,q383,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q384,0.029649,ok,
+2,2025-Q1,q385,0.036606,ok,
+2,2025-Q1,q386,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q387,0.021493,ok,
+2,2025-Q1,q388,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q389,0.029067,ok,
+2,2025-Q1,q390,0.033605,ok,
+2,2025-Q1,q391,0.023009,ok,
+2,2025-Q1,q392,0.038705,ok,
+2,2025-Q1,q393,,error,Schema error: No field named w.id.
+2,2025-Q1,q394,0.014469,ok,
+2,2025-Q1,q395,0.046138,ok,
+2,2025-Q1,q396,,error,"Error during planning: Too many columns! The subquery should only return one column: column1, column2"
+2,2025-Q1,q397,0.020929,ok,
+2,2025-Q1,q398,0.115139,ok,
+2,2025-Q1,q399,,error,Error during planning: Invalid function 'json_value'.
+2,2025-Q1,q400,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+2,2025-Q1,q401,0.069348,ok,
+2,2025-Q1,q402,0.026393,ok,
+2,2025-Q1,q403,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+2,2025-Q1,q404,0.042859,ok,
+2,2025-Q1,q405,0.053679,ok,
+2,2025-Q1,q406,0.300998,ok,
+2,2025-Q1,q407,0.055676,ok,
+2,2025-Q1,q408,0.160396,ok,
+2,2025-Q1,q409,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,load,0.387804,ok,
+3,2025-Q2,q001,0.026417,ok,
+3,2025-Q2,q002,0.054253,ok,
+3,2025-Q2,q003,0.068521,ok,
+3,2025-Q2,q004,0.023642,ok,
+3,2025-Q2,q005,0.137197,ok,
+3,2025-Q2,q006,0.134426,ok,
+3,2025-Q2,q007,0.028449,ok,
+3,2025-Q2,q008,0.028857,ok,
+3,2025-Q2,q009,0.037496,ok,
+3,2025-Q2,q010,0.021150,ok,
+3,2025-Q2,q011,0.050145,ok,
+3,2025-Q2,q012,0.257415,ok,
+3,2025-Q2,q013,0.045770,ok,
+3,2025-Q2,q014,0.064395,ok,
+3,2025-Q2,q015,0.054589,ok,
+3,2025-Q2,q016,0.021710,ok,
+3,2025-Q2,q017,0.116851,ok,
+3,2025-Q2,q018,0.222203,ok,
+3,2025-Q2,q019,0.060018,ok,
+3,2025-Q2,q020,0.254422,ok,
+3,2025-Q2,q021,0.233896,ok,
+3,2025-Q2,q022,0.145143,ok,
+3,2025-Q2,q023,0.312948,ok,
+3,2025-Q2,q024,0.116959,ok,
+3,2025-Q2,q025,1.113422,ok,
+3,2025-Q2,q026,0.806399,ok,
+3,2025-Q2,q027,0.019703,ok,
+3,2025-Q2,q028,0.446376,ok,
+3,2025-Q2,q029,0.384652,ok,
+3,2025-Q2,q030,0.444245,ok,
+3,2025-Q2,q031,0.014509,ok,
+3,2025-Q2,q032,0.060484,ok,
+3,2025-Q2,q033,0.745087,ok,
+3,2025-Q2,q034,0.024081,ok,
+3,2025-Q2,q035,0.033493,ok,
+3,2025-Q2,q036,0.107103,ok,
+3,2025-Q2,q037,0.109376,ok,
+3,2025-Q2,q038,0.082785,ok,
+3,2025-Q2,q039,0.074913,ok,
+3,2025-Q2,q040,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q041,0.057717,ok,
+3,2025-Q2,q042,0.238867,ok,
+3,2025-Q2,q043,0.399694,ok,
+3,2025-Q2,q044,,timeout,no result within 30 s
+3,2025-Q2,q045,0.023388,ok,
+3,2025-Q2,q046,,timeout,no result within 30 s
+3,2025-Q2,q047,0.049030,ok,
+3,2025-Q2,q048,0.095470,ok,
+3,2025-Q2,q049,0.158548,ok,
+3,2025-Q2,q050,0.160130,ok,
+3,2025-Q2,q051,0.202393,ok,
+3,2025-Q2,q052,0.168070,ok,
+3,2025-Q2,q053,0.558175,ok,
+3,2025-Q2,q054,0.091413,ok,
+3,2025-Q2,q055,1.389454,ok,
+3,2025-Q2,q056,0.175391,ok,
+3,2025-Q2,q057,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q058,0.209925,ok,
+3,2025-Q2,q059,0.451516,ok,
+3,2025-Q2,q060,0.015682,ok,
+3,2025-Q2,q061,0.067524,ok,
+3,2025-Q2,q062,0.031709,ok,
+3,2025-Q2,q063,0.135267,ok,
+3,2025-Q2,q064,,error,"Error during planning: Correlated scalar subquery can only be used in Projection, Filter, Aggregate plan nodes"
+3,2025-Q2,q065,0.167866,ok,
+3,2025-Q2,q066,0.071884,ok,
+3,2025-Q2,q067,0.030380,ok,
+3,2025-Q2,q068,0.086020,ok,
+3,2025-Q2,q069,0.016891,ok,
+3,2025-Q2,q070,0.035174,ok,
+3,2025-Q2,q071,0.030810,ok,
+3,2025-Q2,q072,0.028719,ok,
+3,2025-Q2,q073,0.028933,ok,
+3,2025-Q2,q074,0.489292,ok,
+3,2025-Q2,q075,0.011045,ok,
+3,2025-Q2,q076,0.041075,ok,
+3,2025-Q2,q077,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q078,2.811595,ok,
+3,2025-Q2,q079,0.134130,ok,
+3,2025-Q2,q080,0.042653,ok,
+3,2025-Q2,q081,0.018201,ok,
+3,2025-Q2,q082,0.020436,ok,
+3,2025-Q2,q083,0.018659,ok,
+3,2025-Q2,q084,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q085,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q086,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q087,,error,Resources exhausted: Failed to allocate additional 7.6 TB for FinalHashAggregateStream[1] with 0.0 B already allocated for this reservation - 15.4 GB remain available for the total memory pool: fair(pool_size: 76.8 GB)
+3,2025-Q2,q088,0.381937,ok,
+3,2025-Q2,q089,1.103891,ok,
+3,2025-Q2,q090,0.081097,ok,
+3,2025-Q2,q091,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q092,0.057388,ok,
+3,2025-Q2,q093,0.256788,ok,
+3,2025-Q2,q094,1.141699,ok,
+3,2025-Q2,q095,0.158809,ok,
+3,2025-Q2,q096,0.288327,ok,
+3,2025-Q2,q097,0.070408,ok,
+3,2025-Q2,q098,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+3,2025-Q2,q099,0.020242,ok,
+3,2025-Q2,q100,0.260232,ok,
+3,2025-Q2,q101,0.037188,ok,
+3,2025-Q2,q102,0.033908,ok,
+3,2025-Q2,q103,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q104,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.ip_count'?
+3,2025-Q2,q105,0.045026,ok,
+3,2025-Q2,q106,0.043622,ok,
+3,2025-Q2,q107,0.017991,ok,
+3,2025-Q2,q108,0.028137,ok,
+3,2025-Q2,q109,0.057421,ok,
+3,2025-Q2,q110,0.013539,ok,
+3,2025-Q2,q111,0.005196,ok,
+3,2025-Q2,q112,0.086838,ok,
+3,2025-Q2,q113,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q114,0.009861,ok,
+3,2025-Q2,q115,0.032735,ok,
+3,2025-Q2,q116,10.794258,ok,
+3,2025-Q2,q117,0.005517,ok,
+3,2025-Q2,q118,0.011709,ok,
+3,2025-Q2,q119,0.015666,ok,
+3,2025-Q2,q120,0.007296,ok,
+3,2025-Q2,q121,,error,"Error during planning: Plan: [""BoundedWindowAggExec: wdw=[row_number() PARTITION BY [dsr.id] ORDER BY [abs(coalesce(CAST(lh.placed_at AS Date32) - CAST(dsr.received_at AS Date32), Int64(999999))) ASC NULLS LAST, lh.id ASC NULLS LAST] RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW: Field { \""row_n"
+3,2025-Q2,q122,0.150017,ok,
+3,2025-Q2,q123,0.021197,ok,
+3,2025-Q2,q124,0.003977,ok,
+3,2025-Q2,q125,0.018649,ok,
+3,2025-Q2,q126,0.002434,ok,
+3,2025-Q2,q127,0.033585,ok,
+3,2025-Q2,q128,0.042193,ok,
+3,2025-Q2,q129,0.010784,ok,
+3,2025-Q2,q130,0.076064,ok,
+3,2025-Q2,q131,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""t"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+3,2025-Q2,q132,0.123661,ok,
+3,2025-Q2,q133,0.035409,ok,
+3,2025-Q2,q134,0.139814,ok,
+3,2025-Q2,q135,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""wd"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+3,2025-Q2,q136,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q137,0.473139,ok,
+3,2025-Q2,q138,0.144008,ok,
+3,2025-Q2,q139,0.548568,ok,
+3,2025-Q2,q140,0.108957,ok,
+3,2025-Q2,q141,0.041561,ok,
+3,2025-Q2,q142,0.040801,ok,
+3,2025-Q2,q143,0.399878,ok,
+3,2025-Q2,q144,0.129470,ok,
+3,2025-Q2,q145,0.099681,ok,
+3,2025-Q2,q146,0.404466,ok,
+3,2025-Q2,q147,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q148,0.598058,ok,
+3,2025-Q2,q149,,error,"Arrow error: Invalid argument error: Invalid comparison operation: Decimal128(38, 6) == Decimal128(28, 6)"
+3,2025-Q2,q150,0.309280,ok,
+3,2025-Q2,q151,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q152,0.074410,ok,
+3,2025-Q2,q153,1.978234,ok,
+3,2025-Q2,q154,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+3,2025-Q2,q155,0.547111,ok,
+3,2025-Q2,q156,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""d"" }), name: ""id"" })"
+3,2025-Q2,q157,1.345002,ok,
+3,2025-Q2,q158,0.836417,ok,
+3,2025-Q2,q159,0.658926,ok,
+3,2025-Q2,q160,0.099694,ok,
+3,2025-Q2,q161,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q162,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q163,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q164,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q165,0.350606,ok,
+3,2025-Q2,q166,0.446040,ok,
+3,2025-Q2,q167,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q168,0.081311,ok,
+3,2025-Q2,q169,0.797422,ok,
+3,2025-Q2,q170,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q171,1.219849,ok,
+3,2025-Q2,q172,0.030735,ok,
+3,2025-Q2,q173,0.035445,ok,
+3,2025-Q2,q174,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q175,,error,Error during planning: Invalid function 'json_value'.
+3,2025-Q2,q176,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q177,0.024368,ok,
+3,2025-Q2,q178,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q179,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+3,2025-Q2,q180,0.021436,ok,
+3,2025-Q2,q181,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q182,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q183,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q184,0.520259,ok,
+3,2025-Q2,q185,0.397492,ok,
+3,2025-Q2,q186,0.755737,ok,
+3,2025-Q2,q187,0.207242,ok,
+3,2025-Q2,q188,0.475145,ok,
+3,2025-Q2,q189,0.127203,ok,
+3,2025-Q2,q190,0.480290,ok,
+3,2025-Q2,q191,0.366466,ok,
+3,2025-Q2,q192,0.016508,ok,
+3,2025-Q2,q193,0.017375,ok,
+3,2025-Q2,q194,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q195,0.013306,ok,
+3,2025-Q2,q196,0.036614,ok,
+3,2025-Q2,q197,0.080600,ok,
+3,2025-Q2,q198,0.089487,ok,
+3,2025-Q2,q199,0.099647,ok,
+3,2025-Q2,q200,0.076927,ok,
+3,2025-Q2,q201,0.075828,ok,
+3,2025-Q2,q202,0.026960,ok,
+3,2025-Q2,q203,0.076045,ok,
+3,2025-Q2,q204,0.027331,ok,
+3,2025-Q2,q205,0.012137,ok,
+3,2025-Q2,q206,0.113188,ok,
+3,2025-Q2,q207,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q208,0.019073,ok,
+3,2025-Q2,q209,0.050530,ok,
+3,2025-Q2,q210,0.130573,ok,
+3,2025-Q2,q211,0.033837,ok,
+3,2025-Q2,q212,0.079641,ok,
+3,2025-Q2,q213,0.406898,ok,
+3,2025-Q2,q214,0.059794,ok,
+3,2025-Q2,q215,0.220956,ok,
+3,2025-Q2,q216,0.158373,ok,
+3,2025-Q2,q217,0.328536,ok,
+3,2025-Q2,q218,0.102274,ok,
+3,2025-Q2,q219,0.355936,ok,
+3,2025-Q2,q220,5.279992,ok,
+3,2025-Q2,q221,0.305272,ok,
+3,2025-Q2,q222,0.094632,ok,
+3,2025-Q2,q223,0.251022,ok,
+3,2025-Q2,q224,3.616445,ok,
+3,2025-Q2,q225,0.484646,ok,
+3,2025-Q2,q226,2.247603,ok,
+3,2025-Q2,q227,0.322915,ok,
+3,2025-Q2,q228,0.481294,ok,
+3,2025-Q2,q229,0.353243,ok,
+3,2025-Q2,q230,0.754074,ok,
+3,2025-Q2,q231,1.165308,ok,
+3,2025-Q2,q232,0.653264,ok,
+3,2025-Q2,q233,0.329304,ok,
+3,2025-Q2,q234,0.482897,ok,
+3,2025-Q2,q235,0.094256,ok,
+3,2025-Q2,q236,0.018502,ok,
+3,2025-Q2,q237,4.820193,ok,
+3,2025-Q2,q238,0.931620,ok,
+3,2025-Q2,q239,0.818231,ok,
+3,2025-Q2,q240,1.707133,ok,
+3,2025-Q2,q241,1.972625,ok,
+3,2025-Q2,q242,1.596910,ok,
+3,2025-Q2,q243,2.165275,ok,
+3,2025-Q2,q244,0.026784,ok,
+3,2025-Q2,q245,0.028630,ok,
+3,2025-Q2,q246,0.053227,ok,
+3,2025-Q2,q247,0.100130,ok,
+3,2025-Q2,q248,0.132891,ok,
+3,2025-Q2,q249,0.021393,ok,
+3,2025-Q2,q250,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+3,2025-Q2,q251,0.024769,ok,
+3,2025-Q2,q252,0.027989,ok,
+3,2025-Q2,q253,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q254,0.110315,ok,
+3,2025-Q2,q255,0.087546,ok,
+3,2025-Q2,q256,0.920047,ok,
+3,2025-Q2,q257,0.233148,ok,
+3,2025-Q2,q258,0.254099,ok,
+3,2025-Q2,q259,,error,"Arrow error: Invalid argument error: Invalid comparison operation: Decimal128(38, 6) == Decimal128(28, 6)"
+3,2025-Q2,q260,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q261,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q262,0.126031,ok,
+3,2025-Q2,q263,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+3,2025-Q2,q264,0.305098,ok,
+3,2025-Q2,q265,0.380206,ok,
+3,2025-Q2,q266,0.269037,ok,
+3,2025-Q2,q267,0.158892,ok,
+3,2025-Q2,q268,0.067183,ok,
+3,2025-Q2,q269,0.447590,ok,
+3,2025-Q2,q270,0.141616,ok,
+3,2025-Q2,q271,0.802746,ok,
+3,2025-Q2,q272,1.172497,ok,
+3,2025-Q2,q273,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q274,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q275,0.041114,ok,
+3,2025-Q2,q276,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.cnt'?
+3,2025-Q2,q277,0.653812,ok,
+3,2025-Q2,q278,0.013485,ok,
+3,2025-Q2,q279,0.608961,ok,
+3,2025-Q2,q280,0.014096,ok,
+3,2025-Q2,q281,0.057556,ok,
+3,2025-Q2,q282,0.019929,ok,
+3,2025-Q2,q283,0.699683,ok,
+3,2025-Q2,q284,0.281460,ok,
+3,2025-Q2,q285,0.013546,ok,
+3,2025-Q2,q286,0.143125,ok,
+3,2025-Q2,q287,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q288,0.199869,ok,
+3,2025-Q2,q289,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q290,0.019447,ok,
+3,2025-Q2,q291,0.383891,ok,
+3,2025-Q2,q292,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q293,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q294,0.014874,ok,
+3,2025-Q2,q295,0.172784,ok,
+3,2025-Q2,q296,0.104840,ok,
+3,2025-Q2,q297,1.224700,ok,
+3,2025-Q2,q298,0.017888,ok,
+3,2025-Q2,q299,0.811869,ok,
+3,2025-Q2,q300,0.206254,ok,
+3,2025-Q2,q301,0.099115,ok,
+3,2025-Q2,q302,0.143788,ok,
+3,2025-Q2,q303,0.009595,ok,
+3,2025-Q2,q304,2.321773,ok,
+3,2025-Q2,q305,0.127496,ok,
+3,2025-Q2,q306,0.033101,ok,
+3,2025-Q2,q307,0.185236,ok,
+3,2025-Q2,q308,0.205397,ok,
+3,2025-Q2,q309,0.173268,ok,
+3,2025-Q2,q310,0.030250,ok,
+3,2025-Q2,q311,0.052500,ok,
+3,2025-Q2,q312,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q313,0.079901,ok,
+3,2025-Q2,q314,0.187322,ok,
+3,2025-Q2,q315,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q316,0.070554,ok,
+3,2025-Q2,q317,0.104464,ok,
+3,2025-Q2,q318,0.065073,ok,
+3,2025-Q2,q319,0.010220,ok,
+3,2025-Q2,q320,0.008969,ok,
+3,2025-Q2,q321,0.018160,ok,
+3,2025-Q2,q322,0.008404,ok,
+3,2025-Q2,q323,0.012603,ok,
+3,2025-Q2,q324,0.019270,ok,
+3,2025-Q2,q325,0.414524,ok,
+3,2025-Q2,q326,0.023336,ok,
+3,2025-Q2,q327,0.012569,ok,
+3,2025-Q2,q328,0.169131,ok,
+3,2025-Q2,q329,0.280065,ok,
+3,2025-Q2,q330,0.671281,ok,
+3,2025-Q2,q331,1.048106,ok,
+3,2025-Q2,q332,0.201925,ok,
+3,2025-Q2,q333,0.056284,ok,
+3,2025-Q2,q334,0.013512,ok,
+3,2025-Q2,q335,0.098362,ok,
+3,2025-Q2,q336,0.108033,ok,
+3,2025-Q2,q337,0.005360,ok,
+3,2025-Q2,q338,0.104667,ok,
+3,2025-Q2,q339,0.002503,ok,
+3,2025-Q2,q340,0.016307,ok,
+3,2025-Q2,q341,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+3,2025-Q2,q342,0.014194,ok,
+3,2025-Q2,q343,0.057475,ok,
+3,2025-Q2,q344,0.048535,ok,
+3,2025-Q2,q345,0.002665,ok,
+3,2025-Q2,q346,0.010977,ok,
+3,2025-Q2,q347,0.332371,ok,
+3,2025-Q2,q348,0.104833,ok,
+3,2025-Q2,q349,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""c"" }), name: ""product_id"" }), subquery: <subquery>, negated: false })"
+3,2025-Q2,q350,0.054814,ok,
+3,2025-Q2,q351,0.186250,ok,
+3,2025-Q2,q352,0.120016,ok,
+3,2025-Q2,q353,,error,Schema error: No field named p.id.
+3,2025-Q2,q354,0.089586,ok,
+3,2025-Q2,q355,0.043564,ok,
+3,2025-Q2,q356,0.010604,ok,
+3,2025-Q2,q357,0.495029,ok,
+3,2025-Q2,q358,,error,Schema error: No field named p.id.
+3,2025-Q2,q359,0.887442,ok,
+3,2025-Q2,q360,0.577658,ok,
+3,2025-Q2,q361,0.414899,ok,
+3,2025-Q2,q362,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+3,2025-Q2,q363,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+3,2025-Q2,q364,,error,Schema error: No field named latest.tenant_id. Did you mean 'latest.user_id'?
+3,2025-Q2,q365,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""user_id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""o"" }), name: ""user_id"" })"
+3,2025-Q2,q366,0.015922,ok,
+3,2025-Q2,q367,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+3,2025-Q2,q368,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q369,0.201452,ok,
+3,2025-Q2,q370,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q371,0.096997,ok,
+3,2025-Q2,q372,0.118972,ok,
+3,2025-Q2,q373,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q374,0.309535,ok,
+3,2025-Q2,q375,1.164404,ok,
+3,2025-Q2,q376,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q377,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q378,1.135327,ok,
+3,2025-Q2,q379,,error,Error during planning: Cannot coerce arithmetic expression Duration(µs) * Float64 to valid types
+3,2025-Q2,q380,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q381,0.374568,ok,
+3,2025-Q2,q382,0.053582,ok,
+3,2025-Q2,q383,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q384,0.029214,ok,
+3,2025-Q2,q385,0.037597,ok,
+3,2025-Q2,q386,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q387,0.021629,ok,
+3,2025-Q2,q388,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q389,0.029828,ok,
+3,2025-Q2,q390,0.038061,ok,
+3,2025-Q2,q391,0.023413,ok,
+3,2025-Q2,q392,0.041746,ok,
+3,2025-Q2,q393,,error,Schema error: No field named w.id.
+3,2025-Q2,q394,0.015227,ok,
+3,2025-Q2,q395,0.045348,ok,
+3,2025-Q2,q396,,error,"Error during planning: Too many columns! The subquery should only return one column: column1, column2"
+3,2025-Q2,q397,0.020301,ok,
+3,2025-Q2,q398,0.121650,ok,
+3,2025-Q2,q399,,error,Error during planning: Invalid function 'json_value'.
+3,2025-Q2,q400,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+3,2025-Q2,q401,0.086662,ok,
+3,2025-Q2,q402,0.027911,ok,
+3,2025-Q2,q403,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+3,2025-Q2,q404,0.049307,ok,
+3,2025-Q2,q405,0.062402,ok,
+3,2025-Q2,q406,0.404258,ok,
+3,2025-Q2,q407,0.057872,ok,
+3,2025-Q2,q408,0.192507,ok,
+3,2025-Q2,q409,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,load,0.437638,ok,
+4,2025-Q3,q001,0.027016,ok,
+4,2025-Q3,q002,0.054118,ok,
+4,2025-Q3,q003,0.068167,ok,
+4,2025-Q3,q004,0.023849,ok,
+4,2025-Q3,q005,0.150858,ok,
+4,2025-Q3,q006,0.152627,ok,
+4,2025-Q3,q007,0.029373,ok,
+4,2025-Q3,q008,0.029780,ok,
+4,2025-Q3,q009,0.039116,ok,
+4,2025-Q3,q010,0.021086,ok,
+4,2025-Q3,q011,0.051217,ok,
+4,2025-Q3,q012,0.282499,ok,
+4,2025-Q3,q013,0.046429,ok,
+4,2025-Q3,q014,0.062480,ok,
+4,2025-Q3,q015,0.053678,ok,
+4,2025-Q3,q016,0.022649,ok,
+4,2025-Q3,q017,0.133267,ok,
+4,2025-Q3,q018,0.253281,ok,
+4,2025-Q3,q019,0.059940,ok,
+4,2025-Q3,q020,0.285566,ok,
+4,2025-Q3,q021,0.260425,ok,
+4,2025-Q3,q022,0.165479,ok,
+4,2025-Q3,q023,0.352353,ok,
+4,2025-Q3,q024,0.141352,ok,
+4,2025-Q3,q025,1.369480,ok,
+4,2025-Q3,q026,1.096951,ok,
+4,2025-Q3,q027,0.021910,ok,
+4,2025-Q3,q028,0.508721,ok,
+4,2025-Q3,q029,0.490896,ok,
+4,2025-Q3,q030,0.613245,ok,
+4,2025-Q3,q031,0.027230,ok,
+4,2025-Q3,q032,0.068357,ok,
+4,2025-Q3,q033,1.109145,ok,
+4,2025-Q3,q034,0.025188,ok,
+4,2025-Q3,q035,0.034820,ok,
+4,2025-Q3,q036,0.109952,ok,
+4,2025-Q3,q037,0.112041,ok,
+4,2025-Q3,q038,0.082546,ok,
+4,2025-Q3,q039,0.106808,ok,
+4,2025-Q3,q040,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q041,0.058247,ok,
+4,2025-Q3,q042,0.243687,ok,
+4,2025-Q3,q043,0.649345,ok,
+4,2025-Q3,q044,,timeout,no result within 30 s
+4,2025-Q3,q045,0.023860,ok,
+4,2025-Q3,q046,,timeout,no result within 30 s
+4,2025-Q3,q047,0.048913,ok,
+4,2025-Q3,q048,0.100901,ok,
+4,2025-Q3,q049,0.186376,ok,
+4,2025-Q3,q050,0.181753,ok,
+4,2025-Q3,q051,0.226653,ok,
+4,2025-Q3,q052,0.173746,ok,
+4,2025-Q3,q053,0.783614,ok,
+4,2025-Q3,q054,0.102460,ok,
+4,2025-Q3,q055,3.589677,ok,
+4,2025-Q3,q056,0.198316,ok,
+4,2025-Q3,q057,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q058,0.279604,ok,
+4,2025-Q3,q059,0.567693,ok,
+4,2025-Q3,q060,0.015023,ok,
+4,2025-Q3,q061,0.083675,ok,
+4,2025-Q3,q062,0.095351,ok,
+4,2025-Q3,q063,0.140963,ok,
+4,2025-Q3,q064,,error,"Error during planning: Correlated scalar subquery can only be used in Projection, Filter, Aggregate plan nodes"
+4,2025-Q3,q065,0.194101,ok,
+4,2025-Q3,q066,0.072610,ok,
+4,2025-Q3,q067,0.028396,ok,
+4,2025-Q3,q068,0.098235,ok,
+4,2025-Q3,q069,0.018308,ok,
+4,2025-Q3,q070,0.037047,ok,
+4,2025-Q3,q071,0.033792,ok,
+4,2025-Q3,q072,0.032149,ok,
+4,2025-Q3,q073,0.033066,ok,
+4,2025-Q3,q074,0.548498,ok,
+4,2025-Q3,q075,0.011011,ok,
+4,2025-Q3,q076,0.042380,ok,
+4,2025-Q3,q077,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q078,3.173156,ok,
+4,2025-Q3,q079,0.141561,ok,
+4,2025-Q3,q080,0.054616,ok,
+4,2025-Q3,q081,0.018812,ok,
+4,2025-Q3,q082,0.021907,ok,
+4,2025-Q3,q083,0.019548,ok,
+4,2025-Q3,q084,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q085,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q086,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q087,,error,Resources exhausted: Failed to allocate additional 15.6 TB for FinalHashAggregateStream[1] with 0.0 B already allocated for this reservation - 15.4 GB remain available for the total memory pool: fair(pool_size: 76.8 GB)
+4,2025-Q3,q088,0.408040,ok,
+4,2025-Q3,q089,1.209089,ok,
+4,2025-Q3,q090,0.085464,ok,
+4,2025-Q3,q091,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q092,0.062480,ok,
+4,2025-Q3,q093,0.256939,ok,
+4,2025-Q3,q094,1.088625,ok,
+4,2025-Q3,q095,0.172099,ok,
+4,2025-Q3,q096,0.341085,ok,
+4,2025-Q3,q097,0.078289,ok,
+4,2025-Q3,q098,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+4,2025-Q3,q099,0.043510,ok,
+4,2025-Q3,q100,1.162276,ok,
+4,2025-Q3,q101,0.077427,ok,
+4,2025-Q3,q102,0.035702,ok,
+4,2025-Q3,q103,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q104,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.ip_count'?
+4,2025-Q3,q105,0.048538,ok,
+4,2025-Q3,q106,0.047334,ok,
+4,2025-Q3,q107,0.019561,ok,
+4,2025-Q3,q108,0.029904,ok,
+4,2025-Q3,q109,0.077267,ok,
+4,2025-Q3,q110,0.015176,ok,
+4,2025-Q3,q111,0.006734,ok,
+4,2025-Q3,q112,0.087545,ok,
+4,2025-Q3,q113,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q114,0.010850,ok,
+4,2025-Q3,q115,0.037097,ok,
+4,2025-Q3,q116,14.408415,ok,
+4,2025-Q3,q117,0.005803,ok,
+4,2025-Q3,q118,0.013468,ok,
+4,2025-Q3,q119,0.021995,ok,
+4,2025-Q3,q120,0.011959,ok,
+4,2025-Q3,q121,,error,"Error during planning: Plan: [""BoundedWindowAggExec: wdw=[row_number() PARTITION BY [dsr.id] ORDER BY [abs(coalesce(CAST(lh.placed_at AS Date32) - CAST(dsr.received_at AS Date32), Int64(999999))) ASC NULLS LAST, lh.id ASC NULLS LAST] RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW: Field { \""row_n"
+4,2025-Q3,q122,0.163463,ok,
+4,2025-Q3,q123,0.022839,ok,
+4,2025-Q3,q124,0.004194,ok,
+4,2025-Q3,q125,0.012727,ok,
+4,2025-Q3,q126,0.002202,ok,
+4,2025-Q3,q127,0.038664,ok,
+4,2025-Q3,q128,0.041583,ok,
+4,2025-Q3,q129,0.010907,ok,
+4,2025-Q3,q130,0.084661,ok,
+4,2025-Q3,q131,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""t"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+4,2025-Q3,q132,0.140965,ok,
+4,2025-Q3,q133,0.038758,ok,
+4,2025-Q3,q134,0.163077,ok,
+4,2025-Q3,q135,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""wd"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+4,2025-Q3,q136,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q137,0.550648,ok,
+4,2025-Q3,q138,0.164497,ok,
+4,2025-Q3,q139,0.755225,ok,
+4,2025-Q3,q140,0.135633,ok,
+4,2025-Q3,q141,0.046752,ok,
+4,2025-Q3,q142,0.042079,ok,
+4,2025-Q3,q143,0.462371,ok,
+4,2025-Q3,q144,0.132724,ok,
+4,2025-Q3,q145,0.112557,ok,
+4,2025-Q3,q146,0.478072,ok,
+4,2025-Q3,q147,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q148,0.812528,ok,
+4,2025-Q3,q149,,error,"Arrow error: Invalid argument error: Invalid comparison operation: Decimal128(38, 6) == Decimal128(28, 6)"
+4,2025-Q3,q150,0.311214,ok,
+4,2025-Q3,q151,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q152,0.076614,ok,
+4,2025-Q3,q153,2.933019,ok,
+4,2025-Q3,q154,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+4,2025-Q3,q155,0.746424,ok,
+4,2025-Q3,q156,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""d"" }), name: ""id"" })"
+4,2025-Q3,q157,1.587330,ok,
+4,2025-Q3,q158,2.106859,ok,
+4,2025-Q3,q159,1.125845,ok,
+4,2025-Q3,q160,0.100287,ok,
+4,2025-Q3,q161,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q162,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q163,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q164,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q165,0.367205,ok,
+4,2025-Q3,q166,0.459362,ok,
+4,2025-Q3,q167,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q168,0.078839,ok,
+4,2025-Q3,q169,0.929494,ok,
+4,2025-Q3,q170,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q171,1.330507,ok,
+4,2025-Q3,q172,0.031014,ok,
+4,2025-Q3,q173,0.036968,ok,
+4,2025-Q3,q174,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q175,,error,Error during planning: Invalid function 'json_value'.
+4,2025-Q3,q176,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q177,0.025483,ok,
+4,2025-Q3,q178,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q179,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+4,2025-Q3,q180,0.021881,ok,
+4,2025-Q3,q181,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q182,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q183,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q184,0.408216,ok,
+4,2025-Q3,q185,0.549527,ok,
+4,2025-Q3,q186,0.865873,ok,
+4,2025-Q3,q187,0.312786,ok,
+4,2025-Q3,q188,0.506116,ok,
+4,2025-Q3,q189,0.147531,ok,
+4,2025-Q3,q190,0.489130,ok,
+4,2025-Q3,q191,0.499507,ok,
+4,2025-Q3,q192,0.016751,ok,
+4,2025-Q3,q193,0.017396,ok,
+4,2025-Q3,q194,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q195,0.013691,ok,
+4,2025-Q3,q196,0.038878,ok,
+4,2025-Q3,q197,0.084719,ok,
+4,2025-Q3,q198,0.093074,ok,
+4,2025-Q3,q199,0.098714,ok,
+4,2025-Q3,q200,0.078920,ok,
+4,2025-Q3,q201,0.081093,ok,
+4,2025-Q3,q202,0.030883,ok,
+4,2025-Q3,q203,0.081303,ok,
+4,2025-Q3,q204,0.026048,ok,
+4,2025-Q3,q205,0.011861,ok,
+4,2025-Q3,q206,0.133284,ok,
+4,2025-Q3,q207,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q208,0.019641,ok,
+4,2025-Q3,q209,0.062799,ok,
+4,2025-Q3,q210,0.144319,ok,
+4,2025-Q3,q211,0.143442,ok,
+4,2025-Q3,q212,0.079607,ok,
+4,2025-Q3,q213,0.512091,ok,
+4,2025-Q3,q214,0.064048,ok,
+4,2025-Q3,q215,0.269990,ok,
+4,2025-Q3,q216,0.184192,ok,
+4,2025-Q3,q217,0.437117,ok,
+4,2025-Q3,q218,0.140700,ok,
+4,2025-Q3,q219,0.442952,ok,
+4,2025-Q3,q220,,error,Resources exhausted: Failed to allocate additional 443.9 MB for ExternalSorter[1] with 0.0 B already allocated for this reservation - 409.5 MB remain available for the total memory pool: fair(pool_size: 76.8 GB)
+4,2025-Q3,q221,0.464941,ok,
+4,2025-Q3,q222,0.153765,ok,
+4,2025-Q3,q223,0.262612,ok,
+4,2025-Q3,q224,5.584041,ok,
+4,2025-Q3,q225,0.610256,ok,
+4,2025-Q3,q226,2.810900,ok,
+4,2025-Q3,q227,0.369135,ok,
+4,2025-Q3,q228,0.610529,ok,
+4,2025-Q3,q229,0.396647,ok,
+4,2025-Q3,q230,0.858047,ok,
+4,2025-Q3,q231,1.439989,ok,
+4,2025-Q3,q232,0.717311,ok,
+4,2025-Q3,q233,0.355077,ok,
+4,2025-Q3,q234,0.574318,ok,
+4,2025-Q3,q235,0.111317,ok,
+4,2025-Q3,q236,0.018914,ok,
+4,2025-Q3,q237,,timeout,no result within 30 s
+4,2025-Q3,q238,1.804687,ok,
+4,2025-Q3,q239,1.274455,ok,
+4,2025-Q3,q240,2.512223,ok,
+4,2025-Q3,q241,2.940644,ok,
+4,2025-Q3,q242,2.224833,ok,
+4,2025-Q3,q243,3.162636,ok,
+4,2025-Q3,q244,0.027950,ok,
+4,2025-Q3,q245,0.029784,ok,
+4,2025-Q3,q246,0.056549,ok,
+4,2025-Q3,q247,0.103172,ok,
+4,2025-Q3,q248,0.133412,ok,
+4,2025-Q3,q249,0.021206,ok,
+4,2025-Q3,q250,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+4,2025-Q3,q251,0.024242,ok,
+4,2025-Q3,q252,0.028543,ok,
+4,2025-Q3,q253,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q254,0.125135,ok,
+4,2025-Q3,q255,0.094357,ok,
+4,2025-Q3,q256,1.876794,ok,
+4,2025-Q3,q257,0.266101,ok,
+4,2025-Q3,q258,0.291255,ok,
+4,2025-Q3,q259,,error,"Arrow error: Invalid argument error: column types must match schema types, expected Decimal128(38, 6) but found Decimal128(28, 6) at column index 0"
+4,2025-Q3,q260,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q261,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q262,0.132948,ok,
+4,2025-Q3,q263,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+4,2025-Q3,q264,0.350997,ok,
+4,2025-Q3,q265,0.621908,ok,
+4,2025-Q3,q266,0.394890,ok,
+4,2025-Q3,q267,0.181235,ok,
+4,2025-Q3,q268,0.085981,ok,
+4,2025-Q3,q269,0.482008,ok,
+4,2025-Q3,q270,0.148828,ok,
+4,2025-Q3,q271,0.801840,ok,
+4,2025-Q3,q272,1.246691,ok,
+4,2025-Q3,q273,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q274,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q275,0.039459,ok,
+4,2025-Q3,q276,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.cnt'?
+4,2025-Q3,q277,0.725902,ok,
+4,2025-Q3,q278,0.012352,ok,
+4,2025-Q3,q279,0.645419,ok,
+4,2025-Q3,q280,0.013776,ok,
+4,2025-Q3,q281,0.062814,ok,
+4,2025-Q3,q282,0.021092,ok,
+4,2025-Q3,q283,0.770820,ok,
+4,2025-Q3,q284,0.312619,ok,
+4,2025-Q3,q285,0.014450,ok,
+4,2025-Q3,q286,0.158010,ok,
+4,2025-Q3,q287,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q288,0.224424,ok,
+4,2025-Q3,q289,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q290,0.020552,ok,
+4,2025-Q3,q291,0.425460,ok,
+4,2025-Q3,q292,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q293,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q294,0.014010,ok,
+4,2025-Q3,q295,0.190724,ok,
+4,2025-Q3,q296,0.117491,ok,
+4,2025-Q3,q297,1.634211,ok,
+4,2025-Q3,q298,0.025862,ok,
+4,2025-Q3,q299,0.921107,ok,
+4,2025-Q3,q300,0.238869,ok,
+4,2025-Q3,q301,0.112067,ok,
+4,2025-Q3,q302,0.150894,ok,
+4,2025-Q3,q303,0.010414,ok,
+4,2025-Q3,q304,2.686682,ok,
+4,2025-Q3,q305,0.138987,ok,
+4,2025-Q3,q306,0.034749,ok,
+4,2025-Q3,q307,0.268731,ok,
+4,2025-Q3,q308,0.228566,ok,
+4,2025-Q3,q309,0.195298,ok,
+4,2025-Q3,q310,0.031643,ok,
+4,2025-Q3,q311,0.047785,ok,
+4,2025-Q3,q312,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q313,0.080718,ok,
+4,2025-Q3,q314,0.210831,ok,
+4,2025-Q3,q315,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q316,0.077627,ok,
+4,2025-Q3,q317,0.114019,ok,
+4,2025-Q3,q318,0.074899,ok,
+4,2025-Q3,q319,0.011007,ok,
+4,2025-Q3,q320,0.009989,ok,
+4,2025-Q3,q321,0.020228,ok,
+4,2025-Q3,q322,0.008835,ok,
+4,2025-Q3,q323,0.012720,ok,
+4,2025-Q3,q324,0.019469,ok,
+4,2025-Q3,q325,0.462245,ok,
+4,2025-Q3,q326,0.022021,ok,
+4,2025-Q3,q327,0.012332,ok,
+4,2025-Q3,q328,0.185296,ok,
+4,2025-Q3,q329,0.312742,ok,
+4,2025-Q3,q330,0.758757,ok,
+4,2025-Q3,q331,1.154149,ok,
+4,2025-Q3,q332,0.233393,ok,
+4,2025-Q3,q333,0.058795,ok,
+4,2025-Q3,q334,0.015130,ok,
+4,2025-Q3,q335,0.109836,ok,
+4,2025-Q3,q336,0.120633,ok,
+4,2025-Q3,q337,0.006169,ok,
+4,2025-Q3,q338,0.120240,ok,
+4,2025-Q3,q339,0.002803,ok,
+4,2025-Q3,q340,0.017160,ok,
+4,2025-Q3,q341,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+4,2025-Q3,q342,0.013015,ok,
+4,2025-Q3,q343,0.055562,ok,
+4,2025-Q3,q344,0.048904,ok,
+4,2025-Q3,q345,0.002356,ok,
+4,2025-Q3,q346,0.011425,ok,
+4,2025-Q3,q347,0.392842,ok,
+4,2025-Q3,q348,0.109555,ok,
+4,2025-Q3,q349,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""c"" }), name: ""product_id"" }), subquery: <subquery>, negated: false })"
+4,2025-Q3,q350,0.257142,ok,
+4,2025-Q3,q351,0.191889,ok,
+4,2025-Q3,q352,0.128353,ok,
+4,2025-Q3,q353,,error,Schema error: No field named p.id.
+4,2025-Q3,q354,0.094654,ok,
+4,2025-Q3,q355,0.045450,ok,
+4,2025-Q3,q356,0.010881,ok,
+4,2025-Q3,q357,0.608603,ok,
+4,2025-Q3,q358,,error,Schema error: No field named p.id.
+4,2025-Q3,q359,1.022216,ok,
+4,2025-Q3,q360,0.669475,ok,
+4,2025-Q3,q361,0.525367,ok,
+4,2025-Q3,q362,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+4,2025-Q3,q363,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+4,2025-Q3,q364,,error,Schema error: No field named latest.tenant_id. Did you mean 'latest.user_id'?
+4,2025-Q3,q365,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""user_id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""o"" }), name: ""user_id"" })"
+4,2025-Q3,q366,0.015583,ok,
+4,2025-Q3,q367,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+4,2025-Q3,q368,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q369,0.240967,ok,
+4,2025-Q3,q370,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q371,0.101455,ok,
+4,2025-Q3,q372,0.196488,ok,
+4,2025-Q3,q373,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q374,0.351296,ok,
+4,2025-Q3,q375,1.282498,ok,
+4,2025-Q3,q376,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q377,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q378,1.237844,ok,
+4,2025-Q3,q379,,error,Error during planning: Cannot coerce arithmetic expression Duration(µs) * Float64 to valid types
+4,2025-Q3,q380,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q381,0.424216,ok,
+4,2025-Q3,q382,0.054195,ok,
+4,2025-Q3,q383,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q384,0.030174,ok,
+4,2025-Q3,q385,0.035963,ok,
+4,2025-Q3,q386,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q387,0.020479,ok,
+4,2025-Q3,q388,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q389,0.030405,ok,
+4,2025-Q3,q390,0.166363,ok,
+4,2025-Q3,q391,0.023707,ok,
+4,2025-Q3,q392,0.041074,ok,
+4,2025-Q3,q393,,error,Schema error: No field named w.id.
+4,2025-Q3,q394,0.015144,ok,
+4,2025-Q3,q395,0.054608,ok,
+4,2025-Q3,q396,,error,"Error during planning: Too many columns! The subquery should only return one column: column1, column2"
+4,2025-Q3,q397,0.022273,ok,
+4,2025-Q3,q398,0.125113,ok,
+4,2025-Q3,q399,,error,Error during planning: Invalid function 'json_value'.
+4,2025-Q3,q400,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+4,2025-Q3,q401,0.097328,ok,
+4,2025-Q3,q402,0.028269,ok,
+4,2025-Q3,q403,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+4,2025-Q3,q404,0.052915,ok,
+4,2025-Q3,q405,0.069060,ok,
+4,2025-Q3,q406,0.505105,ok,
+4,2025-Q3,q407,0.062729,ok,
+4,2025-Q3,q408,0.226976,ok,
+4,2025-Q3,q409,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,load,0.508789,ok,
+5,2025-Q4,q001,0.027389,ok,
+5,2025-Q4,q002,0.061172,ok,
+5,2025-Q4,q003,0.072241,ok,
+5,2025-Q4,q004,0.024697,ok,
+5,2025-Q4,q005,0.176478,ok,
+5,2025-Q4,q006,0.178172,ok,
+5,2025-Q4,q007,0.029609,ok,
+5,2025-Q4,q008,0.029041,ok,
+5,2025-Q4,q009,0.038991,ok,
+5,2025-Q4,q010,0.020084,ok,
+5,2025-Q4,q011,0.054033,ok,
+5,2025-Q4,q012,0.328803,ok,
+5,2025-Q4,q013,0.045313,ok,
+5,2025-Q4,q014,0.079314,ok,
+5,2025-Q4,q015,0.053911,ok,
+5,2025-Q4,q016,0.022424,ok,
+5,2025-Q4,q017,0.154482,ok,
+5,2025-Q4,q018,0.305309,ok,
+5,2025-Q4,q019,0.059292,ok,
+5,2025-Q4,q020,0.329603,ok,
+5,2025-Q4,q021,0.299962,ok,
+5,2025-Q4,q022,0.200533,ok,
+5,2025-Q4,q023,0.429907,ok,
+5,2025-Q4,q024,0.159108,ok,
+5,2025-Q4,q025,1.696596,ok,
+5,2025-Q4,q026,1.482203,ok,
+5,2025-Q4,q027,0.910969,ok,
+5,2025-Q4,q028,0.580916,ok,
+5,2025-Q4,q029,0.665738,ok,
+5,2025-Q4,q030,0.799009,ok,
+5,2025-Q4,q031,0.136734,ok,
+5,2025-Q4,q032,0.077719,ok,
+5,2025-Q4,q033,1.905035,ok,
+5,2025-Q4,q034,0.024707,ok,
+5,2025-Q4,q035,0.034500,ok,
+5,2025-Q4,q036,0.116804,ok,
+5,2025-Q4,q037,0.126658,ok,
+5,2025-Q4,q038,0.089303,ok,
+5,2025-Q4,q039,0.117808,ok,
+5,2025-Q4,q040,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q041,0.063493,ok,
+5,2025-Q4,q042,0.295125,wrong_result,row count 36 vs 1
+5,2025-Q4,q043,0.773253,wrong_result,row count 12 vs 1
+5,2025-Q4,q044,,timeout,no result within 30 s
+5,2025-Q4,q045,0.023755,wrong_result,"row 1: col 1: ""2023-01"" vs ""YYYY-MM""; col 2: ""64577"" vs ""143693""; col 3: ""1.8031497282314136612106477538442479520572"" vs ""2.1385314524"""
+5,2025-Q4,q046,,timeout,no result within 30 s
+5,2025-Q4,q047,0.054233,ok,
+5,2025-Q4,q048,0.107944,wrong_result,"row 1: col 1: ""2023-01"" vs ""YYYY-MM"""
+5,2025-Q4,q049,0.227499,ok,
+5,2025-Q4,q050,0.217016,ok,
+5,2025-Q4,q051,0.265402,wrong_result,"row 1: col 2: ""1964592"" vs ""0""; col 3: ""1044497"" vs ""0""; col 4: ""53.1661026818800035834412437798789774161760"" vs """""
+5,2025-Q4,q052,0.203907,ok,
+5,2025-Q4,q053,0.979398,ok,
+5,2025-Q4,q054,0.115306,ok,
+5,2025-Q4,q055,11.852875,ok,
+5,2025-Q4,q056,0.233326,ok,
+5,2025-Q4,q057,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q058,0.446006,ok,
+5,2025-Q4,q059,0.729549,ok,
+5,2025-Q4,q060,0.015195,ok,
+5,2025-Q4,q061,0.087082,ok,
+5,2025-Q4,q062,0.192061,ok,
+5,2025-Q4,q063,0.246534,ok,
+5,2025-Q4,q064,,error,"Error during planning: Correlated scalar subquery can only be used in Projection, Filter, Aggregate plan nodes"
+5,2025-Q4,q065,0.262104,ok,
+5,2025-Q4,q066,0.076799,ok,
+5,2025-Q4,q067,0.030746,ok,
+5,2025-Q4,q068,0.100209,ok,
+5,2025-Q4,q069,0.018314,ok,
+5,2025-Q4,q070,0.036017,ok,
+5,2025-Q4,q071,0.033382,ok,
+5,2025-Q4,q072,0.032882,ok,
+5,2025-Q4,q073,0.033011,ok,
+5,2025-Q4,q074,0.616820,ok,
+5,2025-Q4,q075,0.012753,ok,
+5,2025-Q4,q076,0.160611,ok,
+5,2025-Q4,q077,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q078,3.603788,wrong_result,"row 1: col 1: ""2023-01"" vs ""YYYY-MM""; col 2: ""437626"" vs ""278223""; col 3: ""23.6919195843025780003930296645994525005370"" vs ""23.106644669923046"""
+5,2025-Q4,q079,0.175264,ok,
+5,2025-Q4,q080,1.415926,ok,
+5,2025-Q4,q081,0.226948,ok,
+5,2025-Q4,q082,0.533901,ok,
+5,2025-Q4,q083,0.395954,ok,
+5,2025-Q4,q084,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q085,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q086,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q087,,error,Resources exhausted: Failed to allocate additional 17.2 TB for FinalHashAggregateStream[1] with 0.0 B already allocated for this reservation - 15.4 GB remain available for the total memory pool: fair(pool_size: 76.8 GB)
+5,2025-Q4,q088,0.546013,ok,
+5,2025-Q4,q089,1.464453,wrong_result,"row 1: col 2: ""275065"" vs ""0""; col 3: ""95156218.716086"" vs ""0.000000""; col 4: ""170165"" vs ""0"""
+5,2025-Q4,q090,0.083922,wrong_result,"row 1: col 1: ""2023-01"" vs ""YYYY-MM"""
+5,2025-Q4,q091,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q092,0.066010,wrong_result,"row 1: col 1: ""2023-01"" vs ""YYYY-MM"""
+5,2025-Q4,q093,0.282912,ok,
+5,2025-Q4,q094,1.136463,ok,
+5,2025-Q4,q095,0.190078,ok,
+5,2025-Q4,q096,0.446916,ok,
+5,2025-Q4,q097,0.088637,ok,
+5,2025-Q4,q098,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+5,2025-Q4,q099,0.021115,ok,
+5,2025-Q4,q100,2.123087,ok,
+5,2025-Q4,q101,0.047739,ok,
+5,2025-Q4,q102,0.037086,ok,
+5,2025-Q4,q103,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q104,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.ip_count'?
+5,2025-Q4,q105,0.049157,ok,
+5,2025-Q4,q106,0.051725,ok,
+5,2025-Q4,q107,0.019587,ok,
+5,2025-Q4,q108,0.030227,ok,
+5,2025-Q4,q109,0.087605,ok,
+5,2025-Q4,q110,0.013439,ok,
+5,2025-Q4,q111,0.005388,ok,
+5,2025-Q4,q112,0.090646,ok,
+5,2025-Q4,q113,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q114,0.010272,wrong_result,row count 38 vs 2
+5,2025-Q4,q115,0.041395,ok,
+5,2025-Q4,q116,13.865738,ok,
+5,2025-Q4,q117,0.011058,ok,
+5,2025-Q4,q118,0.027722,ok,
+5,2025-Q4,q119,0.013664,ok,
+5,2025-Q4,q120,0.007680,ok,
+5,2025-Q4,q121,,error,"Error during planning: Plan: [""BoundedWindowAggExec: wdw=[row_number() PARTITION BY [dsr.id] ORDER BY [abs(coalesce(CAST(lh.placed_at AS Date32) - CAST(dsr.received_at AS Date32), Int64(999999))) ASC NULLS LAST, lh.id ASC NULLS LAST] RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW: Field { \""row_n"
+5,2025-Q4,q122,0.194535,wrong_result,"row 1: col 1: ""2023-01"" vs ""YYYY-MM"""
+5,2025-Q4,q123,0.026529,wrong_result,"row 1: col 1: ""2023-12"" vs ""YYYY-MM"""
+5,2025-Q4,q124,0.019605,wrong_result,"row 1: col 7: ""9.5911732559622497130468052544318326744038"" vs ""9.2285627470""; col 8: ""25.7216999999999949011453281855210661888123"" vs ""25.0"""
+5,2025-Q4,q125,0.053282,ok,
+5,2025-Q4,q126,0.020133,wrong_result,"row 1: col 1: ""2025-11"" vs ""YYYY-MM"""
+5,2025-Q4,q127,0.064782,wrong_result,"row 1: col 5: ""2.5794618181818181818181818181818181818182"" vs ""2.2790490909""; col 6: ""4.7469999999999998863131622783839702606201"" vs ""4.0""; col 8: ""13.5042036363636363636363636363636363636364"" vs ""13.1525084848"""
+5,2025-Q4,q128,0.102498,wrong_result,"row 1: col 7: ""2.51435"" vs ""2.2839000000"""
+5,2025-Q4,q129,0.029932,ok,
+5,2025-Q4,q130,0.111665,ok,
+5,2025-Q4,q131,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""t"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+5,2025-Q4,q132,0.164574,ok,
+5,2025-Q4,q133,0.050291,ok,
+5,2025-Q4,q134,0.179606,ok,
+5,2025-Q4,q135,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""wd"" }), name: ""tenant_id"" }), subquery: <subquery>, negated: false })"
+5,2025-Q4,q136,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q137,0.765115,ok,
+5,2025-Q4,q138,0.147915,ok,
+5,2025-Q4,q139,1.077090,ok,
+5,2025-Q4,q140,0.137890,ok,
+5,2025-Q4,q141,0.047083,ok,
+5,2025-Q4,q142,0.076069,ok,
+5,2025-Q4,q143,0.583712,ok,
+5,2025-Q4,q144,0.142618,ok,
+5,2025-Q4,q145,0.129726,ok,
+5,2025-Q4,q146,0.633050,ok,
+5,2025-Q4,q147,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q148,1.004873,ok,
+5,2025-Q4,q149,,error,"Arrow error: Invalid argument error: Invalid comparison operation: Decimal128(38, 6) == Decimal128(28, 6)"
+5,2025-Q4,q150,0.271129,ok,
+5,2025-Q4,q151,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q152,0.082249,ok,
+5,2025-Q4,q153,4.603679,ok,
+5,2025-Q4,q154,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+5,2025-Q4,q155,1.088884,ok,
+5,2025-Q4,q156,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""d"" }), name: ""id"" })"
+5,2025-Q4,q157,1.920543,ok,
+5,2025-Q4,q158,5.234434,ok,
+5,2025-Q4,q159,1.946513,ok,
+5,2025-Q4,q160,0.111091,ok,
+5,2025-Q4,q161,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q162,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q163,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q164,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q165,0.414929,ok,
+5,2025-Q4,q166,0.574669,ok,
+5,2025-Q4,q167,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q168,0.084632,ok,
+5,2025-Q4,q169,1.108616,ok,
+5,2025-Q4,q170,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q171,1.566219,ok,
+5,2025-Q4,q172,0.031097,ok,
+5,2025-Q4,q173,0.037230,ok,
+5,2025-Q4,q174,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q175,,error,Error during planning: Invalid function 'json_value'.
+5,2025-Q4,q176,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q177,0.023372,ok,
+5,2025-Q4,q178,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q179,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+5,2025-Q4,q180,0.023159,ok,
+5,2025-Q4,q181,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q182,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q183,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q184,0.422088,wrong_result,row count 12 vs 1
+5,2025-Q4,q185,0.556326,ok,
+5,2025-Q4,q186,0.989938,ok,
+5,2025-Q4,q187,0.412470,ok,
+5,2025-Q4,q188,0.526801,ok,
+5,2025-Q4,q189,0.170806,ok,
+5,2025-Q4,q190,0.545132,wrong_result,"row 1: col 1: ""2025-12"" vs ""YYYY-MM"""
+5,2025-Q4,q191,0.538268,ok,
+5,2025-Q4,q192,0.021656,ok,
+5,2025-Q4,q193,0.019971,wrong_result,"row 1: col 1: ""2025-01"" vs ""YYYY-MM""; col 2: ""23153"" vs ""26541""; col 3: ""23153"" vs ""26541"""
+5,2025-Q4,q194,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q195,0.014891,ok,
+5,2025-Q4,q196,0.042800,ok,
+5,2025-Q4,q197,0.097959,ok,
+5,2025-Q4,q198,0.117583,ok,
+5,2025-Q4,q199,0.104470,ok,
+5,2025-Q4,q200,0.082925,ok,
+5,2025-Q4,q201,0.092943,ok,
+5,2025-Q4,q202,0.058655,ok,
+5,2025-Q4,q203,0.102715,ok,
+5,2025-Q4,q204,0.031039,ok,
+5,2025-Q4,q205,0.013008,ok,
+5,2025-Q4,q206,0.203764,wrong_result,"row 9: col 3: ""61.7599042122437843522431890787150028771554"" vs ""61.75153183721254"""
+5,2025-Q4,q207,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q208,0.020166,ok,
+5,2025-Q4,q209,,error,"Arrow error: Invalid argument error: Invalid comparison operation: Decimal128(38, 6) == Decimal128(28, 6)"
+5,2025-Q4,q210,0.169428,ok,
+5,2025-Q4,q211,0.165208,ok,
+5,2025-Q4,q212,0.087170,ok,
+5,2025-Q4,q213,0.665422,ok,
+5,2025-Q4,q214,0.068399,ok,
+5,2025-Q4,q215,0.344577,ok,
+5,2025-Q4,q216,0.190011,ok,
+5,2025-Q4,q217,0.583230,ok,
+5,2025-Q4,q218,0.154599,ok,
+5,2025-Q4,q219,0.609898,ok,
+5,2025-Q4,q220,,error,Resources exhausted: Failed to allocate additional 805.9 MB for ExternalSorter[1] with 0.0 B already allocated for this reservation - 409.5 MB remain available for the total memory pool: fair(pool_size: 76.8 GB)
+5,2025-Q4,q221,0.538345,ok,
+5,2025-Q4,q222,0.182255,ok,
+5,2025-Q4,q223,0.316381,ok,
+5,2025-Q4,q224,8.523566,ok,
+5,2025-Q4,q225,0.795858,ok,
+5,2025-Q4,q226,3.596189,ok,
+5,2025-Q4,q227,0.441534,ok,
+5,2025-Q4,q228,0.795807,ok,
+5,2025-Q4,q229,0.473941,ok,
+5,2025-Q4,q230,1.047361,ok,
+5,2025-Q4,q231,1.989280,ok,
+5,2025-Q4,q232,0.896108,ok,
+5,2025-Q4,q233,0.423109,wrong_result,"row 1: col 6: ""80.2861445783132530120481927710843373493976"" vs ""100.0"""
+5,2025-Q4,q234,0.723535,ok,
+5,2025-Q4,q235,0.127759,ok,
+5,2025-Q4,q236,0.020116,ok,
+5,2025-Q4,q237,,timeout,no result within 30 s
+5,2025-Q4,q238,,timeout,no result within 30 s
+5,2025-Q4,q239,,timeout,no result within 30 s
+5,2025-Q4,q240,,timeout,no result within 30 s
+5,2025-Q4,q241,14.930473,ok,
+5,2025-Q4,q242,4.907171,ok,
+5,2025-Q4,q243,5.205160,ok,
+5,2025-Q4,q244,0.028358,ok,
+5,2025-Q4,q245,0.035844,ok,
+5,2025-Q4,q246,0.058528,ok,
+5,2025-Q4,q247,0.128235,ok,
+5,2025-Q4,q248,0.138147,ok,
+5,2025-Q4,q249,0.022640,ok,
+5,2025-Q4,q250,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+5,2025-Q4,q251,0.060969,ok,
+5,2025-Q4,q252,0.032342,wrong_result,"row 3: col 5: ""11.3264338432358883437100564878571723085804"" vs ""11.33055704448934""; col 6: ""10.4523151775038139611594441924710345111945"" vs ""10.44819197625036"""
+5,2025-Q4,q253,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q254,0.153475,ok,
+5,2025-Q4,q255,0.108483,ok,
+5,2025-Q4,q256,2.605318,ok,
+5,2025-Q4,q257,0.307694,ok,
+5,2025-Q4,q258,0.359854,wrong_result,"row 1: col 2: ""2029524"" vs ""0""; col 3: ""51413184.919163"" vs ""0.000000""; col 4: ""41538519.960626"" vs ""0.000000"""
+5,2025-Q4,q259,,error,"Arrow error: Invalid argument error: column types must match schema types, expected Decimal128(38, 6) but found Decimal128(28, 6) at column index 0"
+5,2025-Q4,q260,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q261,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q262,0.154919,ok,
+5,2025-Q4,q263,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+5,2025-Q4,q264,0.410275,wrong_result,row count 12 vs 1
+5,2025-Q4,q265,1.065634,ok,
+5,2025-Q4,q266,0.482233,ok,
+5,2025-Q4,q267,0.223692,ok,
+5,2025-Q4,q268,0.094366,ok,
+5,2025-Q4,q269,0.519610,ok,
+5,2025-Q4,q270,0.186975,ok,
+5,2025-Q4,q271,1.106043,ok,
+5,2025-Q4,q272,1.592039,ok,
+5,2025-Q4,q273,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q274,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q275,0.151389,ok,
+5,2025-Q4,q276,,error,Schema error: No field named ip_counts.tenant_id. Did you mean 'ip_counts.cnt'?
+5,2025-Q4,q277,0.776202,ok,
+5,2025-Q4,q278,0.014421,ok,
+5,2025-Q4,q279,0.682691,ok,
+5,2025-Q4,q280,0.013675,ok,
+5,2025-Q4,q281,0.074695,ok,
+5,2025-Q4,q282,0.021768,ok,
+5,2025-Q4,q283,0.849885,ok,
+5,2025-Q4,q284,0.353363,ok,
+5,2025-Q4,q285,0.013967,ok,
+5,2025-Q4,q286,0.172053,ok,
+5,2025-Q4,q287,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q288,0.276541,wrong_result,"row 1: col 5: ""68.9206325973346642415982416654269384150994"" vs ""69.50016556370844"""
+5,2025-Q4,q289,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q290,0.106524,ok,
+5,2025-Q4,q291,0.527439,ok,
+5,2025-Q4,q292,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q293,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q294,0.087266,ok,
+5,2025-Q4,q295,0.233985,ok,
+5,2025-Q4,q296,0.138449,ok,
+5,2025-Q4,q297,2.291939,ok,
+5,2025-Q4,q298,0.068152,ok,
+5,2025-Q4,q299,1.072045,ok,
+5,2025-Q4,q300,0.279742,ok,
+5,2025-Q4,q301,0.132841,ok,
+5,2025-Q4,q302,0.175394,ok,
+5,2025-Q4,q303,0.010099,ok,
+5,2025-Q4,q304,2.985121,wrong_result,"row 1: col 4: ""62.0934139491398720375910747583656311803674"" vs ""100.0""; col 5: ""62.8406963034884527359733684721547957556002"" vs ""100.0"""
+5,2025-Q4,q305,0.155379,ok,
+5,2025-Q4,q306,0.044939,ok,
+5,2025-Q4,q307,0.322770,ok,
+5,2025-Q4,q308,0.268764,ok,
+5,2025-Q4,q309,0.232956,ok,
+5,2025-Q4,q310,0.035131,ok,
+5,2025-Q4,q311,0.047983,ok,
+5,2025-Q4,q312,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q313,0.084210,ok,
+5,2025-Q4,q314,0.239857,ok,
+5,2025-Q4,q315,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q316,0.089113,ok,
+5,2025-Q4,q317,0.139264,ok,
+5,2025-Q4,q318,,timeout,no result within 30 s
+5,2025-Q4,q319,0.016689,ok,
+5,2025-Q4,q320,0.018231,ok,
+5,2025-Q4,q321,0.024812,ok,
+5,2025-Q4,q322,0.012596,ok,
+5,2025-Q4,q323,0.015082,ok,
+5,2025-Q4,q324,0.023566,ok,
+5,2025-Q4,q325,1.086990,ok,
+5,2025-Q4,q326,0.028212,ok,
+5,2025-Q4,q327,0.014974,ok,
+5,2025-Q4,q328,0.409865,ok,
+5,2025-Q4,q329,0.619593,ok,
+5,2025-Q4,q330,1.936828,ok,
+5,2025-Q4,q331,2.280370,ok,
+5,2025-Q4,q332,0.524461,ok,
+5,2025-Q4,q333,0.090110,ok,
+5,2025-Q4,q334,0.017339,ok,
+5,2025-Q4,q335,0.273274,ok,
+5,2025-Q4,q336,0.180718,ok,
+5,2025-Q4,q337,0.018083,ok,
+5,2025-Q4,q338,0.186883,ok,
+5,2025-Q4,q339,0.017428,ok,
+5,2025-Q4,q340,0.042716,ok,
+5,2025-Q4,q341,,error,Error during planning: Cannot get result type for temporal operation Int32 * Interval(MonthDayNano): Invalid argument error: Invalid interval arithmetic operation: Interval(MonthDayNano) * Interval(MonthDayNano)
+5,2025-Q4,q342,0.039576,ok,
+5,2025-Q4,q343,0.065708,ok,
+5,2025-Q4,q344,0.055973,wrong_result,"row 1: col 3: ""15439"" vs ""0""; col 4: ""3097223.518652"" vs ""0.000000""; col 6: ""6.4665426886476343653665728454630746548720"" vs ""0.0"""
+5,2025-Q4,q345,0.019082,ok,
+5,2025-Q4,q346,0.030256,ok,
+5,2025-Q4,q347,0.771870,ok,
+5,2025-Q4,q348,0.217457,wrong_result,"row 1: col 1: ""2023-01"" vs ""YYYY-MM"""
+5,2025-Q4,q349,,error,"This feature is not implemented: Physical plan does not support logical expression InSubquery(InSubquery { expr: Column(Column { relation: Some(Bare { table: ""c"" }), name: ""product_id"" }), subquery: <subquery>, negated: false })"
+5,2025-Q4,q350,0.690079,wrong_result,"row 1: col 7: ""89.4666611067094783370168049706017263667070"" vs ""100.0000000000"""
+5,2025-Q4,q351,0.215839,ok,
+5,2025-Q4,q352,0.216145,ok,
+5,2025-Q4,q353,,error,Schema error: No field named p.id.
+5,2025-Q4,q354,0.197449,ok,
+5,2025-Q4,q355,0.052170,ok,
+5,2025-Q4,q356,0.012330,wrong_result,"row 1: col 1: ""2023-01"" vs ""YYYY-MM"""
+5,2025-Q4,q357,1.391199,ok,
+5,2025-Q4,q358,,error,Schema error: No field named p.id.
+5,2025-Q4,q359,1.986417,ok,
+5,2025-Q4,q360,1.094505,ok,
+5,2025-Q4,q361,0.664848,ok,
+5,2025-Q4,q362,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: true })"
+5,2025-Q4,q363,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+5,2025-Q4,q364,,error,Schema error: No field named latest.tenant_id. Did you mean 'latest.user_id'?
+5,2025-Q4,q365,,error,"This feature is not implemented: Physical plan does not support logical expression OuterReferenceColumn(Field { name: ""user_id"", data_type: Int64 }, Column { relation: Some(Bare { table: ""o"" }), name: ""user_id"" })"
+5,2025-Q4,q366,0.017825,ok,
+5,2025-Q4,q367,,error,Error during planning: Correlated scalar subquery must be aggregated to return at most one row
+5,2025-Q4,q368,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q369,0.556881,ok,
+5,2025-Q4,q370,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q371,0.138455,ok,
+5,2025-Q4,q372,0.259384,ok,
+5,2025-Q4,q373,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q374,0.739504,ok,
+5,2025-Q4,q375,2.314283,ok,
+5,2025-Q4,q376,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q377,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q378,2.353835,ok,
+5,2025-Q4,q379,,error,Error during planning: Cannot coerce arithmetic expression Duration(µs) * Float64 to valid types
+5,2025-Q4,q380,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q381,0.731992,ok,
+5,2025-Q4,q382,0.062986,wrong_result,"row 1: col 2: ""5203"" vs ""5194""; col 3: ""14.4966704744922125323897355883090468362542"" vs ""14.47159455016578""; col 4: ""5203"" vs ""5194"""
+5,2025-Q4,q383,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q384,0.038885,ok,
+5,2025-Q4,q385,0.045601,ok,
+5,2025-Q4,q386,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q387,0.028363,ok,
+5,2025-Q4,q388,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q389,0.037920,wrong_result,"row 1: col 1: ""2025-01 (1-15)"" vs ""YYYY-MM (1-15)"""
+5,2025-Q4,q390,0.248416,ok,
+5,2025-Q4,q391,0.029080,ok,
+5,2025-Q4,q392,0.059158,ok,
+5,2025-Q4,q393,,error,Schema error: No field named w.id.
+5,2025-Q4,q394,0.019644,ok,
+5,2025-Q4,q395,0.085317,ok,
+5,2025-Q4,q396,,error,"Error during planning: Too many columns! The subquery should only return one column: column1, column2"
+5,2025-Q4,q397,0.026944,ok,
+5,2025-Q4,q398,0.181431,ok,
+5,2025-Q4,q399,,error,Error during planning: Invalid function 'json_value'.
+5,2025-Q4,q400,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"
+5,2025-Q4,q401,0.213828,ok,
+5,2025-Q4,q402,0.034022,ok,
+5,2025-Q4,q403,,error,This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)
+5,2025-Q4,q404,0.074671,wrong_result,"row 1: col 6: ""83.4504845713435489782017594943115537931207"" vs ""100.0"""
+5,2025-Q4,q405,0.108890,wrong_result,"row 1: col 2: ""2025-01"" vs ""YYYY-MM""; col 3: ""3220"" vs ""5628""; col 4: ""5406.8743571843685300207039337474120082815735"" vs ""812.47471866852873"""
+5,2025-Q4,q406,0.722405,ok,
+5,2025-Q4,q407,0.083231,wrong_result,row count 11 vs 1
+5,2025-Q4,q408,0.441512,wrong_result,"row 1: col 5: ""77.0103320800025277259945021959619577237827"" vs ""100.0"""
+5,2025-Q4,q409,,error,"This feature is not implemented: Physical plan does not support logical expression Exists(Exists { subquery: <subquery>, negated: false })"

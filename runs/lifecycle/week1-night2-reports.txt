@@ -1,0 +1,83 @@
+=== Report 1: Loyalty member vs non-member behavior by account tenure (written by Bea) ===
+Engineer's note: Tenure bands are bucketed by whole days from users.created_at to 2025-12-31 (under 6mo = under 182 days, 6-12mo = 182-364 days, 12-24mo = 365-729 days, over 24mo = 730+ days) since the warehouse has no month-interval type; boundaries approximate calendar months. Refund_rate_pct and AOV are computed as aggregate totals within each tenure-band/segment cell (refunded orders ÷ all orders; revenue ÷ non-cancelled orders), not averaged per customer, consistent with a rate/AOV definition.
+REPORT: Loyalty member vs non-member behavior by account tenure
+QUESTION: Does the loyalty-member gap in orders, revenue, AOV and refunds from last night's report persist once we control for how long the customer has had an account, or is it just that members and non-members differ in account age?
+tenure_band     | segment        | customer_count | avg_lifetime_orders | avg_lifetime_revenue_eur | avg_order_value_eur | refund_rate_pct
+----------------+----------------+----------------+---------------------+--------------------------+---------------------+----------------
+under 6 months  | loyalty member |            264 |                1.79 |                   358.92 |              211.98 |           27.27
+under 6 months  | non-member     |           1466 |                1.91 |                   491.69 |              268.06 |           20.31
+6 to 12 months  | loyalty member |            214 |                2.38 |                   480.71 |              212.98 |           31.96
+6 to 12 months  | non-member     |           1113 |                3.52 |                   883.43 |              259.64 |           16.99
+12 to 24 months | loyalty member |            376 |                4.17 |                   748.19 |              189.57 |           31.63
+12 to 24 months | non-member     |           2477 |                5.56 |                  1435.39 |              267.27 |           16.36
+over 24 months  | loyalty member |            476 |                5.02 |                   916.14 |              190.18 |           33.93
+over 24 months  | non-member     |           3254 |                7.87 |                  2244.59 |              294.03 |           14.37
+(8 rows)
+
+=== Report 2: Loyalty member order behavior before vs after enrollment (written by Bea) ===
+Engineer's note: For exposure days I used the customer's first order within the pre-period (vs users.created_at if none) as the pre-period start, and the customer's last order within the post-period (vs 2025-12-31 if none yet) as the post-period end, which is how I read the 'first/last order ... or X if ...' rule. Refund rate counts an order as refunded if any linked payment has amount_refunded>0 or it has any order_returns row, regardless of order status.
+REPORT: Loyalty member order behavior before vs after enrollment
+QUESTION: For the same loyalty members, does their own order frequency, spend and refund rate actually change after they enroll, compared to their behavior before they joined - or is the elevated refund rate already present pre-enrollment?
+period          | distinct_customers | total_orders | avg_order_value_eur | orders_per_customer_per_year | refund_rate_pct
+----------------+--------------------+--------------+---------------------+------------------------------+----------------
+pre-enrollment  |                  0 |            0 |                 0.0 |                          0.0 |             0.0
+post-enrollment |               1330 |         4941 |               194.4 |                         3.25 |           32.36
+(2 rows)
+
+=== Report 3: Referral redemption concentration by referrer (written by Viktor) ===
+Engineer's note: Report caps at 50 rows as requested; since the query can't also return a separate "total rows/redemptions" summary within the 12-column single-grain report, please note in the memo that the true referrer count and overall redemption total can be read off by summing redemption_count across all returned+unreturned rows if needed as a follow-up query. referrer_lifetime_order_count/revenue are scoped to the same tenant as the referral (users belong to one tenant).
+REPORT: Referral redemption concentration by referrer
+QUESTION: Is referral activity concentrated among a small number of referrers in a way that looks like gaming rather than broad-based word-of-mouth, and are the top referrers themselves genuine, active customers?
+referrer_user_id | tenant_name                   | redemption_count | distinct_referred_customers | total_reward_paid_eur | share_of_all_redemptions_pct | referrer_lifetime_order_count | referrer_lifetime_revenue_eur
+-----------------+-------------------------------+------------------+-----------------------------+-----------------------+------------------------------+-------------------------------+------------------------------
+            1799 | Petalcourt Beauty             |                2 |                           2 |                 19.98 |                         2.99 |                             5 |                        890.01
+            2948 | Spice Route Box               |                2 |                           2 |                  20.0 |                         2.99 |                            65 |                       1523.94
+            5539 | Cragsley Outfitters           |                2 |                           2 |                 18.94 |                         2.99 |                             2 |                        477.85
+             612 | Willow & Wren                 |                1 |                           1 |                  9.69 |                         1.49 |                            16 |                       7989.04
+             633 | Cragsley Outfitters           |                1 |                           1 |                  9.89 |                         1.49 |                            11 |                       3147.27
+             643 | Cragsley Outfitters           |                1 |                           1 |                 10.02 |                         1.49 |                             5 |                        416.01
+             713 | Cragsley Outfitters           |                1 |                           1 |                  9.84 |                         1.49 |                            15 |                       4292.74
+             749 | Cragsley Outfitters           |                1 |                           1 |                  9.84 |                         1.49 |                             6 |                        399.43
+             762 | Cragsley Outfitters           |                1 |                           1 |                  9.93 |                         1.49 |                             3 |                        826.54
+             937 | Cragsley Outfitters           |                1 |                           1 |                  9.93 |                         1.49 |                            25 |                       3619.08
+             952 | Cragsley Outfitters           |                1 |                           1 |                  9.92 |                         1.49 |                            11 |                       3304.36
+             988 | Castell Fasteners             |                1 |                           1 |                   9.4 |                         1.49 |                            21 |                      19539.11
+             994 | Honeycomb Larder              |                1 |                           1 |                  9.72 |                         1.49 |                            48 |                        103.29
+            1056 | Ballycorran Industrial Supply |                1 |                           1 |                  10.0 |                         1.49 |                            30 |                      26668.86
+            1095 | Spice Route Box               |                1 |                           1 |                  10.0 |                         1.49 |                            44 |                       1872.77
+            1119 | OfficeHub Nordic              |                1 |                           1 |                  10.0 |                         1.49 |                             8 |                       7396.03
+            1215 | Ampfeld Elektronik            |                1 |                           1 |                  10.0 |                         1.49 |                             6 |                      10520.67
+            1300 | Brennquell Kaffee             |                1 |                           1 |                  10.0 |                         1.49 |                            25 |                        513.88
+            1330 | Brennquell Kaffee             |                1 |                           1 |                  10.0 |                         1.49 |                            30 |                         722.8
+            1697 | Fell & Fjell                  |                1 |                           1 |                  10.0 |                         1.49 |                             6 |                       1057.33
+            1739 | Wiesgrund Wohnen              |                1 |                           1 |                  10.0 |                         1.49 |                            16 |                       1989.55
+            2017 | Cragsley Outfitters           |                1 |                           1 |                  9.78 |                         1.49 |                            11 |                        2580.1
+            2018 | Brennquell Kaffee             |                1 |                           1 |                  10.0 |                         1.49 |                            40 |                        567.83
+            2067 | OfficeHub Nordic              |                1 |                           1 |                  9.96 |                         1.49 |                            25 |                      36664.72
+            2276 | Ampfeld Elektronik            |                1 |                           1 |                  10.0 |                         1.49 |                             2 |                        395.93
+            2292 | Marrowby & Vane               |                1 |                           1 |                  9.54 |                         1.49 |                             9 |                       1078.29
+            2302 | Brennquell Kaffee             |                1 |                           1 |                  10.0 |                         1.49 |                            34 |                        607.38
+            2346 | Cragsley Outfitters           |                1 |                           1 |                 10.09 |                         1.49 |                            13 |                        2353.0
+            2365 | Coastline Interiors           |                1 |                           1 |                 10.33 |                         1.49 |                            20 |                       3358.78
+            2431 | Cragsley Outfitters           |                1 |                           1 |                 10.09 |                         1.49 |                             2 |                        321.01
+            2471 | Cragsley Outfitters           |                1 |                           1 |                  9.31 |                         1.49 |                            13 |                       2100.95
+            2650 | Studio Vrij                   |                1 |                           1 |                  10.0 |                         1.49 |                            19 |                       6112.71
+            2674 | Castell Fasteners             |                1 |                           1 |                 10.12 |                         1.49 |                            20 |                      71378.19
+            2767 | Fern & Fable                  |                1 |                           1 |                  10.0 |                         1.49 |                             1 |                         91.96
+            2780 | Lumen Collective              |                1 |                           1 |                  10.0 |                         1.49 |                            12 |                       1740.99
+            2794 | Cragsley Outfitters           |                1 |                           1 |                  9.61 |                         1.49 |                            13 |                       4543.43
+            2837 | Studio Vrij                   |                1 |                           1 |                  10.0 |                         1.49 |                             6 |                        419.81
+            2940 | Cragsley Outfitters           |                1 |                           1 |                 10.09 |                         1.49 |                             1 |                        186.63
+            3271 | Cragsley Outfitters           |                1 |                           1 |                   9.8 |                         1.49 |                             6 |                        602.12
+            3434 | Spice Route Box               |                1 |                           1 |                  10.0 |                         1.49 |                            48 |                       1157.46
+            3581 | Marrowby & Vane               |                1 |                           1 |                  9.55 |                         1.49 |                             5 |                       1592.03
+            3675 | Spice Route Box               |                1 |                           1 |                  10.0 |                         1.49 |                            35 |                        367.62
+            3710 | Grind Collective              |                1 |                           1 |                 10.08 |                         1.49 |                            18 |                        143.91
+            3751 | Grind Collective              |                1 |                           1 |                   9.5 |                         1.49 |                            18 |                        167.57
+            3899 | Feather & Fin                 |                1 |                           1 |                   9.7 |                         1.49 |                            19 |                        251.35
+            3904 | Cragsley Outfitters           |                1 |                           1 |                  9.23 |                         1.49 |                             5 |                       1025.13
+            3944 | Fennel & Flint                |                1 |                           1 |                 10.02 |                         1.49 |                             4 |                        374.82
+            4126 | Wiesgrund Wohnen              |                1 |                           1 |                  10.0 |                         1.49 |                             2 |                         182.9
+            4129 | Hautnah                       |                1 |                           1 |                  10.0 |                         1.49 |                             9 |                       1361.34
+            4211 | Petalcourt Beauty             |                1 |                           1 |                 10.21 |                         1.49 |                             9 |                        580.01
+(50 rows)

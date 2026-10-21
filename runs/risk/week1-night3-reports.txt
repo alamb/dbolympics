@@ -1,0 +1,31 @@
+=== Report 1: Audit log coverage for identity and access-control tables (written by Omar) ===
+Engineer's note: Grain is entity_table x action, counted across audit_log UNION ALL audit_log_archive for 2023-01-01 through 2025-12-31. To catch spelling mismatches, the entity_table filter includes both the exact 13 requested table names and their singular/plural counterpart (e.g. both 'user_roles' and 'user_role', 'role' and 'roles'), so any variant spelling will show up as its own row rather than being silently excluded.
+REPORT: Audit log coverage for identity and access-control tables
+QUESTION: Which identity/access-control tables and actions actually appear in the audit trail, and under what naming — specifically, are role/permission grant and revocation events logged at all?
+entity_table | action | row_count | distinct_entity_id_count | min_occurred_at            | max_occurred_at           
+-------------+--------+-----------+--------------------------+----------------------------+---------------------------
+users        | delete |        31 |                       31 | 2023-05-15 14:13:16.012883 | 2025-11-10 15:18:24.435098
+users        | export |         9 |                        9 | 2023-06-09 16:34:46.861497 | 2025-09-05 15:45:58.012648
+users        | login  |     74825 |                      547 | 2023-01-01 06:38:54.555406 | 2025-12-31 18:11:47.560027
+users        | logout |     22529 |                      546 | 2023-01-01 10:11:26.298722 | 2025-12-31 22:19:26.215605
+users        | update |        39 |                       39 | 2023-11-11 15:54:50.148121 | 2025-10-27 10:28:33       
+(5 rows)
+
+=== Report 2: Resolution timing of rejected DSARs via audit trail (written by Viktor) ===
+Engineer's note: rejection_event_timestamp is taken as the earliest change_history row (entity_table='data_subject_requests') whose after_data->>'status'='rejected'; when no such change_history row exists, it falls back to the latest audit_log row for that entity with action='update' and summary/metadata text matching 'reject'. A rejection_source column flags which source (or 'neither found') was used per row, since no exact enum/field for 'status changed to rejected' exists in audit_log.metadata.
+REPORT: Resolution timing of rejected DSARs via audit trail
+QUESTION: For the data subject requests that were rejected without a completed_at timestamp, can the audit/change-history trail tell us when the rejection decision was actually made, and was it within the due date?
+STATUS: FAILED
+  - execution failed: Conversion Error: Failed to cast value to numerical: {"price_amount":"53.99"} when casting from source column after_data
+
+=== Report 3: MFA device adoption by user segment and status (written by Ines) ===
+Engineer's note: This is a current-state snapshot across all tenants (no date filter applied beyond excluding deleted users), since users/mfa_devices have no period column to bound as of 2025-12-31 and the warehouse already ends there. Percentages are rounded to 1 decimal place.
+REPORT: MFA device adoption by user segment and status
+QUESTION: What share of staff and customer accounts are protected by a confirmed MFA device, and does that differ by account status?
+is_staff | status      | total_users | users_with_confirmed_mfa | pct_with_confirmed_mfa | users_with_any_mfa_device | pct_with_any_mfa_device
+---------+-------------+-------------+--------------------------+------------------------+---------------------------+------------------------
+true     | active      |         548 |                      301 |                   54.9 |                       317 |                    57.8
+true     | deactivated |           2 |                        1 |                   50.0 |                         1 |                    50.0
+false    | active      |       11183 |                        0 |                    0.0 |                         0 |                     0.0
+false    | suspended   |          36 |                        0 |                    0.0 |                         0 |                     0.0
+(4 rows)

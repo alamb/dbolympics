@@ -1,0 +1,56 @@
+{
+ "notes": "Report 1 confirms health checks for checkout/storefront run only every 2 hours (checks exist at 12:00, 14:00, 16:00 but nothing in between) - so even though monitoring did catch a 100%-unhealthy reading at 14:00, our detection granularity for this path is coarse (up to 2 hours to notice), which is itself worth flagging for Diego's #3. Report 2 is the smoking gun on business impact: hour 14 had just 1 order and hour 15 has NO row at all (zero orders) on Black Friday, versus 7-11 orders in every neighboring hour that day - a near-total order freeze for roughly 2 hours on the year's biggest shopping day. Report 3 shows Black Friday 2025 total revenue (€40,166) came in 26% below Black Friday 2024 (€54,186) despite the business having grown since then, which is directionally consistent with real lost sales, though other factors could contribute and I haven't isolated the outage's exact share of that gap. This is my last night before the memo, so I'm using the 3 slots to: (1) precisely size the lost-order/revenue window by comparing the same 14:00-16:00 UTC slot across Nov 28 against two baseline Fridays and Black Friday 2024, so I can give Diego an actual number rather than an impression; (2) check whether checkout/storefront ever showed another severe (>=50% unhealthy) outage anywhere else in the Nov-Dec window we have, to answer whether this was a true one-off or a recurring latent risk; (3) check payment attempts during the same window, since a checkout-path outage should show up there too and would confirm this was a full checkout failure, not just a reminder-email glitch.",
+ "requests": [
+  {
+   "title": "Orders in the 14:00-16:00 UTC Window: Nov 28 vs Baseline Days",
+   "question": "How many orders (and how much revenue) were actually lost in the 14:00-16:00 UTC outage window on Black Friday, compared to the same window on comparable days?",
+   "grain": "one row per reference date",
+   "columns": [
+    "date",
+    "label",
+    "orders_14_to_16_utc",
+    "revenue_eur_14_to_16_utc",
+    "total_orders_full_day",
+    "pct_of_day_in_window"
+   ],
+   "details": "Table orders, placed_at. For each of 2025-11-21 ('Prior Friday'), 2025-11-28 ('Black Friday 2025'), 2025-12-05 ('Following Friday'), 2024-11-29 ('Black Friday 2024'): orders_14_to_16_utc = count of orders with placed_at >= date 14:00:00 and < date 16:00:00 (UTC); revenue_eur_14_to_16_utc = sum of grand_total for those orders converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=that date), rounded to whole number. total_orders_full_day = count of all orders placed that full UTC day (for context). pct_of_day_in_window = orders_14_to_16_utc / total_orders_full_day * 100, rounded 1dp. Order by date ascending.",
+   "builds_on": [
+    "Order Volume by Hour on Black Friday 2025 (Nov 28)",
+    "Black Friday 2025 Sales vs Surrounding Fridays and Black Friday 2024"
+   ]
+  },
+  {
+   "title": "Checkout/Storefront Severe Outages, Nov-Dec 2025",
+   "question": "Was the Nov 28 checkout/storefront outage a one-off, or did similarly severe (>=50% unhealthy) readings happen at other times in the window we have data for?",
+   "grain": "one row per hour and component where unhealthy_rate_pct >= 50",
+   "columns": [
+    "checked_hour",
+    "component",
+    "total_checks",
+    "unhealthy_checks",
+    "unhealthy_rate_pct",
+    "avg_latency_ms"
+   ],
+   "details": "Table system_health_checks. Filter checked_at >= 2025-11-01 and < 2026-01-01, component in ('checkout','storefront'). Group by hour of checked_at and component. Keep only groups where unhealthy_rate_pct (is_healthy=false count / total_checks * 100) >= 50, rounded 2dp. avg_latency_ms over non-null latency_ms, rounded to whole number. Order by checked_hour ascending, component ascending.",
+   "builds_on": [
+    "Checkout/Storefront Outage Timeline, Nov 28 2025"
+   ]
+  },
+  {
+   "title": "Payment Attempts During the Nov 28 2025 Outage Window",
+   "question": "Did payment processing itself fail or stall during the same 14:00-16:00 UTC window, confirming a full checkout-path outage rather than just the reminder-email job?",
+   "grain": "one row per hour of the day, for 2025-11-28 (UTC)",
+   "columns": [
+    "hour",
+    "total_payment_attempts",
+    "captured_or_authorized_count",
+    "failed_count",
+    "failure_rate_pct"
+   ],
+   "details": "Table payment_attempts, filtered to attempted_at on 2025-11-28 (all 24 hours UTC). Group by hour of attempted_at. captured_or_authorized_count = count where status in ('authorized','captured'); failed_count = count where status='failed'; failure_rate_pct = failed_count / total_payment_attempts * 100, rounded 2dp. Order by hour ascending (0-23); hours with zero attempts simply won't appear, note the gap if any in the report.",
+   "builds_on": [
+    "Order Volume by Hour on Black Friday 2025 (Nov 28)"
+   ]
+  }
+ ]
+}

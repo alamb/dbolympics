@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH lost_opps AS (\n  SELECT o.id, o.tenant_id\n  FROM opportunities o\n  JOIN tenants t ON t.id = o.tenant_id\n  JOIN pipelines p ON p.id = o.pipeline_id\n  WHERE p.name = 'New business'\n    AND o.is_closed = true\n    AND o.is_won = false\n    AND (t.industry ILIKE '%industrial%' OR t.industry ILIKE '%office equipment%' OR t.industry ILIKE '%wholesal%')\n),\nlast_stage_change AS (\n  SELECT DISTINCT ON (ch.entity_id)\n    ch.entity_id,\n    ch.tenant_id,\n    (ch.before_data->>'stage_id') AS before_stage_id\n  FROM change_history ch\n  JOIN lost_opps lo ON lo.id = ch.entity_id AND lo.tenant_id = ch.tenant_id\n  WHERE ch.entity_table = 'opportunities'\n    AND 'stage_id' = ANY(ch.changed_columns)\n  ORDER BY ch.entity_id, ch.occurred_at DESC\n),\nopp_stage AS (\n  SELECT\n    lo.id AS opportunity_id,\n    os.name AS stage_name,\n    os.sort_position AS stage_order\n  FROM lost_opps lo\n  LEFT JOIN last_stage_change lsc ON lsc.entity_id = lo.id\n  LEFT JOIN opportunity_stages os ON os.id = CAST(lsc.before_stage_id AS bigint)\n)\nSELECT\n  COALESCE(stage_name, 'No stage transition recorded') AS stage_name,\n  stage_order,\n  COUNT(*) AS lost_opportunities_last_seen_here,\n  ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct_of_total_lost_in_new_business,\n  SUM(COUNT(*)) OVER () AS total_lost_opportunities_new_business\nFROM opp_stage\nGROUP BY 1, 2\nORDER BY lost_opportunities_last_seen_here DESC, stage_name\n",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: stage_name, stage_order, lost_opportunities_last_seen_here, pct_of_total_lost_in_new_business, total_lost_opportunities_new_business"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH lost_opps AS (\n  SELECT o.id, o.tenant_id\n  FROM opportunities o\n  JOIN tenants t ON t.id = o.tenant_id\n  JOIN pipelines p ON p.id = o.pipeline_id\n  WHERE p.name = 'New business'\n    AND o.is_closed = true\n    AND o.is_won = false\n    AND (t.industry ILIKE '%industrial%' OR t.industry ILIKE '%office equipment%' OR t.industry ILIKE '%wholesal%')\n),\nlast_stage_change AS (\n  SELECT DISTINCT ON (ch.entity_id)\n    ch.entity_id,\n    ch.tenant_id,\n    (ch.before_data->>'stage_id') AS before_stage_id\n  FROM change_history ch\n  JOIN lost_opps lo ON lo.id = ch.entity_id AND lo.tenant_id = ch.tenant_id\n  WHERE ch.entity_table = 'opportunities'\n    AND 'stage_id' = ANY(ch.changed_columns)\n  ORDER BY ch.entity_id, ch.occurred_at DESC\n),\nopp_stage AS (\n  SELECT\n    lo.id AS opportunity_id,\n    os.name AS stage_name,\n    os.sort_position AS stage_order\n  FROM lost_opps lo\n  LEFT JOIN last_stage_change lsc ON lsc.entity_id = lo.id\n  LEFT JOIN opportunity_stages os ON os.id = CAST(lsc.before_stage_id AS bigint)\n)\nSELECT\n  COALESCE(stage_name, 'No stage transition recorded') AS stage_name,\n  stage_order,\n  COUNT(*) AS lost_opportunities_last_seen_here,\n  ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct_of_total_lost_in_new_business,\n  SUM(COUNT(*)) OVER () AS total_lost_opportunities_new_business\nFROM opp_stage\nGROUP BY 1, 2\nORDER BY lost_opportunities_last_seen_here DESC, stage_name",
+  "note": "Grain is one row per New-business pipeline stage (plus a 'No stage transition recorded' bucket), scoped to lost opportunities at wholesale tenants as specified. Please check the row count/share for the 'No stage transition recorded' bucket in the printed report: if it holds most of the lost opportunities, the change_history audit trail doesn't have enough coverage to answer the graveyard-stage question and the result should be read as inconclusive rather than a real stage distribution.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups lost New-business opportunities at wholesale tenants by the stage recorded in their last `stage_id` change in `change_history` before closing, with a fallback bucket for opportunities lacking any logged stage transition — and I flagged in the note that the analyst should check whether that fallback bucket dominates, since that would mean the audit trail can't really answer the \"graveyard stage\" question."
+ }
+]

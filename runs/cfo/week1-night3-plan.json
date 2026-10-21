@@ -1,0 +1,58 @@
+{
+ "notes": "The currency reconciliation report is the key finding tonight: payout_count_missing_fx_rate is 0 for every currency, so FX coverage is complete — my \"inner join dropping unmatched currencies\" hypothesis was wrong. But summing the reconciliation report's own gross_volume_eur across currencies gives €3,972,988 and fee_revenue_eur gives €93,583 — both match Night 1's Report 3 total almost to the cent. That confirms the TRUE 2025 totals, and proves Night 1's Report 1 (monthly trend: €1.99M gross / €53.2k fee) was wrong by a different mechanism than I guessed — not missing FX matches, but something in how that specific query aggregated/converted by month (gross was off by ~2.0x, fee only by ~1.76x, so it's not a uniform \"half the rows missing\" bug either, more likely a currency-conversion-direction or grouping error localized to that query). Rather than guess further, I'm asking for the monthly report to be rebuilt using the exact validated per-payout conversion method from tonight's reconciliation report, with an explicit annual TOTAL row so it self-checks against the €3,972,988 / €93,583 figures I now trust. This is the top priority tonight since it underpins the board-facing 2025 revenue narrative.\n\nOn refunds: Apparel & Footwear stands out hard at ~20.8% refund rate, 3-6x every other vertical, and it's broad-based across apparel merchants (not just one outlier per Report 3), so I don't think it's a data artifact — apparel/fashion e-commerce genuinely runs high return rates. Still, since this affects net revenue and cash payouts (Tobias's framing), I want to know if it's stable or worsening, especially given the Nov/Dec volume spike we saw in gross volume. I'm using my remaining two slots for a company-wide quarterly refund-rate trend and an Apparel-specific quarterly trend, both 2024 vs 2025, to see direction of travel before I write the memo.",
+ "requests": [
+  {
+   "title": "Corrected Tidewick Revenue by Month, 2025 (validated EUR conversion)",
+   "question": "What is the correct month-by-month view of Tidewick's 2025 gross payout volume and processing-fee revenue, using the per-payout EUR conversion method validated against the currency reconciliation?",
+   "grain": "one calendar month in 2025, plus a final TOTAL row for the year",
+   "columns": [
+    "month (YYYY-MM, or 'TOTAL')",
+    "payout_count",
+    "gross_volume_eur",
+    "fee_revenue_eur",
+    "net_paid_out_eur",
+    "fee_rate_pct",
+    "fee_revenue_prior_year_eur (same month 2024)"
+   ],
+   "details": "Source: payouts, status IN ('paid','completed'), paid_at in 2025. For each payout, convert gross_amount, fee_amount, net_amount from currency_code to EUR by matching exchange_rates on base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at), dividing the local amount by the matched rate (rate=1 when currency_code='EUR', no join needed) — this is the exact method used in last night's 'Payout Reconciliation by Currency' report, which cross-footed to known-good annual totals. Group by month (calendar_days.month_label), and add one extra row labeled 'TOTAL' summing all 12 months, so the figures can be checked against the independently-confirmed 2025 annual totals of approximately €3,972,988 gross volume and €93,583 fee revenue. For the prior-year column, run the same per-payout conversion method for the matching month in 2024. Round money to 2 decimals, fee rate to 1 decimal. Order months chronologically with TOTAL last.",
+   "builds_on": [
+    "Tidewick Processing Fee Revenue by Month, 2025",
+    "2025 Payout Reconciliation by Currency (Local vs EUR-Converted)"
+   ]
+  },
+  {
+   "title": "Company-Wide Refund Rate Trend by Quarter, 2024-2025",
+   "question": "Is Tidewick's overall refund rate rising, falling, or flat over the last two years, and does it spike around the Nov/Dec peak-volume period?",
+   "grain": "one calendar quarter (2024-Q1 through 2025-Q4)",
+   "columns": [
+    "quarter (e.g. 2025-Q4)",
+    "payment_count",
+    "gross_captured_eur",
+    "amount_refunded_eur",
+    "refund_rate_pct",
+    "refund_rate_same_quarter_prior_year_pct"
+   ],
+   "details": "Source: payments, filtered to status reflecting a captured/refunded/partially_refunded state with captured_at between 2024-01-01 and 2025-12-31. Convert amount and amount_refunded to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=date(captured_at)), using the same division method validated for payouts. Group by calendar quarter of captured_at across all tenants combined (company-wide, not split by vertical). refund_rate_pct = amount_refunded_eur / gross_captured_eur * 100. The prior-year column repeats the same calculation for the matching quarter one year earlier (null for 2024 rows). Order chronologically 2024-Q1 to 2025-Q4 (8 rows).",
+   "builds_on": []
+  },
+  {
+   "title": "Apparel & Footwear Refund Rate Trend by Quarter, 2024-2025",
+   "question": "Within the outlier Apparel & Footwear vertical, is the elevated refund rate structural/stable or getting worse over time, and how does it compare to the company average each quarter?",
+   "grain": "one calendar quarter (2024-Q1 through 2025-Q4), restricted to the Apparel & Footwear vertical",
+   "columns": [
+    "quarter",
+    "merchant_count (Apparel & Footwear tenants with qualifying payments that quarter)",
+    "payment_count",
+    "gross_captured_eur",
+    "amount_refunded_eur",
+    "refund_rate_pct",
+    "company_avg_refund_rate_pct (all verticals, same quarter, for comparison)"
+   ],
+   "details": "Source: payments joined to tenants where tenants.industry = 'Apparel & Footwear', filtered to status reflecting captured/refunded/partially_refunded with captured_at between 2024-01-01 and 2025-12-31, converted to EUR the same way as the company-wide refund trend report (exchange_rates matched on currency_code and date(captured_at)). Group by calendar quarter. The company_avg_refund_rate_pct column should be the all-tenant, all-vertical refund rate for that same quarter (volume-weighted: total amount_refunded_eur / total gross_captured_eur across every tenant), to show the gap each quarter. Order chronologically 2024-Q1 to 2025-Q4 (8 rows).",
+   "builds_on": [
+    "Refund Rate by Merchant Vertical, 2025",
+    "Merchant Refund Rate Outliers, 2025 (merchants with 50+ captured payments)"
+   ]
+  }
+ ]
+}

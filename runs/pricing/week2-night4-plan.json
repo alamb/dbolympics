@@ -1,0 +1,56 @@
+{
+ "notes": "Before writing anything near-final for Tobias, I need to flag something I should have caught earlier: the numbers across this whole investigation don't reconcile with each other. The original per-tenant orphan count for 2025 (night before last, summing Grind Collective 167 + Honeycomb Larder 127 + Kibblewick 100 + Feather & Fin 49 + Saffron & Sage 17 + The Balm Room 1 = 461 orders, €22,318.18 total) is far smaller than the \"same population\" reported a night later when split by subscription status (1,322 canceled + 291 active = 1,613 orders, €68,914.08 total) — a ~3.5x gap that I didn't catch before sending Friday's memo. And tonight's attempt to classify the 291 \"active\" orders by date logic came back internally inconsistent on its own terms: it reports 291 orders in one category but a discount total (€3,363.71) that matches a completely different, smaller 88-order subset from two nights ago — the count and the amount don't belong to the same population. Three different engineers independently \"rebuilding the population from scratch\" each night has clearly introduced drift (likely a 2025-only vs. full-history mismatch, and probably a join fan-out on the amount side).\n\nI'm treating this as the priority for my last night: I'd rather hand Marco a number I've personally reconciled than compound a questionable one. All three requests tonight are single, self-contained, fan-out-safe queries that explicitly validate against previously-known, trusted reference totals, so I can see exactly where the drift is before writing anything definitive:\n1. A single query, at tenant grain, for 2025 only, that reproduces last week's known-good per-tenant orphan totals (461 orders / €22,318.18) AND splits each tenant by subscription status in the same pass — so population and status-split can't drift apart.\n2. The same construction extended to full history (2023-2025), checked against the monthly trend's cumulative total (~€57.7k for the canceled bucket, ~1,188 orders by my own hand-count of last week's monthly figures).\n3. A careful, fan-out-safe rebuild of the date-logic classification for the active-bucket (started-after-order vs. active-but-already-ended vs. likely bug), built order-by-order first before aggregating, so the category counts and the discount total can't come from different populations.\n\nI won't write the final headline number until I see these three agree with each other and with the known reference totals.",
+ "requests": [
+  {
+   "title": "Reconciled 2025 orphan population by tenant and subscription status (single pass)",
+   "question": "In one single query, does the 2025 orphan subscription-delivery population split by tenant reproduce last week's known-good totals (Grind Collective 167, Honeycomb Larder 127, Kibblewick 100, Feather & Fin 49, Saffron & Sage 17, The Balm Room 1 — 461 orders, €22,318.18 total), and how does each tenant's orphan pool split by the customer's most-recent subscription status?",
+   "grain": "one row per tenant and subscription-status category (canceled / active / other-or-no-subscription-record)",
+   "columns": [
+    "tenant name",
+    "status category",
+    "orphan order count",
+    "distinct customers",
+    "total discount amount (EUR)"
+   ],
+   "details": "Source: order_discounts + discounts (name='Subscription delivery (prepaid)') + orders (placed_at 2025-01-01 to 2025-12-31, status != 'cancelled', user_id, tenant_id) + tenants. Build this as ONE query: first produce a single row per order_id with its orphan flag (no overlapping subscription with status in trialing/active/past_due whose started_at/ended_at window covers placed_at) and its most-recent-subscription status (by started_at, any status, or 'no_subscription_record'), using subqueries/window functions rather than joins that could duplicate rows; only then aggregate by tenant and status. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). As a validation step, please confirm in the engineer's note whether each tenant's total orphan order count (summed across status categories) matches the reference figures above, and flag explicitly if not along with a hypothesis why. Order by tenant name, then status category. Print all rows (expect ~6 tenants x up to 3 categories).",
+   "builds_on": [
+    "Subscription-delivery discount orders with no overlapping active subscription",
+    "Tenant-level breakdown of the lapsed-subscriber leakage trend, by half-year"
+   ]
+  },
+  {
+   "title": "Reconciled full-history (2023-2025) orphan population by tenant and subscription status (single pass)",
+   "question": "Using the same single-pass, fan-out-safe construction, does the full-history orphan population by tenant and status reproduce the monthly trend's cumulative canceled-bucket total (~€57,658.66, roughly 1,188 orders by hand-summing last week's monthly report)?",
+   "grain": "one row per tenant and subscription-status category (canceled / active / other-or-no-subscription-record)",
+   "columns": [
+    "tenant name",
+    "status category",
+    "orphan order count",
+    "distinct customers",
+    "total discount amount (EUR)"
+   ],
+   "details": "Identical construction and definitions to the 2025-only version above (one row per order_id built first via subqueries/window functions, no fan-out joins, then aggregated), but over the full history: orders.placed_at from 2023-01-01 to 2025-12-31, status != 'cancelled'. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). In the engineer's note, state the grand total order count and EUR total for the 'canceled' category across all tenants, and flag whether it's close to the reference figures above (~1,188 orders, ~€57,658.66) or diverges, with a hypothesis why if it diverges. Order by tenant name, then status category. Print all rows.",
+   "builds_on": [
+    "Monthly trend of confirmed lapsed-subscriber free-delivery leakage, 2023-2025",
+    "Reconciled 2025 orphan population by tenant and subscription status (single pass)"
+   ]
+  },
+  {
+   "title": "Fan-out-safe date classification of the 2025 active-bucket orphan orders",
+   "question": "Rebuilt carefully so the category counts and the discount total come from the same population: of the 2025 orphan orders whose customer's most-recent subscription is 'active', how many had that subscription start after the order, how many show active status despite an already-past end date, and how many have dates that should have overlapped (a bug)?",
+   "grain": "one row per explanation category",
+   "columns": [
+    "category: 'subscription started after this order' / 'active status but already past its end date' / 'dates indicate overlap - likely a bug in the original orphan flag'",
+    "order count",
+    "% of the active-bucket total",
+    "distinct customers",
+    "total discount amount (EUR)"
+   ],
+   "details": "Source: build a single row per order_id first (via a subquery/CTE joining each 2025 orphan order, restricted to those whose most-recent subscription status = 'active', to that same single most-recent subscription row S), computing its category and its own discount_amount_eur in that same row — only then GROUP BY category and SUM, so the category counts and the summed euro total are guaranteed to come from an identical set of orders. Categories: 'started after this order' if S.started_at > order.placed_at; 'active status but already past its end date' if S.started_at <= placed_at AND S.ended_at is not null AND S.ended_at < placed_at; 'dates indicate overlap - likely a bug' if S.started_at <= placed_at AND (S.ended_at is null OR S.ended_at >= placed_at). Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). State the total order count and EUR sum across all three categories in the engineer's note so it can be checked against the 2025 'active' status-category total from the tenant-level reconciliation report above. Order by order count descending. Print all categories.",
+   "builds_on": [
+    "Root cause of the 291 'unexplained' active-bucket orphan orders",
+    "Reconciled 2025 orphan population by tenant and subscription status (single pass)"
+   ]
+  }
+ ]
+}

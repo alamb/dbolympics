@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "New Business Only: Deal Cycle Time Trend by Month",
+    "--question",
+    "Restricted to genuine new-customer acquisition deals (excluding renewals), how long does it take to close an opportunity, and is that cycle time trending up or down over the last three years?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Grace\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per calendar month (based on closed_at month), New business pipeline only\", \"columns_requested\": [\"month (YYYY-MM)\", \"opportunities_closed (count)\", \"closed_won (count)\", \"closed_lost (count)\", \"win_rate_pct\", \"avg_cycle_days (closed_at - created_at)\", \"median_cycle_days (closed_at - created_at)\"], \"details\": \"Re-runs last night's cycle-time trend but adds pipeline_id = the tenant's 'New business' pipeline (join pipelines on name = 'New business') to the filter, for the same reason as the won/lost report: pooling in Renewals (which likely close faster and win far more often, given 'Renewed' has a 1.0 win_probability) could be masking or distorting the true acquisition-cycle trend. Same tenant scope (industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'), opportunities where is_closed = true and closed_at is not null, full history 2023-01-01 through 2025-12-31, grouped by month of closed_at (calendar_days.month_label or equivalent). Round avg/median cycle days to 1 decimal. Order by month ascending.\", \"builds_on\": [\"B2B Wholesale Deal Cycle Time Trend by Month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

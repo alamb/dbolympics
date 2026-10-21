@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Support Ticket Volume Around the Nov 2025 Carts.remind Incident",
+    "--question",
+    "Did support ticket volume spike for the 10 affected tenants around the week of the carts.remind failures, compared to other tenants?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Omar\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per ISO week, Nov 1 - Dec 31 2025, split into affected vs other tenants\", \"columns_requested\": [\"week_start\", \"tickets_affected_tenants\", \"avg_tickets_per_affected_tenant\", \"tickets_other_tenants\", \"avg_tickets_per_other_tenant\"], \"details\": \"Table tickets, filtered to created_at >= 2025-11-01 and < 2026-01-01, grouped by ISO week (calendar_days.week_start). 'Affected' tenants are the 10 identified via job_runs joined to jobs where handler='carts.remind', status='failed', queued_at in November 2025 (same definition as the prior request); 'other' is every other tenant with status in (trial, active, past_due, suspended, churned) -- i.e. all remaining tenants. avg_tickets_per_affected_tenant = tickets_affected_tenants / 10; avg_tickets_per_other_tenant = tickets_other_tenants / (total tenant count - 10). Order by week_start ascending.\", \"builds_on\": [\"2025 Job Failures by Job Type (Handler)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

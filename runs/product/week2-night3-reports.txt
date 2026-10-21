@@ -1,0 +1,47 @@
+=== Report 1: Email nudge effect on stalled carts, controlling for guest vs. logged-in customers (written by Omar) ===
+Engineer's note: Used the same cart population/exclusion and 'eventually converted' (cart.status='converted', any time) and median-days-to-convert (converted_at - created_at) definitions as the prior stalled-carts report; 'received_email' requires a matching email_log row (same tenant_id/user_id) with sent_at in (created_at+1h, created_at+48h).
+REPORT: Email nudge effect on stalled carts, controlling for guest vs. logged-in customers
+QUESTION: Once we separate carts that could never receive an email (guests) from logged-in customers who simply weren't emailed, does receiving an email still look like it drives recovery?
+group              | cart_count | pct_eventually_converted | median_days_to_convert
+-------------------+------------+--------------------------+-----------------------
+received_email     |        587 |                     56.0 |                    1.4
+logged_in_no_email |       4740 |                     20.9 |                    4.8
+guest              |       7540 |                      0.0 |                   NULL
+(3 rows)
+
+=== Report 2: Daily cart conversion at Cragsley Outfitters, Nov 17 – Dec 1 2025 (written by Ines) ===
+Engineer's note: Conversion = cart status 'converted'; within-1-hour = converted_at minus created_at <= 1 hour, matching the standard cart-conversion definitions used in prior weekly reports. 15 rows expected (Nov 17 - Dec 1 2025), one per day, no truncation.
+REPORT: Daily cart conversion at Cragsley Outfitters, Nov 17 – Dec 1 2025
+QUESTION: Is there a visible conversion dip in the first few days after cart-reminder emails broke (Nov 24), before Black Friday/Cyber Monday demand likely swamps the signal?
+cart_date  | carts_created | overall_conversion_pct | pct_converted_within_1_hour
+-----------+---------------+------------------------+----------------------------
+2025-11-17 |            51 |                   45.1 |                       35.29
+2025-11-18 |            38 |                  52.63 |                       44.74
+2025-11-19 |            37 |                  37.84 |                       29.73
+2025-11-20 |            33 |                  36.36 |                        30.3
+2025-11-21 |            39 |                  41.03 |                        35.9
+2025-11-22 |            57 |                  36.84 |                       28.07
+2025-11-23 |            49 |                  38.78 |                       34.69
+2025-11-24 |            49 |                  36.73 |                       30.61
+2025-11-25 |            48 |                  31.25 |                       29.17
+2025-11-26 |            74 |                  43.24 |                       29.73
+2025-11-27 |            63 |                  47.62 |                       30.16
+2025-11-28 |           109 |                  43.12 |                        36.7
+2025-11-29 |            83 |                  48.19 |                       43.37
+2025-11-30 |            98 |                  46.94 |                       37.76
+2025-12-01 |           122 |                  45.08 |                       36.89
+(15 rows)
+
+=== Report 3: Single-item vs. multi-item cart conversion, by tenant (written by Bea) ===
+Engineer's note: Conversion pct is computed directly from carts.status = 'converted' per item-count group, as specified; carts with item_count = 0 (if any exist) are excluded from both groups since they match neither = 1 nor >= 2.
+REPORT: Single-item vs. multi-item cart conversion, by tenant
+QUESTION: Does the pattern 'small, single-item carts convert worse than multi-item carts' hold consistently across all 6 retail merchants, or is it driven by one or two of them?
+tenant_name         | single_item_cart_count | single_item_conversion_pct | multi_item_cart_count | multi_item_conversion_pct |      gap_in_points
+--------------------+------------------------+----------------------------+-----------------------+---------------------------+-------------------
+Cragsley Outfitters |                   5393 |                       19.5 |                  4791 |                      53.8 |               34.3
+Marrowby & Vane     |                   2686 |                       21.6 |                  2141 |                      54.7 |               33.1
+Ampfeld Elektronik  |                   1009 |                       17.1 |                   542 |                      50.0 |               32.9
+Studio Vrij         |                   1079 |                       19.6 |                   820 |                      50.7 |               31.1
+Petalcourt Beauty   |                    882 |                       27.6 |                   831 |                      55.4 | 27.799999999999997
+Kibblewick          |                    542 |                       30.3 |                   481 |                      46.4 | 16.099999999999998
+(6 rows)

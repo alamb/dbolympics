@@ -1,0 +1,176 @@
+{
+  "managers": [
+    {
+      "id": "ceo",
+      "title": "Chief Executive Officer",
+      "name": "Maren Okafor",
+      "reports_to": null,
+      "background": "Joined two weeks ago from a European payments company. Board meeting at the end of January.",
+      "remit": "The whole business: growth, which merchants and verticals matter, where Tidewick earns its money, what is going well and what is not."
+    },
+    {
+      "id": "cfo",
+      "title": "Chief Financial Officer",
+      "name": "Tobias Lindqvist",
+      "reports_to": "ceo",
+      "background": "New this month, previously finance director at a retailer. Preparing the 2025 annual accounts and the 2026 budget.",
+      "remit": "Tidewick's own revenue (plans and processing fees), merchants' gross volume, refunds, payouts, receivables of the B2B merchants, tax across countries, currency exposure."
+    },
+    {
+      "id": "ops",
+      "title": "Chief Operating Officer",
+      "name": "Priya Raman",
+      "reports_to": "ceo",
+      "background": "Came from a third-party logistics provider. Wants to know how reliable the delivery promise is that merchants make on Tidewick.",
+      "remit": "Fulfillment, warehouses and stock, carriers and delivery times, returns logistics, suppliers and purchase orders, how the busy season went."
+    },
+    {
+      "id": "cx",
+      "title": "VP Customer Experience",
+      "name": "Daniel Achterberg",
+      "reports_to": "ops",
+      "background": "Former head of support at a marketplace. Merchants run their helpdesk on Tidewick, so their shoppers' experience is partly Tidewick's reputation.",
+      "remit": "Support tickets and response times, returns and refunds from the shopper's side, reviews and ratings, satisfaction, what shoppers complain about."
+    },
+    {
+      "id": "growth",
+      "title": "Head of Growth Marketing",
+      "name": "Chloé Marchetti",
+      "reports_to": "ceo",
+      "background": "Joined from a direct-to-consumer brand. Wants to sell merchants more of Tidewick's marketing tools.",
+      "remit": "Shopper acquisition and channels, campaigns and email, coupons and promotions, loyalty and referrals, experiments, whether marketing spend by merchants pays off."
+    },
+    {
+      "id": "success",
+      "title": "Head of Merchant Success",
+      "name": "Samuel Whitcombe",
+      "reports_to": "ceo",
+      "background": "New in the role, owns the relationship with the largest merchants and quarterly business reviews with them in January.",
+      "remit": "Health of individual merchants: their sales, their shoppers, retention, plan usage, which merchants are at risk and which are thriving. Often from one merchant's point of view."
+    },
+    {
+      "id": "risk",
+      "title": "Head of Risk and Payments",
+      "name": "Aylin Demir",
+      "reports_to": "cfo",
+      "background": "Previously in fraud operations at a bank. Responsible for payment performance and for keeping bad actors out.",
+      "remit": "Payment success and failure, gateways, disputes and chargebacks, fraud and abuse, account security, refunds that look wrong."
+    },
+    {
+      "id": "product",
+      "title": "VP Product",
+      "name": "Jonas Feld",
+      "reports_to": "ceo",
+      "background": "Joined from a mobile-first retailer. Deciding the 2026 roadmap.",
+      "remit": "How shoppers use storefronts and apps, the checkout funnel, search, subscriptions as a product, B2B features, which features merchants adopt."
+    },
+    {
+      "id": "data",
+      "title": "Head of Data",
+      "name": "Rosa Van den Berg",
+      "reports_to": "ceo",
+      "background": "Took over the analytics team last week. Before the team's numbers go to the board she wants to know how far they can be trusted.",
+      "remit": "Data quality and consistency in the warehouse: duplicates, gaps, timestamps, reference data, metrics that disagree with each other."
+    },
+    {
+      "id": "ciso",
+      "title": "Chief Information Security Officer",
+      "name": "Henrik Aalto",
+      "reports_to": "ceo",
+      "background": "Joined from a cloud provider's security team. Several enterprise deals depend on passing security reviews.",
+      "remit": "Account security for merchants' staff and shoppers: sign-ins, sessions, multi-factor authentication, API tokens and service accounts, access to sensitive data, audit trails."
+    },
+    {
+      "id": "dpo",
+      "title": "Data Protection Officer",
+      "name": "Ines Laurent",
+      "reports_to": "cfo",
+      "background": "Lawyer by training, previously at a European marketplace. Also reports to the board's audit committee.",
+      "remit": "Personal data: consent, privacy requests, retention and deletion, legal holds, data exports, and what the platform keeps about shoppers."
+    },
+    {
+      "id": "platform",
+      "title": "VP Platform Engineering",
+      "name": "Diego Morales",
+      "reports_to": "ceo",
+      "background": "Former reliability lead at a payments company. Owns uptime and the integrations merchants depend on.",
+      "remit": "Reliability of the platform: background jobs, scheduled tasks, health checks, rate limits, webhooks and integrations, imports, feature flags, and how incidents affect merchants."
+    },
+    {
+      "id": "merch",
+      "title": "Head of Merchandising",
+      "name": "Freya Lindgren",
+      "reports_to": "ops",
+      "background": "Came from a fashion marketplace's catalog team. Responsible for helping merchants present their products well.",
+      "remit": "Merchants' catalogs: products and variants, attributes, categories and collections, bundles, media, reviews, and how catalog quality relates to sales."
+    },
+    {
+      "id": "pricing",
+      "title": "Head of Pricing and Promotions",
+      "name": "Marco Bianchi",
+      "reports_to": "cfo",
+      "background": "Previously in revenue management at a travel company.",
+      "remit": "Prices and price lists, price rules, promotions and coupons, the cost of discounts, and taxes on sales."
+    },
+    {
+      "id": "lifecycle",
+      "title": "Head of Lifecycle Marketing",
+      "name": "Aisha Rahman",
+      "reports_to": "growth",
+      "background": "Ran customer messaging at a subscription box company.",
+      "remit": "Email, SMS and push messaging, notifications, deliverability, unsubscribes and preferences, segments, loyalty and referral programmes."
+    },
+    {
+      "id": "b2b",
+      "title": "Head of B2B Commerce",
+      "name": "Patrick O'Neill",
+      "reports_to": "ceo",
+      "background": "Built B2B sales teams at a software company. Owns the B2B features wholesale merchants run their sales on.",
+      "remit": "The B2B side of the platform: leads, pipelines and opportunities, quotes and deal lines, company accounts, contacts and tasks, payment terms, and whether merchants' sales teams succeed with them."
+    },
+    {
+      "id": "warehouse",
+      "title": "Director of Fulfilment Operations",
+      "name": "Tomasz Nowak",
+      "reports_to": "ops",
+      "background": "Ran warehouses for a large retailer before joining.",
+      "remit": "What happens inside merchants' warehouses: receiving and inbound receipts, lots and serial numbers, stock locations, reservations, adjustments and counts, picking, packing and parcel tracking."
+    },
+    {
+      "id": "supportops",
+      "title": "Support Operations Manager",
+      "name": "Mia Schultz",
+      "reports_to": "cx",
+      "background": "Built support tooling and processes at a software company.",
+      "remit": "How the helpdesk is run: agent groups and staffing, macros, the knowledge base and its feedback, SLA policies and breaches, tags and routing."
+    }
+  ],
+  "analysts": [
+    {"name": "Hannah Brooks", "style": "methodical: starts with an overview, then drills into whatever looks unusual"},
+    {"name": "Kofi Mensah", "style": "hypothesis-driven: states what he expects and designs reports that would prove him wrong"},
+    {"name": "Lena Hartmann", "style": "skeptical: checks definitions and sanity totals before trusting a trend"},
+    {"name": "Mateo Ruiz", "style": "comparative: likes year-over-year and peer comparisons across merchants and countries"},
+    {"name": "Sofie Nilsen", "style": "storyteller: looks for the two or three findings that matter and digs until each is explained"},
+    {"name": "Arjun Patel", "style": "segmenter: breaks totals down by merchant size, vertical, country and channel"},
+    {"name": "Claire Dubois", "style": "time-series minded: weekly and daily trends, before and after, seasonality"},
+    {"name": "Emeka Obi", "style": "customer-centric: follows cohorts of shoppers or merchants over time"},
+    {"name": "Yuki Tanaka", "style": "detail-oriented: picks specific merchants, products or days and looks at them closely"},
+    {"name": "Noah Fischer", "style": "systems thinker: maps how one process feeds the next before measuring anything"},
+    {"name": "Priyanka Desai", "style": "auditor's mindset: traces individual records end to end to check that the totals are real"},
+    {"name": "Lucas Moreau", "style": "pragmatic: answers the question asked with the simplest reliable report"},
+    {"name": "Zara Ahmed", "style": "exploratory: looks at the raw detail of an unfamiliar area before aggregating it"},
+    {"name": "Oliver Grant", "style": "peer-minded: compares each merchant with peers of similar size and vertical"},
+    {"name": "Ingrid Solberg", "style": "risk-focused: looks for the tail, the outliers and the worst cases"},
+    {"name": "Daniel Kim", "style": "funnel thinker: measures each step of a process and where things drop out"},
+    {"name": "Fatima Zahra", "style": "definition-minded: checks what each field really records before relying on it"},
+    {"name": "Ben Carter", "style": "quantifier: puts a money value on every finding"}
+  ],
+  "engineers": [
+    {"name": "Grace", "style": "Writes tidy, layered CTEs with descriptive names, one step per CTE, then a final select."},
+    {"name": "Felix", "style": "Junior engineer who nests subqueries in FROM and WHERE (IN, EXISTS, correlated subqueries) rather than CTEs."},
+    {"name": "Ines", "style": "Thinks in window functions: ranks, running totals, LAG/LEAD for comparisons, percent-of-total."},
+    {"name": "Viktor", "style": "Old-school warehouse engineer: explicit JOIN chains straight to the base tables, derived tables, GROUP BY with CASE pivots, few CTEs."},
+    {"name": "Bea", "style": "Writes SQL the way the company's BI tool generates it: verbose fully qualified aliases (t0, t1, ...), a subquery per measure joined back on the grain keys, COALESCE everywhere."},
+    {"name": "Omar", "style": "Pragmatic: the shortest correct query, aggregates first and joins dimensions afterwards, FILTER clauses for conditional counts."}
+  ]
+}

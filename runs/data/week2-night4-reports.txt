@@ -1,0 +1,40 @@
+=== Report 1: Corrected 2025 revenue and receivables by B2B tenant (written by Bea) ===
+Engineer's note: Built exactly as specified: EUR amounts pass through at 1.0 (no self-join to exchange_rates for quote_code='EUR'), non-EUR amounts divide by the EUR-base daily rate; pct_of_total_2025_revenue is each tenant's share of company-wide 2025 captured/refunded/partially_refunded payment revenue (all tenants, same conversion rule); open receivables and overdue share use the 2025-12-31 snapshot rate per invoice currency.
+REPORT: Corrected 2025 revenue and receivables by B2B tenant
+QUESTION: What is the real 2025 revenue and open receivables for all 9 verified B2B wholesale tenants, now that the EUR-conversion bug that zeroed out 6 of them is fixed?
+tenant_name                   | currency_code | total_2025_revenue_eur | pct_of_total_2025_revenue | open_amount_due_eur | pct_amount_due_overdue
+------------------------------+---------------+------------------------+---------------------------+---------------------+-----------------------
+Ballycorran Industrial Supply | EUR           |              554871.06 |                       9.4 |            22415.24 |                    6.5
+OfficeHub Nordic              | NOK           |              426010.27 |                       7.2 |            14348.57 |                    2.5
+Castell Fasteners             | USD           |              386487.62 |                       6.5 |            14481.02 |                   23.8
+Midland Safety Wear           | EUR           |              297398.75 |                       5.0 |            10049.47 |                    1.7
+Deskline Supplies             | GBP           |              281736.43 |                       4.8 |            12749.42 |                    0.0
+Hanse Industriebedarf         | EUR           |              111754.28 |                       1.9 |              864.14 |                    0.0
+Polder Packaging              | EUR           |               90872.65 |                       1.5 |              5296.8 |                    1.2
+Papeterie Grossiste           | EUR           |               40352.64 |                       0.7 |                 0.0 |                   NULL
+(8 rows)
+
+=== Report 2: Scope of the EUR exchange-rate join bug on 2025 revenue (written by Omar) ===
+Engineer's note: Assumes exchange_rates has no base_code='EUR', quote_code='EUR' rows (which is why the naive inner join drops EUR entirely); for non-EUR currencies the correct-sum also uses a LEFT JOIN to exchange_rates, so if any non-EUR currency/day is missing a rate row, both naive and correct sums would silently omit that slice equally (no shortfall shown for that gap) rather than erroring.
+REPORT: Scope of the EUR exchange-rate join bug on 2025 revenue
+QUESTION: If a query naively joins exchange_rates for EUR the same way it does for every other currency, how much revenue silently vanishes, and is EUR the only currency affected?
+currency_code | total_2025_revenue_naive_eur | total_2025_revenue_correct_eur |          shortfall_eur | shortfall_pct
+--------------+------------------------------+--------------------------------+------------------------+--------------
+EUR           |                          0.0 |              3099511.380000115 |      3099511.380000115 |         100.0
+USD           |           1300583.0611276545 |              1300583.061127654 | -4.656612873077393e-10 |          -0.0
+GBP           |            893904.2672557983 |              893904.2672557984 | 1.1641532182693481e-10 |           0.0
+NOK           |            453506.7042973397 |              453506.7042973398 |  5.820766091346741e-11 |           0.0
+DKK           |             82859.0331042957 |               82859.0331042957 |                    0.0 |           0.0
+SEK           |            80103.30381810686 |              80103.30381810686 |                    0.0 |           0.0
+(6 rows)
+
+=== Report 3: Final B2B wholesale receivables aging (corrected) (written by Ines) ===
+Engineer's note: Tenants matched by exact name against the 9 verified B2B wholesale merchants listed in the request; EUR invoices pass through at rate 1.0 and all other currencies are converted via exchange_rates (EUR base, as_of 2025-12-31).
+REPORT: Final B2B wholesale receivables aging (corrected)
+QUESTION: With the full, verified 9-tenant B2B wholesale list and EUR handled correctly, what does the receivables aging actually look like for the board pack?
+aging_bucket       | invoice_count | amount_due_eur | pct_of_total_amount_due | avg_days_past_due
+-------------------+---------------+----------------+-------------------------+------------------
+Not yet due        |            66 |       74706.09 |                    93.1 |               0.0
+1-30 days overdue  |             7 |        5140.32 |                     6.4 |               7.0
+31-60 days overdue |             1 |         358.26 |                     0.4 |              33.0
+(3 rows)

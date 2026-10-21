@@ -1,0 +1,58 @@
+{
+ "notes": "Freya's reply raises four follow-up threads: Cragsley's quality concentration, the December rating dip's root cause (especially given COO's Albion Parcel carrier breakdown and CX's WISMO/late-delivery spike in Nov-Dec, which could well be the real explanation rather than a catalog issue), the zero-vs-one-image effect (is it causal or a proxy for something else like product age), and what distinguishes bundle-users descriptively. That's a lot for one week, so tonight I'm spending all 3 slots on Cragsley since it's the most urgent (our #2 merchant, flagged independently by Support Ops as having the worst response times too) and because Freya asked three distinct sub-questions about it that each deserve their own grain: which product categories concentrate the poor ratings, whether the problem is new or longstanding, and whether sales for the poor-rated products are already slowing or still growing despite the bad reviews. I'll tackle the December dip (cross-referencing carrier/shipping data), the image-effect confound, and bundle-user profiling on the remaining three nights.",
+ "requests": [
+  {
+   "title": "Cragsley Outfitters: Poor Ratings by Product Category",
+   "question": "Within Cragsley Outfitters, is the poor-rating problem concentrated in particular kinds of products, or spread evenly across the catalog?",
+   "grain": "one row per product category (products.primary_category_id -> categories.name) for Cragsley Outfitters only",
+   "columns": [
+    "category_name",
+    "product_count",
+    "products_with_5plus_reviews",
+    "poor_rated_product_count",
+    "pct_poor_rated_products",
+    "avg_rating_of_reviewed_products",
+    "units_sold_last_12mo",
+    "revenue_eur_last_12mo"
+   ],
+   "details": "Filter to tenant = Cragsley Outfitters (join tenants on name). products_with_5plus_reviews = count of distinct products in that category with at least 5 approved product_reviews (all-time). poor_rated_product_count = count of those with an all-time average approved rating below 3.0. pct_poor_rated_products = poor_rated_product_count / products_with_5plus_reviews * 100 (blank if denominator 0). avg_rating_of_reviewed_products = mean all-time approved rating across products_with_5plus_reviews in the category. units_sold_last_12mo and revenue_eur_last_12mo come from order_items joined to orders (placed_at 2025-01-01 to 2025-12-31, status not cancelled), revenue converted to EUR via exchange_rates as of placed_at date, summed over all active products in the category (not just the reviewed ones). Round rating to 2 decimals, pct to 1 decimal, revenue to whole EUR. Order by poor_rated_product_count descending, tie-break by pct_poor_rated_products descending then category_name.",
+   "builds_on": [
+    "Poorly-Rated Product Concentration by Merchant"
+   ]
+  },
+  {
+   "title": "Cragsley Outfitters: Rating Trend Over Time",
+   "question": "Has Cragsley Outfitters' rating problem been building over time, or has it always looked this way?",
+   "grain": "one row per calendar month, 2023-01 through 2025-12, for Cragsley Outfitters only",
+   "columns": [
+    "month",
+    "review_count",
+    "avg_rating",
+    "pct_1_2_star",
+    "orders_count",
+    "revenue_eur"
+   ],
+   "details": "Filter to tenant = Cragsley Outfitters. review_count/avg_rating/pct_1_2_star computed over approved product_reviews with created_at in that month (same definitions used in the platform-wide Monthly Review Volume and Rating Trend report, so the two can be compared). orders_count = count of Cragsley orders with placed_at in that month and status not cancelled. revenue_eur = sum of grand_total for those orders converted to EUR via exchange_rates as of placed_at date. Build off the full calendar so every month appears even with zero reviews. Round avg_rating to 2 decimals, pct to 1 decimal, revenue to whole EUR. Order by month ascending.",
+   "builds_on": [
+    "Poorly-Rated Product Concentration by Merchant",
+    "Monthly Review Volume and Rating Trend"
+   ]
+  },
+  {
+   "title": "Cragsley Outfitters: Sales Trajectory of Poor-Rated vs Other Products",
+   "question": "For Cragsley's already-identified poor-rated products, is demand starting to slow down to match the bad reviews, or is it still growing despite them?",
+   "grain": "one row per calendar month, 2023-01 through 2025-12, for Cragsley Outfitters only, split into two fixed product groups",
+   "columns": [
+    "month",
+    "poor_tier_units_sold",
+    "poor_tier_revenue_eur",
+    "other_tier_units_sold",
+    "other_tier_revenue_eur"
+   ],
+   "details": "Define the 'poor tier' as the fixed set of Cragsley products with at least 5 approved reviews (all-time) and an all-time average rating below 3.0 (the same set identified in the Poorly-Rated Product Concentration report, 23 products); 'other tier' is all of Cragsley's remaining active products. For each month, sum order_items.quantity and EUR-converted revenue (via exchange_rates as of placed_at date) from orders placed that month (status not cancelled), separately for each tier. Build off the full calendar so months with zero sales for a tier still show 0. Round revenue to whole EUR. Order by month ascending.",
+   "builds_on": [
+    "Poorly-Rated Product Concentration by Merchant"
+   ]
+  }
+ ]
+}

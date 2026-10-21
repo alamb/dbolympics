@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Payout net formula check via payment-linked refunds",
+    "--question",
+    "Once refunds are matched to the actual payments inside each payout (not just by calendar month), does net = gross - fee - refunds hold cleanly, confirming refunds are reflected once and only once in what we pay merchants?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Ines\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"calendar month, 2023-01 through 2025-12, based on payout paid_at month\", \"columns_requested\": [\"month\", \"payout_gross_eur\", \"payout_fee_eur\", \"payout_net_eur\", \"linked_refunds_eur\", \"implied_net_eur\", \"diff_eur\", \"diff_pct\"], \"details\": \"For each payout, identify its settled payments via payout_items (payout_items.payout_id = payouts.id, payout_items.payment_id = payments.id). linked_refunds_eur for a month = sum of payment_refunds.amount (status='succeeded') where payment_refunds.payment_id is one of the payments settled in a payout whose paid_at falls in that month, converted to EUR via exchange_rates using payment_refunds.currency_code and processed_at date (refunds counted regardless of when they were processed, i.e. a refund processed any time against a payment that ended up in this month's payout). payout_gross_eur/payout_fee_eur/payout_net_eur = sum of payouts.gross_amount/fee_amount/net_amount for payouts with paid_at in that month, converted to EUR via payouts.currency_code and paid_at date. implied_net_eur = payout_gross_eur - payout_fee_eur - linked_refunds_eur. diff_eur = payout_net_eur - implied_net_eur. diff_pct = diff_eur / payout_net_eur * 100, rounded to 1 decimal. Tables: payouts, payout_items, payments, payment_refunds, exchange_rates. Order by month ascending.\", \"builds_on\": [\"Payout reconciliation to gross, fees and refunds\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Where the delay accumulates: first-response lag vs. post-response handling time",
+    "--question",
+    "For Marrowby & Vane, Studio Vrij, and Cragsley Outfitters, does the slowness happen before an agent first replies (pickup delay) or after the first reply, while the ticket is still being worked (handling/back-and-forth delay)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Omar\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per tenant, restricted to Marrowby & Vane, Studio Vrij, and Cragsley Outfitters\", \"columns_requested\": [\"tenant_name\", \"ticket_count (2025, resolved tickets with both first_response_at and resolved_at)\", \"avg_first_response_minutes (first_response_at - created_at)\", \"avg_post_response_minutes (resolved_at - first_response_at)\", \"avg_resolution_minutes (resolved_at - created_at, as a check that the two components sum correctly)\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31, restricted to tenant_id for the three named tenants, and to tickets with both first_response_at and resolved_at not null. Source table: tickets. Order by avg_post_response_minutes descending. Round all minute figures to whole numbers. Goal: if avg_post_response_minutes is disproportionately large for Marrowby & Vane / Studio Vrij relative to Cragsley, the delay is happening while the ticket is already being worked (consistent with waiting on something external, e.g. a shipment) rather than agents being slow to pick it up.\", \"builds_on\": [\"Staffing load vs. ticket complexity, top merchants benchmark\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

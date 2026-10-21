@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale: Win Rate and Average Deal Size by Merchant (New Business) — Corrected",
+    "--question",
+    "Does the merchant-level win-rate pattern hold once we also see typical deal size per merchant, and can we fix last night's missing EUR averages?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Bea\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per wholesale merchant (tenant)\", \"columns_requested\": [\"merchant\", \"currency_code (tenant default)\", \"opportunities_closed\", \"closed_won\", \"closed_lost\", \"win_rate_pct\", \"avg_days_open\", \"avg_amount_eur\"], \"details\": \"Re-run of last night's merchant report, which returned NULL avg_amount_eur for 4 of 5 merchants (all the EUR-denominated ones; only the one USD merchant, Castell Fasteners, returned a value) \\u2014 almost certainly because converting EUR amounts via a EUR/EUR identity lookup in exchange_rates failed to find a matching row. Filter explicitly: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true. For avg_amount_eur: if currency_code = 'EUR', amount_eur = amount directly (skip the exchange_rates join entirely for EUR rows); otherwise amount_eur = amount / rate from exchange_rates where base_code = 'EUR', quote_code = opportunity.currency_code, as_of = nearest date on or before closed_at. Include tenants.default_currency_code as a reference column so the reader can see which merchant is USD vs EUR. Order by win_rate_pct ascending, tie-break by opportunities_closed descending, then merchant name.\", \"builds_on\": [\"B2B Wholesale: Win Rate and Cycle Time by Merchant (New Business)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

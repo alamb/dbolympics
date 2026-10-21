@@ -1,0 +1,34 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  EXTRACT(QUARTER FROM ordered_at) AS q,\n  COUNT(*) AS pos_ordered_total,\n  COUNT(*) FILTER (WHERE ordered_at <= DATE '2025-11-01') AS pos_matured,\n  AVG(CASE WHEN received_at IS NOT NULL THEN DATEDIFF(day, ordered_at, received_at) END) AS avg_lead\nFROM purchase_orders\nWHERE ordered_at >= DATE '2025-01-01' AND ordered_at < DATE '2026-01-01'\nGROUP BY 1\nORDER BY 1",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Binder Error: Referenced column \"day\" not found in FROM clause!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  EXTRACT(QUARTER FROM ordered_at) AS q,\n  COUNT(*) AS pos_ordered_total,\n  COUNT(*) FILTER (WHERE ordered_at <= DATE '2025-11-01') AS pos_matured,\n  AVG(CASE WHEN received_at IS NOT NULL THEN DATE_DIFF('day', ordered_at, received_at) END) AS avg_lead\nFROM purchase_orders\nWHERE ordered_at >= DATE '2025-01-01' AND ordered_at < DATE '2026-01-01'\nGROUP BY 1\nORDER BY 1",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: q, pos_ordered_total, pos_matured, avg_lead"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  '2025-Q' || CAST(EXTRACT(QUARTER FROM ordered_at) AS INTEGER) AS quarter,\n  COUNT(*) AS pos_ordered_total,\n  COUNT(*) FILTER (WHERE ordered_at <= DATE '2025-11-01') AS pos_matured,\n  COUNT(*) FILTER (WHERE ordered_at <= DATE '2025-11-01' AND received_at IS NOT NULL) AS pos_matured_received,\n  ROUND(100.0 * COUNT(*) FILTER (\n      WHERE ordered_at <= DATE '2025-11-01'\n        AND received_at IS NULL\n        AND status IN ('submitted','partially_received')\n    ) / NULLIF(COUNT(*) FILTER (WHERE ordered_at <= DATE '2025-11-01'), 0), 1) AS pct_matured_still_open,\n  ROUND(AVG(CASE\n      WHEN ordered_at <= DATE '2025-11-01' AND received_at IS NOT NULL\n      THEN DATE_DIFF('day', ordered_at, received_at)\n    END), 1) AS avg_actual_lead_days,\n  ROUND(100.0 * COUNT(*) FILTER (\n      WHERE ordered_at <= DATE '2025-11-01'\n        AND expected_at IS NOT NULL\n        AND received_at IS NOT NULL\n        AND received_at > expected_at\n    ) / NULLIF(COUNT(*) FILTER (\n      WHERE ordered_at <= DATE '2025-11-01'\n        AND expected_at IS NOT NULL\n        AND received_at IS NOT NULL\n    ), 0), 1) AS pct_received_late,\n  ROUND(AVG(CASE\n      WHEN ordered_at <= DATE '2025-11-01'\n        AND expected_at IS NOT NULL\n        AND received_at IS NOT NULL\n        AND received_at > expected_at\n      THEN DATE_DIFF('day', expected_at, received_at)\n    END), 1) AS avg_days_late\nFROM purchase_orders\nWHERE ordered_at >= DATE '2025-01-01' AND ordered_at < DATE '2026-01-01'\nGROUP BY EXTRACT(QUARTER FROM ordered_at)\nORDER BY quarter ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: quarter, pos_ordered_total, pos_matured, pos_matured_received, pct_matured_still_open, avg_actual_lead_days, pct_received_late, avg_days_late"
+ },
+ {
+  "kind": "text",
+  "text": "This matches the requested grain (one row per quarter), has 8 columns within the width limit, and the query compiles cleanly. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  '2025-Q' || CAST(EXTRACT(QUARTER FROM ordered_at) AS INTEGER) AS quarter,\n  COUNT(*) AS pos_ordered_total,\n  COUNT(*) FILTER (WHERE ordered_at <= DATE '2025-11-01') AS pos_matured,\n  COUNT(*) FILTER (WHERE ordered_at <= DATE '2025-11-01' AND received_at IS NOT NULL) AS pos_matured_received,\n  ROUND(100.0 * COUNT(*) FILTER (\n      WHERE ordered_at <= DATE '2025-11-01'\n        AND received_at IS NULL\n        AND status IN ('submitted','partially_received')\n    ) / NULLIF(COUNT(*) FILTER (WHERE ordered_at <= DATE '2025-11-01'), 0), 1) AS pct_matured_still_open,\n  ROUND(AVG(CASE\n      WHEN ordered_at <= DATE '2025-11-01' AND received_at IS NOT NULL\n      THEN DATE_DIFF('day', ordered_at, received_at)\n    END), 1) AS avg_actual_lead_days,\n  ROUND(100.0 * COUNT(*) FILTER (\n      WHERE ordered_at <= DATE '2025-11-01'\n        AND expected_at IS NOT NULL\n        AND received_at IS NOT NULL\n        AND received_at > expected_at\n    ) / NULLIF(COUNT(*) FILTER (\n      WHERE ordered_at <= DATE '2025-11-01'\n        AND expected_at IS NOT NULL\n        AND received_at IS NOT NULL\n    ), 0), 1) AS pct_received_late,\n  ROUND(AVG(CASE\n      WHEN ordered_at <= DATE '2025-11-01'\n        AND expected_at IS NOT NULL\n        AND received_at IS NOT NULL\n        AND received_at > expected_at\n      THEN DATE_DIFF('day', expected_at, received_at)\n    END), 1) AS avg_days_late\nFROM purchase_orders\nWHERE ordered_at >= DATE '2025-01-01' AND ordered_at < DATE '2026-01-01'\nGROUP BY EXTRACT(QUARTER FROM ordered_at)\nORDER BY quarter ASC",
+  "note": "Aggregated across all tenants/POs platform-wide (no merchant filter requested). As noted in the request, Q4's matured subset only covers POs ordered in October since Nov/Dec POs aren't yet 60 days old as of the 2025-12-31 cutoff - this is expected, not a data gap.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per 2025 quarter with the requested PO maturity and backlog metrics, using a 60-day maturity cutoff (`ordered_at <= 2025-11-01`) as specified, so Q4's matured figures intentionally reflect only October-ordered POs."
+ }
+]

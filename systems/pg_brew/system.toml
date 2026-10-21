@@ -1,0 +1,60 @@
+# Querybrew on PostgreSQL: Umbra writes every query for PostgreSQL, and PostgreSQL runs what
+# Umbra wrote. Two databases hold the data: Umbra (the experimental build of Umbra's public image,
+# as systems/umbra), whose optimizer works with the statistics of the loaded data, and
+# PostgreSQL 18 (the pg_duckdb image, as systems/postgres). Its query program hides the
+# two:
+# - DDL and loads run in both, Umbra first.
+# - A query goes to Umbra as `EXPLAIN (FORMAT SQL, DIALECT postgresql)`, and the text it returns
+#   runs in PostgreSQL. The time is the runner's: Umbra's writing and PostgreSQL's run.
+# So the schema, the load statement and the queries below are Umbra's; the query program makes
+# PostgreSQL's DDL and load from them.
+name = "pg_brew"
+# the version, kept with the results (by hand)
+version = "experimental (PostgreSQL 18.1)"
+# disabled from this scale factor on, and why (shown on the website)
+scale_limit = 1000
+scale_limit_message = "Loading takes longer than 2 hours at SF1000."
+# Umbra and PostgreSQL's COPY both read the arrays as PostgreSQL literals
+arrays = "text"
+
+
+[load]
+statement = "COPY {table} FROM '{file}' WITH (FORMAT parquet)"
+
+[dialect]
+# Umbra's session, before it writes a query: date - date is the number of days, as in the
+# standard (otherwise an interval in Umbra); no sideways information passing, which executes small
+# scans early while planning and would put results that Umbra computed into the query it writes
+settings = ["SET debug.semana.pgdatesub = true", "SET debug.optimizer.sidewayinformationpassing = false"]
+
+[dialect.functions]
+# no DISTINCT in window aggregates: the distinct non-NULL values from two dense ranks
+"count_distinct_over(x, window)" = "(DENSE_RANK() OVER ({window} ORDER BY {x} ASC NULLS FIRST) + DENSE_RANK() OVER ({window} ORDER BY {x} DESC NULLS LAST) - 1 - MAX(CASE WHEN {x} IS NULL THEN 1 ELSE 0 END) OVER ({window}))"
+
+[[container]]
+name = "umbra"
+image = "docker.io/umbradb/umbra:experimental"
+# Umbra only writes the queries; it has a memory limit of its own (as every container), and its
+# buffers, which hold the loaded data, get all of it (as systems/umbra).
+# PGHOST: its socket in /run/dbo, where the query program connects
+env = { PARALLEL = "{threads}", MEMORY = "{memory_mb}M", PGHOST = "/run/dbo" }
+ulimits = ["nofile=524288:524288"]
+
+[[container]]
+name = "pg"
+image = "docker.io/pgduckdb/pgduckdb:18-v1.1.1"
+# as systems/postgres
+command = [
+    "postgres",
+    "-c", "unix_socket_directories=/var/run/postgresql,/run/dbo",
+    "-c", "shared_buffers={memory_mb%25}MB",
+    "-c", "effective_cache_size={memory_mb%75}MB",
+    "-c", "max_worker_processes={threads%300}",
+    "-c", "max_parallel_workers={threads}",
+    "-c", "max_parallel_workers_per_gather={threads%50}",
+    "-c", "max_parallel_maintenance_workers={threads%50}",
+    "-c", "work_mem=64MB",
+    "-c", "max_wal_size=32GB",
+]
+# Umbra has port 5432 in the pod; PostgreSQL takes 5433 (PGPORT is also its server's default port)
+env = { POSTGRES_PASSWORD = "Dbolympics-Bench-2026!", POSTGRES_INITDB_ARGS = "--locale=C --encoding=UTF8", PGPORT = "5433" }

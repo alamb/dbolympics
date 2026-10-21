@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Support Tickets: Affected vs Other Tenants, Baseline vs Incident Period",
+    "--question",
+    "Was the Nov-Dec ticket rise for the 10 carts.remind-affected tenants a real spike against their own baseline, or just their normal (or seasonal) level?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Ines\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per tenant group (Affected vs Other), comparing two time periods\", \"columns_requested\": [\"group_name\", \"tenant_count\", \"avg_weekly_tickets_per_tenant_baseline\", \"avg_weekly_tickets_per_tenant_incident\", \"pct_change\"], \"details\": \"Table tickets, created_at. 'Affected' = the same 10 tenant_ids with a failed job_runs row for jobs.handler='carts.remind' queued in Nov 2025 (as established in prior reports); 'Other' = all remaining tenants. baseline period = 2025-08-01 to 2025-09-30 (61 days); incident period = 2025-11-01 to 2025-12-31 (61 days), so periods are equal length for a fair comparison. avg_weekly_tickets_per_tenant = (count of tickets for the group in that period) / tenant_count / (period_days/7.0), rounded 2dp. pct_change = (incident value - baseline value) / baseline value * 100, rounded 1dp. Two rows total: one per group. Order by group_name.\", \"builds_on\": [\"Support Ticket Volume Around the Nov 2025 Carts.remind Incident\", \"Tenant Size vs Carts.remind Job Failure Exposure, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

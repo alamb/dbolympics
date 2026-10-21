@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  w.name AS warehouse_name,\n  t.name AS tenant_name,\n  (SELECT COALESCE(SUM(si.quantity), 0)\n     FROM stock_items si\n     JOIN stock_locations sl ON sl.id = si.stock_location_id\n    WHERE sl.warehouse_id = w.id) AS total_stock_on_hand,\n  (SELECT COUNT(DISTINCT si.variant_id)\n     FROM stock_items si\n     JOIN stock_locations sl ON sl.id = si.stock_location_id\n    WHERE sl.warehouse_id = w.id\n      AND si.quantity > 0) AS distinct_variants_stocked,\n  ROUND(\n    (\n      (SELECT COALESCE(SUM(si.quantity), 0)\n         FROM stock_items si\n         JOIN stock_locations sl ON sl.id = si.stock_location_id\n        WHERE sl.warehouse_id = w.id)::numeric\n      /\n      NULLIF(\n        (SELECT COALESCE(SUM(si2.quantity), 0)\n           FROM stock_items si2\n           JOIN stock_locations sl2 ON sl2.id = si2.stock_location_id\n           JOIN warehouses w2 ON w2.id = sl2.warehouse_id\n          WHERE w2.tenant_id = w.tenant_id), 0\n      ) * 100\n    ), 1\n  ) AS pct_of_tenant_total_stock_units\nFROM warehouses w\nJOIN tenants t ON t.id = w.tenant_id\nWHERE (t.name, w.name) IN (\n  VALUES\n    ('Oakhurst Tailoring', 'Aarhus Warehouse'),\n    ('Cragsley Outfitters', 'Boston Warehouse'),\n    ('Studio Vrij', 'Brussels Warehouse'),\n    ('Cragsley Outfitters', 'Calgary Warehouse'),\n    ('Thistlecombe', 'Glasgow Warehouse'),\n    ('Studio Vrij', 'Groningen Warehouse'),\n    ('Marrowby & Vane', 'Limerick Warehouse'),\n    ('Marrowby & Vane', 'Preston Warehouse'),\n    ('Rue Lafayette Studio', 'Toulouse Warehouse'),\n    ('Velvet Ash', 'Uppsala Warehouse')\n)\nORDER BY total_stock_on_hand DESC, warehouse_name",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: warehouse_name, tenant_name, total_stock_on_hand, distinct_variants_stocked, pct_of_tenant_total_stock_units"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  w.name AS warehouse_name,\n  t.name AS tenant_name,\n  (SELECT COALESCE(SUM(si.quantity), 0)\n     FROM stock_items si\n     JOIN stock_locations sl ON sl.id = si.stock_location_id\n    WHERE sl.warehouse_id = w.id) AS total_stock_on_hand,\n  (SELECT COUNT(DISTINCT si.variant_id)\n     FROM stock_items si\n     JOIN stock_locations sl ON sl.id = si.stock_location_id\n    WHERE sl.warehouse_id = w.id\n      AND si.quantity > 0) AS distinct_variants_stocked,\n  ROUND(\n    (\n      (SELECT COALESCE(SUM(si.quantity), 0)\n         FROM stock_items si\n         JOIN stock_locations sl ON sl.id = si.stock_location_id\n        WHERE sl.warehouse_id = w.id)::numeric\n      /\n      NULLIF(\n        (SELECT COALESCE(SUM(si2.quantity), 0)\n           FROM stock_items si2\n           JOIN stock_locations sl2 ON sl2.id = si2.stock_location_id\n           JOIN warehouses w2 ON w2.id = sl2.warehouse_id\n          WHERE w2.tenant_id = w.tenant_id), 0\n      ) * 100\n    ), 1\n  ) AS pct_of_tenant_total_stock_units\nFROM warehouses w\nJOIN tenants t ON t.id = w.tenant_id\nWHERE (t.name, w.name) IN (\n  VALUES\n    ('Oakhurst Tailoring', 'Aarhus Warehouse'),\n    ('Cragsley Outfitters', 'Boston Warehouse'),\n    ('Studio Vrij', 'Brussels Warehouse'),\n    ('Cragsley Outfitters', 'Calgary Warehouse'),\n    ('Thistlecombe', 'Glasgow Warehouse'),\n    ('Studio Vrij', 'Groningen Warehouse'),\n    ('Marrowby & Vane', 'Limerick Warehouse'),\n    ('Marrowby & Vane', 'Preston Warehouse'),\n    ('Rue Lafayette Studio', 'Toulouse Warehouse'),\n    ('Velvet Ash', 'Uppsala Warehouse')\n)\nORDER BY total_stock_on_hand DESC, warehouse_name",
+  "note": "The request names 10 warehouse/tenant pairs but refers to \"9 zero-activity sites\" — I included all 10 listed pairs since that's the explicit list given; please flag if one should be dropped.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. One note: the request text said \"9 zero-activity sites\" but then listed 10 named warehouse/tenant pairs — I included all 10 as explicitly listed and flagged the discrepancy in the submission note for the analyst to confirm."
+ }
+]

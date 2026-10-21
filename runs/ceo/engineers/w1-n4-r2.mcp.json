@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Vertical health: merchant status mix and support load",
+    "--question",
+    "Which verticals have the most at-risk merchants or the heaviest support burden, independent of revenue growth?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per merchant vertical (tenants.industry)\", \"columns_requested\": [\"vertical (industry)\", \"total merchant count\", \"active merchant count (status='active')\", \"at-risk merchant count (status in ('past_due','suspended','churned'))\", \"tickets per merchant (trailing 12 months)\", \"average CSAT score (trailing 12 months, 1-5)\"], \"details\": \"Source: tenants (for industry and status, excluding deleted_at not null) left joined to: (a) tickets where tickets.requester_user_id's user belongs to that tenant and tickets.created_at is in [2025-01-01, 2026-01-01), counted per tenant then averaged per vertical as total tickets / total merchant count in that vertical; (b) csat_responses joined via ticket_id to tickets in the same window, averaging csat_responses.score per vertical across all responses from merchants in that vertical. Group null/blank industry into 'Unspecified'. Order by at-risk merchant count descending, tie-break by vertical name ascending.\", \"builds_on\": [\"Vertical revenue growth, 2024 vs 2025\", \"Merchant status and payout activity, today\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

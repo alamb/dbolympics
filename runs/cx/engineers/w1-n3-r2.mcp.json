@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Returns and refunds experience by merchant, 2025",
+    "--question",
+    "Does the returns/refund experience vary a lot across merchants, and does any merchant stand out as a problem spot the way Studio Vrij did on support tickets?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per tenant (merchant), among tenants with at least 20 returns requested in 2025\", \"columns_requested\": [\"merchant name\", \"orders placed, 2025\", \"returns requested, 2025\", \"return rate (%)\", \"avg days requested-to-refunded\", \"median days requested-to-refunded\", \"returns rejected (%)\"], \"details\": \"Source: order_returns joined to tenants (for name) and orders (for the orders-placed denominator). Window: order_returns.requested_at and orders.placed_at both in 2025-01-01 through 2025-12-31. Return rate = tenant's returns requested in 2025 / tenant's orders placed in 2025, as a percentage rounded to 1 decimal (same approximation caveat as the platform-wide returns report: a given return may relate to an order placed outside the year, so treat this as a rough proxy, not a precise cohort rate). avg/median days requested-to-refunded = extract(epoch from refunded_at - requested_at)/86400 over that tenant's returns with status='refunded' and refunded_at not null in 2025, rounded to 1 decimal. returns rejected (%) = tenant's order_returns with status='rejected' in 2025 / tenant's returns requested in 2025, percentage rounded to 1 decimal. Only include tenants with >=20 returns requested in 2025. Order by returns requested descending, tie-break by merchant name ascending. Cap at 50 printed rows per house standard; note total qualifying tenant count in the footer.\", \"builds_on\": [\"Returns and refunds: volume and time-to-resolve trend\", \"Response & resolution times by merchant, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

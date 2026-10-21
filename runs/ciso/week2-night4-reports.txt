@@ -1,0 +1,32 @@
+=== Report 1: Scope tally across all 76 long-lived (4+ year) active API keys (written by Felix) ===
+Engineer's note: Population matches last night's 76-key cohort (active, created_at before 2022-01-05, i.e. 4+ years before the 2026-01-05 reporting date). Share % is computed against the fixed denominator of 76 as requested.
+REPORT: Scope tally across all 76 long-lived (4+ year) active API keys
+QUESTION: Of all 76 active API keys that are 4+ years old, how many actually carry the broad 'admin_api' rate-limit scope versus no scope recorded at all — the full count, not just the 50 printed last night?
+scope_category    | distinct_key_count | share_pct | distinct_tenants
+------------------+--------------------+-----------+-----------------
+admin_api         |                 53 |      69.7 |               25
+no scope recorded |                 23 |      30.3 |               23
+(2 rows)
+
+=== Report 2: Is admin_api scope concentrated in old keys, or standard across all ages? (written by Viktor) ===
+Engineer's note: "No scope recorded" means the active key has zero rate_limits rows at all (not merely a non-admin_api scope); admin_api_scoped_keys counts keys with at least one rate_limits row where limit_scope='admin_api'. Age buckets use the fixed 2026-01-05 reference date and the same 5 ranges as the earlier age-distribution report.
+REPORT: Is admin_api scope concentrated in old keys, or standard across all ages?
+QUESTION: Are broadly-scoped (admin_api) keys specifically a feature of our oldest, longest-unrotated keys, or is that scope just how every integration key is set up regardless of age — i.e. is 'old + broad' a rotation failure or simply the norm?
+age_bucket     | total_active_keys | admin_api_scoped_keys | admin_api_share_pct | no_scope_recorded_keys | distinct_tenants
+---------------+-------------------+-----------------------+---------------------+------------------------+-----------------
+Under 90 days  |                 1 |                     1 |               100.0 |                      0 |                1
+90 days-1 year |                11 |                     8 |                72.7 |                      3 |               11
+1-2 years      |                14 |                    12 |                85.7 |                      2 |                9
+2-4 years      |                11 |                    10 |                90.9 |                      1 |               10
+4+ years       |                76 |                    53 |                69.7 |                     23 |               32
+(5 rows)
+
+=== Report 3: Active API keys on churned tenants: scope and recent use (written by Ines) ===
+Engineer's note: days_since_last_use is null if last_used_at is null (key never used); rate_limits is scoped by api_key_id so a key with no matching rate limit row shows null scope/max_requests, and a key with more than one rate-limit row would appear on multiple lines (not expected given the small result set).
+REPORT: Active API keys on churned tenants: scope and recent use
+QUESTION: The 2 churned tenants found earlier with a still-active API key (Dewdrop Studio, Aurum & Ash) — do those specific keys carry elevated (admin_api) scope, and how recently were they actually used?
+tenant_name    | key_name | age_days | last_used_at               | days_since_last_use | limit_scope | max_requests
+---------------+----------+----------+----------------------------+---------------------+-------------+-------------
+Aurum & Ash    | ERP sync |      554 | 2025-12-31 23:53:43.999999 |                   5 | admin_api   |          120
+Dewdrop Studio | ERP sync |      456 | 2025-12-31 22:05:15.999999 |                   5 | admin_api   |          120
+(2 rows)

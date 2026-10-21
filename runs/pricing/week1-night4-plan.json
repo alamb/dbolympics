@@ -1,0 +1,61 @@
+{
+ "notes": "Last night before the memo, so I'm closing out the three loose threads that actually change what I tell Marco and Tobias, and skipping anything merely confirmatory:\n\n1. The orphan subscription-delivery report came back strange: 0% of orphan customers were classified as \"lapsed within 30 days\" and 0% as \"no subscription record at all\" — yet 25-46% of orders are orphan. That means essentially all orphan customers have a subscription record, just not one whose status/date my query treated as active-and-overlapping. The likely candidates are 'paused' or 'incomplete' subscriptions, or cancellations that happened well before the 30-day window I checked. I need the actual status distribution before I can tell Tobias whether this is \"paused customers still getting free boxes\" (a real control gap) or something more benign.\n\n2. The corrected (pre-discount subtotal) lift report is strikingly consistent — every one of the 50 worst rows shows negative lift, and the pattern looks structural, not noise. But it's fragmented into 219 rows at the per-tenant-instance grain, which is too granular for the memo's headline number. I want one clean, order-weighted summary per promotion family (Welcome10 / Black Friday / January Sale / Summer Sale) so Marco and Tobias get a single defensible \"no incremental lift, if anything smaller baskets\" figure rather than a page of tenant fragments.\n\n3. The returns/refunds report surfaced two outsized ratios — a Welcome10 instance refunding 189% of its own discount cost, and a Volume-tier-10+ instance refunding 162% of its discount cost. Before stating \"this discount is actively loss-making after refunds\" in the memo, I want to check whether that's driven by a handful of large refunds (an outlier/concentration story, possibly one big account) versus broad-based returns across many orders (a genuine pattern worth capping the discount over).\n\nThese three reports close out Marco's Q3/Q4 and Tobias's Q1/Q2 with concrete, checked numbers for Friday.",
+ "requests": [
+  {
+   "title": "Subscription status distribution behind orphan comped-delivery orders",
+   "question": "What subscription status do the 'orphan' Subscription-delivery-discount customers (no active subscription overlap found) actually have on record, since neither 'lapsed within 30 days' nor 'no subscription at all' explained them?",
+   "grain": "one row per subscription-status category (trialing, active, past_due, canceled, paused, incomplete, or 'no_subscription_record')",
+   "columns": [
+    "status category (customer's most recent subscription status for that tenant, by started_at, or 'no_subscription_record' if none exists)",
+    "orphan customer count",
+    "orphan order count (2025 'Subscription delivery (prepaid)' orders with no active-status date overlap, as defined in the prior report)",
+    "% of all orphan orders",
+    "avg days between subscription's ended_at (or current date if still open) and the orphan order's placed_at, where applicable",
+    "total discount amount on these orders (EUR)"
+   ],
+   "details": "Source: same orphan-order population as the prior report (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at in 2025, status != 'cancelled', with no overlapping subscription of status in ('trialing','active','past_due') per the prior definition). For each orphan order's customer (user_id, tenant_id), find their single most recent subscription record by started_at and report its status (not restricted to active ones this time) as the category, or 'no_subscription_record' if the customer has zero subscription rows for that tenant. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by orphan order count descending. Print all categories (expect 5-8 rows).",
+   "builds_on": [
+    "Subscription-delivery discount orders with no overlapping active subscription"
+   ]
+  },
+  {
+   "title": "Aggregate within-customer basket-size lift by promotion family, 2025",
+   "question": "Across all tenants running each major marketing promotion, do customers buy bigger baskets (pre-discount subtotal) when using the code, stated as one clean weighted number per promotion family?",
+   "grain": "one row per promotion family name: 'Welcome 10% off', 'Black Friday 2025', 'January Sale 2025', 'Summer Sale 2025'",
+   "columns": [
+    "promotion name",
+    "discount instances aggregated (distinct discounts.id count across tenants)",
+    "discounted order count (sum across all instances)",
+    "distinct customers (sum across instances, not deduplicated across tenants)",
+    "avg discounted order subtotal, order-weighted (EUR)",
+    "avg comparison order subtotal (same customers' other non-discounted 2025 orders), order-weighted (EUR)",
+    "subtotal lift (EUR)",
+    "subtotal lift (%)",
+    "% of discounted customers who had at least one comparison order"
+   ],
+   "details": "Source: order_discounts + discounts (name in the four promotion names above, across all tenants/instances) + orders (subtotal, currency_code, placed_at in 2025, status != 'cancelled', user_id, tenant_id). For each promotion name, sum subtotal_eur and count across all discounted orders tenant-wide to get the order-weighted average (i.e. total EUR / total orders, not an average of per-tenant averages). For comparison, for every (user_id, tenant_id) that appears as a discounted customer under that promotion name, pull all their other 2025 orders for that tenant with no row in order_discounts, and similarly sum subtotal_eur and count across all of them tenant-wide for the order-weighted comparison average. Convert to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by subtotal lift (%) ascending. Print all 4 rows.",
+   "builds_on": [
+    "Corrected incrementality read: pre-discount basket size on top marketing discounts, 2025"
+   ]
+  },
+  {
+   "title": "Concentration of refund cost on the two highest refund-to-discount-ratio instances",
+   "question": "For the two discount instances whose total refunds exceeded their own discount cost (Welcome 10% off with 260 orders, Volume tier 10+ with 104 orders, both from the prior return-rate report), is that refund cost driven by a handful of large refunds or spread broadly across many orders?",
+   "grain": "one row per discount instance (2 rows)",
+   "columns": [
+    "discount name",
+    "order count (used to confirm identity: 260 for Welcome 10% off, 104 for Volume tier 10+)",
+    "total refunded amount, status='refunded' (EUR)",
+    "refund count (number of refunded order_returns)",
+    "top 3 single refunds as % of total refunded amount",
+    "median single refund amount (EUR)",
+    "max single refund amount (EUR)",
+    "% of this discount's orders that were refunded in full (refund_total >= order grand_total)"
+   ],
+   "details": "Source: identify the two discount_id instances exactly as in the prior return-rate report — discounts.name='Welcome 10% off' whose set of 2025 non-cancelled orders (via order_discounts) numbers exactly 260, and discounts.name='Volume tier 10+' whose matching order set numbers exactly 104. For those two discount_ids, pull order_returns (status='refunded') joined to orders (grand_total, currency_code) for the orders carrying that discount, convert refund_total to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=refunded_at date). Compute total, count, median, max, top-3-as-%-of-total, and % of orders fully refunded. Order by discount name ascending. Print both rows.",
+   "builds_on": [
+    "Return and refund rates on discounted orders vs. baseline, 2025"
+   ]
+  }
+ ]
+}

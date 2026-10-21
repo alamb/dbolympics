@@ -1,0 +1,61 @@
+=== Report 1: New Business Pipeline: Stage Where Lost Opportunities Were Last Seen (written by Ines) ===
+Engineer's note: Grain is one row per New-business pipeline stage (plus a 'No stage transition recorded' bucket), scoped to lost opportunities at wholesale tenants as specified. Please check the row count/share for the 'No stage transition recorded' bucket in the printed report: if it holds most of the lost opportunities, the change_history audit trail doesn't have enough coverage to answer the graveyard-stage question and the result should be read as inconclusive rather than a real stage distribution.
+REPORT: New Business Pipeline: Stage Where Lost Opportunities Were Last Seen
+QUESTION: Among B2B wholesale opportunities that were actually lost in new-customer acquisition (not renewals), which stage were they sitting in just before they were marked Closed Lost — i.e. where is the real graveyard?
+stage_name                   | stage_order | lost_opportunities_last_seen_here | pct_of_total_lost_in_new_business | total_lost_opportunities_new_business
+-----------------------------+-------------+-----------------------------------+-----------------------------------+--------------------------------------
+No stage transition recorded |        NULL |                                30 |                             100.0 |                                    30
+(1 rows)
+
+=== Report 2: New Business Only: Won vs Lost Opportunity Characteristics (written by Grace) ===
+Engineer's note: Restricted to pipelines named 'New business' (joined on pipelines.name) as requested, excluding Renewals; all other filters (tenant industry, is_closed) and conversions (EUR via nearest prior-day exchange rate) match the prior report's methodology.
+REPORT: New Business Only: Won vs Lost Opportunity Characteristics
+QUESTION: Restricted to genuine new-customer acquisition deals (excluding renewals), what reliably differs between won and lost opportunities — deal size, activities before close, days open, or concentration among accounts and reps?
+outcome | opportunities | avg_amount_eur | median_amount_eur | avg_activities_before_close | avg_days_open | distinct_accounts | distinct_reps
+--------+---------------+----------------+-------------------+-----------------------------+---------------+-------------------+--------------
+won     |           155 |        7097.90 |           5880.52 |                        2.30 |           9.1 |               155 |            10
+lost    |            30 |        5628.59 |           6520.14 |                        3.37 |          35.5 |                30 |             9
+(2 rows)
+
+=== Report 3: New Business Only: Deal Cycle Time Trend by Month (written by Grace) ===
+Engineer's note: Filtered to pipelines named exactly 'New business' per tenant, joined via tenant_id+pipeline_id; months with zero closed opportunities in scope won't appear as rows (no calendar spine requested). Cycle time computed as closed_at minus created_at in days (fractional).
+REPORT: New Business Only: Deal Cycle Time Trend by Month
+QUESTION: Restricted to genuine new-customer acquisition deals (excluding renewals), how long does it take to close an opportunity, and is that cycle time trending up or down over the last three years?
+month   | opportunities_closed | closed_won | closed_lost | win_rate_pct | avg_cycle_days | median_cycle_days
+--------+----------------------+------------+-------------+--------------+----------------+------------------
+2023-01 |                    3 |          3 |           0 |        100.0 |           14.0 |              16.0
+2023-02 |                    4 |          4 |           0 |        100.0 |           11.4 |               9.6
+2023-03 |                    5 |          3 |           2 |         60.0 |           15.7 |              17.0
+2023-04 |                    2 |          2 |           0 |        100.0 |            3.0 |               3.0
+2023-05 |                    2 |          1 |           1 |         50.0 |           23.3 |              23.3
+2023-06 |                    3 |          2 |           1 |         66.7 |           19.1 |              26.3
+2023-07 |                    1 |          1 |           0 |        100.0 |           30.4 |              30.4
+2023-08 |                    2 |          2 |           0 |        100.0 |           14.8 |              14.8
+2023-09 |                    2 |          1 |           1 |         50.0 |           21.6 |              21.6
+2023-10 |                    2 |          2 |           0 |        100.0 |           19.7 |              19.7
+2023-11 |                    7 |          5 |           2 |         71.4 |           19.7 |              18.1
+2023-12 |                    3 |          2 |           1 |         66.7 |           14.9 |              12.7
+2024-01 |                    8 |          8 |           0 |        100.0 |           13.0 |              12.6
+2024-02 |                    4 |          4 |           0 |        100.0 |            8.6 |               8.5
+2024-03 |                    3 |          3 |           0 |        100.0 |           18.8 |              14.0
+2024-04 |                    3 |          3 |           0 |        100.0 |           11.0 |              13.0
+2024-05 |                    8 |          6 |           2 |         75.0 |           22.7 |              20.4
+2024-07 |                    5 |          2 |           3 |         40.0 |           33.7 |              31.0
+2024-08 |                    3 |          3 |           0 |        100.0 |           12.6 |              14.5
+2024-09 |                    2 |          2 |           0 |        100.0 |           21.6 |              21.6
+2024-10 |                    7 |          6 |           1 |         85.7 |           17.2 |              15.0
+2024-11 |                    7 |          3 |           4 |         42.9 |           23.1 |              17.0
+2024-12 |                    4 |          1 |           3 |         25.0 |           29.6 |              30.9
+2025-01 |                    3 |          2 |           1 |         66.7 |           17.2 |              15.3
+2025-02 |                    2 |          1 |           1 |         50.0 |           34.1 |              34.1
+2025-03 |                    4 |          3 |           1 |         75.0 |           14.9 |              14.6
+2025-04 |                    6 |          5 |           1 |         83.3 |           18.4 |              18.6
+2025-05 |                    3 |          3 |           0 |        100.0 |           13.7 |              11.8
+2025-06 |                    2 |          2 |           0 |        100.0 |            6.5 |               6.5
+2025-07 |                    5 |          5 |           0 |        100.0 |           12.5 |               9.3
+2025-08 |                    2 |          2 |           0 |        100.0 |            5.0 |               5.0
+2025-09 |                    5 |          4 |           1 |         80.0 |           13.7 |              14.7
+2025-10 |                    5 |          4 |           1 |         80.0 |           23.6 |              14.0
+2025-11 |                    7 |          5 |           2 |         71.4 |           20.5 |              21.0
+2025-12 |                    2 |          1 |           1 |         50.0 |           30.9 |              30.9
+(35 rows)

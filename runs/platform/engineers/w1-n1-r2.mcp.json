@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchants Hit Hardest by Job Failures, 2025",
+    "--question",
+    "Which merchants had the most background job failures in 2025, and does it track with order volume?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Felix\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per tenant\", \"columns_requested\": [\"tenant_name\", \"total_job_runs_2025\", \"failed_runs_2025\", \"failure_rate_pct\", \"avg_duration_seconds_failed\", \"total_orders_2025\", \"failed_runs_per_1000_orders\"], \"details\": \"job_runs joined to tenants on tenant_id. Filter queued_at in 2025. total_orders_2025 = count of orders with placed_at in 2025 per tenant, left joined so zero-order tenants show 0. failed_runs_per_1000_orders = failed_runs_2025/total_orders_2025*1000 rounded 1dp, blank if zero orders. Order by failed_runs_2025 descending, tie-break tenant_name ascending. Limit to top 20 tenants.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

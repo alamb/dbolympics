@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant unit economics, rate-based view: top 20 by volume, 2025",
+    "--question",
+    "Among our largest merchants, which look efficient versus costly to serve on a like-for-like rate basis?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Omar\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per merchant (tenant), top 20 by gross payment volume\", \"columns_requested\": [\"merchant name\", \"vertical\", \"gross payment volume (EUR, 2025)\", \"fee revenue (EUR, 2025)\", \"take rate (%, fee revenue / gross volume)\", \"refund rate (%, order_returns.refund_total / gross volume)\", \"shipping cost rate (%, shipments.shipping_cost / gross volume)\", \"tickets per 100 orders\"], \"details\": \"Same sources, filters, EUR conversion and rate definitions as tonight's vertical-level unit-economics report, but aggregated per tenant instead of per vertical, limited to the top 20 merchants ranked by 2025 gross payment volume (EUR). This gives the board a merchant-level cut using the corrected, comparable methodology (rates against gross volume, not against fee revenue). Order by gross payment volume EUR descending.\", \"builds_on\": [\"Vertical unit economics, rate-based view, 2025\", \"Merchant revenue concentration, trailing 12 months\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

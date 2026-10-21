@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Failed login attempts and suspicious access patterns by month",
+    "--question",
+    "How much login activity fails, is there visible evidence of brute-force-style patterns, and are access-denied events actually being captured as suspicious activity over time?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Ines\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per calendar month (occurred_at), platform-wide, from 2023-01 through 2025-12\", \"columns_requested\": [\"month (YYYY-MM)\", \"total_login_attempts (from login_attempts)\", \"failed_login_attempts (succeeded = false)\", \"pct_failed\", \"emails_with_5plus_failed_in_month (distinct email values with >=5 failed login_attempts rows in the month \\u2014 a brute-force proxy)\", \"audit_access_denied_events (count from audit_log UNION audit_log_archive where action = 'access_denied', same month)\"], \"details\": \"Sources: login_attempts for the login outcome series; audit_log + audit_log_archive (action='access_denied') as a separate parallel signal of flagged suspicious access, same month grain, not joined row-by-row. Purpose: give Aylin real evidence that failed logins and suspicious access attempts are visible in the data (not just policy), and whether volumes/patterns look stable or show spikes worth a follow-up. Order by month ascending.\", \"builds_on\": [\"MFA device adoption by user segment and status\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

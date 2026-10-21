@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 revenue share by industry vertical",
+    "--question",
+    "How big a slice of our 2025 collected revenue comes from B2B wholesale merchants (industrial supplies, office equipment) versus every other vertical, so we know whether omitting their receivables line from the board pack is material?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Omar\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"industry vertical (tenants.industry)\", \"columns_requested\": [\"industry\", \"tenant_count\", \"total_2025_money_collected_eur\", \"pct_of_total_revenue\"], \"details\": \"Population: payments with status in ('captured','refunded','partially_refunded') and captured_at in 2025 (2025-01-01 to 2025-12-31). Join payments.tenant_id to tenants to get tenants.industry (group by the literal industry value as stored, do not pre-filter or re-bucket it - show every distinct value that appears, including null/unclassified as its own row labeled '(none)'). tenant_count = count of distinct tenants in that industry with at least one such payment in 2025. total_2025_money_collected_eur = sum of payments.amount converted to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=captured_at date). pct_of_total_revenue = total_2025_money_collected_eur / (sum across all industries) * 100, rounded to 1 decimal. Tables: payments, tenants, exchange_rates. Order by total_2025_money_collected_eur descending.\", \"builds_on\": [\"2025 revenue share by industry vertical\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,38 @@
+=== Report 1: B2B wholesaler receivables aging (written by Omar) ===
+Engineer's note: Scoped to tenants whose industry matches industrial/office/wholesale/b2b via ILIKE, per spec. As a safety net, if that filter matches zero tenants the query instead falls back to listing the distinct tenants.industry values (with the other measure columns null) so the right filter can be identified without burning another slot.
+REPORT: B2B wholesaler receivables aging
+QUESTION: For our B2B wholesaler merchants, how much of their outstanding receivables is genuinely overdue versus just within normal net terms lag, so we can present that line accurately in the annual accounts?
+aging_bucket       | invoice_count | amount_due_eur | pct_of_total_amount_due | avg_days_past_due | avg_net_terms_days
+-------------------+---------------+----------------+-------------------------+-------------------+-------------------
+Not yet due        |            26 |       37770.52 |                    90.8 |               0.0 |               39.2
+1-30 days overdue  |             3 |        3450.24 |                     8.3 |              10.7 |               19.3
+31-60 days overdue |             1 |         358.26 |                     0.9 |              33.0 |               14.0
+(3 rows)
+
+=== Report 2: EUR exchange rate movement by currency, 2023 vs 2025 (written by Omar) ===
+Engineer's note: EUR rows are set to a rate of 1.0 and 0.0% change by definition rather than looking them up in exchange_rates (which may not carry an EUR/EUR identity row). The 2023-01-02 lookup falls back to the earliest January 2023 rate only when the exact date is missing, as specified.
+REPORT: EUR exchange rate movement by currency, 2023 vs 2025
+QUESTION: How much have the currencies our merchants transact in moved against EUR over the three years of history, and is that movement large enough to distort revenue trends when we roll up multi-currency figures over time?
+currency_code | tenant_count | orders_2025_total_eur | rate_eur_to_currency_2023_01_02 | rate_eur_to_currency_2025_12_31 | pct_rate_change
+--------------+--------------+-----------------------+---------------------------------+---------------------------------+----------------
+EUR           |           58 |            3129100.34 |                        1.000000 |                        1.000000 |             0.0
+USD           |           18 |             1260986.9 |                        1.069236 |                        1.186695 |            11.0
+GBP           |           25 |             864036.92 |                        0.886173 |                        0.860807 |            -2.9
+NOK           |            6 |             426199.66 |                       10.540942 |                       11.693321 |            10.9
+DKK           |            5 |              80219.69 |                        7.439947 |                        7.448739 |             0.1
+SEK           |            8 |              75895.03 |                       11.208926 |                       11.125129 |            -0.7
+(6 rows)
+
+=== Report 3: Payout net-formula drift by currency (written by Omar) ===
+Engineer's note: Used payouts.created_at to scope 2023-01-01 through 2025-12-31 (no payout date column other than arrival_date/paid_at which can be null for non-arrived payouts); all amounts are summed in native currency per currency_code with no FX conversion, as requested.
+REPORT: Payout net-formula drift by currency
+QUESTION: Does net equal gross minus fee cleanly for payouts in every currency, or do certain currencies show persistent drift in that basic arithmetic, separate from the refund timing issue already found?
+currency_code | payout_count | gross_native_total | fee_native_total | net_native_total | net_check_diff_native | net_check_diff_pct
+--------------+--------------+--------------------+------------------+------------------+-----------------------+-------------------
+EUR           |        12748 |       4551282.0000 |       94742.2900 |     4056774.8600 |          -399764.8500 |              -8.78
+GBP           |         7042 |       1340792.0500 |       27293.8300 |     1146739.2800 |          -166758.9400 |             -12.44
+USD           |         4493 |       2764435.1400 |       87984.7900 |     2168931.0100 |          -507519.3400 |             -18.36
+SEK           |         1366 |       2063787.2400 |       34067.0400 |     1810084.8700 |          -219635.3300 |             -10.64
+DKK           |          742 |       1182005.8200 |       20719.0200 |     1010639.1000 |          -150647.7000 |             -12.75
+NOK           |          621 |       3417294.3900 |      103731.3400 |     3051768.5800 |          -261794.4700 |              -7.66
+(6 rows)

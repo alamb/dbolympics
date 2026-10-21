@@ -1,0 +1,41 @@
+=== Report 1: Cart conversion by week at Cragsley Outfitters around the Nov 24 reminder-email outage (written by Ines) ===
+Engineer's note: Resolution-time buckets: "within 1 hour" = <=1h since created_at; "1-7 days" = 24h-168h inclusive (converted_at - created_at). Carts converting between 1h and 24h aren't shown in either bucket, consistent with prior cart-timing report definitions.
+REPORT: Cart conversion by week at Cragsley Outfitters around the Nov 24 reminder-email outage
+QUESTION: Did cart conversion dip during the week cart-reminder emails broke (week of Nov 24, 2025), suggesting those reminders meaningfully nudge stalled carts toward purchase?
+week_start | carts_created | overall_conversion_pct | pct_converted_within_1_hour | pct_converted_1_to_7_days
+-----------+---------------+------------------------+-----------------------------+--------------------------
+2025-10-06 |           213 |                   31.5 |                        24.9 |                       5.6
+2025-10-13 |           236 |                   32.2 |                        28.0 |                       3.0
+2025-10-20 |           231 |                   29.0 |                        23.4 |                       4.3
+2025-10-27 |           207 |                   38.6 |                        32.9 |                       5.3
+2025-11-03 |           250 |                   36.0 |                        27.2 |                       7.2
+2025-11-10 |           241 |                   31.1 |                        24.1 |                       5.0
+2025-11-17 |           304 |                   41.1 |                        33.9 |                       5.9
+2025-11-24 |           524 |                   43.5 |                        34.9 |                       7.4
+2025-12-01 |           478 |                   38.5 |                        31.4 |                       6.1
+2025-12-08 |           345 |                   38.3 |                        29.0 |                       8.7
+2025-12-15 |           333 |                   37.5 |                        27.9 |                       7.8
+2025-12-22 |           253 |                   40.3 |                        33.2 |                       6.3
+(12 rows)
+
+=== Report 2: Cart value tier vs. conversion speed, 2025 (written by Grace) ===
+Engineer's note: I did not have the exact wording of the "prior cart-timing reports," so I defined conversion/resolution the standard way: overall_conversion_pct = share of carts with status='converted'; pct_resolved_within_1_hour = share converted within 1 hour of created_at; pct_resolved_in_1_7_days = share converted strictly between 1 and 7 days after created_at (carts converted in the 1-hour-to-1-day gap are not double-counted in either bucket). Please flag if the prior reports used different cutoffs.
+REPORT: Cart value tier vs. conversion speed, 2025
+QUESTION: Is checkout hesitation concentrated in higher-priced carts specifically (not just low-item-count carts), i.e. does price point on its own predict stalling?
+price_tier | cart_count | pct_of_total_carts | avg_item_count | overall_conversion_pct | pct_resolved_within_1_hour | pct_resolved_in_1_7_days
+-----------+------------+--------------------+----------------+------------------------+----------------------------+-------------------------
+<€50       |       5585 |              26.35 |            1.3 |                  23.29 |                      16.08 |                     6.34
+€50-100    |       6029 |              28.44 |           1.63 |                  32.71 |                      24.85 |                     6.73
+€100-200   |       5065 |              23.89 |           2.13 |                  38.52 |                      31.71 |                     5.71
+€200+      |       4518 |              21.31 |            3.2 |                  51.35 |                      44.05 |                      6.2
+(4 rows)
+
+=== Report 3: Do stalled carts that receive an email convert more often? (written by Omar) ===
+Engineer's note: Added a guest_cart_count column (carts with null user_id, always bucketed into 'no_email') alongside the requested 4 metrics so the report itself shows what share of 'no_email' is guest traffic without a possible recovery email, per your flag-in-notes request — this didn't warrant a separate report since it's a supporting breakdown of the same no_email group, not a new question.
+REPORT: Do stalled carts that receive an email convert more often?
+QUESTION: Among carts that don't convert within the first hour, is there already an organic recovery nudge happening (an email reaching the shopper), and does it correlate with eventually converting?
+group_name     | cart_count | guest_cart_count | pct_eventually_converted | median_days_to_convert
+---------------+------------+------------------+--------------------------+-----------------------
+received_email |        587 |                0 |                     56.0 |                    1.4
+no_email       |      12280 |             7540 |                      8.1 |                    4.8
+(2 rows)

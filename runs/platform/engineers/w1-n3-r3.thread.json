@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  date_trunc('month', created_at)::date AS month,\n  count(*) AS total_deliveries,\n  count(*) FILTER (WHERE status = 'success') AS success_count,\n  round(100.0 * count(*) FILTER (WHERE status = 'success') / count(*), 2) AS success_rate_pct,\n  count(*) FILTER (WHERE status = 'failed') AS failed_count,\n  round(100.0 * count(*) FILTER (WHERE status = 'failed') / count(*), 2) AS failure_rate_pct,\n  round(avg(duration_ms) FILTER (WHERE duration_ms IS NOT NULL)) AS avg_duration_ms,\n  count(DISTINCT webhook_id) AS distinct_webhooks\nFROM webhook_deliveries\nWHERE created_at >= DATE '2025-01-01' AND created_at < DATE '2026-01-01'\nGROUP BY date_trunc('month', created_at)\nORDER BY month ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, total_deliveries, success_count, success_rate_pct, failed_count, failure_rate_pct, avg_duration_ms, distinct_webhooks"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns exactly the requested columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  date_trunc('month', created_at)::date AS month,\n  count(*) AS total_deliveries,\n  count(*) FILTER (WHERE status = 'success') AS success_count,\n  round(100.0 * count(*) FILTER (WHERE status = 'success') / count(*), 2) AS success_rate_pct,\n  count(*) FILTER (WHERE status = 'failed') AS failed_count,\n  round(100.0 * count(*) FILTER (WHERE status = 'failed') / count(*), 2) AS failure_rate_pct,\n  round(avg(duration_ms) FILTER (WHERE duration_ms IS NOT NULL)) AS avg_duration_ms,\n  count(DISTINCT webhook_id) AS distinct_webhooks\nFROM webhook_deliveries\nWHERE created_at >= DATE '2025-01-01' AND created_at < DATE '2026-01-01'\nGROUP BY date_trunc('month', created_at)\nORDER BY month ASC",
+  "note": "Filtered on created_at as requested; the query only returns months that actually have webhook_deliveries rows within 2025 (no synthetic zero-filled months), so the row count itself shows the real coverage window.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups webhook_deliveries by calendar month of created_at for 2025, computing total/success/failed counts, success and failure rate percentages, average delivery duration, and distinct webhooks touched — one row per month, ordered ascending, with only months that actually have data appearing (so the row count itself reveals the true coverage window within 2025)."
+ }
+]

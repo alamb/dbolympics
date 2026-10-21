@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Post-withdrawal marketing suppression check",
+    "--question",
+    "When a shopper withdraws marketing_email consent, do we actually stop sending them marketing campaign emails, or does sending continue after withdrawal?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Felix\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"single summary row across all users with an effective withdrawn marketing_email consent as of 2026-01-05 (i.e. their most recent consent_records row for purpose='marketing_email' has status='withdrawn', with no later 'granted' row)\", \"columns_requested\": [\"users with effective withdrawal as of today (count)\", \"of those, users who received at least 1 campaign_messages send after their withdrawal date (count)\", \"pct of withdrawn users contacted after withdrawal\", \"total post-withdrawal sends across all such users (count)\", \"max days between withdrawal and a post-withdrawal send (worst case observed)\", \"most recent post-withdrawal send date observed\"], \"details\": \"Source: consent_records (window function per user to find the latest marketing_email row, filtered to status='withdrawn') joined to campaign_messages on user_id, counting sends where campaign_messages.sent_at (or created_at if sent_at is null) is after the withdrawal's occurred_at. Platform-wide, full history. This is a single aggregate row by design \\u2014 the underlying population of withdrawn users is in the thousands (per last week's consent trend), so a per-user listing would blow past the row cap; we need the magnitude and worst case, not a row-by-row listing. If the 'contacted after withdrawal' count is non-trivial, that's evidence we don't suppress sends promptly.\", \"builds_on\": [\"Marketing-email consent opt-in trend, full history\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

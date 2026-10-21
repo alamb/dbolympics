@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "MFA device adoption by user segment and status",
+    "--question",
+    "What share of staff and customer accounts are protected by a confirmed MFA device, and does that differ by account status?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Ines\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per combination of users.is_staff (true/false) and users.status, across all tenants, current-state snapshot as of 2025-12-31\", \"columns_requested\": [\"is_staff\", \"status\", \"total_users (non-deleted)\", \"users_with_confirmed_mfa (distinct user_id in mfa_devices where confirmed_at is not null)\", \"pct_with_confirmed_mfa\", \"users_with_any_mfa_device (confirmed or not)\", \"pct_with_any_mfa_device\"], \"details\": \"Sources: users (exclude deleted_at not null), mfa_devices. This is the first evidence report on login/authentication security (priority #2): I want a real, current number for 'what fraction of staff vs. customer accounts have MFA' broken out by account status, to see whether MFA coverage is meaningfully different for active staff (who hold tenant access) versus end customers, and whether any non-active accounts still show confirmed MFA (expected to be irrelevant but worth seeing). Order by is_staff descending, then status.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

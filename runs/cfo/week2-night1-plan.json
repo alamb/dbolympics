@@ -1,0 +1,59 @@
+{
+ "notes": "Audit readiness is explicitly the lead ask, so I'm using one dense report to walk a sample of real transactions end-to-end — payment → refund → merchant payout (gross/fee/net) → ledger balance — in one place, since that's literally what the auditors will do when they pick sample transactions. I folded the payout settlement check and the ledger tie-out into a single payment-grain report (12 columns, at the comfortable limit) rather than two separate reports, to leave room tonight for the other two priorities.\n\nFor priority #2 (refund figure discrepancy), my working hypothesis going in is that this is a structural date-field mismatch rather than a data error: payments.amount_refunded gets bucketed by the original purchase's captured_at quarter, while order_returns.refund_total gets bucketed by refunded_at (when the refund actually happened) — and Yuki's finding that refunds typically land ~3 weeks after settlement supports refunds routinely crossing a quarter boundary. I'm testing that directly by measuring the lag between purchase quarter and refund quarter for 2025 returns, which should explain most of the 16-40% swings without needing a full reconciliation.\n\nFor #4 (room permitting), I'm sizing the uncapped-coupon-reuse gap Oliver flagged, since \"no usage/per-customer limit exists\" is only a control gap in euros if people are actually exploiting it — I want €-at-risk from repeat redemptions by the same customer, comparable in kind to the €57k free-delivery number, so Tobias can judge scale before deciding if it goes to the auditors.\n\n#3 (plan-fee revenue) gets no slot tonight: I rechecked the schema and confirmed there is no table that could hold Tidewick's own platform-plan billing of merchants (plans/subscriptions/invoices here are each merchant's billing of their own customers) — this is a true data gap, not something a cleverer query can solve, so I'll report that status in prose and recommend sourcing it from the corporate billing/finance system instead.",
+ "requests": [
+  {
+   "title": "Audit Sample: End-to-End Transaction Walkthrough, 2025",
+   "question": "For a representative sample of 2025 transactions, does the shopper payment amount, any refund, the resulting merchant payout (gross/fee/net), and the linked ledger entries all tie out consistently?",
+   "grain": "one sampled payment captured in 2025",
+   "columns": [
+    "order_number",
+    "merchant_name",
+    "currency_code",
+    "payment_amount (captured)",
+    "amount_refunded",
+    "net_amount (payment_amount - amount_refunded)",
+    "payout_item_amount (amount of this payment settled into a payout, from payout_items)",
+    "payout_item_fee_amount",
+    "payout_net_amount (payout_item_amount - payout_item_fee_amount)",
+    "ledger_debit_credit_diff (sum of ledger_entries.amount for this payment_id where direction='debit' minus direction='credit'; should be 0)",
+    "ledger_credit_total (sum of ledger_entries.amount for this payment_id where direction='credit', to compare against payment_amount)",
+    "reconciliation_flag ('OK' if net_amount equals payout_net_amount plus payout_item_fee_amount and ledger_debit_credit_diff is 0 and not yet settled payments are labeled 'PENDING PAYOUT', else 'CHECK')"
+   ],
+   "details": "Source: payments (status captured/refunded/partially_refunded, captured_at in 2025) as the base. LEFT JOIN payout_items on payment_id (some payments may not be in a payout yet — show as NULL, not excluded). LEFT JOIN ledger_entries on payment_id, aggregated by direction. Join orders on payments.order_id for order_number, and tenants for merchant_name. Build the sample as: (a) the 8 largest payments by payment_amount (converted to EUR for ranking only, print native currency), spread across different tenants where possible; (b) 8 payments with amount_refunded > 0, choosing a mix of fully refunded (amount_refunded = amount) and partially refunded, across different tenants; (c) 9 additional payments chosen by taking every Nth row ordered by payments.id (deterministic pseudo-random) to represent typical/unremarkable transactions, including at least 2 that have no matching payout_items row yet if any exist. Do not convert money columns to EUR (keep each row in its own currency_code so the diff/reconciliation checks are exact, not rounded by conversion). Order by sample category then by payment_amount descending within category; 25 rows total.",
+   "builds_on": []
+  },
+  {
+   "title": "Refund Attribution Lag: Purchase Quarter vs Refund Quarter, 2025",
+   "question": "Does the 16-40% quarterly gap between payments-based and order_returns-based refund totals come from refunds simply landing in a later quarter than the original purchase, rather than from missing or double-counted data?",
+   "grain": "one lag category, for order_returns refunded in 2025",
+   "columns": [
+    "lag_category ('same quarter as purchase', 'purchase 1 quarter earlier', 'purchase 2+ quarters earlier', 'no matching payment found')",
+    "return_count",
+    "refund_amount_eur",
+    "pct_of_total_2025_refund_amount",
+    "avg_lag_days (refunded_at minus the originating payment's captured_at)"
+   ],
+   "details": "Source: order_returns with status='refunded' and refunded_at in calendar year 2025, LEFT JOIN orders on order_returns.order_id, LEFT JOIN payments on payments.order_id = orders.id (if an order has multiple payments, use the earliest captured_at). Convert order_returns.refund_total to EUR via exchange_rates (base_code='EUR', quote_code=order_returns.currency_code, as_of=date(refunded_at)). Compute the calendar quarter of refunded_at and the calendar quarter of the matched payment's captured_at; bucket into the four lag_category values based on how many quarters apart they are (or 'no matching payment found' if the join fails). avg_lag_days is the average of (refunded_at - captured_at) in days within each bucket (null for the no-match bucket). Order by return_count descending.",
+   "builds_on": [
+    "Refund Figures Cross-Check: Payments vs Order Returns, 2025"
+   ]
+  },
+  {
+   "title": "Coupon Reuse Exposure: Redemptions Beyond First Use per Customer, 2025",
+   "question": "Roughly how much discount euro value comes from the same customer reusing a coupon code multiple times, given no usage or per-customer limit is enforced?",
+   "grain": "one coupon code, for redemptions in 2025",
+   "columns": [
+    "coupon_code",
+    "discount_kind",
+    "total_redemptions_2025",
+    "distinct_customers_2025",
+    "redemptions_beyond_first_use (total_redemptions - distinct_customers)",
+    "total_discount_amount_eur",
+    "discount_amount_beyond_first_use_eur (excess discount from a customer's 2nd+ redemption of the same code)",
+    "pct_of_discount_from_repeat_use"
+   ],
+   "details": "Source: coupon_redemptions joined to coupons (for code, and discount_id -> discounts for discount_kind), filtered to redeemed_at in calendar year 2025. Convert discount_amount to EUR via exchange_rates (base_code='EUR', quote_code=coupon_redemptions.currency_code, as_of=date(redeemed_at)). Group by coupon_id/code. distinct_customers_2025 counts distinct user_id redeeming that code in 2025. redemptions_beyond_first_use = total_redemptions_2025 - distinct_customers_2025 (i.e., repeat uses by the same customer beyond their first). discount_amount_beyond_first_use_eur: for each (coupon, user_id) pair, sum discount_amount_eur from all but the earliest redemption (by redeemed_at) for that user, then sum across users for the coupon. pct_of_discount_from_repeat_use = discount_amount_beyond_first_use_eur / total_discount_amount_eur * 100. Order by discount_amount_beyond_first_use_eur descending; print top 20 coupons and note total number of distinct coupons redeemed in 2025.",
+   "builds_on": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "id": "security-questionnaire",
+ "lead": "risk",
+ "with": [
+  "data"
+ ],
+ "text": "An enterprise prospect sent a security and compliance questionnaire covering account security, access control, privacy requests, data retention and audit trails. Sales wants answers backed by evidence from our own systems, not by policy documents.",
+ "week": 1
+}

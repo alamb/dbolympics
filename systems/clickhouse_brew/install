@@ -1,0 +1,68 @@
+#!/bin/bash
+# ClickHouse as in systems/clickhouse, with the settings the SQL Umbra writes for it relies on.
+# Umbra runs from its image (system.toml).
+set -e -o pipefail
+
+# A stable release, not the latest master build that https://clickhouse.com/ installs: that one
+# changes with every commit (26.11 builds cannot create their system log tables with
+# data_type_default_nullable and retry without end, on every core).
+CLICKHOUSE=26.9.22.3
+if [ ! -x /usr/bin/clickhouse ]; then
+    cd /tmp
+    curl -fsSL --retry 10 --retry-delay 60 --retry-all-errors -o clickhouse.tgz \
+        "https://github.com/ClickHouse/ClickHouse/releases/download/v$CLICKHOUSE-stable/clickhouse-common-static-$CLICKHOUSE-$(dpkg --print-architecture).tgz"
+    tar xzf clickhouse.tgz --strip-components=3 "clickhouse-common-static-$CLICKHOUSE/usr/bin/clickhouse"
+    sudo ./clickhouse install --noninteractive
+    rm -f ./clickhouse clickhouse.tgz
+fi
+
+# Load everything at startup, not lazily during the first queries (see ClickBench).
+sudo mkdir -p /etc/clickhouse-server/config.d /etc/clickhouse-server/users.d
+sudo tee /etc/clickhouse-server/config.d/eager_load.yaml >/dev/null <<'YAML'
+async_load_databases: false
+merge_tree:
+  primary_key_lazy_load: 0
+  columns_and_secondary_indices_sizes_lazy_calculation: 0
+YAML
+
+# The data is read with file() from /data. The name sorts after data-paths.xml of the
+# installer, which sets the same path.
+sudo tee /etc/clickhouse-server/config.d/zz-benchmark.yaml >/dev/null <<'YAML'
+user_files_path: /data/
+listen_host: 127.0.0.1
+YAML
+
+# Standard SQL behaviour where ClickHouse's defaults differ, as systems/clickhouse. Umbra's SQL
+# for ClickHouse also needs cast_keep_nullable, and enable_materialized_cte to compute a common
+# table expression it reads more than once only once.
+sudo tee /etc/clickhouse-server/users.d/zz-benchmark.yaml >/dev/null <<'YAML'
+profiles:
+  default:
+    data_type_default_nullable: 1
+    join_use_nulls: 1
+    aggregate_functions_null_for_empty: 1
+    union_default_mode: DISTINCT
+    format_csv_null_representation: ''
+    date_time_output_format: simple
+    output_format_decimal_trailing_zeros: 0
+    cast_keep_nullable: 1
+    enable_materialized_cte: 1
+    # the joins as Umbra ordered them: no reordering, and the right input of every join is the
+    # one ClickHouse builds its hash table from (Umbra writes its joins from the probe side)
+    query_plan_optimize_join_order_limit: 0
+    query_plan_join_swap_table: 'false'
+    # a load statement is written at once, not through the asynchronous insert queue (which
+    # waits about 50 ms for more inserts to join it)
+    async_insert: 0
+    # the runner's timeout check is a deep recursion (no benchmark query recurses)
+    max_recursive_cte_evaluation_depth: 1000000000000
+YAML
+
+# the query program (query.rs), built here with a Rust toolchain that is removed again
+cd /system
+sudo apt-get update -y
+sudo apt-get install -y --no-install-recommends build-essential
+curl -fsSL --retry 10 https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.99.0
+"$HOME/.cargo/bin/cargo" build --release --locked
+install -m 0755 target/release/query query
+rm -rf target "$HOME/.cargo" "$HOME/.rustup"

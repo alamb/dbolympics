@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Session-tracking coverage vs order volume for top merchants, 2025",
+    "--question",
+    "Does the >100% visit-to-cart ratio in the Q4 funnel reflect real shopper behavior, or is web-session tracking sparse relative to order volume for certain merchants (e.g. subscription sellers), making 'visits' an unreliable denominator for them?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Felix\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per tenant, for the same 10 tenants as the Q4 2025 funnel report\", \"columns_requested\": [\"tenant name\", \"industry\", \"visits in 2025 (web_sessions count)\", \"orders placed in 2025\", \"visits per order\", \"subscription-linked orders % (orders with a matching invoice whose subscription_id is not null)\", \"active subscriptions (current count, status = active)\"], \"details\": \"Tenants: Brennquell Kaffee, Spice Route Box, Grind Collective, Honeycomb Larder, Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik (look up tenant_id by name in tenants; also pull tenants.industry). Visits = count of web_sessions where started_at is in 2025-01-01 to 2025-12-31. Orders = count of orders where placed_at is in 2025-01-01 to 2025-12-31. Visits per order = visits / orders, rounded to 2 decimals. Subscription-linked orders % = among those 2025 orders, the % that have a matching row in invoices (invoices.order_id = orders.id) where invoices.subscription_id is not null, rounded to 1 decimal. Active subscriptions = count of rows in subscriptions for that tenant_id with status = 'active' (current snapshot, no date filter). Order rows by visits_per_order ascending (most session-sparse first), tie-break by tenant name.\", \"builds_on\": [\"Storefront-to-order funnel for top merchants, Q4 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

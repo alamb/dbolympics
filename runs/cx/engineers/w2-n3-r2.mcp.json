@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Q4-vs-rest-of-year ticket load per agent, all qualifying merchants",
+    "--question",
+    "Is 'flat support staffing through a seasonal ticket surge' a pattern specific to the three hotspot merchants, or common across the book?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per tenant, among tenants with at least 20 tickets created in 2025\", \"columns_requested\": [\"merchant name\", \"tickets created, Q1-Q3 2025 (combined)\", \"avg distinct agents handling tickets, Q1-Q3 (average of the three quarterly counts)\", \"tickets per agent per quarter, Q1-Q3 average\", \"tickets created, Q4 2025\", \"distinct agents handling tickets, Q4\", \"tickets per agent, Q4\"], \"details\": \"Source: tickets joined to tenants. Window: tickets.created_at in 2025. Q1-Q3 = Jan-Sep 2025 combined; Q4 = Oct-Dec 2025. 'avg distinct agents, Q1-Q3' = average across the three individual quarters of count distinct assignee_agent_id (excluding null) per quarter, rounded to 1 decimal. 'tickets per agent per quarter, Q1-Q3 average' = (Q1-Q3 combined tickets \\u00f7 3) \\u00f7 avg distinct agents Q1-Q3, rounded to 1 decimal. 'tickets per agent, Q4' = Q4 tickets \\u00f7 distinct agents handling tickets in Q4 (excluding null), rounded to 1 decimal. Only include tenants with >=20 tickets created in 2025 (same threshold as the earlier staffing/channel/complexity reports, for a consistent peer set of 22). Order by 'tickets per agent, Q4' descending (worst Q4 crunch first), tie-break merchant name ascending. Expect at most 22 rows.\", \"builds_on\": [\"Support agent staffing vs ticket volume, by merchant\", \"Ticket load per agent over 2025, hotspot merchants vs a comparable peer\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

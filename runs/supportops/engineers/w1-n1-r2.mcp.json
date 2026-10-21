@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "SLA breach rates by agent group",
+    "--question",
+    "Which agent groups miss first-response and resolution SLA targets most often, and by how much when they do?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Omar\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per agent group (plus one row for tickets with no agent_group_id, labeled 'Unassigned queue')\", \"columns_requested\": [\"agent_group_name\", \"ticket_count_with_sla (tickets created in 2025 with a non-null sla_policy_id)\", \"first_response_breach_rate (% of those tickets with a sla_breaches row of breach_kind = first_response)\", \"resolution_breach_rate (% with a sla_breaches row of breach_kind = resolution)\", \"avg_minutes_over_first_response (avg minutes_over for first_response breaches)\", \"avg_minutes_over_resolution (avg minutes_over for resolution breaches)\", \"avg_first_response_minutes (actual first_response_at - created_at)\", \"avg_resolution_minutes (actual resolved_at - created_at)\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31 inclusive, restricted to tickets with sla_policy_id not null (tickets actually under an SLA). Source tables: tickets, sla_breaches, agent_groups. Join sla_breaches on ticket_id, split by breach_kind. Order by resolution_breach_rate descending, 'Unassigned queue' row last. Round rates to 1 decimal percent, minutes to whole numbers.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

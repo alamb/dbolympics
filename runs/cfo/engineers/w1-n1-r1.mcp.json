@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Tidewick Processing Fee Revenue by Month, 2025",
+    "--question",
+    "How much processing-fee revenue did Tidewick earn each month in 2025, and how is it trending?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one calendar month in 2025\", \"columns_requested\": [\"month (YYYY-MM)\", \"payout count\", \"gross volume (EUR)\", \"fee revenue (EUR) \\u2014 Tidewick's processing-fee take\", \"net paid out to merchants (EUR)\", \"fee rate (%) = fee revenue / gross volume\", \"fee revenue same month prior year (EUR)\"], \"details\": \"Source: payouts (gross_amount, fee_amount, net_amount, currency_code, paid_at/arrival_date). Include only payouts with a non-null paid_at and status indicating completed/paid settlement. Bucket by month of paid_at using calendar_days.month_label for 2025-01 through 2025-12. Convert each payout's amounts from its currency_code to EUR using exchange_rates (base_code='EUR', quote_code=payout currency, as_of = date(paid_at)); EUR amount = amount / rate. For the 'prior year' column, compute the same aggregation for the matching month in 2024. Round money to 2 decimals and the fee rate to 1 decimal place. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,55 @@
+{
+ "notes": "Before I write anything, I cross-checked the three night-3 order-level reports against each other by hand, and they don't reconcile: Report 1 says the three weak carriers blend to 66.8% within 5 days; Report 2's Albion baseline/collapse figures imply Albion alone blends to ~80.1%, which would force Landfall+Lowlands down to ~58.8% to match Report 1's total. But Report 3's \"all other carriers\" (82.0%, 18,088 orders) combined with Report 1's \"good eleven\" (93.4%, 13,696 orders) and Report 2's Albion (~80.1%, 2,564 orders) overshoots the reported total on its own -- it would require Landfall's own rate to be negative, which is impossible. So at least one of these three reports has an inconsistency (likely a scoping or computation difference across the three separate queries), and I'm not willing to hand Priya a \"ceiling\" number or a \"fix Lowlands' lanes\" recommendation until it's resolved -- this is exactly the kind of number I'd expect her or Daniel's/Tomasz's teams to poke at. Tonight (last night) I'm spending all 3 slots getting a single, internally-consistent source of truth in one query each, rather than stitching across reports: (1) one full-year carrier-level breakdown to anchor the ceiling calculation, (2) one carrier-group-by-quarter breakdown (Albion / Landfall / Lowlands / everyone else) to nail down the timing story cleanly, and (3) one Lowlands-by-lane breakdown done the same consistent way, so the lane-reassignment number is trustworthy. I'll reconcile against this week's earlier reports once these are back and flag any remaining discrepancy explicitly in the memo rather than paper over it.",
+ "requests": [
+  {
+   "title": "Order-level delivery reliability by carrier, full year 2025 (unified source)",
+   "question": "What is each carrier's order-level delivery reliability (orders placed to orders delivered, within 5 days), in one single consistent query I can use as the ground truth for a reliability ceiling calculation?",
+   "grain": "one row per carrier, full year 2025",
+   "columns": [
+    "carrier",
+    "orders_fully_delivered",
+    "avg_delivery_days (placed_at to delivered_at)",
+    "pct_within_5_days",
+    "share_of_orders_pct"
+   ],
+   "details": "Scope: orders with placed_at between 2025-01-01 and 2025-12-31, status='fulfilled', restricted to orders with exactly one row in fulfillments and that fulfillment linked to exactly one row in shipments, with that shipment's delivered_at not null (one carrier per order, cleanly attributed). delivery_days = DATEDIFF(day, orders.placed_at, shipments.delivered_at). Group by shipments.carrier. Please also show the grand total as a final row labeled 'ALL CARRIERS' (sum of orders_fully_delivered across all carriers, and the overall pct_within_5_days across that full population) so I can sanity-check that individual carrier rows sum correctly. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order by orders_fully_delivered descending, with the 'ALL CARRIERS' total row last. Expect about 15 rows (14 carriers + 1 total).",
+   "builds_on": [
+    "Order-level delivery reliability: weak carriers vs rest, 2025",
+    "Order-level delivery reliability: Lowlands Express by destination lane, 2025"
+   ]
+  },
+  {
+   "title": "Order-level delivery reliability by carrier group and quarter, 2025 (unified source)",
+   "question": "Did Albion Parcel's reliability break down specifically in Q4 while Landfall Freight and Lowlands Express stayed consistently weak all year, when measured in one single consistent query?",
+   "grain": "one row per carrier_group and calendar quarter of placed_at, 2025",
+   "columns": [
+    "carrier_group ('Albion Parcel', 'Landfall Freight', 'Lowlands Express', or 'All other carriers')",
+    "quarter (e.g. 2025-Q1)",
+    "orders_fully_delivered",
+    "avg_delivery_days",
+    "pct_within_5_days",
+    "share_of_quarter_orders_pct"
+   ],
+   "details": "Same scoping and single-carrier attribution rule as the full-year carrier report (orders placed_at in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null). Group by quarter of orders.placed_at (use calendar_days.quarter_num/quarter_start) and by carrier_group, where carrier_group = the shipment's carrier name if it is 'Albion Parcel', 'Landfall Freight', or 'Lowlands Express', else 'All other carriers' (all remaining carriers summed together). Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order by quarter ascending, then carrier_group in this fixed order: Albion Parcel, Landfall Freight, Lowlands Express, All other carriers. Expect 16 rows (4 quarters x 4 groups).",
+   "builds_on": [
+    "Order-level delivery reliability: Albion Parcel vs rest, baseline vs collapse, 2025"
+   ]
+  },
+  {
+   "title": "Order-level delivery reliability: Lowlands Express by destination lane, full year 2025 (unified re-check)",
+   "question": "Confirmed and reconciled: how much does Lowlands Express's order-level reliability differ between its home lanes (Netherlands/Belgium/France) and everywhere else, versus the rest of our carriers combined?",
+   "grain": "one row per lane_group: 'Lowlands core (NL/BE/FR)', 'Lowlands non-core (other countries)', 'All other carriers combined'",
+   "columns": [
+    "lane_group",
+    "orders_fully_delivered",
+    "avg_delivery_days",
+    "pct_within_5_days",
+    "share_of_orders_pct"
+   ],
+   "details": "Same scoping and single-carrier attribution rule as the other two reports in this set (orders placed_at in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null). For orders where shipments.carrier = 'Lowlands Express', split by destination country (orders.shipping_address_id -> addresses -> countries.name): 'Lowlands core (NL/BE/FR)' if country in ('Netherlands','Belgium','France'), else 'Lowlands non-core (other countries)'. All remaining orders (any other carrier) go to 'All other carriers combined'. Please also report the raw count of orders in each group and confirm the three groups sum to the same total order count as the full-year carrier report in this batch, so I can verify consistency across the two reports. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order: Lowlands core first, then Lowlands non-core, then All other carriers combined. Expect 3 rows.",
+   "builds_on": [
+    "Order-level delivery reliability: Lowlands Express by destination lane, 2025"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,114 @@
+=== Report 1: Currently open data subject requests: age and overdue detail (written by Grace) ===
+Engineer's note: Days overdue is NULL when due_at is not set, and 0 when due_at is in the future (not yet overdue); all date math uses the literal 2026-01-05 reporting date as requested.
+REPORT: Currently open data subject requests: age and overdue detail
+QUESTION: Which specific data subject requests are still open right now, how old are they, and which are overdue?
+request_public_id                    | tenant_name          | request_type | status      | received_at | due_at     | days_since_received | days_overdue | assigned_to    
+-------------------------------------+----------------------+--------------+-------------+-------------+------------+---------------------+--------------+----------------
+0bd4ff3e-19c5-44d7-9288-04b73f44dccb | Marrowby & Vane      | erasure      | rejected    | 2023-05-26  | 2023-06-25 |                 955 |          925 | Emma Kim       
+e5fcf055-b01f-479e-b995-34d0c5e3eb8c | Rue Lafayette Studio | erasure      | rejected    | 2024-07-09  | 2024-08-08 |                 545 |          515 | Aurélie Richard
+89c20516-5f50-4f0e-99c9-616fb24a9eaf | Cragsley Outfitters  | erasure      | rejected    | 2025-03-21  | 2025-04-20 |                 290 |          260 | William Martin 
+1ae91754-0856-42a6-947a-05725d6bc5e5 | Marrowby & Vane      | erasure      | received    | 2025-12-06  | 2026-01-05 |                  30 |            0 | Emma Kim       
+8a0c1a1b-3ad0-4720-be86-dcfaded836c7 | Studio Vrij          | access       | in_progress | 2025-12-29  | 2026-01-28 |                   7 |            0 | Yara Woźniak   
+(5 rows)
+
+=== Report 2: Marketing-email consent opt-in trend, full history (written by Viktor) ===
+Engineer's note: All 36 months (2023-01 through 2025-12) are included, platform-wide across all tenants, purpose fixed to marketing_email; effective status as of each month end is the latest consent_records row per user with occurred_at on or before that month's last day.
+REPORT: Marketing-email consent opt-in trend, full history
+QUESTION: Has the marketing-email opt-in rate meaningfully changed over the full 3-year history, and did the early decline continue or stabilize?
+month   | grants_recorded | withdrawals_recorded | expirations_recorded | users_with_any_consent | net_active_opt_ins | active_opt_in_rate_pct
+--------+-----------------+----------------------+----------------------+------------------------+--------------------+-----------------------
+2023-01 |              66 |                    4 |                    0 |                    713 |                709 |                   99.4
+2023-02 |              73 |                    2 |                    0 |                    786 |                780 |                   99.2
+2023-03 |              99 |                    9 |                    0 |                    885 |                870 |                   98.3
+2023-04 |              86 |                    0 |                    0 |                    971 |                956 |                   98.5
+2023-05 |              89 |                    5 |                    0 |                   1060 |               1040 |                   98.1
+2023-06 |              90 |                    9 |                    0 |                   1150 |               1121 |                   97.5
+2023-07 |              76 |                    7 |                    0 |                   1226 |               1190 |                   97.1
+2023-08 |              77 |                    8 |                    0 |                   1303 |               1259 |                   96.6
+2023-09 |              83 |                    6 |                    0 |                   1386 |               1336 |                   96.4
+2023-10 |              98 |                   13 |                    0 |                   1484 |               1421 |                   95.8
+2023-11 |             170 |                    7 |                    0 |                   1654 |               1584 |                   95.8
+2023-12 |             149 |                   17 |                    0 |                   1803 |               1716 |                   95.2
+2024-01 |              86 |                   12 |                    0 |                   1889 |               1790 |                   94.8
+2024-02 |              66 |                   10 |                    0 |                   1955 |               1846 |                   94.4
+2024-03 |              94 |                    7 |                    0 |                   2049 |               1933 |                   94.3
+2024-04 |              89 |                   10 |                    0 |                   2138 |               2012 |                   94.1
+2024-05 |             100 |                   11 |                    0 |                   2238 |               2101 |                   93.9
+2024-06 |              99 |                   14 |                    0 |                   2337 |               2186 |                   93.5
+2024-07 |              90 |                   19 |                    0 |                   2427 |               2257 |                   93.0
+2024-08 |             104 |                   16 |                    0 |                   2531 |               2345 |                   92.7
+2024-09 |              97 |                    9 |                    0 |                   2628 |               2433 |                   92.6
+2024-10 |             102 |                   14 |                    0 |                   2730 |               2521 |                   92.3
+2024-11 |             154 |                    9 |                    0 |                   2884 |               2666 |                   92.4
+2024-12 |             174 |                   18 |                    0 |                   3058 |               2822 |                   92.3
+2025-01 |              91 |                   15 |                    0 |                   3149 |               2898 |                   92.0
+2025-02 |              82 |                   12 |                    0 |                   3231 |               2968 |                   91.9
+2025-03 |             107 |                   17 |                    0 |                   3338 |               3058 |                   91.6
+2025-04 |             101 |                   13 |                    0 |                   3439 |               3146 |                   91.5
+2025-05 |             125 |                   14 |                    0 |                   3564 |               3257 |                   91.4
+2025-06 |              96 |                    9 |                    0 |                   3660 |               3344 |                   91.4
+2025-07 |             106 |                   28 |                    0 |                   3766 |               3422 |                   90.9
+2025-08 |              86 |                   26 |                    0 |                   3852 |               3482 |                   90.4
+2025-09 |             132 |                   17 |                    0 |                   3984 |               3597 |                   90.3
+2025-10 |             146 |                   17 |                    0 |                   4130 |               3726 |                   90.2
+2025-11 |             184 |                   13 |                    0 |                   4314 |               3897 |                   90.3
+2025-12 |             236 |                   14 |                    0 |                   4550 |               4119 |                   90.5
+(36 rows)
+
+=== Report 3: Retention policy inventory: what rules exist and where (written by Viktor) ===
+Engineer's note: Lists every configured retention policy (active and inactive), one row per policy, ordered by entity table then tenant name, as requested. Note: this report may exceed 50 printed rows if there are more than 50 policies across all tenants; the handbook caps printed rows at 50, so the printed report will note total row count if truncated.
+REPORT: Retention policy inventory: what rules exist and where
+QUESTION: What data-retention policies has Tidewick actually configured, for which entity tables, with what retention windows and expiry actions?
+tenant_name                   | policy_name         | entity_schema | entity_table | retention_days | action_on_expiry | is_active | last_run_at        
+------------------------------+---------------------+---------------+--------------+----------------+------------------+-----------+--------------------
+Alpine Loft                   | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Ampere & Co.                  | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Ampfeld Elektronik            | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Atelier Nouveau               | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Aurum & Ash                   | audit log retention | audit         | audit_log    |            730 | archive          | true      | NULL               
+Ballycorran Industrial Supply | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Barkley & Co.                 | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Basecamp Nord                 | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Bijoux Lune                   | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Brennquell Kaffee             | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Brewline Coffee               | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Brick & Bobbin                | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Buchstabe                     | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Bytefield                     | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Castell Fasteners             | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Chocolaterie Mireille         | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Cinder Peak Sports Co.        | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Circuit Harbor                | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Coastline Interiors           | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Copper Lane                   | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Courtside Collective          | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Cragsley Outfitters           | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Deskline Supplies             | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Dewdrop Studio                | audit log retention | audit         | audit_log    |            730 | archive          | true      | NULL               
+Driftwood Home                | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Feather & Fin                 | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Fell & Fjell                  | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Fennel & Flint                | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Fern & Fable                  | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Fjordline Wear                | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Folio & Fern                  | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Glasshouse Grooming           | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Goldkind                      | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Gratlinie Outdoor             | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Greyfriars Supply             | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Grind Collective              | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Halden Boots                  | audit log retention | audit         | audit_log    |            730 | archive          | true      | NULL               
+Hanse Industriebedarf         | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Harbour Swim                  | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Hautnah                       | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Haven Linen                   | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Honeycomb Larder              | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Hound Hamper                  | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Hus & Hem                     | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Inkwell & Quire               | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Juniper Apothecary            | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Kabelwerk                     | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Kaffeekontor Nord             | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Kayak Corner                  | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+Kestrel Denim                 | audit log retention | audit         | audit_log    |            730 | archive          | true      | 2025-12-31 03:00:00
+(720 rows, first 50 printed)

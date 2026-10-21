@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Shipping cost recovery: customer-paid shipping vs. carrier cost, by vertical, 2025",
+    "--question",
+    "Is shipping actually a net cost exposure, or does what we collect from customers for shipping roughly cover what we pay carriers?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Viktor\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per merchant vertical (tenants.industry)\", \"columns_requested\": [\"vertical\", \"order count (2025)\", \"shipping revenue collected from customers (EUR, sum of orders.shipping_total)\", \"shipping cost paid to carriers (EUR, sum of shipments.shipping_cost)\", \"shipping margin (EUR, revenue minus cost)\", \"shipping margin as % of shipping revenue collected\"], \"details\": \"Source: orders (status in 'paid','partially_fulfilled','fulfilled','refunded', placed_at in [2025-01-01,2026-01-01), shipping_total converted to EUR via exchange_rates as_of placed_at date) joined to tenants for industry, for the revenue side; shipments (shipped_at in the same 2025 window, shipping_cost converted to EUR as_of shipped_at date) joined via fulfillments->orders->tenant_id, for the cost side. Both sums rolled up to vertical. This is meant to settle whether 'shipping cost' from the cost-driver inventory represents a real net cost exposure (if margin is sharply negative) or is largely self-funded by what customers already pay for shipping (if margin is near zero or positive) \\u2014 directly feeding how we frame shipping in the unit-economics model. Group null/blank industry into 'Unspecified'. Order by shipping margin EUR ascending (worst recovery first), tie-break by vertical name ascending.\", \"builds_on\": [\"Cost-driver volume inventory by merchant, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

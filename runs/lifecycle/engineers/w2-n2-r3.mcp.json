@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "What distinguishes higher-revenue loyalty members from the rest",
+    "--question",
+    "Among enrolled loyalty members, do the ones who generate the most revenue use the programme differently - redeeming more or less, staying longer, returning less - giving a hint at what a healthier version of the programme would look like?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Ines\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per member performance group: 'top 25% by lifetime revenue' vs 'remaining 75%'\", \"columns_requested\": [\"performance_group\", \"member_count\", \"avg_lifetime_revenue_eur\", \"avg_lifetime_orders\", \"avg_tenure_days\", \"pct_who_ever_redeemed_points\", \"own_redemption_rate_pct\", \"refund_rate_pct\"], \"details\": \"Population: all users with a loyalty_accounts row who placed at least one order between 2023-01-01 and 2025-12-31. Rank these members by lifetime revenue (sum of grand_total on non-cancelled orders, converted to EUR via exchange_rates as_of placed_at) and split into the top 25% and the remaining 75% by that ranking. avg_lifetime_orders = average count of orders (any status) per member in the group. avg_tenure_days = average of (last order placed_at minus users.created_at) in days per member in the group. pct_who_ever_redeemed_points = share of members in the group with at least one 'burn'-direction loyalty_transactions row. own_redemption_rate_pct = for the group, (sum of redeemed points value in EUR) divided by (sum of earned points value in EUR), using the same points-to-EUR conversion method as the unit-economics report. refund_rate_pct = share of orders (any status) in the group with payments.amount_refunded greater than 0 OR an order_returns row. Order rows: 'top 25% by lifetime revenue' first.\", \"builds_on\": [\"Loyalty programme unit economics: points cost vs revenue per customer\", \"Loyalty points redemption rate by enrollment cohort age\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

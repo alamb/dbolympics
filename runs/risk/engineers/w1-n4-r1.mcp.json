@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Resolution timing of rejected DSARs via audit trail (retry)",
+    "--question",
+    "For the data subject requests that were rejected without a completed_at timestamp, can the audit/change-history trail tell us when the rejection decision was actually made, and was it within the due date?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Ines\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per rejected data_subject_requests record (expect 3 rows), no subject-identifying columns included\", \"columns_requested\": [\"request_type\", \"received_at\", \"due_at\", \"rejection_event_timestamp (occurred_at of the matching change_history or audit_log row)\", \"days_received_to_rejection_event\", \"within_due_at (rejection_event_timestamp <= due_at)\", \"source (change_history or audit_log or neither_found)\"], \"details\": \"Same question as last night's failed attempt. That query errored by casting after_data generically and picked up an unrelated product_variant row, because entity_id alone isn't unique across tables. Please this time: (1) in change_history, require BOTH entity_table = 'data_subject_requests' AND entity_id = data_subject_requests.id in the join condition before touching after_data at all; (2) only ever read after_data as JSON/text via a ->> or equivalent text accessor for the 'status' key \\u2014 never CAST it or any JSON column to a numeric type; (3) take the earliest matching change_history row per request where after_data->>'status' = 'rejected'; (4) if none exists, fall back to audit_log (same entity_table/entity_id equality filter) with action='update', taking the latest occurred_at, and mark source accordingly; (5) if neither source has a match, leave rejection_event_timestamp null and mark source='neither_found'. Do not include subject_email or subject_user_id. Order by received_at ascending.\", \"builds_on\": [\"Resolution timing of rejected DSARs via audit trail\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

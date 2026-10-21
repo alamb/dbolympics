@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Is users.deleted_at used anywhere on the platform?",
+    "--question",
+    "Is deleted_at a field that's actually populated for any users platform-wide, or is account deactivation simply not wired up at all (context for the erasure finding)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Grace\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per users.status value, platform-wide, full history\", \"columns_requested\": [\"status\", \"total users\", \"count with deleted_at not null\", \"pct with deleted_at set\", \"most recent deleted_at observed\"], \"details\": \"Source: users, platform-wide, no tenant filter, no date filter. This gives the baseline: if deleted_at is essentially never populated for anyone regardless of status (not just the 39 erasure subjects), that points to a platform-wide gap in how account deactivation is recorded rather than something specific to the DSAR erasure workflow. Order by total users descending.\", \"builds_on\": [\"Does completed erasure actually deactivate the core user record?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

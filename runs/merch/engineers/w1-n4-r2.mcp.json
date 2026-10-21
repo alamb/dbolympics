@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "High-Selling Products With Few or No Reviews",
+    "--question",
+    "Which products sell well but have surprisingly little customer review feedback, suggesting a listing or follow-up gap rather than a demand problem?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per product\", \"columns_requested\": [\"product_name\", \"merchant_name\", \"industry\", \"units_sold_last_12mo\", \"revenue_eur_last_12mo\", \"review_count\", \"avg_rating\"], \"details\": \"Tables: products, tenants, order_items joined to orders (placed_at between 2025-01-01 and 2025-12-31, status not cancelled) for units_sold_last_12mo and revenue_eur_last_12mo (converted via exchange_rates, base_code=EUR, quote_code=order currency_code, as_of the order's placed_at date), and product_reviews (is_approved = true, all-time) for review_count and avg_rating (avg_rating blank/null when review_count = 0). Filter to active, non-deleted products with units_sold_last_12mo >= 30 and review_count <= 2. Round revenue to whole EUR, avg_rating to 2 decimals. Order by units_sold_last_12mo descending, tie-break by revenue_eur_last_12mo descending; cap at 50 rows and note how many products in total met the filter.\", \"builds_on\": [\"Lowest-Rated Products Platform-Wide With Sufficient Review Volume\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

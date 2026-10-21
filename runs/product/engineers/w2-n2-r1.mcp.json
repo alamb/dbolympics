@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cart conversion by week at Cragsley Outfitters around the Nov 24 reminder-email outage",
+    "--question",
+    "Did cart conversion dip during the week cart-reminder emails broke (week of Nov 24, 2025), suggesting those reminders meaningfully nudge stalled carts toward purchase?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Ines\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per ISO week of cart creation, for Cragsley Outfitters only\", \"columns_requested\": [\"week start date\", \"carts created\", \"overall conversion pct (cart eventually became an order)\", \"pct converted within 1 hour\", \"pct converted in 1-7 days\"], \"details\": \"Tenant: Cragsley Outfitters only (look up tenant_id by name). Population: carts with created_at falling in ISO weeks starting 2025-10-06 through 2025-12-22 inclusive (12 weeks) \\u2014 stop at week-start 2025-12-22 so every included cart has a full 7-day window to resolve before the 2025-12-31 data cutoff (avoids right-censoring bias). overall_conversion_pct = % of that week's carts with status='converted' (no time limit on when). pct_converted_within_1_hour and pct_converted_in_1_7_days use resolution_time = converted_at - created_at (hours/days), same definitions as prior cart-timing reports. Order rows by week start ascending. The week of 2025-11-24 should be visually easy to compare against the surrounding weeks.\", \"builds_on\": [\"Cart bleed trend by month, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,57 @@
+=== Report 1: Order-level delivery reliability by carrier, full year 2025 (unified source) (written by Felix) ===
+Engineer's note: Scoped exactly as specified: orders placed in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null, delivery_days = date(delivered_at) - date(placed_at). share_of_orders_pct is each carrier's share of this clean population (denominator is the same filtered set, not all orders tenant-wide), and the ALL CARRIERS row re-aggregates the identical population so it sums correctly against the carrier rows.
+REPORT: Order-level delivery reliability by carrier, full year 2025 (unified source)
+QUESTION: What is each carrier's order-level delivery reliability (orders placed to orders delivered, within 5 days), in one single consistent query I can use as the ground truth for a reliability ceiling calculation?
+carrier              | orders_fully_delivered | avg_delivery_days | pct_within_5_days | share_of_orders_pct
+---------------------+------------------------+-------------------+-------------------+--------------------
+Strombogen Kurier    |                   2900 |              3.27 |              97.7 |                14.1
+Albion Parcel        |                   2564 |              4.72 |              82.9 |                12.5
+Lowlands Express     |                   2445 |              4.97 |              66.7 |                11.9
+Liberty Ground       |                   2196 |              3.13 |              96.5 |                10.7
+Alpenpaket           |                   1996 |              3.31 |              97.1 |                 9.7
+Landfall Freight     |                   1828 |              6.15 |              44.5 |                 8.9
+Trailhead Express    |                   1759 |              3.36 |              92.3 |                 8.6
+Skerrylane Logistics |                   1075 |              3.83 |              87.5 |                 5.2
+Kennet Freight       |                    876 |              3.60 |              91.8 |                 4.3
+Polder Post          |                    855 |              4.17 |              80.6 |                 4.2
+Regent Parcels       |                    759 |              3.55 |              92.4 |                 3.7
+Prairie Line Express |                    699 |              3.41 |              93.7 |                 3.4
+Liffey Couriers      |                    319 |              3.95 |              84.3 |                 1.6
+Gallia Colis         |                    262 |              4.18 |              81.7 |                 1.3
+ALL CARRIERS         |                  20533 |              4.02 |              84.5 |               100.0
+(15 rows)
+
+=== Report 2: Order-level delivery reliability by carrier group and quarter, 2025 (unified source) (written by Bea) ===
+Engineer's note: Built as a single self-contained query per the request: qualifying orders (2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null) are bucketed into the three named carrier groups vs. 'All other carriers' (summed), by calendar quarter of placed_at. share_of_quarter_orders_pct is each group's share of all qualifying orders in that quarter (the four group shares sum to 100%). If a named carrier has zero qualifying orders in some quarter, that row will be absent rather than printed as zero (did not observe this in a dry run since no data is read).
+REPORT: Order-level delivery reliability by carrier group and quarter, 2025 (unified source)
+QUESTION: Did Albion Parcel's reliability break down specifically in Q4 while Landfall Freight and Lowlands Express stayed consistently weak all year, when measured in one single consistent query?
+carrier_group      | quarter | orders_fully_delivered | avg_delivery_days | pct_within_5_days | share_of_quarter_orders_pct
+-------------------+---------+------------------------+-------------------+-------------------+----------------------------
+Albion Parcel      | 2025-Q1 |                    614 |              3.18 |              95.0 |                        13.4
+Landfall Freight   | 2025-Q1 |                    430 |              5.76 |              42.6 |                         9.4
+Lowlands Express   | 2025-Q1 |                    567 |              4.61 |              64.2 |                        12.4
+All other carriers | 2025-Q1 |                   2980 |              3.35 |              91.4 |                        64.9
+Albion Parcel      | 2025-Q2 |                    587 |              3.58 |              88.8 |                        13.1
+Landfall Freight   | 2025-Q2 |                    366 |              6.08 |              38.8 |                         8.2
+Lowlands Express   | 2025-Q2 |                    560 |              5.27 |              54.1 |                        12.5
+All other carriers | 2025-Q2 |                   2957 |              3.51 |              87.6 |                        66.2
+Albion Parcel      | 2025-Q3 |                    612 |              3.40 |              93.1 |                        13.2
+Landfall Freight   | 2025-Q3 |                    408 |              6.24 |              30.6 |                         8.8
+Lowlands Express   | 2025-Q3 |                    547 |              4.82 |              60.1 |                        11.8
+All other carriers | 2025-Q3 |                   3066 |              3.60 |              86.8 |                        66.2
+Albion Parcel      | 2025-Q4 |                    751 |              7.80 |              50.5 |                        11.0
+Landfall Freight   | 2025-Q4 |                    624 |              6.31 |              31.6 |                         9.1
+Lowlands Express   | 2025-Q4 |                    771 |              4.95 |              58.5 |                        11.3
+All other carriers | 2025-Q4 |                   4693 |              3.46 |              88.6 |                        68.6
+(16 rows)
+
+=== Report 3: Order-level delivery reliability: Lowlands Express by destination lane, full year 2025 (unified re-check) (written by Grace) ===
+Engineer's note: Applies the same eligibility rule (status='fulfilled', placed_at in 2025, exactly one fulfillment with exactly one shipment, delivered_at not null) as the other two reports in this set; the three lane_group totals sum to that same eligible-order population, so they should reconcile with the full-year carrier report's total.
+REPORT: Order-level delivery reliability: Lowlands Express by destination lane, full year 2025 (unified re-check)
+QUESTION: Confirmed and reconciled: how much does Lowlands Express's order-level reliability differ between its home lanes (Netherlands/Belgium/France) and everywhere else, versus the rest of our carriers combined?
+lane_group                          | orders_fully_delivered | avg_delivery_days | pct_within_5_days | share_of_orders_pct
+------------------------------------+------------------------+-------------------+-------------------+--------------------
+Lowlands core (NL/BE/FR)            |                   1581 |              4.34 |              72.9 |                 7.7
+Lowlands non-core (other countries) |                    864 |              5.96 |              34.1 |                 4.2
+All other carriers combined         |                  18088 |              3.92 |              82.0 |                88.1
+(3 rows)

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  p.currency_code,\n  COUNT(*) AS payout_count,\n  SUM(p.gross_amount) AS gross_volume_local_sum,\n  SUM(CASE WHEN p.currency_code = 'EUR' THEN p.gross_amount\n           WHEN er.rate IS NOT NULL THEN p.gross_amount / er.rate\n           ELSE 0 END) AS gross_volume_eur,\n  SUM(CASE WHEN p.currency_code = 'EUR' THEN p.fee_amount\n           WHEN er.rate IS NOT NULL THEN p.fee_amount / er.rate\n           ELSE 0 END) AS fee_revenue_eur,\n  COUNT(CASE WHEN p.currency_code = 'EUR' OR er.rate IS NOT NULL THEN 1 END) AS payout_count_with_matched_fx_rate,\n  COUNT(CASE WHEN p.currency_code <> 'EUR' AND er.rate IS NULL THEN 1 END) AS payout_count_missing_fx_rate,\n  ROUND(AVG(CASE WHEN p.currency_code = 'EUR' THEN 1.0\n                 WHEN er.rate IS NOT NULL THEN er.rate END), 6) AS avg_eur_rate_used\nFROM payouts p\nLEFT JOIN exchange_rates er\n  ON er.base_code = 'EUR'\n  AND er.quote_code = p.currency_code\n  AND er.as_of = CAST(p.paid_at AS date)\nWHERE p.status IN ('paid','completed')\n  AND p.paid_at >= DATE '2025-01-01'\n  AND p.paid_at < DATE '2026-01-01'\nGROUP BY p.currency_code\nORDER BY payout_count DESC, p.currency_code ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: currency_code, payout_count, gross_volume_local_sum, gross_volume_eur, fee_revenue_eur, payout_count_with_matched_fx_rate, payout_count_missing_fx_rate, avg_eur_rate_used"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  p.currency_code,\n  COUNT(*) AS payout_count,\n  SUM(p.gross_amount) AS gross_volume_local_sum,\n  SUM(CASE WHEN p.currency_code = 'EUR' THEN p.gross_amount\n           WHEN er.rate IS NOT NULL THEN p.gross_amount / er.rate\n           ELSE 0 END) AS gross_volume_eur,\n  SUM(CASE WHEN p.currency_code = 'EUR' THEN p.fee_amount\n           WHEN er.rate IS NOT NULL THEN p.fee_amount / er.rate\n           ELSE 0 END) AS fee_revenue_eur,\n  COUNT(CASE WHEN p.currency_code = 'EUR' OR er.rate IS NOT NULL THEN 1 END) AS payout_count_with_matched_fx_rate,\n  COUNT(CASE WHEN p.currency_code <> 'EUR' AND er.rate IS NULL THEN 1 END) AS payout_count_missing_fx_rate,\n  ROUND(AVG(CASE WHEN p.currency_code = 'EUR' THEN 1.0\n                 WHEN er.rate IS NOT NULL THEN er.rate END), 6) AS avg_eur_rate_used\nFROM payouts p\nLEFT JOIN exchange_rates er\n  ON er.base_code = 'EUR'\n  AND er.quote_code = p.currency_code\n  AND er.as_of = CAST(p.paid_at AS date)\nWHERE p.status IN ('paid','completed')\n  AND p.paid_at >= DATE '2025-01-01'\n  AND p.paid_at < DATE '2026-01-01'\nGROUP BY p.currency_code\nORDER BY payout_count DESC, p.currency_code ASC",
+  "note": "exchange_rates gives EUR->currency rates (base_code=EUR), so local-to-EUR conversion divides by the matched rate; EUR rows are treated as rate=1 and always counted as matched, per the request. gross_volume_eur/fee_revenue_eur sum only matched rows (unmatched rows contribute 0), so the gap vs. matched-rate coverage is directly visible via payout_count_missing_fx_rate.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per currency for 2025 paid/completed payouts, showing local vs. EUR-converted volume and fee revenue, plus matched/missing FX-rate counts and the average rate used — so Kofi can see exactly which currencies (if any) are losing payouts from the EUR total due to missing exchange rate rows."
+ }
+]

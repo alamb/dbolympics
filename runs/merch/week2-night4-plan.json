@@ -1,0 +1,53 @@
+{
+ "notes": "Night 3 findings: (1) Wiesgrund Wohnen's December reviews are scattered thinly across 10 different products (mostly 1 review each) rather than concentrated on one bad item — but nearly all of them are fragile homeware: vases, a frying pan, dinner plates, a casserole dish, glassware. That points away from 'systemic quality problem' and toward 'breakage in transit,' which wouldn't show up in on-time-delivery stats (an item can arrive on schedule but shattered). (2) The 3-year December history splits the two merchants clearly: Fennel & Flint shows a real, monotonic 3-year rating decline (4.43 → 3.71 → 3.14) alongside order growth (28 → 45 → 69), consistent with a merchant whose quality control hasn't kept pace with scale; Wiesgrund Wohnen's history is noisier and non-monotonic (4.00 → 3.57 → 3.50, with 2023 already at 28.6% 1-2-star on a tiny sample), more consistent with episodic bad luck than a trend. (3) The bundle-by-vertical split is suspiciously clean — exactly 100% of merchants in six verticals (Beauty, Books & Stationery, Consumer Electronics, Food & Coffee, Home & Living, Jewelry) have made at least one bundle, and exactly 0% in the other five (Apparel & Footwear, both B2B verticals, Pet Supplies, Sports & Outdoor) have made any. A binary split with no partial adoption anywhere is unusual for organic merchant behavior and makes me suspect this may reflect how bundles were seeded/templated per vertical rather than a genuine merchandising choice — I want to check the creation-date distribution before I tell Freya it's a real behavioral pattern. For this final night: (A) check whether bundle creation clusters in one burst (seeding) or spreads out over time (organic), (B) test the fragile-goods-breakage theory with actual return/damage data across Home & Living, and (C) run the same product-level breakdown for Fennel & Flint's December reviews that we did for Wiesgrund, to see if their decline is broad-based or concentrated.",
+ "requests": [
+  {
+   "title": "Bundle Creation Timing: Seeded in a Batch or Built Up Organically?",
+   "question": "Does the suspiciously clean 100%/0% bundle adoption split by vertical look like genuine, ongoing merchant activity, or does it look like a one-time data-seeding event?",
+   "grain": "one row per calendar month, 2023-01 through 2025-12",
+   "columns": [
+    "month",
+    "bundles_created_count",
+    "distinct_tenants_creating_a_bundle"
+   ],
+   "details": "Table: product_bundles. bundles_created_count = count of product_bundles rows with created_at in that month, across all tenants. distinct_tenants_creating_a_bundle = count of distinct tenant_id values among those rows. Build off the full calendar so every month appears even with zero bundles created. Order by month ascending. If the counts cluster heavily into one or two months, that points to a seeding/backfill event rather than organic, ongoing adoption.",
+   "builds_on": [
+    "Bundle Adoption Rate by Vertical"
+   ]
+  },
+  {
+   "title": "Return and Damage Rates for Fragile vs Other Home & Living Categories",
+   "question": "Do fragile homeware categories (cookware, glassware, tableware, decor) see more damage-related returns than other Home & Living categories, supporting the in-transit-breakage theory for the December dip?",
+   "grain": "one row per product category within tenants in the Home & Living industry",
+   "columns": [
+    "category_name",
+    "units_sold_last_12mo",
+    "return_count",
+    "return_rate_pct",
+    "pct_returns_damage_related"
+   ],
+   "details": "Scope to products whose tenant has industry = 'Home & Living'. units_sold_last_12mo = sum of order_items.quantity for that category's products from orders placed 2025-01-01 to 2025-12-31, status not cancelled. return_count = count of return_items (joined via order_items to the category's products) whose parent order_returns.requested_at falls in the same 2025-01-01 to 2025-12-31 window. return_rate_pct = return_count / units_sold_last_12mo * 100, rounded to 1 decimal. pct_returns_damage_related = share of those return_items whose order_returns.reason (case-insensitive) contains any of 'damage', 'broken', 'crack', 'chip', or 'shattered', rounded to 1 decimal. Order by return_rate_pct descending, tie-break by category_name.",
+   "builds_on": [
+    "Wiesgrund Wohnen December 2025: Product-Level Review Breakdown"
+   ]
+  },
+  {
+   "title": "Fennel & Flint December 2025: Product-Level Review Breakdown",
+   "question": "Is Fennel & Flint's declining rating trend concentrated in specific products, or spread broadly across its catalog, in parallel to what we found at Wiesgrund Wohnen?",
+   "grain": "one row per product, for Fennel & Flint only, among products with at least one approved review created in December 2025",
+   "columns": [
+    "product_name",
+    "category_name",
+    "review_count",
+    "avg_rating",
+    "pct_1_2_star",
+    "units_sold_last_12mo"
+   ],
+   "details": "Same definitions as the Wiesgrund Wohnen December 2025: Product-Level Review Breakdown report, filtered to tenant = Fennel & Flint instead: review_count/avg_rating/pct_1_2_star over approved product_reviews with created_at in December 2025, category_name from primary_category_id, units_sold_last_12mo from order_items/orders placed in 2025 with status not cancelled. Round avg_rating to 2 decimals, pct to 1 decimal. Order by review_count descending, tie-break by avg_rating ascending.",
+   "builds_on": [
+    "Wiesgrund Wohnen December 2025: Product-Level Review Breakdown",
+    "Fennel & Flint and Wiesgrund Wohnen: Historical December Pattern, 2023-2025"
+   ]
+  }
+ ]
+}

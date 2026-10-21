@@ -1,0 +1,53 @@
+{
+ "notes": "Night 3 closed out two big open questions. The refund-inclusive order-status report shows the original 22% fulfilled gap was almost entirely a status-filter artifact: captured payments that later moved to refunded or partially_refunded status were invisible to a captured-only filter. Once included, the real residual gap is 0.9% for fulfilled orders and 5.3% for refunded orders, and the cancelled bucket is fully explained by orders cancelled before any charge plus clean full-refund treatment (net collected is exactly 0) for the ones that were charged. That is good news: orders trace cleanly to money collected once refund statuses are included. The refund-timing report found something genuinely structural: 85.5% of refund dollars are processed after the original payment's payout already settled, 20.9 days later on average, and payout_items has a one-row-per-payment constraint, so there is no clean slot in any payout to tie that later clawback back to the original sale. That explains the earlier volatility and is a real traceability gap to flag to Tobias rather than something I can fully resolve with one more query. The customer-headcount report shows a huge range from 11,258 total accounts down to 411 with an active subscription, with status equals active nearly meaningless as an activity signal since it covers 99.3% of all accounts. Tonight I am closing out the two asks not yet touched, Tobias's B2B receivables question and Rosa's currency and timestamp distortion question, plus one more targeted test of whether gross minus fee equals net holds consistently across currencies, tested in native currency to avoid any FX conversion noise contaminating that specific check.",
+ "requests": [
+  {
+   "title": "B2B wholesaler receivables aging",
+   "question": "For our B2B wholesaler merchants, how much of their outstanding receivables is genuinely overdue versus just within normal net terms lag, so we can present that line accurately in the annual accounts?",
+   "grain": "receivables aging bucket",
+   "columns": [
+    "aging_bucket",
+    "invoice_count",
+    "amount_due_eur",
+    "pct_of_total_amount_due",
+    "avg_days_past_due",
+    "avg_net_terms_days"
+   ],
+   "details": "Scope: tenants whose industry indicates a B2B wholesale vertical such as industrial supplies or office equipment, matched via tenants.industry ILIKE patterns for industrial, office, wholesale, or B2B; if none match, instead return the distinct tenants.industry values present so the right filter can be identified. Population: invoices for those tenants with status in open or past_due and amount_due greater than 0, as of the snapshot date 2025-12-31. Bucket each invoice by days overdue, computed as 2025-12-31 minus invoices.due_at: Not yet due when due_at is null or due_at is on or after 2025-12-31, then 1 to 30 days overdue, 31 to 60 days overdue, 61 to 90 days overdue, and 90 plus days overdue. invoice_count is the count of invoices in the bucket. amount_due_eur is the sum of invoices.amount_due converted to EUR via exchange_rates using base_code EUR, quote_code equal to the invoice currency_code, and as_of 2025-12-31. pct_of_total_amount_due is amount_due_eur divided by the total amount_due_eur across all buckets, times 100, rounded to 1 decimal. avg_days_past_due is the average of 2025-12-31 minus due_at in days for the bucket, rounded to 1 decimal, with 0 for Not yet due. avg_net_terms_days is the average of billing_profiles.net_terms_days for the billing profile tied to each invoice, rounded to 1 decimal, for context on what normal lag looks like. Tables: tenants, invoices, billing_profiles, exchange_rates. Order by amount_due_eur descending.",
+   "builds_on": []
+  },
+  {
+   "title": "EUR exchange rate movement by currency, 2023 vs 2025",
+   "question": "How much have the currencies our merchants transact in moved against EUR over the three years of history, and is that movement large enough to distort revenue trends when we roll up multi-currency figures over time?",
+   "grain": "currency code",
+   "columns": [
+    "currency_code",
+    "tenant_count",
+    "orders_2025_total_eur",
+    "rate_eur_to_currency_2023_01_02",
+    "rate_eur_to_currency_2025_12_31",
+    "pct_rate_change"
+   ],
+   "details": "Scope: every currency_code that appears in orders.currency_code across the full history. tenant_count is the count of distinct tenants whose default_currency_code equals this currency. orders_2025_total_eur is the sum of orders.grand_total for non-cancelled orders placed in 2025, converted to EUR via exchange_rates using the order's currency_code and placed_at date. rate_eur_to_currency_2023_01_02 is exchange_rates.rate where base_code is EUR, quote_code is this currency, and as_of is 2023-01-02, falling back to the earliest available date in January 2023 if that exact date is missing. rate_eur_to_currency_2025_12_31 is the same lookup for as_of 2025-12-31. pct_rate_change is the late rate minus the early rate, divided by the early rate, times 100, rounded to 1 decimal. Tables: orders, tenants, exchange_rates. Order by orders_2025_total_eur descending.",
+   "builds_on": []
+  },
+  {
+   "title": "Payout net-formula drift by currency",
+   "question": "Does net equal gross minus fee cleanly for payouts in every currency, or do certain currencies show persistent drift in that basic arithmetic, separate from the refund timing issue already found?",
+   "grain": "currency code, using the payout's native currency with no FX conversion applied",
+   "columns": [
+    "currency_code",
+    "payout_count",
+    "gross_native_total",
+    "fee_native_total",
+    "net_native_total",
+    "net_check_diff_native",
+    "net_check_diff_pct"
+   ],
+   "details": "Scope: all payouts across the full history from 2023-01-01 to 2025-12-31, grouped by payouts.currency_code, deliberately kept in native currency with no EUR conversion so this checks pure arithmetic consistency without introducing any FX rounding or rate matching as a confound. payout_count is the count of payouts in that currency. gross_native_total is the sum of payouts.gross_amount. fee_native_total is the sum of payouts.fee_amount. net_native_total is the sum of payouts.net_amount. net_check_diff_native is net_native_total minus the quantity gross_native_total minus fee_native_total, which should be close to 0 if net equals gross minus fee holds. net_check_diff_pct is net_check_diff_native divided by gross_native_total, times 100, rounded to 2 decimals. Table: payouts. Order by payout_count descending.",
+   "builds_on": [
+    "Payout reconciliation to gross, fees and refunds"
+   ]
+  }
+ ]
+}

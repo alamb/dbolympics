@@ -1,0 +1,10 @@
+{
+  "config": "sf100-reference",
+  "date": "2026-10-15",
+  "engine": "Umbra v0.2-3407-gd51348fcf (bin/sql), debug.semana.exactarithmetic",
+  "format": "CSV, no header, rows in query order, NULL as an empty field; compare with dbo-bench check",
+  "loaded": "2025-Q4",
+  "queries": 409,
+  "scale_factor": "100",
+  "seed": 42
+}

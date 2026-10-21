@@ -1,0 +1,48 @@
+=== Report 1: 2025 Background Job Reliability by Month (written by Omar) ===
+Engineer's note: Platform-wide (all tenants) monthly rollup of job_runs for 2025; duration stats computed only over runs with both started_at and finished_at set.
+REPORT: 2025 Background Job Reliability by Month
+QUESTION: How did background job failure rates and run durations trend across 2025?
+month      | total_job_runs | failed_runs | failure_rate_pct | cancelled_runs | cancelled_rate_pct | avg_duration_seconds | p95_duration_seconds
+-----------+----------------+-------------+------------------+----------------+--------------------+----------------------+---------------------
+2025-10-01 |          15688 |           0 |              0.0 |              0 |                0.0 |                  4.8 |                 13.0
+2025-11-01 |          16487 |          20 |             0.12 |              0 |                0.0 |                  5.4 |                 18.0
+2025-12-01 |          17072 |           0 |              0.0 |              0 |                0.0 |                  5.0 |                 16.0
+(3 rows)
+
+=== Report 2: Merchants Hit Hardest by Job Failures, 2025 (written by Felix) ===
+Engineer's note: avg_duration_seconds_failed is computed from job_runs.duration_ms/1000 (the only duration field available), averaged over failed runs only; failed_runs_per_1000_orders is left blank (NULL) when a tenant has zero 2025 orders, per the request.
+REPORT: Merchants Hit Hardest by Job Failures, 2025
+QUESTION: Which merchants had the most background job failures in 2025, and does it track with order volume?
+tenant_name                   | total_job_runs_2025 | failed_runs_2025 | failure_rate_pct | avg_duration_seconds_failed | total_orders_2025 | failed_runs_per_1000_orders
+------------------------------+---------------------+------------------+------------------+-----------------------------+-------------------+----------------------------
+Ampfeld Elektronik            |                2397 |                2 |              0.1 |                         1.1 |               449 |                         4.5
+Brennquell Kaffee             |                2490 |                2 |              0.1 |                         2.3 |              4195 |                         0.5
+Cinder Peak Sports Co.        |                2485 |                2 |              0.1 |                         1.5 |               338 |                         5.9
+Cragsley Outfitters           |                2397 |                2 |              0.1 |                         2.8 |              3635 |                         0.6
+Fennel & Flint                |                2397 |                2 |              0.1 |                         1.2 |               389 |                         5.1
+Gratlinie Outdoor             |                2400 |                2 |              0.1 |                         1.2 |               232 |                         8.6
+Kibblewick                    |                2482 |                2 |              0.1 |                         2.3 |               672 |                         3.0
+Marrowby & Vane               |                2489 |                2 |              0.1 |                         1.9 |              1758 |                         1.1
+Petalcourt Beauty             |                2395 |                2 |              0.1 |                         1.0 |               706 |                         2.8
+Studio Vrij                   |                2489 |                2 |              0.1 |                         1.6 |               631 |                         3.2
+Alpine Loft                   |                 209 |                0 |              0.0 |                        NULL |                 2 |                         0.0
+Ampere & Co.                  |                 301 |                0 |              0.0 |                        NULL |                62 |                         0.0
+Atelier Nouveau               |                 300 |                0 |              0.0 |                        NULL |                64 |                         0.0
+Ballycorran Industrial Supply |                 209 |                0 |              0.0 |                        NULL |               344 |                         0.0
+Barkley & Co.                 |                 210 |                0 |              0.0 |                        NULL |                38 |                         0.0
+Basecamp Nord                 |                 299 |                0 |              0.0 |                        NULL |                43 |                         0.0
+Bijoux Lune                   |                 213 |                0 |              0.0 |                        NULL |                21 |                         0.0
+Brewline Coffee               |                 308 |                0 |              0.0 |                        NULL |                42 |                         0.0
+Brick & Bobbin                |                 209 |                0 |              0.0 |                        NULL |                27 |                         0.0
+Buchstabe                     |                 305 |                0 |              0.0 |                        NULL |                35 |                         0.0
+(20 rows)
+
+=== Report 3: 2025 Internal Health Check Reliability by Month (written by Grace) ===
+Engineer's note: Platform-wide monthly rollup of system_health_checks for 2025, one row per month with 12 rows total; avg_latency_ms averages over non-null latency_ms values only.
+REPORT: 2025 Internal Health Check Reliability by Month
+QUESTION: How did the rate of failed internal health checks trend across 2025?
+month   | total_checks | unhealthy_checks | unhealthy_rate_pct | avg_latency_ms | distinct_components_checked
+--------+--------------+------------------+--------------------+----------------+----------------------------
+2025-11 |        14832 |              362 |               2.44 |            373 |                           6
+2025-12 |       114948 |             1131 |               0.98 |            229 |                           6
+(2 rows)

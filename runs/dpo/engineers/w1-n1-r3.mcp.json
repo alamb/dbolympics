@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Compliance events: monthly volume and resolution time by severity",
+    "--question",
+    "How many compliance incidents are being flagged each month by severity, how quickly are they resolved, and is an unresolved backlog building up?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per calendar month of detection (compliance_events.occurred_at) and severity level\", \"columns_requested\": [\"month (YYYY-MM)\", \"severity\", \"incidents detected\", \"resolved count (resolved = true, as of 2026-01-05)\", \"unresolved count (resolved = false, as of 2026-01-05)\", \"median days to resolve (resolved_at - occurred_at, in days, for resolved=true rows only)\", \"unresolved and older than 30 days (resolved=false AND 2026-01-05 - occurred_at > 30 days)\"], \"details\": \"Source: compliance_events. Group by date_trunc('month', occurred_at) (or join calendar_days) and by the severity column as-is (do not assume specific severity strings \\u2014 use whatever distinct values are present). Use the literal date 2026-01-05 as 'today' for all age/backlog calculations (never CURRENT_DATE/now()). Span 2023-01 through 2025-12. Platform-wide, all tenants. Order by month ascending, then severity.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

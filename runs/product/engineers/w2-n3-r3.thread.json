@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t0.name AS tenant_name,\n  COALESCE(t1.single_count, 0) AS single_item_cart_count,\n  COALESCE(t2.single_conv_pct, 0) AS single_item_conversion_pct,\n  COALESCE(t3.multi_count, 0) AS multi_item_cart_count,\n  COALESCE(t4.multi_conv_pct, 0) AS multi_item_conversion_pct,\n  COALESCE(t4.multi_conv_pct, 0) - COALESCE(t2.single_conv_pct, 0) AS gap_in_points\nFROM tenants t0\nLEFT JOIN (\n  SELECT c0.tenant_id AS tenant_id, COUNT(*) AS single_count\n  FROM carts c0\n  WHERE c0.item_count = 1\n    AND c0.created_at >= DATE '2025-01-01'\n    AND c0.created_at < DATE '2026-01-01'\n  GROUP BY c0.tenant_id\n) t1 ON t1.tenant_id = t0.id\nLEFT JOIN (\n  SELECT c1.tenant_id AS tenant_id,\n    ROUND(100.0 * SUM(CASE WHEN c1.status = 'converted' THEN 1 ELSE 0 END) / COUNT(*), 1) AS single_conv_pct\n  FROM carts c1\n  WHERE c1.item_count = 1\n    AND c1.created_at >= DATE '2025-01-01'\n    AND c1.created_at < DATE '2026-01-01'\n  GROUP BY c1.tenant_id\n) t2 ON t2.tenant_id = t0.id\nLEFT JOIN (\n  SELECT c2.tenant_id AS tenant_id, COUNT(*) AS multi_count\n  FROM carts c2\n  WHERE c2.item_count >= 2\n    AND c2.created_at >= DATE '2025-01-01'\n    AND c2.created_at < DATE '2026-01-01'\n  GROUP BY c2.tenant_id\n) t3 ON t3.tenant_id = t0.id\nLEFT JOIN (\n  SELECT c3.tenant_id AS tenant_id,\n    ROUND(100.0 * SUM(CASE WHEN c3.status = 'converted' THEN 1 ELSE 0 END) / COUNT(*), 1) AS multi_conv_pct\n  FROM carts c3\n  WHERE c3.item_count >= 2\n    AND c3.created_at >= DATE '2025-01-01'\n    AND c3.created_at < DATE '2026-01-01'\n  GROUP BY c3.tenant_id\n) t4 ON t4.tenant_id = t0.id\nWHERE t0.name IN ('Kibblewick', 'Studio Vrij', 'Petalcourt Beauty', 'Marrowby & Vane', 'Cragsley Outfitters', 'Ampfeld Elektronik')\nORDER BY gap_in_points DESC, tenant_name ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, single_item_cart_count, single_item_conversion_pct, multi_item_cart_count, multi_item_conversion_pct, gap_in_points"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t0.name AS tenant_name,\n  COALESCE(t1.single_count, 0) AS single_item_cart_count,\n  COALESCE(t2.single_conv_pct, 0) AS single_item_conversion_pct,\n  COALESCE(t3.multi_count, 0) AS multi_item_cart_count,\n  COALESCE(t4.multi_conv_pct, 0) AS multi_item_conversion_pct,\n  COALESCE(t4.multi_conv_pct, 0) - COALESCE(t2.single_conv_pct, 0) AS gap_in_points\nFROM tenants t0\nLEFT JOIN (\n  SELECT c0.tenant_id AS tenant_id, COUNT(*) AS single_count\n  FROM carts c0\n  WHERE c0.item_count = 1\n    AND c0.created_at >= DATE '2025-01-01'\n    AND c0.created_at < DATE '2026-01-01'\n  GROUP BY c0.tenant_id\n) t1 ON t1.tenant_id = t0.id\nLEFT JOIN (\n  SELECT c1.tenant_id AS tenant_id,\n    ROUND(100.0 * SUM(CASE WHEN c1.status = 'converted' THEN 1 ELSE 0 END) / COUNT(*), 1) AS single_conv_pct\n  FROM carts c1\n  WHERE c1.item_count = 1\n    AND c1.created_at >= DATE '2025-01-01'\n    AND c1.created_at < DATE '2026-01-01'\n  GROUP BY c1.tenant_id\n) t2 ON t2.tenant_id = t0.id\nLEFT JOIN (\n  SELECT c2.tenant_id AS tenant_id, COUNT(*) AS multi_count\n  FROM carts c2\n  WHERE c2.item_count >= 2\n    AND c2.created_at >= DATE '2025-01-01'\n    AND c2.created_at < DATE '2026-01-01'\n  GROUP BY c2.tenant_id\n) t3 ON t3.tenant_id = t0.id\nLEFT JOIN (\n  SELECT c3.tenant_id AS tenant_id,\n    ROUND(100.0 * SUM(CASE WHEN c3.status = 'converted' THEN 1 ELSE 0 END) / COUNT(*), 1) AS multi_conv_pct\n  FROM carts c3\n  WHERE c3.item_count >= 2\n    AND c3.created_at >= DATE '2025-01-01'\n    AND c3.created_at < DATE '2026-01-01'\n  GROUP BY c3.tenant_id\n) t4 ON t4.tenant_id = t0.id\nWHERE t0.name IN ('Kibblewick', 'Studio Vrij', 'Petalcourt Beauty', 'Marrowby & Vane', 'Cragsley Outfitters', 'Ampfeld Elektronik')\nORDER BY gap_in_points DESC, tenant_name ASC",
+  "note": "Conversion pct is computed directly from carts.status = 'converted' per item-count group, as specified; carts with item_count = 0 (if any exist) are excluded from both groups since they match neither = 1 nor >= 2.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per tenant (the six named retail merchants) with single-item and multi-item cart counts, their conversion percentages, and the gap in points, ordered by gap descending — exactly as requested."
+ }
+]

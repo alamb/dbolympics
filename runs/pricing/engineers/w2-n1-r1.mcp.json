@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Is the 'active' 18% of orphan subscription-delivery orders a categorization artifact or a real gap?",
+    "--question",
+    "For the ~291 orphan free-delivery orders where the customer's most-recent subscription record shows status 'active', did that order actually fall in a gap between an earlier (now-superseded) subscription and the current one, which would mean it belongs with the confirmed 'canceled' leakage group rather than being a separate unexplained case?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Bea\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per explanation category\", \"columns_requested\": [\"category: 'order preceded customer's first-ever subscription' / 'order fell between two subscription stints (an older subscription record exists with started_at <= order date)' / 'unexplained - active subscription dates should already have overlapped'\", \"order count\", \"% of the 291 active-bucket orphan orders\", \"distinct customers\", \"total discount amount (EUR)\"], \"details\": \"Source: start from the exact orphan-order population used in last week's reports (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at in 2025, status != 'cancelled', no overlapping subscription with status in trialing/active/past_due for that user+tenant), restricted to the subset whose most-recent subscription (by started_at) has status = 'active' (the 291-order/60-customer group from last week, ~\\u20ac11,746). For each such order, check: (a) does the customer have any OTHER subscription row for that tenant (any status) with started_at <= order.placed_at? If yes and that older subscription's own coverage (started_at to ended_at, or started_at to current date if still open) does not include placed_at, classify as 'fell between two subscription stints'. If no such older row exists at all, classify as 'preceded first-ever subscription'. Otherwise ('unexplained') flag for manual review. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by order count descending. Print all categories (expect 3 rows).\", \"builds_on\": [\"Subscription status distribution behind orphan comped-delivery orders\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

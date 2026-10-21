@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant Catalog Profile",
+    "--question",
+    "How large and content-rich is each merchant's catalog, and how does that relate to their recent sales volume?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant_name\", \"industry (vertical)\", \"active_product_count\", \"active_variant_count\", \"avg_variants_per_product\", \"pct_products_with_primary_image\", \"pct_products_with_description\", \"avg_reviews_per_product\", \"avg_rating\", \"orders_last_12mo\", \"revenue_eur_last_12mo\"], \"details\": \"Tables: tenants, products, product_variants, product_media, product_reviews, orders, exchange_rates. Scope to non-deleted tenants. Only count active, non-deleted products and variants for the catalog columns (products.status = active, product_variants.is_active = true). pct_products_with_primary_image = share of active products with a product_media row where is_primary = true. pct_products_with_description = share of active products with non-null, non-empty description. avg_reviews_per_product and avg_rating use approved product_reviews only. Time window for sales columns: orders.placed_at between 2025-01-01 and 2025-12-31 inclusive, status not cancelled. revenue_eur_last_12mo = sum of grand_total converted to EUR via exchange_rates (base_code EUR, quote_code = order currency_code, rate as_of the order's placed_at date, amount_eur = grand_total divided by rate). Round avg_rating and avg_variants_per_product to 2 decimals, percentages to 1 decimal, revenue to whole EUR. Order by revenue_eur_last_12mo descending, tie-break by merchant_name. Expect around 120 tenants total; print the top 50 by revenue and note the full row count returned.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

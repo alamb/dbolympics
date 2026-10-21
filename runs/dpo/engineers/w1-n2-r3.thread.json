@@ -1,0 +1,18 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t.name AS tenant_name,\n  rp.name AS policy_name,\n  rp.entity_schema,\n  rp.entity_table,\n  rp.retention_days,\n  rp.action_on_expiry,\n  rp.is_active,\n  rp.last_run_at\nFROM retention_policies rp\nJOIN tenants t ON t.id = rp.tenant_id\nORDER BY rp.entity_table, t.name, rp.id",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, policy_name, entity_schema, entity_table, retention_days, action_on_expiry, is_active, last_run_at"
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t.name AS tenant_name,\n  rp.name AS policy_name,\n  rp.entity_schema,\n  rp.entity_table,\n  rp.retention_days,\n  rp.action_on_expiry,\n  rp.is_active,\n  rp.last_run_at\nFROM retention_policies rp\nJOIN tenants t ON t.id = rp.tenant_id\nORDER BY rp.entity_table, t.name, rp.id",
+  "note": "Lists every configured retention policy (active and inactive), one row per policy, ordered by entity table then tenant name, as requested. Note: this report may exceed 50 printed rows if there are more than 50 policies across all tenants; the handbook caps printed rows at 50, so the printed report will note total row count if truncated.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The query lists every configured retention policy (active and inactive) joined to tenant names, at one row per policy, ordered by entity_table then tenant name as requested."
+ }
+]

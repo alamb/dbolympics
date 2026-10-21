@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant profile snapshot: industry, size, and order volume",
+    "--question",
+    "Before calling 'respond faster' the headline fix, do the three hotspot merchants simply differ in business profile (vertical, size, order volume) in ways that would naturally explain more support load, independent of staffing or speed?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per tenant, among tenants with at least 20 tickets created in 2025 (same qualifying set as the staffing/channel/complexity reports)\", \"columns_requested\": [\"merchant name\", \"industry (tenants.industry)\", \"employee count (tenants.employee_count)\", \"orders placed, 2025\", \"avg order value 2025 (EUR equivalent)\"], \"details\": \"Source: tenants (industry, employee_count) joined to orders (count and grand_total for 2025). Window: orders.placed_at in 2025-01-01 through 2025-12-31. Convert each order's grand_total to EUR using exchange_rates (base_code='EUR', quote_code=orders.currency_code, matching as_of to the order's placed_at date, using the prior business day's rate for weekends per house convention) before averaging; round avg order value to 2 decimals. Only include the same 22 tenants with >=20 tickets created in 2025 used in prior reports this week. Order by orders placed descending, tie-break merchant name ascending.\", \"builds_on\": [\"Support agent staffing vs ticket volume, by merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "\nSELECT\n  t0.month_label AS month,\n  COALESCE(t1.orders_count, 0) AS orders_count,\n  COALESCE(t2.review_count, 0) AS review_count,\n  ROUND(\n    CASE WHEN COALESCE(t1.orders_count, 0) = 0 THEN 0\n    ELSE COALESCE(t2.review_count, 0)::decimal / t1.orders_count * 100\n    END, 2\n  ) AS reviews_per_100_orders,\n  ROUND(COALESCE(t2.avg_rating, 0), 2) AS avg_rating\nFROM (\n  SELECT DISTINCT month_label, month_start\n  FROM calendar_days\n  WHERE calendar_date >= DATE '2023-01-01' AND calendar_date <= DATE '2025-12-31'\n) t0\nLEFT JOIN (\n  SELECT\n    DATE_TRUNC('month', o.placed_at)::date AS month_start,\n    COUNT(*) AS orders_count\n  FROM orders o\n  WHERE o.placed_at IS NOT NULL\n    AND o.status NOT IN ('cancelled')\n  GROUP BY DATE_TRUNC('month', o.placed_at)::date\n) t1 ON t1.month_start = t0.month_start\nLEFT JOIN (\n  SELECT\n    DATE_TRUNC('month', r.created_at)::date AS month_start,\n    COUNT(*) AS review_count,\n    AVG(r.rating) AS avg_rating\n  FROM product_reviews r\n  WHERE r.is_approved = true\n  GROUP BY DATE_TRUNC('month', r.created_at)::date\n) t2 ON t2.month_start = t0.month_start\nORDER BY t0.month_start ASC\n",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, orders_count, review_count, reviews_per_100_orders, avg_rating"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "\nSELECT\n  t0.month_label AS month,\n  COALESCE(t1.orders_count, 0) AS orders_count,\n  COALESCE(t2.review_count, 0) AS review_count,\n  ROUND(\n    CASE WHEN COALESCE(t1.orders_count, 0) = 0 THEN 0\n    ELSE COALESCE(t2.review_count, 0)::decimal / t1.orders_count * 100\n    END, 2\n  ) AS reviews_per_100_orders,\n  ROUND(COALESCE(t2.avg_rating, 0), 2) AS avg_rating\nFROM (\n  SELECT DISTINCT month_label, month_start\n  FROM calendar_days\n  WHERE calendar_date >= DATE '2023-01-01' AND calendar_date <= DATE '2025-12-31'\n) t0\nLEFT JOIN (\n  SELECT\n    DATE_TRUNC('month', o.placed_at)::date AS month_start,\n    COUNT(*) AS orders_count\n  FROM orders o\n  WHERE o.placed_at IS NOT NULL\n    AND o.status NOT IN ('cancelled')\n  GROUP BY DATE_TRUNC('month', o.placed_at)::date\n) t1 ON t1.month_start = t0.month_start\nLEFT JOIN (\n  SELECT\n    DATE_TRUNC('month', r.created_at)::date AS month_start,\n    COUNT(*) AS review_count,\n    AVG(r.rating) AS avg_rating\n  FROM product_reviews r\n  WHERE r.is_approved = true\n  GROUP BY DATE_TRUNC('month', r.created_at)::date\n) t2 ON t2.month_start = t0.month_start\nORDER BY t0.month_start ASC\n",
+  "note": "Built off calendar_days so every month 2023-01..2025-12 appears even with zero orders/reviews; reviews_per_100_orders is 0 when orders_count is 0 to avoid divide-by-zero, and avg_rating is 0 (not null) for months with no approved reviews.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report builds the full 36-month calendar (2023-01 through 2025-12) and left-joins order counts (all tenants, `placed_at` in month, status ≠ cancelled) and approved review counts/ratings (same definition as the night-1 report), computing reviews-per-100-orders and average rating per month so Merchandising can see whether review engagement is outpacing, tracking, or lagging order growth."
+ }
+]

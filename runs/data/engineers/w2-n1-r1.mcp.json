@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-to-payment match rate by order age",
+    "--question",
+    "At the portfolio level, how much of the gap between order value and money collected is just timing (recent orders not yet settled) versus a permanent shortfall that age doesn't fix?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Bea\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"order age bucket, measured as (2025-12-31 minus orders.placed_at) in days\", \"columns_requested\": [\"age_bucket\", \"order_count\", \"orders_grand_total_eur\", \"matched_money_collected_eur\", \"match_rate_pct\"], \"details\": \"Population: all orders with status not 'cancelled' and placed_at between 2023-01-01 and 2025-12-31. Bucket each order by its age in days as of 2025-12-31: '0-3 days', '4-7 days', '8-14 days', '15-30 days', '31-60 days', '61-90 days', '91-180 days', '181-365 days', '366+ days'. order_count = count of orders in the bucket. orders_grand_total_eur = sum of orders.grand_total converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=placed_at date). matched_money_collected_eur = sum of linked payments.amount (payments.order_id = orders.id) where payments.status in ('captured','refunded','partially_refunded'), converted to EUR via payments.currency_code and captured_at date (an order's full matched total if it has multiple such payments). match_rate_pct = matched_money_collected_eur / orders_grand_total_eur * 100, rounded to 1 decimal. Tables: orders, payments, exchange_rates. Order by age_bucket from youngest to oldest.\", \"builds_on\": [\"Order-to-payment gap re-measured with refund-inclusive payment status\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

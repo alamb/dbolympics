@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-level delivery reliability by carrier, full year 2025 (unified source)",
+    "--question",
+    "What is each carrier's order-level delivery reliability (orders placed to orders delivered, within 5 days), in one single consistent query I can use as the ground truth for a reliability ceiling calculation?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per carrier, full year 2025\", \"columns_requested\": [\"carrier\", \"orders_fully_delivered\", \"avg_delivery_days (placed_at to delivered_at)\", \"pct_within_5_days\", \"share_of_orders_pct\"], \"details\": \"Scope: orders with placed_at between 2025-01-01 and 2025-12-31, status='fulfilled', restricted to orders with exactly one row in fulfillments and that fulfillment linked to exactly one row in shipments, with that shipment's delivered_at not null (one carrier per order, cleanly attributed). delivery_days = DATEDIFF(day, orders.placed_at, shipments.delivered_at). Group by shipments.carrier. Please also show the grand total as a final row labeled 'ALL CARRIERS' (sum of orders_fully_delivered across all carriers, and the overall pct_within_5_days across that full population) so I can sanity-check that individual carrier rows sum correctly. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order by orders_fully_delivered descending, with the 'ALL CARRIERS' total row last. Expect about 15 rows (14 carriers + 1 total).\", \"builds_on\": [\"Order-level delivery reliability: weak carriers vs rest, 2025\", \"Order-level delivery reliability: Lowlands Express by destination lane, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

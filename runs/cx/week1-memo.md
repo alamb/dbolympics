@@ -1,0 +1,19 @@
+**To:** Daniel Achterberg, VP Customer Experience
+**From:** Mateo Ruiz
+**Re:** Shopper experience — week 1 baseline
+
+Daniel — here's what the data shows on #1–#3, plus a first look at #4 and #5.
+
+**1. Response/resolution speed — stable in "normal" months, with two distinct spikes.** Platform-wide, typical months run ~10–15h to first response, ~18–28h to resolution, ~30% SLA breach (*monthly trend*). Two anomalies stand out: a **Nov/Dec spike every year** (2023: 41h/73h; 2024: 45h/91h; 2025: 40h/60h, response/resolution), and a **one-off May–Jun 2025 spike** (26–45h response, 53–87h resolution) with no equivalent in 2023/2024. I'm confident the Nov/Dec pattern is real seasonality, not noise — it recurs 3 years running, shipment volume jumps ~1,600→2,600+/month, and the share of deliveries taking >7 days rises from ~4% to 7–12% platform-wide in Nov/Dec 2025 (*delivery performance report*). The May/Jun spike traced to **one merchant, Studio Vrij**: 86 tickets vs. an expected ~16 (5.4x normal), 84% delivery-tagged (*spike-by-merchant report*), confirmed independently by real shipment data — their placed-to-delivered time hit 9.3 days avg with 70% of shipments over 7 days in May alone, vs. 0–20% other months (platform stayed ~4–5%). This was a single-merchant fulfillment breakdown, not a platform problem.
+
+**2. Where the load comes from.** Delivery/"where-is-my-order" tickets are now **65.5% of tagged tickets** (last 6 months), up from 53.7% the prior 6 (*tag-mix report*), while complaint/return/product-question shrink in share. Combined with the Nov/Dec capacity evidence above, this points to one fixable platform-level theme: **holiday fulfillment capacity drives WISMO tickets.** Response speed itself also varies enormously by merchant — 2025 SLA breach rates range from 9.5% (Gratlinie) to 61%+ (Cragsley, Marrowby) — so some of the "we're slow" feeling is concentrated in a handful of merchants, not universal.
+
+**3. Returns/refunds — not currently a pain point.** Time-to-refund is consistently ~7.5–8.5 days and rejection rates 0–13.5%, with no real merchant or time trend (*returns trend + by-merchant reports*), even for Studio Vrij. Return rate varies mostly by vertical (apparel 30–44% vs. food/beauty <15%), which looks structural, not a service failure.
+
+**4. Satisfaction — the clearest finding of the week.** CSAT by resolution-time bucket is a clean, strong dose-response: **avg score falls from 4.38 (<4h) → 3.82 (4–24h) → 2.72 (1–3 days) → 1.70 (3–7 days) → 1.72 (>7 days)**, with dissatisfaction rising from 0.7% to 84% (*resolution-bucket report*). CSAT's worst months line up exactly with the spikes above. Weakest merchants (Kibblewick 2.82, Marrowby 2.86, Cragsley 3.05) are the same ones with high SLA breach rates — speed and satisfaction move together.
+
+**5. Reviews (first look).** Product ratings are high and stable (~4.0–4.2 avg, ~65–73% 4–5 star) and barely echo the support dips — a small December softening each year, nothing like CSAT's swings. Reviews seem to track product quality more than service experience — a likely blind spot if we rely on them alone.
+
+**Confidence/caveats:** High confidence in the speed→CSAT link and the Studio Vrij root cause (two independent data sources agree). Lower confidence in exact Nov/Dec capacity mechanics (only 2025 has shipment-level detail) and in per-merchant CSAT rankings, since several merchants have under 20 responses. Return rate is an approximation (same-month orders vs. returns, not true cohorts). Recent months (Nov/Dec 2025) understate true response/resolution/delivery times due to right-censoring.
+
+**Next:** confirm Studio Vrij has recovered; quantify Nov/Dec staffing vs. volume to size the capacity fix; dig into why Cragsley/Marrowby are structurally slow (agent staffing, channel mix).

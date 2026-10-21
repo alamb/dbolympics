@@ -1,0 +1,63 @@
+{
+ "notes": "Two of last night's reports came back collapsed to a single row - which is itself informative, not just noise. Report 1 found zero member orders with a matched points-redemption transaction, so the 'reward-driven returns' hypothesis couldn't be tested via order_id linkage (either redemptions don't record order_id, or genuinely none exist in this join); I'm treating that specific mechanism as unconfirmed rather than ruled out, and won't push further on it given limited slots. Report 3 found literally zero loyalty-enrolled customers among B2B wholesaler tenants - before reporting 'the programme isn't offered/adopted in B2B' to Tobias as fact, I want to confirm it's a real pattern (the program simply isn't live there) rather than an artifact of the engineer's fuzzy industry-name matching. Report 2 confirms loyalty penetration plateaued at roughly 15 to 16 percent of customers for two years and referral penetration is still under 1 percent after three years - participation is small and flat, capping any upside regardless of behavior quality. For this final night I'm spending slots on: (1) a clean vertical-level view of where loyalty/referral even exist and are adopted - this resolves the B2B ambiguity and shows whether participation is concentrated in a few verticals; (2) checking whether the member refund-rate penalty is a generalizable pattern or an artifact of one or two verticals' return-prone mix, since that materially changes how we would advise fixing it; (3) a single consolidated unit-economics table (points cost versus revenue, per customer, member versus non-member) to give Tobias and Aisha the bottom-line ROI number the memo needs. This closes out the must-haves (1, 2, 3) with a robustness check and gives a clean answer on 3, 4 and 5 enough to write a defensible Friday memo.",
+ "requests": [
+  {
+   "title": "Loyalty and referral programme reach by merchant vertical",
+   "question": "In which merchant verticals does the loyalty/referral programme even exist and get adopted - is B2B wholesale genuinely excluded, and is participation concentrated in a few verticals?",
+   "grain": "one row per tenant industry/vertical (tenants.industry)",
+   "columns": [
+    "industry",
+    "tenant_count",
+    "tenants_with_any_loyalty_program",
+    "active_customers",
+    "loyalty_members",
+    "pct_customers_enrolled",
+    "referred_customers",
+    "pct_customers_referred"
+   ],
+   "details": "Group all tenants by tenants.industry. tenant_count = distinct tenants in that industry. tenants_with_any_loyalty_program = count of distinct tenants in that industry that have at least one row in loyalty_programs (any status, any date). active_customers = distinct users (is_staff = false) belonging to tenants in that industry who placed at least one order between 2023-01-01 and 2025-12-31. loyalty_members = distinct users among those active customers who have a loyalty_accounts row. pct_customers_enrolled = loyalty_members divided by active_customers, as a percentage. referred_customers = distinct users among those active customers who appear as referred_user_id in referral_redemptions. pct_customers_referred = referred_customers divided by active_customers, as a percentage. Order by active_customers descending, then industry.",
+   "builds_on": [
+    "B2B invoice payment behavior: loyalty-enrolled vs not",
+    "Loyalty and referral programme participation rate over time"
+   ]
+  },
+  {
+   "title": "Loyalty member refund rate by merchant vertical",
+   "question": "Is the elevated refund rate among loyalty members a broad pattern across verticals, or is it concentrated in one or two verticals that happen to have naturally high returns, such as apparel?",
+   "grain": "one row per combination of tenant industry and loyalty segment (member vs non-member)",
+   "columns": [
+    "industry",
+    "segment",
+    "customer_count",
+    "avg_lifetime_orders",
+    "avg_order_value_eur",
+    "refund_rate_pct"
+   ],
+   "details": "Same population and definitions as the earlier 'Loyalty member vs non-member behavior by account tenure' report: users (is_staff = false) with at least one order 2023-01-01 to 2025-12-31, grouped by tenants.industry and by segment ('loyalty member' if present in loyalty_accounts, else 'non-member'). avg_order_value_eur uses non-cancelled orders, grand_total converted to EUR via exchange_rates (rate as_of placed_at). refund_rate_pct = share of orders (any status) with payments.amount_refunded greater than 0 OR an order_returns row. Only include industries with at least 20 customers in both segments to keep the comparison meaningful; note in the report how many industries were excluded for low volume. Order by industry, then segment ('loyalty member' before 'non-member').",
+   "builds_on": [
+    "Loyalty member vs non-member behavior by account tenure"
+   ]
+  },
+  {
+   "title": "Loyalty programme unit economics: points cost vs revenue per customer",
+   "question": "Putting cost and revenue side by side: how does the points value we issue and redeem per loyalty member compare to the revenue those members actually generate, versus non-members?",
+   "grain": "one row per segment: 'loyalty member' vs 'non-member'",
+   "columns": [
+    "segment",
+    "customer_count",
+    "total_revenue_eur",
+    "revenue_per_customer_eur",
+    "total_points_redeemed_cost_eur",
+    "redeemed_cost_per_customer_eur",
+    "total_points_earned_liability_eur",
+    "earned_liability_per_customer_eur",
+    "redeemed_cost_pct_of_revenue"
+   ],
+   "details": "Population: same as the original 'Loyalty member vs non-member customer behavior' report (users, is_staff = false, at least one order 2023-01-01 to 2025-12-31, segment by presence in loyalty_accounts). total_revenue_eur = sum of grand_total for non-cancelled orders, converted to EUR via exchange_rates (order currency_code to EUR, rate as_of placed_at); revenue_per_customer_eur = total_revenue_eur divided by customer_count. total_points_redeemed_cost_eur = for loyalty members only, sum of loyalty_transactions with a non-'earn' direction, converting points to currency using that transaction's loyalty account's program points_per_currency and currency_code, then to EUR via exchange_rates as_of occurred_at (same method as the 'Loyalty points and referral reward cost by month' report); this is 0 for non-members. total_points_earned_liability_eur = same conversion but for 'earn'-direction loyalty_transactions (total value ever issued); 0 for non-members. redeemed_cost_per_customer_eur and earned_liability_per_customer_eur divide those totals by customer_count. redeemed_cost_pct_of_revenue = total_points_redeemed_cost_eur divided by total_revenue_eur, as a percentage (0 for non-members). Order rows: 'loyalty member' first, then 'non-member'.",
+   "builds_on": [
+    "Loyalty points and referral reward cost by month",
+    "Loyalty member vs non-member customer behavior"
+   ]
+  }
+ ]
+}

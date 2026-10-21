@@ -1,0 +1,83 @@
+=== Report 1: Order status history coverage for cancelled orders (written by Grace) ===
+Engineer's note: Grain is one row per tenant with ≥1 cancelled order, worst coverage first; capped at 50 rows as instructed, and the warehouse's row-count note will show the true tenant total (expected ~90) since computing it would need a second metered query.
+REPORT: Order status history coverage for cancelled orders
+QUESTION: Generic audit_log barely covers order cancellations (0.2%) — but does the purpose-built order_status_history table actually capture who cancelled each order and when?
+tenant_name                   | cancelled_orders | matching_history_rows | coverage_rate_pct | matching_rows_with_actor
+------------------------------+------------------+-----------------------+-------------------+-------------------------
+Cragsley Outfitters           |              373 |                   373 |             100.0 |                        0
+Marrowby & Vane               |              206 |                   206 |             100.0 |                        0
+Brennquell Kaffee             |              163 |                   163 |             100.0 |                        0
+Studio Vrij                   |               69 |                    69 |             100.0 |                        0
+Petalcourt Beauty             |               63 |                    63 |             100.0 |                        0
+Ampfeld Elektronik            |               49 |                    49 |             100.0 |                        0
+Sourdough Club                |               43 |                    43 |             100.0 |                        0
+Grind Collective              |               40 |                    40 |             100.0 |                        0
+Honeycomb Larder              |               35 |                    35 |             100.0 |                        0
+Rue Lafayette Studio          |               35 |                    35 |             100.0 |                        0
+Wiesgrund Wohnen              |               34 |                    34 |             100.0 |                        0
+Kibblewick                    |               33 |                    33 |             100.0 |                        0
+Spice Route Box               |               32 |                    32 |             100.0 |                        0
+Cinder Peak Sports Co.        |               28 |                    28 |             100.0 |                        0
+Fennel & Flint                |               27 |                    27 |             100.0 |                        0
+Linden & Loom                 |               27 |                    27 |             100.0 |                        0
+Nordic Bloom Cosmetics        |               26 |                    26 |             100.0 |                        0
+Coastline Interiors           |               19 |                    19 |             100.0 |                        0
+Gratlinie Outdoor             |               19 |                    19 |             100.0 |                        0
+Wohnglück                     |               19 |                    19 |             100.0 |                        0
+Juniper Apothecary            |               18 |                    18 |             100.0 |                        0
+Velvet Ash                    |               16 |                    16 |             100.0 |                        0
+Fell & Fjell                  |               15 |                    15 |             100.0 |                        0
+Oakhurst Tailoring            |               15 |                    15 |             100.0 |                        0
+Ballycorran Industrial Supply |               14 |                    14 |             100.0 |                        0
+Kayak Corner                  |               12 |                    12 |             100.0 |                        0
+Ridgeback Gear                |               11 |                    11 |             100.0 |                        0
+Saffron & Sage                |               11 |                    11 |             100.0 |                        0
+Atelier Nouveau               |               10 |                    10 |             100.0 |                        0
+Willow & Wren                 |               10 |                    10 |             100.0 |                        0
+Feather & Fin                 |                9 |                     9 |             100.0 |                        0
+Hus & Hem                     |                9 |                     9 |             100.0 |                        0
+Hound Hamper                  |                8 |                     8 |             100.0 |                        0
+Kontor24 Bürobedarf           |                8 |                     8 |             100.0 |                        0
+Noordzee Surfwear             |                8 |                     8 |             100.0 |                        0
+Paperplane Press              |                8 |                     8 |             100.0 |                        0
+Tail Wag Supply               |                8 |                     8 |             100.0 |                        0
+Whisker Works                 |                8 |                     8 |             100.0 |                        0
+Ampere & Co.                  |                7 |                     7 |             100.0 |                        0
+Fjordline Wear                |                7 |                     7 |             100.0 |                        0
+Ostwind Mode                  |                7 |                     7 |             100.0 |                        0
+Pfotenglück                   |                7 |                     7 |             100.0 |                        0
+Basecamp Nord                 |                6 |                     6 |             100.0 |                        0
+Haven Linen                   |                6 |                     6 |             100.0 |                        0
+Kettle & Key                  |                6 |                     6 |             100.0 |                        0
+Lumen Collective              |                6 |                     6 |             100.0 |                        0
+Midland Safety Wear           |                6 |                     6 |             100.0 |                        0
+The Balm Room                 |                6 |                     6 |             100.0 |                        0
+Thistlecombe                  |                6 |                     6 |             100.0 |                        0
+Barkley & Co.                 |                5 |                     5 |             100.0 |                        0
+(50 rows)
+
+=== Report 2: Invoice void and uncollectible traceability, with timestamp completeness check (written by Viktor) ===
+Engineer's note: Counts all invoices with status in ('void','uncollectible') regardless of voided_at, splits them into voided_at populated vs null, and separately counts how many of those invoices have at least one matching audit_log row (entity_table='invoices', entity_id=invoices.id, same tenant_id) via EXISTS, which is also the basis for the coverage rate.
+REPORT: Invoice void and uncollectible traceability, with timestamp completeness check
+QUESTION: Has any invoice actually been voided or marked uncollectible on the platform, and if so, is the event dated and traceable in audit_log — or was last night's zero result just because voided_at is missing?
+invoice_status | total_invoices | voided_at_populated | voided_at_null | matching_audit_log_rows | coverage_rate_pct | distinct_tenants
+---------------+----------------+---------------------+----------------+-------------------------+-------------------+-----------------
+uncollectible  |             85 |                   0 |             85 |                       0 |               0.0 |               11
+(1 rows)
+
+=== Report 3: Validity of never-revoked sessions on churned tenants (written by Ines) ===
+Engineer's note: One row per churned tenant, counting never-revoked sessions split into still-valid (expires_at > 2026-01-05) vs naturally expired, plus the latest expiry and latest real use (last_seen_at) among them.
+REPORT: Validity of never-revoked sessions on churned tenants
+QUESTION: The 9 churned tenants show 46-300 sessions per tenant that were never explicitly revoked — but are those sessions actually still usable today (expiry in the future), or did they just naturally expire without anyone bothering to revoke them?
+tenant_name        | never_revoked_sessions | still_within_expiry | already_expired | latest_expires_at          | latest_last_seen_at       
+-------------------+------------------------+---------------------+-----------------+----------------------------+---------------------------
+Aurum & Ash        |                     73 |                   0 |              73 | 2025-01-10 07:20:13.755243 | 2024-12-27 15:40:13.755243
+Dewdrop Studio     |                    171 |                   0 |             171 | 2025-10-23 09:44:11.78363  | 2025-10-09 17:45:11.78363 
+Halden Boots       |                    120 |                   0 |             120 | 2025-10-17 08:05:13.116482 | 2025-10-03 09:55:13.116482
+Klara Beauty       |                    110 |                   0 |             110 | 2025-05-05 06:00:35.543369 | 2025-04-21 07:19:35.543369
+Marginalia         |                     80 |                   0 |              80 | 2025-06-27 06:55:24.418769 | 2025-06-13 11:25:24.418769
+Northwire Audio    |                    191 |                   0 |             191 | 2024-10-18 09:15:34.531675 | 2024-10-04 16:38:43.724015
+Paddock & Pine     |                     46 |                   0 |              46 | 2024-06-13 05:55:25.699322 | 2024-05-30 06:29:25.699322
+Petal & Pestle     |                    223 |                   0 |             223 | 2024-10-25 06:04:30.128982 | 2024-10-11 14:46:30.128982
+Saltmarsh Knitwear |                    300 |                   0 |             300 | 2024-12-06 07:15:36.203341 | 2024-11-22 13:57:36.203341
+(9 rows)

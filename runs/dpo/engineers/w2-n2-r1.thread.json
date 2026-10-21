@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t0.public_id AS public_id,\n  t1.name AS tenant_name,\n  t0.request_type AS request_type,\n  t0.status AS status,\n  t0.received_at AS received_at,\n  t0.completed_at AS completed_at,\n  t0.created_at AS created_at,\n  ROUND(EXTRACT(EPOCH FROM (t0.created_at - t0.received_at)) / 86400.0, 1) AS days_received_to_created,\n  LEFT(COALESCE(t0.notes, ''), 200) AS notes\nFROM data_subject_requests t0\nJOIN tenants t1 ON t1.id = t0.tenant_id\nWHERE t0.received_at < DATE '2023-01-01'\nORDER BY t0.received_at ASC, t0.public_id ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: public_id, tenant_name, request_type, status, received_at, completed_at, created_at, days_received_to_created, notes"
+ },
+ {
+  "kind": "text",
+  "text": "Compiles cleanly. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t0.public_id AS public_id,\n  t1.name AS tenant_name,\n  t0.request_type AS request_type,\n  t0.status AS status,\n  t0.received_at AS received_at,\n  t0.completed_at AS completed_at,\n  t0.created_at AS created_at,\n  ROUND(EXTRACT(EPOCH FROM (t0.created_at - t0.received_at)) / 86400.0, 1) AS days_received_to_created,\n  LEFT(COALESCE(t0.notes, ''), 200) AS notes\nFROM data_subject_requests t0\nJOIN tenants t1 ON t1.id = t0.tenant_id\nWHERE t0.received_at < DATE '2023-01-01'\nORDER BY t0.received_at ASC, t0.public_id ASC",
+  "note": "Returns full history of data_subject_requests rows with received_at before 2023-01-01, one row each, with the received_at-to-created_at gap (in days) as the key diagnostic column; if this exceeds 50 rows only the first 50 by received_at will print, and the report should note the true row count.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns every data_subject_requests row with `received_at < 2023-01-01`, ordered by received_at, with `days_received_to_created` as the key diagnostic: a large positive value indicates the row was written well after the historical date (consistent with a legitimate migration backfill), while a near-zero value would flag it as likely a data quality artifact."
+ }
+]

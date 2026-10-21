@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Why do last week's and this week's 'attributed orders' counts disagree so much?",
+    "--question",
+    "Last week's channel-revenue report (joined attributions to campaigns) found ~14% order coverage; this week's blind-spot report (just checking attributions.order_id) found ~75-83%. What's driving that gap — is it mostly attribution rows with no campaign_id?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per attribution-linkage category\", \"columns_requested\": [\"linkage_category - 'campaign_id is null', 'campaign_id set but no matching campaigns row', or 'campaign_id set and matches a campaigns row'\", \"attribution_rows_count - count of attributions rows with occurred_at in 2025 and order_id not null, in that category\", \"distinct_orders_count - count of distinct order_id in that category\", \"distinct_touch_point_values - count of distinct non-null touch_point values present in that category\", \"distinct_model_values - count of distinct non-null model values present in that category\", \"attributed_revenue_eur - sum of attributed_revenue converted to EUR for that category, rounded to 0 decimals\"], \"details\": \"Source: attributions left joined to campaigns on campaign_id. Filter attributions.occurred_at in 2025-01-01..2026-01-01 and order_id is not null, all tenants. Convert attributed_revenue to EUR using exchange_rates (base_code='EUR', quote_code=attributions.currency_code, as_of=occurred_at date, EUR=rate 1). Order by attribution_rows_count descending. Expect exactly 3 rows.\", \"builds_on\": [\"Which marketing channels drive orders and revenue\", \"Is the attribution blind spot growing, shrinking, or stable over 2025?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

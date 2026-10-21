@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Monthly Review Volume and Rating Trend",
+    "--question",
+    "How is customer review volume and average rating trending over time across the platform?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per calendar month from 2023-01 through 2025-12\", \"columns_requested\": [\"month\", \"review_count\", \"avg_rating\", \"pct_1_2_star\", \"pct_5_star\", \"pct_verified_purchase\"], \"details\": \"Table: product_reviews filtered to is_approved = true, grouped by calendar month of created_at (use calendar_days.month_label or an equivalent month truncation, applied consistently). Include all tenants combined. review_count = count of approved reviews that month. pct_1_2_star = share of that month's reviews with rating in (1,2). pct_5_star = share with rating = 5. pct_verified_purchase = share with is_verified_purchase = true. Round avg_rating to 2 decimals, percentages to 1 decimal. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

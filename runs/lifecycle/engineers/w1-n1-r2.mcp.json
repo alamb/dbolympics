@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty member vs non-member customer behavior",
+    "--question",
+    "Do enrolled loyalty members actually order more often, spend more, stick around longer, and return items less than non-member customers, as of today?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Omar\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per customer segment: 'loyalty member' vs 'non-member'\", \"columns_requested\": [\"segment\", \"customer count\", \"avg lifetime orders per customer\", \"avg lifetime revenue per customer (EUR)\", \"avg order value (EUR)\", \"avg customer tenure days (first order to last order)\", \"repeat purchase rate (% with 2+ orders)\", \"refund rate (% of orders with any amount refunded or an associated return)\"], \"details\": \"Population: all users (is_staff = false) across all tenants who have placed at least one order (any status) between 2023-01-01 and 2025-12-31. Segment = 'loyalty member' if the user has a row in loyalty_accounts (any program, any tenant), else 'non-member'. Revenue and order value: use orders.grand_total converted to EUR via exchange_rates using orders.currency_code and the rate as_of orders.placed_at (fall back to created_at if placed_at is null). Avg lifetime revenue per customer = total EUR revenue from non-cancelled orders / customer count in segment. Avg order value = total EUR revenue / total order count in segment. Tenure = days between each customer's first and last placed order (0 for single-order customers). Repeat purchase rate = share of customers in the segment with 2 or more orders. Refund rate = (orders with payments.amount_refunded > 0 OR an order_returns row) / total orders in the segment. Order rows with 'loyalty member' first, then 'non-member'.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

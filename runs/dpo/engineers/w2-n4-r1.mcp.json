@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Post-erasure login and session activity: timing and success",
+    "--question",
+    "After an erasure is marked completed, do login attempts and sessions actually stop, or does activity continue afterward — and if attempts occur, do any of them succeed?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Ines\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per completed erasure request (request_type='erasure', status='completed', the same 39 rows as last night)\", \"columns_requested\": [\"dsar public_id\", \"tenant name\", \"subject_user_id\", \"completed_at (date)\", \"login attempts strictly after completed_at (count)\", \"of those, succeeded (count, login_attempts.succeeded = true)\", \"earliest login attempt after completed_at\", \"latest login attempt after completed_at\", \"sessions strictly after completed_at (count, sessions.started_at > completed_at)\", \"latest session start after completed_at\"], \"details\": \"Source: data_subject_requests (request_type='erasure', status='completed') left-joined to login_attempts and sessions on tenant_id + user_id = subject_user_id, filtered to occurred_at/started_at strictly greater than the request's completed_at. This isolates genuinely post-erasure activity (unlike last night's report, which counted all remaining rows regardless of date). The succeeded-count column is the critical security signal: failed attempts after erasure suggest stale/targeted credential attempts against a closed account; any succeeded=true row would mean live access continued after erasure. Order by completed_at ascending.\", \"builds_on\": [\"Post-erasure data footprint: what remains in sessions, logins, and access log\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

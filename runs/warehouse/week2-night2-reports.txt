@@ -1,0 +1,116 @@
+=== Report 1: Do B2B wholesale merchants get routine stock counts, or only the annual catch-up? (written by Omar) ===
+Engineer's note: Grain is one row per tenant (8 named merchants). Percentages are rounded to 1 decimal; tenants with zero routine adjustments or no Dec-31 movements show 0 via COALESCE rather than being dropped.
+REPORT: Do B2B wholesale merchants get routine stock counts, or only the annual catch-up?
+QUESTION: Do the B2B wholesale/office-supply merchants behind the December 31 correction run any routine, day-to-day stock-count activity during the year, or does their stock sit untouched in bulk storage until a single year-end true-up?
+tenant_name                   | total_stock_locations | pct_locations_kind_bulk | pct_locations_kind_pick | routine_stock_adjustments_2025 | distinct_variants_with_routine_adjustmen | dec31_correction_abs_units | dec31_correction_distinct_variants
+------------------------------+-----------------------+-------------------------+-------------------------+--------------------------------+------------------------------------------+----------------------------+-----------------------------------
+Ballycorran Industrial Supply |                     6 |                    33.3 |                    33.3 |                             57 |                                       51 |                       1058 |                                 58
+Castell Fasteners             |                     3 |                    33.3 |                    33.3 |                             31 |                                       29 |                        704 |                                 28
+Hanse Industriebedarf         |                     3 |                    33.3 |                    33.3 |                             27 |                                       23 |                        458 |                                 20
+Midland Safety Wear           |                     3 |                    33.3 |                    33.3 |                             30 |                                       30 |                        440 |                                 16
+OfficeHub Nordic              |                     6 |                    33.3 |                    33.3 |                             48 |                                       40 |                        429 |                                 29
+Deskline Supplies             |                     3 |                    33.3 |                    33.3 |                             14 |                                       13 |                        288 |                                 17
+Kontor24 Bürobedarf           |                     6 |                    33.3 |                    33.3 |                             28 |                                       28 |                        285 |                                 25
+Polder Packaging              |                     3 |                    33.3 |                    33.3 |                             20 |                                       17 |                        134 |                                  8
+(8 rows)
+
+=== Report 2: Apparel/footwear discrepancies by warehouse: scale effect or genuine elevated rate? (written by Felix) ===
+Engineer's note: Grain is warehouse, restricted to tenants.industry = 'Apparel & Footwear' as specified; distinct_pick_locations counts stock_locations with kind='pick' independent of whether adjustments occurred there, so events_per_pick_location is NULL (shown blank) for any warehouse with zero pick locations. If the true apparel-warehouse count exceeds 50 the report is capped at 50 rows per the house page-length limit; please flag if you need the full count surfaced separately.
+REPORT: Apparel/footwear discrepancies by warehouse: scale effect or genuine elevated rate?
+QUESTION: Is the apparel/footwear concentration in stock-count discrepancies explained by those warehouses simply being bigger (more pick locations), or do specific apparel sites show a genuinely higher discrepancy rate per location?
+warehouse_name                         | tenant_name          | distinct_pick_locations | total_routine_adjustments_2025 | events_per_pick_location | distinct_variants_affected | avg_hour_of_day_of_entries
+---------------------------------------+----------------------+-------------------------+--------------------------------+--------------------------+----------------------------+---------------------------
+Atlanta Fulfilment Centre              | Cragsley Outfitters  |                       1 |                           1506 |                   1506.0 |                       1380 |                       11.4
+Reading Fulfilment Centre              | Marrowby & Vane      |                       1 |                           1058 |                   1058.0 |                        977 |                       11.6
+Den Haag Fulfilment Centre             | Studio Vrij          |                       1 |                            622 |                    622.0 |                        570 |                       11.6
+Uppsala Fulfilment Centre              | Velvet Ash           |                       1 |                            304 |                    304.0 |                        280 |                       11.6
+Paris Fulfilment Centre                | Rue Lafayette Studio |                       1 |                            286 |                    286.0 |                        265 |                       11.4
+Cambridge Fulfilment Centre            | Thistlecombe         |                       1 |                            253 |                    253.0 |                        239 |                       11.9
+München Fulfilment Centre              | Ostwind Mode         |                       1 |                            244 |                    244.0 |                        227 |                       11.6
+København Fulfilment Centre            | Oakhurst Tailoring   |                       1 |                            216 |                    216.0 |                        196 |                       11.3
+Boulogne-Billancourt Fulfilment Centre | Atelier Nouveau      |                       1 |                            209 |                    209.0 |                        194 |                       11.9
+Trondheim Fulfilment Centre            | Fjordline Wear       |                       1 |                            209 |                    209.0 |                        194 |                       11.7
+Arnhem Fulfilment Centre               | Noordzee Surfwear    |                       1 |                            199 |                    199.0 |                        184 |                       11.8
+Nice Fulfilment Centre                 | Maison Clair         |                       1 |                            157 |                    157.0 |                        145 |                       12.0
+Delft Fulfilment Centre                | Lumen Collective     |                       1 |                            153 |                    153.0 |                        140 |                       11.6
+Oslo Fulfilment Centre                 | Brick & Bobbin       |                       1 |                            151 |                    151.0 |                        136 |                       11.5
+Seattle Fulfilment Centre              | Meadow Row           |                       1 |                            138 |                    138.0 |                        128 |                       11.4
+Utrecht Fulfilment Centre              | Saltmarsh Knitwear   |                       1 |                            125 |                    125.0 |                        119 |                       11.4
+Buffalo Fulfilment Centre              | Greyfriars Supply    |                       1 |                            123 |                    123.0 |                        112 |                       11.4
+Manchester Fulfilment Centre           | Little Larch Kids    |                       1 |                            113 |                    113.0 |                        108 |                       11.2
+København Fulfilment Centre            | Paddock & Pine       |                       1 |                            102 |                    102.0 |                         91 |                       11.7
+Berlin Fulfilment Centre               | Strandgut            |                       1 |                             95 |                     95.0 |                         87 |                       11.4
+Wiesbaden Fulfilment Centre            | Kiezkind             |                       1 |                             87 |                     87.0 |                         83 |                       11.4
+Stockholm Fulfilment Centre            | Halden Boots         |                       1 |                             85 |                     85.0 |                         78 |                       11.5
+Charlotte Fulfilment Centre            | Copper Lane          |                       1 |                             27 |                     27.0 |                         27 |                       12.5
+Cork Fulfilment Centre                 | Kestrel Denim        |                       1 |                             27 |                     27.0 |                         27 |                       11.1
+Tampere Fulfilment Centre              | Thread & Tide        |                       1 |                             14 |                     14.0 |                         13 |                       11.0
+Aarhus Warehouse                       | Oakhurst Tailoring   |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Boston Warehouse                       | Cragsley Outfitters  |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Brussels Warehouse                     | Studio Vrij          |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Calgary Warehouse                      | Cragsley Outfitters  |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Glasgow Warehouse                      | Thistlecombe         |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Groningen Warehouse                    | Studio Vrij          |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Limerick Warehouse                     | Marrowby & Vane      |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Preston Warehouse                      | Marrowby & Vane      |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Toulouse Warehouse                     | Rue Lafayette Studio |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+Uppsala Warehouse                      | Velvet Ash           |                       1 |                              0 |                      0.0 |                          0 |                       NULL
+(35 rows)
+
+=== Report 3: Which specific products drive discrepancies at the three standout apparel sites (written by Grace) ===
+Engineer's note: Grain is warehouse × product variant as requested; adjustment_count/pct_theft_reason/distinct_days_affected are computed per variant per warehouse over 2025 stock_adjustments at the three named sites. Added a total_distinct_variants column (window count before the 50-row cap) so the analyst can see the full count of variants with discrepancies even though only the top 50 by adjustment_count are printed.
+REPORT: Which specific products drive discrepancies at the three standout apparel sites
+QUESTION: At Atlanta (Cragsley Outfitters), Reading (Marrowby & Vane) and Den Haag (Studio Vrij) — the three sites with by far the most stock-count discrepancies — is the problem spread across the catalog, or concentrated in a handful of specific products/size-color variants?
+warehouse_name             | product_name                          | sku                | variant_name    | adjustment_count | pct_theft_reason | distinct_days_affected | total_distinct_variants
+---------------------------+---------------------------------------+--------------------+-----------------+------------------+------------------+------------------------+------------------------
+Atlanta Fulfilment Centre  | Chunky Lambswool Scarf                | CO-10927-FORE      | Forest Green    |                5 |             20.0 |                      5 |                    2927
+Den Haag Fulfilment Centre | Fine Knit Merino Scarf                | SV-10293-BLAC      | Black           |                5 |              0.0 |                      5 |                    2927
+Atlanta Fulfilment Centre  | Pom-Pom Merino Wool Beanie            | CO-10248-WHIT      | White           |                4 |              0.0 |                      4 |                    2927
+Atlanta Fulfilment Centre  | Checked Scarf                         | CO-10530-GREY      | Grey Marl       |                4 |             25.0 |                      4 |                    2927
+Atlanta Fulfilment Centre  | Fisherman Beanie                      | CO-10745-FORE      | Forest Green    |                4 |              0.0 |                      3 |                    2927
+Den Haag Fulfilment Centre | Ribbed Merino Wool Beanie             | SV-10004-CHAR      | Charcoal        |                4 |              0.0 |                      4 |                    2927
+Den Haag Fulfilment Centre | Oversized Lambswool Scarf             | SV-10291-WHIT      | White           |                4 |             50.0 |                      4 |                    2927
+Reading Fulfilment Centre  | Fisherman Recycled Wool Beanie        | MV-10038-GREY      | Grey Marl       |                4 |              0.0 |                      4 |                    2927
+Reading Fulfilment Centre  | Pom-Pom Merino Wool Beanie            | MV-10544-RUST      | Rust            |                4 |             50.0 |                      4 |                    2927
+Atlanta Fulfilment Centre  | Graphic Organic Cotton Kids T-Shirt   | CO-10089-1213-LILA | 12-13Y / Lilac  |                3 |              0.0 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Ribbed Beanie                         | CO-10205-GREY      | Grey Marl       |                3 |              0.0 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Striped Organic Cotton Kids T-Shirt   | CO-10221-45Y-NAVY  | 4-5Y / Navy     |                3 |             33.3 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Oversized Merino Scarf                | CO-10388-SKYB      | Sky Blue        |                3 |              0.0 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Cardigan Cashmere Blend Sweater       | CO-10400-S-CAME    | S / Camel       |                3 |              0.0 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Fisherman Recycled Wool Beanie        | CO-10487-WHIT      | White           |                3 |             33.3 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Ribbed Merino Wool Beanie             | CO-10609-GREY      | Grey Marl       |                3 |             33.3 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Bootcut Organic Denim Jeans           | CO-10682-W36-BURG  | W36 / Burgundy  |                3 |              0.0 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Pullover Loopback Cotton Hoodie       | CO-10786-XS-CHAR   | XS / Charcoal   |                3 |              0.0 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Oversized Scarf                       | CO-11023-OLIV      | Olive           |                3 |             33.3 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Pullover Organic Cotton Fleece Hoodie | CO-11172-XL-ECRU   | XL / Ecru       |                3 |              0.0 |                      3 |                    2927
+Den Haag Fulfilment Centre | Checked Scarf                         | SV-10062-ECRU      | Ecru            |                3 |             33.3 |                      3 |                    2927
+Den Haag Fulfilment Centre | Checked Scarf                         | SV-10115-WHIT      | White           |                3 |             33.3 |                      3 |                    2927
+Den Haag Fulfilment Centre | Fisherman Beanie                      | SV-10221-BURG      | Burgundy        |                3 |              0.0 |                      3 |                    2927
+Den Haag Fulfilment Centre | Checked Merino Scarf                  | SV-10296-SAND      | Sand            |                3 |              0.0 |                      3 |                    2927
+Reading Fulfilment Centre  | Knitted Viscose Dress                 | MV-10060-XL-BLAC   | XL / Black      |                3 |              0.0 |                      3 |                    2927
+Reading Fulfilment Centre  | Fisherman Beanie                      | MV-10496-RUST      | Rust            |                3 |             33.3 |                      3 |                    2927
+Reading Fulfilment Centre  | Pom-Pom Beanie                        | MV-10533-BLAC      | Black           |                3 |              0.0 |                      3 |                    2927
+Reading Fulfilment Centre  | Fine Knit Lambswool Scarf             | MV-10618-FORE      | Forest Green    |                3 |              0.0 |                      3 |                    2927
+Reading Fulfilment Centre  | Ribbed Recycled Wool Beanie           | MV-10724-SAND      | Sand            |                3 |             33.3 |                      3 |                    2927
+Atlanta Fulfilment Centre  | Fine Knit Scarf                       | CO-10020-CAME      | Camel           |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Court Sneakers                        | CO-10026-38-SKYB   | 38 / Sky Blue   |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Oversized Lambswool Scarf             | CO-10034-BLAC      | Black           |                2 |             50.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Chunky Lambswool Scarf                | CO-10062-WHIT      | White           |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Ribbed Recycled Wool Beanie           | CO-10067-WHIT      | White           |                2 |             50.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Corduroy Shirt                        | CO-10068-S-BLAC    | S / Black       |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Bootcut Jeans                         | CO-10075-W36-GREY  | W36 / Grey Marl |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Overcoat Coat                         | CO-10079-XXL-BLAC  | XXL / Black     |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Crew Neck Cashmere Blend Sweater      | CO-10080-XL-SKYB   | XL / Sky Blue   |                2 |             50.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Pom-Pom Merino Wool Beanie            | CO-10095-SKYB      | Sky Blue        |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Crew Neck Lambswool Sweater           | CO-10109-M-ECRU    | M / Ecru        |                2 |             50.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | 3-Pack Organic Cotton Socks           | CO-10140-L-RUST    | L / Rust        |                2 |             50.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Garment Dyed Loopback Cotton Hoodie   | CO-10143-L-OLIV    | L / Olive       |                2 |             50.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Ribbed Merino Wool Beanie             | CO-10160-BURG      | Burgundy        |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Striped Cotton Jersey T-Shirt         | CO-10161-M-ECRU    | M / Ecru        |                2 |             50.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Checked Merino Scarf                  | CO-10166-SAND      | Sand            |                2 |             50.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | V-Neck Merino Wool Sweater            | CO-10173-L-ECRU    | L / Ecru        |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Pom-Pom Beanie                        | CO-10178-FORE      | Forest Green    |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Pom-Pom Beanie                        | CO-10178-GREY      | Grey Marl       |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Court Recycled Canvas Sneakers        | CO-10186-37-NAVY   | 37 / Navy       |                2 |              0.0 |                      2 |                    2927
+Atlanta Fulfilment Centre  | Fine Knit Cashmere Scarf              | CO-10190-CAME      | Camel           |                2 |              0.0 |                      2 |                    2927
+(50 rows)

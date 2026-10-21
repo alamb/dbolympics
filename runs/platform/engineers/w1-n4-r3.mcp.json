@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Webhook Delivery Reliability: Carts.remind-Affected Tenants vs Others, 2025",
+    "--question",
+    "Do the 10 tenants hit by the Nov carts.remind job failures also show worse webhook delivery reliability than other tenants, suggesting clustered reliability problems on the same accounts?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Viktor\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per tenant group (Affected vs Other)\", \"columns_requested\": [\"group_name\", \"tenant_count\", \"total_deliveries_2025\", \"success_rate_pct\", \"failed_rate_pct\", \"pending_or_retrying_rate_pct\"], \"details\": \"Table webhook_deliveries joined to webhooks for tenant_id, filtered to created_at in 2025. 'Affected' = the same 10 tenant_ids defined in prior reports (failed carts.remind job_runs in Nov 2025); 'Other' = all remaining tenants with at least one webhook delivery in 2025. Rates defined as in the endpoint-level request: success_rate_pct, failed_rate_pct, pending_or_retrying_rate_pct as shares of total_deliveries_2025 for the group, rounded 2dp. Two rows total. Order by group_name.\", \"builds_on\": [\"2025 Webhook Delivery Reliability by Endpoint\", \"Tenant Size vs Carts.remind Job Failure Exposure, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

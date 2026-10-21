@@ -1,0 +1,63 @@
+{
+ "notes": "Night 1 surfaced a methodology problem before any business insight: Grace's agent-group report rolled up every tenant's same-named group (e.g. all 120 merchants' 'Customer Care') into one row, while Omar's SLA-breach-by-group report kept each tenant's group separate (171 rows). The two reports use different grains under the same label, so they can't be compared, and neither tells us whether load/staffing is balanced within a real operational unit (a tenant's own group). Also, the company briefing says a handful of merchants drive most volume — I haven't checked that at all yet, and Daniel explicitly asked to flag any single merchant driving disproportionate pain. So tonight I'm fixing the grain: first, ticket volume and SLA performance by merchant to find concentration and any outlier tenant; second, the highest-volume tenant+group combinations (the real staffing units) to redo the staffing-balance read properly; third, a day-of-week/time-of-day cut of SLA breaches since Daniel specifically asked about time patterns and I have a slot free for it. Headline SLA numbers from report 3 (37.7% first-response breach, 20.3% resolution breach, urgent tickets breaching resolution over half the time) are worth noting to Mia/Daniel now even before drill-down.",
+ "requests": [
+  {
+   "title": "Ticket volume and SLA performance by merchant",
+   "question": "Is ticket volume and SLA breach pain concentrated in a handful of merchants, and do any merchants stand out as outliers?",
+   "grain": "one row per tenant (merchant)",
+   "columns": [
+    "tenant_name",
+    "ticket_count (created in 2025)",
+    "pct_of_total_tickets",
+    "cumulative_pct_of_total_tickets (rows ordered by ticket_count desc)",
+    "first_response_breach_rate",
+    "resolution_breach_rate",
+    "avg_resolution_minutes",
+    "agent_count (distinct support_agents belonging to that tenant via agent_group_members, or via support_agents.tenant_id if simpler)"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets (join tenants for name), sla_breaches (breach_kind = first_response / resolution, as % of that tenant's tickets with sla_policy_id not null), support_agents. Order by ticket_count descending; print the top 30 rows but note the total number of tenants with at least one ticket in 2025. Round rates to 1 decimal percent, cumulative_pct to 1 decimal.",
+   "builds_on": [
+    "Ticket volume and staffing by agent group",
+    "SLA breach rates by agent group"
+   ]
+  },
+  {
+   "title": "Highest-volume merchant + agent-group units",
+   "question": "At the real operational unit (one merchant's one agent group), where is ticket load heaviest, and does staffing (agent count) look right for that load?",
+   "grain": "one row per (tenant, agent_group) pair",
+   "columns": [
+    "tenant_name",
+    "agent_group_name",
+    "ticket_count (created 2025)",
+    "agent_count (support_agents in that tenant's group via agent_group_members)",
+    "tickets_per_agent",
+    "pct_unassigned",
+    "avg_first_response_minutes",
+    "avg_resolution_minutes",
+    "resolution_breach_rate"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31, tickets.agent_group_id not null. Source tables: tickets, agent_groups, agent_group_members, support_agents, tenants, sla_breaches. Group by tenant_id + agent_group_id (do not roll up by group name across tenants). Order by ticket_count descending, show the top 20 rows, and note how many (tenant, agent_group) combinations exist in total in 2025. Round tickets_per_agent to 1 decimal, rates to 1 decimal percent.",
+   "builds_on": [
+    "Ticket volume and staffing by agent group",
+    "SLA breach rates by agent group"
+   ]
+  },
+  {
+   "title": "SLA breach rates by day of week and time of day",
+   "question": "Is there a time-of-day or day-of-week pattern to when we breach first-response and resolution SLA targets?",
+   "grain": "one row per combination of ticket creation day-of-week (Monday..Sunday) and time-of-day bucket (Night 00-06, Morning 06-12, Afternoon 12-18, Evening 18-24, all in UTC)",
+   "columns": [
+    "day_of_week",
+    "time_of_day_bucket",
+    "ticket_count (created 2025, sla_policy_id not null)",
+    "first_response_breach_rate",
+    "resolution_breach_rate",
+    "avg_first_response_minutes"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31, restricted to tickets with sla_policy_id not null. Derive day-of-week from tickets.created_at (use calendar_days.day_name joined on the date, or extract directly) and a 6-hour UTC time bucket from the created_at time component. Source tables: tickets, sla_breaches, calendar_days. 28 rows total (7 days x 4 buckets); order by day_of_week (Monday first) then time_of_day_bucket in chronological order (Night, Morning, Afternoon, Evening). Round rates to 1 decimal percent, minutes to whole numbers.",
+   "builds_on": [
+    "SLA breach rates by priority, with overall headline rate"
+   ]
+  }
+ ]
+}

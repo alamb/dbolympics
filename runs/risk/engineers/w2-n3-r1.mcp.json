@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Row counts by year for tables with pre-2023 timestamps",
+    "--question",
+    "Are the pre-2023 dates in change_history, compliance_events, and data_subject_requests a handful of outlier rows, or a systematic chunk of data — given the warehouse's history is only supposed to start 2023-01-01?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Ines\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per combination of table_name (change_history, compliance_events, data_subject_requests) and calendar year of its relevant timestamp (occurred_at for change_history/compliance_events, received_at for data_subject_requests), from the earliest year present through 2025\", \"columns_requested\": [\"table_name\", \"year\", \"row_count\"], \"details\": \"Sources: change_history (occurred_at), compliance_events (occurred_at), data_subject_requests (received_at). Purpose: last night's retention-exposure report showed earliest dates of 2021-10-23, 2020-04-24, and 2021-11-10 for these three tables respectively, which is impossible given the stated 2023-01-01 history start \\u2014 need to see whether pre-2023 rows are a tiny handful (likely bad seed/migration timestamps, safe to treat as noise) or a meaningful share (a real data-quality issue to escalate). Order by table_name, year ascending.\", \"builds_on\": [\"How far back does data go in tables without a retention policy?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

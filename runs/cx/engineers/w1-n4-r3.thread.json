@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH base AS (\n  SELECT\n    date_trunc('month', t.created_at) AS month_start,\n    t.rating,\n    t.is_verified_purchase\n  FROM product_reviews t\n  WHERE t.is_approved = true\n    AND t.created_at >= DATE '2023-01-01'\n    AND t.created_at < DATE '2026-01-01'\n)\nSELECT\n  TO_CHAR(t0.month_start, 'YYYY-MM') AS month,\n  t0.review_count AS reviews_submitted,\n  t1.avg_rating,\n  t2.median_rating,\n  t3.pct_low_rating,\n  t3.pct_high_rating,\n  t3.pct_verified_purchase\nFROM (\n  SELECT month_start, COUNT(*) AS review_count\n  FROM base\n  GROUP BY month_start\n) t0\nJOIN (\n  SELECT month_start, ROUND(AVG(rating)::numeric, 2) AS avg_rating\n  FROM base\n  GROUP BY month_start\n) t1 ON t1.month_start = t0.month_start\nJOIN (\n  SELECT month_start, ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY rating)::numeric, 1) AS median_rating\n  FROM base\n  GROUP BY month_start\n) t2 ON t2.month_start = t0.month_start\nJOIN (\n  SELECT\n    month_start,\n    ROUND(100.0 * SUM(CASE WHEN rating IN (1,2) THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_low_rating,\n    ROUND(100.0 * SUM(CASE WHEN rating IN (4,5) THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_high_rating,\n    ROUND(100.0 * SUM(CASE WHEN is_verified_purchase THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_verified_purchase\n  FROM base\n  GROUP BY month_start\n) t3 ON t3.month_start = t0.month_start\nORDER BY t0.month_start ASC",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Catalog Error: Scalar Function with name to_char does not exist!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH base AS (\n  SELECT\n    date_trunc('month', t.created_at) AS month_start,\n    t.rating,\n    t.is_verified_purchase\n  FROM product_reviews t\n  WHERE t.is_approved = true\n    AND t.created_at >= DATE '2023-01-01'\n    AND t.created_at < DATE '2026-01-01'\n)\nSELECT\n  strftime(t0.month_start, '%Y-%m') AS month,\n  t0.review_count AS reviews_submitted,\n  t1.avg_rating,\n  t2.median_rating,\n  t3.pct_low_rating,\n  t3.pct_high_rating,\n  t3.pct_verified_purchase\nFROM (\n  SELECT month_start, COUNT(*) AS review_count\n  FROM base\n  GROUP BY month_start\n) t0\nJOIN (\n  SELECT month_start, ROUND(AVG(rating)::numeric, 2) AS avg_rating\n  FROM base\n  GROUP BY month_start\n) t1 ON t1.month_start = t0.month_start\nJOIN (\n  SELECT month_start, ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY rating)::numeric, 1) AS median_rating\n  FROM base\n  GROUP BY month_start\n) t2 ON t2.month_start = t0.month_start\nJOIN (\n  SELECT\n    month_start,\n    ROUND(100.0 * SUM(CASE WHEN rating IN (1,2) THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_low_rating,\n    ROUND(100.0 * SUM(CASE WHEN rating IN (4,5) THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_high_rating,\n    ROUND(100.0 * SUM(CASE WHEN is_verified_purchase THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_verified_purchase\n  FROM base\n  GROUP BY month_start\n) t3 ON t3.month_start = t0.month_start\nORDER BY t0.month_start ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, reviews_submitted, avg_rating, median_rating, pct_low_rating, pct_high_rating, pct_verified_purchase"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles with the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH base AS (\n  SELECT\n    date_trunc('month', t.created_at) AS month_start,\n    t.rating,\n    t.is_verified_purchase\n  FROM product_reviews t\n  WHERE t.is_approved = true\n    AND t.created_at >= DATE '2023-01-01'\n    AND t.created_at < DATE '2026-01-01'\n)\nSELECT\n  strftime(t0.month_start, '%Y-%m') AS month,\n  t0.review_count AS reviews_submitted,\n  t1.avg_rating,\n  t2.median_rating,\n  t3.pct_low_rating,\n  t3.pct_high_rating,\n  t3.pct_verified_purchase\nFROM (\n  SELECT month_start, COUNT(*) AS review_count\n  FROM base\n  GROUP BY month_start\n) t0\nJOIN (\n  SELECT month_start, ROUND(AVG(rating)::numeric, 2) AS avg_rating\n  FROM base\n  GROUP BY month_start\n) t1 ON t1.month_start = t0.month_start\nJOIN (\n  SELECT month_start, ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY rating)::numeric, 1) AS median_rating\n  FROM base\n  GROUP BY month_start\n) t2 ON t2.month_start = t0.month_start\nJOIN (\n  SELECT\n    month_start,\n    ROUND(100.0 * SUM(CASE WHEN rating IN (1,2) THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_low_rating,\n    ROUND(100.0 * SUM(CASE WHEN rating IN (4,5) THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_high_rating,\n    ROUND(100.0 * SUM(CASE WHEN is_verified_purchase THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_verified_purchase\n  FROM base\n  GROUP BY month_start\n) t3 ON t3.month_start = t0.month_start\nORDER BY t0.month_start ASC",
+  "note": "Report is platform-wide review ratings only, at the requested grain and columns (36 monthly rows expected, 2023-01 through 2025-12). The CSAT comparison mentioned in the question isn't included as a column here since that would be a second metric/grain bundled into this report; if the analyst wants a side-by-side with support CSAT, that should be its own request (or a follow-up report joining metrics_daily/csat_responses).",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report delivers the monthly product-review trend exactly as specified — reviews submitted, avg/median rating, % low (1–2★), % high (4–5★), and % verified purchase, approved reviews only, Jan 2023–Dec 2025 (36 rows). I left the CSAT comparison out of this report since mixing a support metric into a reviews-grain table would bundle two questions into one report; that's flagged in the submit note in case Mateo wants a dedicated follow-up report for it."
+ }
+]

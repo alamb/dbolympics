@@ -1,0 +1,64 @@
+=== Report 1: Where orders stall after checkout, Q4 2025 — retail merchants only (corrected) (written by Omar) ===
+Engineer's note: Restricted to the six named tenants (looked up by tenants.name) and orders created 2025-10-01 to 2025-12-31; one row per status (all 7 included, zero-filled where unreached), as specified.
+REPORT: Where orders stall after checkout, Q4 2025 — retail merchants only (corrected)
+QUESTION: For the real one-off retail merchants (excluding subscription-box sellers), is the drop-off between order creation and payment a single cliff or a slow bleed, and at which status does it happen?
+status              | orders_reaching_status | pct_of_total_orders | median_hours_from_order_creation
+--------------------+------------------------+---------------------+---------------------------------
+pending             |                   2997 |               100.0 |                              0.0
+paid                |                   2924 |                97.6 |                              0.0
+fulfilled           |                   2843 |                94.9 |                             22.8
+refunded            |                    173 |                 5.8 |                            517.0
+cancelled           |                    127 |                 4.2 |                              0.1
+confirmed           |                      0 |                 0.0 |                             NULL
+partially_fulfilled |                      0 |                 0.0 |                             NULL
+(7 rows)
+
+=== Report 2: Cart abandonment timing by tenant, Q4 2025 (retail merchants) (written by Viktor) ===
+Engineer's note: Grain is tenant x duration bucket (up to 6 tenants x 5 buckets = 30 rows), matching the bucket/window definitions from the earlier 'cliff or slow bleed' report. pct_of_tenant_carts sums to ~100% within each tenant; converted_pct is the share of converted-status carts within each tenant/bucket cell.
+REPORT: Cart abandonment timing by tenant, Q4 2025 (retail merchants)
+QUESTION: Is the 'slow bleed' pattern in cart abandonment (most unresolved carts linger 1 hour to 7 days rather than dying instantly) consistent across retail merchants, or is it driven by one or two tenants' cart-expiry settings?
+tenant_name         | bucket     | cart_count | pct_of_tenant_carts | converted_pct
+--------------------+------------+------------+---------------------+--------------
+Ampfeld Elektronik  | <1 hour    |        163 |                22.6 |         100.0
+Ampfeld Elektronik  | 1-24 hours |        248 |                34.4 |           0.8
+Ampfeld Elektronik  | 1-7 days   |        286 |                39.7 |           9.8
+Ampfeld Elektronik  | >7 days    |         23 |                 3.2 |           4.3
+Cragsley Outfitters | <1 hour    |       1150 |                29.3 |         100.0
+Cragsley Outfitters | 1-24 hours |       1150 |                29.3 |           1.5
+Cragsley Outfitters | 1-7 days   |       1475 |                37.6 |          16.4
+Cragsley Outfitters | >7 days    |        147 |                 3.7 |          19.0
+Kibblewick          | <1 hour    |         87 |                26.4 |         100.0
+Kibblewick          | 1-24 hours |        100 |                30.3 |           4.0
+Kibblewick          | 1-7 days   |        134 |                40.6 |          14.9
+Kibblewick          | >7 days    |          9 |                 2.7 |          22.2
+Marrowby & Vane     | <1 hour    |        545 |                30.0 |         100.0
+Marrowby & Vane     | 1-24 hours |        525 |                28.9 |           2.9
+Marrowby & Vane     | 1-7 days   |        697 |                38.3 |          13.8
+Marrowby & Vane     | >7 days    |         51 |                 2.8 |           7.8
+Petalcourt Beauty   | <1 hour    |        211 |                31.5 |         100.0
+Petalcourt Beauty   | 1-24 hours |        225 |                33.6 |           0.9
+Petalcourt Beauty   | 1-7 days   |        215 |                32.1 |          18.6
+Petalcourt Beauty   | >7 days    |         18 |                 2.7 |          16.7
+Studio Vrij         | <1 hour    |        194 |                29.8 |         100.0
+Studio Vrij         | 1-24 hours |        207 |                31.8 |           2.4
+Studio Vrij         | 1-7 days   |        227 |                34.9 |          16.3
+Studio Vrij         | >7 days    |         23 |                 3.5 |          17.4
+(24 rows)
+
+=== Report 3: Delivery speed and return rate by merchant, Q4 2025 (written by Viktor) ===
+Engineer's note: Per the request, "late" is approximated as delivery_days > 7 since there's no promised-delivery-date field in the schema; this is a generic lateness proxy, not an SLA breach measure. Returns % is at the order level (any return row), not return value/revenue.
+REPORT: Delivery speed and return rate by merchant, Q4 2025
+QUESTION: Do merchants whose deliveries run slower/later also see higher return rates — an early read on whether delivery experience is eroding trust?
+tenant_name         | shipments_delivered | median_delivery_days | pct_over_7_days | pct_orders_with_return
+--------------------+---------------------+----------------------+-----------------+-----------------------
+Grind Collective    |                 339 |                  3.1 |            23.3 |                    0.9
+Petalcourt Beauty   |                 232 |                  3.1 |            23.3 |                    4.3
+Kibblewick          |                 194 |                  3.0 |            20.6 |                    0.5
+Marrowby & Vane     |                 609 |                  2.3 |            12.0 |                   31.3
+Studio Vrij         |                 217 |                  2.6 |             1.4 |                   32.8
+Brennquell Kaffee   |                1105 |                  2.2 |             1.0 |                    0.5
+Spice Route Box     |                 193 |                  2.2 |             1.0 |                    1.0
+Honeycomb Larder    |                 172 |                  2.1 |             0.6 |                    0.5
+Cragsley Outfitters |                1349 |                  2.1 |             0.3 |                   34.4
+Ampfeld Elektronik  |                 187 |                  2.1 |             0.0 |                   10.8
+(10 rows)

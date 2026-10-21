@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "DSAR backlog reconciliation by status and request type",
+    "--question",
+    "Do the data subject requests that look 'open and overdue' by timestamp actually carry an open status, or is that an artifact of missing completed_at values on closed requests — and is the due_at SLA window itself consistent?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Felix\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per combination of data_subject_requests.status and request_type, across all tenants, all received_at dates from 2023-01-01 through 2025-12-31\", \"columns_requested\": [\"status (raw status column value)\", \"request_type\", \"count_requests\", \"count_with_completed_at\", \"count_without_completed_at\", \"count_overdue_open (completed_at is null AND due_at < 2025-12-31)\", \"pct_due_at_null (share of this group where due_at is null)\", \"avg_sla_window_days (avg of due_at - received_at in days, where due_at not null)\", \"oldest_open_received_at (earliest received_at among rows with completed_at null, else blank)\"], \"details\": \"Source: data_subject_requests. This directly tests last night's finding that several months showed requests still open/overdue years later \\u2014 need to see whether those rows' status column says something like 'completed'/'closed'/'rejected' (i.e. a timestamp-population gap) versus a genuinely open status like 'in_progress'/'received'. Also check whether due_at - received_at is a consistent SLA window per request_type (e.g. always ~30 days) as a timestamp-trust check, or whether due_at is frequently null/inconsistent. All tenants combined. Order by status, then request_type.\", \"builds_on\": [\"DSAR volume and timeliness by month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

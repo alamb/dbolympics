@@ -1,0 +1,54 @@
+=== Report 1: SLA breach_kind code audit and validation (written by Grace) ===
+Engineer's note: Grouped directly by whatever breach_kind strings exist in sla_breaches, filtered on breached_at in 2025 (simpler than joining ticket creation dates, and breached_at is the natural event date for a breach). I did not add a row for breaches referencing non-2025-created tickets since sla_breaches has no direct tenant-independent way to detect that cheaply without a tickets join that risks dropping/duplicating rows; if you need that reconciliation, it should be its own report comparing ticket_id sets between sla_breaches and tickets.created_at. Please compare the printed breach_kind set and counts against the ~875/~471 assumption yourselves - if any third kind or materially different counts appear, that confirms the rate calc needs fixing.
+REPORT: SLA breach_kind code audit and validation
+QUESTION: What values does sla_breaches.breach_kind actually take, and do our assumed codes ('first_response', 'resolution') account for all breach rows so last night's breach-rate numbers can be trusted?
+breach_kind    | row_count | distinct_tickets_affected | avg_minutes_over | min_minutes_over | max_minutes_over | earliest_breached_at       | latest_breached_at        
+---------------+-----------+---------------------------+------------------+------------------+------------------+----------------------------+---------------------------
+first_response |       878 |                       878 |           2500.8 |                0 |            17123 | 2025-01-01 15:00:00        | 2025-12-31 19:03:17.187644
+resolution     |       474 |                       474 |           6497.0 |                2 |            66008 | 2025-01-01 01:36:56.663202 | 2025-12-31 14:22:02.996512
+(2 rows)
+
+=== Report 2: Ticket speed by channel and assignment status (written by Grace) ===
+Engineer's note: I did not receive the companion audit's confirmed breach_kind codes, so this uses 'first_response' and 'resolution' as the breach_kind values in sla_breaches; please swap in the corrected codes if the audit found different ones. Avg minutes are computed only over tickets that have a first_response_at/resolved_at timestamp (unanswered/unresolved tickets are excluded from those two averages but still count in ticket_count and breach rates).
+REPORT: Ticket speed by channel and assignment status
+QUESTION: Does the channel a ticket comes in on, or whether it currently sits unassigned, separate fast-resolving tickets from slow ones?
+channel | assignment_status | ticket_count | avg_first_response_minutes | avg_resolution_minutes | first_response_breach_rate | resolution_breach_rate
+--------+-------------------+--------------+----------------------------+------------------------+----------------------------+-----------------------
+phone   | Assigned          |          277 |                       1658 |                   2940 |                       36.8 |                   24.2
+social  | Assigned          |          304 |                       1463 |                   2732 |                       33.6 |                   17.4
+web     | Assigned          |          298 |                       1435 |                   2665 |                       35.9 |                   21.5
+chat    | Assigned          |          581 |                       1573 |                   2644 |                       39.6 |                   20.7
+email   | Assigned          |          848 |                       1436 |                   2626 |                       38.2 |                   18.8
+chat    | Unassigned        |            6 |                       NULL |                   NULL |                      100.0 |                   83.3
+email   | Unassigned        |            4 |                       NULL |                   NULL |                       50.0 |                   25.0
+phone   | Unassigned        |            1 |                       NULL |                   NULL |                      100.0 |                    0.0
+web     | Unassigned        |            1 |                       NULL |                   NULL |                      100.0 |                  100.0
+(9 rows)
+
+=== Report 3: Macro usage overview (written by Viktor) ===
+Engineer's note: Report is platform-wide (not tenant-filtered) since the question is about overall macro reliance across the library. usage_count is a lifetime counter with no date dimension, so pct_of_total_macro_usage and the constants are all-time, while total_agent_reply_messages_2025 is scoped to 2025 as a rough denominator only - the two are not directly comparable periods. total_macro_count reflects the full non-deleted library size so you can see concentration vs. the long tail beyond the top 20 shown.
+REPORT: Macro usage overview
+QUESTION: How much do agents actually lean on canned-reply macros, and is usage concentrated in a few macros or spread across the library?
+macro_title          | is_shared | usage_count | pct_of_total_macro_usage | total_macro_count | total_macro_usage_sum | total_agent_reply_messages_2025
+---------------------+-----------+-------------+--------------------------+-------------------+-----------------------+--------------------------------
+Refund processed     | true      |        1840 |                     4.94 |               600 |                 37230 |                            4279
+Refund processed     | true      |         730 |                     1.96 |               600 |                 37230 |                            4279
+Refund processed     | true      |         697 |                     1.87 |               600 |                 37230 |                            4279
+Where is my order    | true      |         651 |                     1.75 |               600 |                 37230 |                            4279
+Return instructions  | true      |         647 |                     1.74 |               600 |                 37230 |                            4279
+Damaged item apology | true      |         518 |                     1.39 |               600 |                 37230 |                            4279
+Payment declined     | true      |         467 |                     1.25 |               600 |                 37230 |                            4279
+Damaged item apology | true      |         452 |                     1.21 |               600 |                 37230 |                            4279
+Damaged item apology | true      |         414 |                     1.11 |               600 |                 37230 |                            4279
+Refund processed     | true      |         397 |                     1.07 |               600 |                 37230 |                            4279
+Refund processed     | true      |         385 |                     1.03 |               600 |                 37230 |                            4279
+Payment declined     | true      |         383 |                     1.03 |               600 |                 37230 |                            4279
+Return instructions  | true      |         369 |                     0.99 |               600 |                 37230 |                            4279
+Where is my order    | true      |         349 |                     0.94 |               600 |                 37230 |                            4279
+Damaged item apology | true      |         336 |                      0.9 |               600 |                 37230 |                            4279
+Where is my order    | true      |         304 |                     0.82 |               600 |                 37230 |                            4279
+Payment declined     | true      |         295 |                     0.79 |               600 |                 37230 |                            4279
+Damaged item apology | true      |         294 |                     0.79 |               600 |                 37230 |                            4279
+Damaged item apology | true      |         261 |                      0.7 |               600 |                 37230 |                            4279
+Return instructions  | true      |         259 |                      0.7 |               600 |                 37230 |                            4279
+(20 rows)

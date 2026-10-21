@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Which specific products drive discrepancies at the three standout apparel sites",
+    "--question",
+    "At Atlanta (Cragsley Outfitters), Reading (Marrowby & Vane) and Den Haag (Studio Vrij) — the three sites with by far the most stock-count discrepancies — is the problem spread across the catalog, or concentrated in a handful of specific products/size-color variants?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Grace\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"product variant, restricted to stock_adjustments rows at these three specific warehouses in 2025: Atlanta Fulfilment Centre, Reading Fulfilment Centre, Den Haag Fulfilment Centre\", \"columns_requested\": [\"warehouse_name\", \"product_name\", \"sku\", \"variant_name (product_variants.name, which typically encodes size/color)\", \"adjustment_count (count of stock_adjustments rows for this variant at this warehouse)\", \"pct_theft_reason (% of this variant's adjustments at this warehouse tagged 'Missing - suspected theft', rounded 1dp)\", \"distinct_days_affected (count of distinct calendar dates with >=1 adjustment for this variant at this warehouse)\"], \"details\": \"Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound), joined to stock_locations (filtered to the 3 named warehouses by name) and to product_variants (via variant_id) and products (for product_name). Group by warehouse, product, sku, variant_name. Order by adjustment_count descending, tie-break by warehouse_name, then sku. Cap at 50 rows and note the total distinct variant count even if it exceeds 50.\", \"builds_on\": [\"Where 'Missing - suspected theft' tags concentrate: by warehouse\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

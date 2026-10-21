@@ -1,0 +1,132 @@
+=== Report 1: Merchant refund-rate spike check, Q3 2025 vs H1 2025 baseline (written by Omar) ===
+Engineer's note: Vertical is taken from tenants.industry (closest match to "vertical" in the catalog). Order count is the count of orders with placed_at in Q3 2025, used both as the >=10 filter and the reported column; merchants with zero Q3 captured-payment volume show a null refund rate/change rather than divide-by-zero.
+REPORT: Merchant refund-rate spike check, Q3 2025 vs H1 2025 baseline
+QUESTION: Does the refund spike Finance flagged for Q3 2025 (naming OfficeHub Nordic and Sports & Outdoor sellers) hold up at the merchant level, and is it the same story as Q4?
+merchant_name                 | vertical                  | refund_rate_q3_pct | refund_rate_h1_baseline_pct | change_vs_baseline_pp | refund_amount_q3_eur | order_count_q3
+------------------------------+---------------------------+--------------------+-----------------------------+-----------------------+----------------------+---------------
+OfficeHub Nordic              | Office Supplies (B2B)     |              20.98 |                        2.99 |                 17.99 |             23267.74 |             45
+Saffron & Sage                | Beauty                    |               9.62 |                         0.0 |                  9.62 |               183.14 |             25
+Nordic Bloom Cosmetics        | Beauty                    |               12.2 |                        4.59 |                  7.61 |               591.12 |             38
+Petalcourt Beauty             | Beauty                    |              11.63 |                        4.03 |                   7.6 |              1754.09 |            164
+Kayak Corner                  | Sports & Outdoor          |              14.12 |                        8.78 |                  5.34 |               828.54 |             24
+Feather & Fin                 | Pet Supplies              |               3.95 |                        0.56 |                  3.39 |               104.85 |             51
+Honeycomb Larder              | Food & Coffee             |                4.2 |                        0.93 |                  3.27 |               231.58 |            149
+Kibblewick                    | Pet Supplies              |                2.0 |                        0.69 |                  1.31 |               153.25 |            166
+Juniper Apothecary            | Beauty                    |               7.53 |                        6.49 |                  1.04 |               242.06 |             31
+Fennel & Flint                | Home & Living             |               7.85 |                        7.24 |                  0.61 |               910.97 |             75
+Tail Wag Supply               | Pet Supplies              |               2.34 |                        2.39 |                 -0.05 |                32.83 |             23
+Castell Fasteners             | Industrial Supplies (B2B) |                0.0 |                        0.34 |                 -0.34 |                  0.0 |             37
+Deskline Supplies             | Office Supplies (B2B)     |                0.0 |                        0.46 |                 -0.46 |                  0.0 |             18
+Oakhurst Tailoring            | Apparel & Footwear        |              13.06 |                       14.01 |                 -0.95 |               518.28 |             37
+The Balm Room                 | Beauty                    |                4.5 |                        5.53 |                 -1.03 |               154.76 |             23
+Grind Collective              | Food & Coffee             |                0.0 |                         1.1 |                  -1.1 |                  0.0 |            279
+Fell & Fjell                  | Sports & Outdoor          |               2.61 |                         4.1 |                 -1.48 |               382.12 |             22
+Coastline Interiors           | Home & Living             |               7.04 |                        8.77 |                 -1.73 |                184.7 |             25
+Cinder Peak Sports Co.        | Sports & Outdoor          |               9.28 |                       12.54 |                 -3.26 |              2712.96 |             75
+Cragsley Outfitters           | Apparel & Footwear        |              22.82 |                        26.1 |                 -3.27 |             28724.77 |            762
+Purrfect Pantry               | Pet Supplies              |                0.0 |                        3.44 |                 -3.44 |                  0.0 |             13
+Thistlecombe                  | Apparel & Footwear        |              21.64 |                       25.16 |                 -3.52 |               561.43 |             25
+Marrowby & Vane               | Apparel & Footwear        |              20.24 |                        24.4 |                 -4.16 |             10088.68 |            369
+Willow & Wren                 | Home & Living             |               6.22 |                       13.31 |                 -7.09 |               233.03 |             15
+Lamplight Living              | Home & Living             |               0.66 |                       11.98 |                -11.32 |                12.77 |             15
+Velvet Ash                    | Apparel & Footwear        |              19.65 |                       38.05 |                 -18.4 |               773.06 |             29
+Ampfeld Elektronik            | Consumer Electronics      |               NULL |                        NULL |                  NULL |                  0.0 |             80
+Atelier Nouveau               | Apparel & Footwear        |               NULL |                        NULL |                  NULL |                  0.0 |             18
+Ballycorran Industrial Supply | Industrial Supplies (B2B) |               NULL |                        NULL |                  NULL |                  0.0 |             79
+Basecamp Nord                 | Sports & Outdoor          |               NULL |                        NULL |                  NULL |                  0.0 |             12
+Brennquell Kaffee             | Food & Coffee             |               NULL |                        NULL |                  NULL |                  0.0 |            980
+Brewline Coffee               | Food & Coffee             |               NULL |                        NULL |                  NULL |                  0.0 |             10
+Chocolaterie Mireille         | Food & Coffee             |               NULL |                        NULL |                  NULL |                  0.0 |             32
+Gratlinie Outdoor             | Sports & Outdoor          |               NULL |                        NULL |                  NULL |                  0.0 |             51
+Hanse Industriebedarf         | Industrial Supplies (B2B) |               NULL |                        NULL |                  NULL |                  0.0 |             15
+Hautnah                       | Beauty                    |               NULL |                        NULL |                  NULL |                  0.0 |             13
+Hound Hamper                  | Pet Supplies              |               NULL |                        NULL |                  NULL |                  0.0 |             11
+Kettle & Key                  | Home & Living             |               NULL |                        NULL |                  NULL |                  0.0 |             12
+Kontor24 Bürobedarf           | Office Supplies (B2B)     |               NULL |                        NULL |                  NULL |                  0.0 |             57
+Linden & Loom                 | Home & Living             |               NULL |                        NULL |                  NULL |                  0.0 |             45
+Lumen Collective              | Apparel & Footwear        |               NULL |                        NULL |                  NULL |                  0.0 |             11
+Maison Clair                  | Apparel & Footwear        |               NULL |                        NULL |                  NULL |                  0.0 |             10
+Midland Safety Wear           | Industrial Supplies (B2B) |               NULL |                        NULL |                  NULL |                  0.0 |             45
+Mirelle                       | Beauty                    |               NULL |                        NULL |                  NULL |                  0.0 |             15
+Noordzee Surfwear             | Apparel & Footwear        |               NULL |                        NULL |                  NULL |                  0.0 |             16
+Ostwind Mode                  | Apparel & Footwear        |               NULL |                        NULL |                  NULL |                  0.0 |             22
+Pfotenglück                   | Pet Supplies              |               NULL |                        NULL |                  NULL |                  0.0 |             26
+Polder Packaging              | Industrial Supplies (B2B) |               NULL |                        NULL |                  NULL |                  0.0 |             18
+Ridgeback Gear                | Sports & Outdoor          |               NULL |                        NULL |                  NULL |                  0.0 |             28
+Rue Lafayette Studio          | Apparel & Footwear        |               NULL |                        NULL |                  NULL |                  0.0 |             44
+(58 rows, first 50 printed)
+
+=== Report 2: Receivables aging: who owes us and for how long (written by Bea) ===
+Engineer's note: EUR conversion uses the EUR-base exchange_rates row whose as_of date is the latest on/before 2025-12-31 for each currency (a single snapshot rate per currency, not a per-invoice historical rate). Net terms are taken from each tenant's default, non-deleted billing_profiles row; if a tenant somehow has more than one default profile the highest net_terms_days is shown. Report returns up to 50 merchants ranked by unpaid balance; the printed report will show the true total row count.
+REPORT: Receivables aging: who owes us and for how long
+QUESTION: Which merchants are slowest to pay their invoices, how large and how overdue are the balances, and is this concentrated in B2B wholesale?
+merchant_name                 | vertical                  | total_unpaid_balance_eur | open_invoice_count | days_overdue_oldest | largest_unpaid_invoice_eur | net_terms_days
+------------------------------+---------------------------+--------------------------+--------------------+---------------------+----------------------------+---------------
+Kontor24 Bürobedarf           | Office Supplies (B2B)     |                116652.86 |                 16 |                  13 |                   49396.29 |           NULL
+Ballycorran Industrial Supply | Industrial Supplies (B2B) |                 22415.24 |                 29 |                  10 |                    4097.99 |           NULL
+Castell Fasteners             | Industrial Supplies (B2B) |                 14481.02 |                 11 |                  29 |                    3537.39 |           NULL
+OfficeHub Nordic              | Office Supplies (B2B)     |                 14348.57 |                 13 |                  38 |                    3070.98 |           NULL
+Deskline Supplies             | Office Supplies (B2B)     |                 12749.42 |                  6 |                   3 |                    5000.42 |           NULL
+Midland Safety Wear           | Industrial Supplies (B2B) |                 10049.47 |                  9 |                   7 |                    4437.03 |           NULL
+Polder Packaging              | Industrial Supplies (B2B) |                   5296.8 |                  5 |                  12 |                    2697.74 |           NULL
+Hanse Industriebedarf         | Industrial Supplies (B2B) |                   864.14 |                  1 |                   0 |                     864.14 |           NULL
+Brennquell Kaffee             | Food & Coffee             |                    41.84 |                  1 |                   6 |                      41.84 |           NULL
+(9 rows)
+
+=== Report 3: Cost-driver volume inventory by merchant, 2025 (written by Grace) ===
+Engineer's note: Ordered by total shipping cost EUR descending (not merchant name) per your fallback instruction, to keep ordering deterministic without a secondary sort key conflicting with the requested limit; printed rows are capped at 50 but the query includes every tenant (all ~120 merchants) before the LIMIT, so if fewer than 50 tenants exist all are shown. Used tenants.industry as the "vertical" column since that is the closest attribute in the schema.
+REPORT: Cost-driver volume inventory by merchant, 2025
+QUESTION: What operational cost-driver volumes do we actually have per merchant today, to serve as the measurable building blocks for a cost-to-serve model?
+merchant_name          | vertical                  | shipment_count_2025 | total_shipping_cost_eur_2025 | return_count_2025 | refund_amount_eur_2025 | ticket_count_2025 | failed_webhook_count_2025
+-----------------------+---------------------------+---------------------+------------------------------+-------------------+------------------------+-------------------+--------------------------
+Deskline Supplies      | Office Supplies (B2B)     |                  75 |                     77876.17 |                 6 |                 905.48 |                11 |                         0
+Cragsley Outfitters    | Apparel & Footwear        |                3483 |                     15210.68 |              1370 |              169010.91 |               400 |                         0
+Marrowby & Vane        | Apparel & Footwear        |                1671 |                     11907.22 |               616 |               62492.02 |               231 |                         0
+Grind Collective       | Food & Coffee             |                1094 |                      7181.33 |                 6 |                 573.06 |               122 |                         0
+Castell Fasteners      | Industrial Supplies (B2B) |                 156 |                      5946.97 |                11 |                1552.35 |                13 |                         0
+Kibblewick             | Pet Supplies              |                 651 |                      5605.63 |                 4 |                 281.93 |                72 |                         0
+OfficeHub Nordic       | Office Supplies (B2B)     |                 167 |                      4948.84 |                10 |               29640.92 |                15 |                         0
+Petalcourt Beauty      | Beauty                    |                 674 |                      4727.42 |                55 |                4571.77 |               119 |                         0
+Fennel & Flint         | Home & Living             |                 379 |                      3109.02 |                52 |                3790.59 |                67 |                         0
+Honeycomb Larder       | Food & Coffee             |                 604 |                      2746.26 |                 9 |                 379.03 |                58 |                         0
+Cinder Peak Sports Co. | Sports & Outdoor          |                 329 |                      1683.36 |                78 |               16718.36 |                43 |                         0
+Feather & Fin          | Pet Supplies              |                 216 |                      1118.22 |                 5 |                 418.97 |                14 |                         0
+Kayak Corner           | Sports & Outdoor          |                 101 |                       931.94 |                16 |                 3384.1 |                20 |                         0
+Willow & Wren          | Home & Living             |                  96 |                       833.28 |                19 |                2413.08 |                19 |                         0
+Thistlecombe           | Apparel & Footwear        |                  87 |                        702.4 |                26 |                2304.01 |                21 |                         0
+The Balm Room          | Beauty                    |                 101 |                        618.9 |                 4 |                 772.49 |                15 |                         0
+Tail Wag Supply        | Pet Supplies              |                  89 |                       469.53 |                 3 |                  75.91 |                 6 |                         0
+Tiny Atelier           | Home & Living             |                  32 |                       243.98 |                 3 |                 263.46 |                 6 |                         0
+Lamplight Living       | Home & Living             |                  49 |                       224.18 |                 8 |                 790.19 |                 6 |                         0
+Haven Linen            | Home & Living             |                  25 |                        223.7 |                 4 |                 432.17 |                 4 |                         0
+Little Larch Kids      | Apparel & Footwear        |                  22 |                       212.41 |                12 |                 746.22 |                 4 |                         0
+Roast Republic         | Food & Coffee             |                  51 |                        211.5 |                 0 |                    0.0 |                 7 |                         0
+Folio & Fern           | Books & Stationery        |                  43 |                       210.33 |                 3 |                  95.09 |                11 |                         0
+Bytefield              | Consumer Electronics      |                  21 |                       196.21 |                 4 |                4487.99 |                 6 |                         0
+Rosehip Lab            | Beauty                    |                  28 |                       144.28 |                 2 |                  44.48 |                 6 |                         0
+Circuit Harbor         | Consumer Electronics      |                  18 |                       129.24 |                 1 |                  56.62 |                 1 |                         0
+Nordic Bloom Cosmetics | Beauty                    |                 135 |                       121.81 |                 6 |                1395.08 |                14 |                         0
+Oakhurst Tailoring     | Apparel & Footwear        |                 153 |                       113.12 |                48 |                3594.08 |                27 |                         0
+Kibble Crate           | Pet Supplies              |                  16 |                       107.29 |                 0 |                    0.0 |                 0 |                         0
+Meadow Row             | Apparel & Footwear        |                  24 |                       105.35 |                 5 |                1193.78 |                 4 |                         0
+Snout & Sons           | Pet Supplies              |                   7 |                       100.68 |                 0 |                    0.0 |                 0 |                         0
+Stoneware Studio       | Home & Living             |                  25 |                        99.72 |                 4 |                  93.98 |                 3 |                         0
+Coastline Interiors    | Home & Living             |                 148 |                        98.45 |                23 |                1535.87 |                21 |                         0
+Velvet Ash             | Apparel & Footwear        |                 130 |                        81.82 |                59 |                5814.41 |                19 |                         0
+Inkwell & Quire        | Books & Stationery        |                  15 |                        80.56 |                 1 |                   9.37 |                 1 |                         0
+Juniper Apothecary     | Beauty                    |                 150 |                        73.88 |                 9 |                 927.15 |                17 |                         0
+Fell & Fjell           | Sports & Outdoor          |                  79 |                        69.58 |                17 |                5909.87 |                 8 |                         0
+Saffron & Sage         | Beauty                    |                 113 |                        62.64 |                 0 |                 737.69 |                10 |                         0
+Purrfect Pantry        | Pet Supplies              |                  74 |                        62.32 |                 4 |                 119.22 |                 4 |                         0
+Greyfriars Supply      | Apparel & Footwear        |                  14 |                        57.52 |                 4 |                 311.98 |                 2 |                         0
+Glasshouse Grooming    | Beauty                    |                   9 |                        49.86 |                 0 |                    0.0 |                 0 |                         0
+Silverthread           | Jewelry & Accessories     |                  13 |                        47.27 |                 1 |                    0.0 |                 0 |                         0
+Dewdrop Studio         | Beauty                    |                   5 |                        41.41 |                 0 |                    0.0 |                 0 |                         0
+Signalbox              | Consumer Electronics      |                   5 |                        33.62 |                 0 |                    0.0 |                 0 |                         0
+Fjordline Wear         | Apparel & Footwear        |                  54 |                        30.78 |                24 |                2321.06 |                14 |                         0
+Driftwood Home         | Home & Living             |                  25 |                        28.05 |                 3 |                 389.07 |                 6 |                         0
+Paperplane Press       | Books & Stationery        |                  52 |                        25.71 |                 4 |                  82.22 |                 5 |                         0
+Barkley & Co.          | Pet Supplies              |                  36 |                        25.12 |                 0 |                  51.77 |                 4 |                         0
+Hus & Hem              | Home & Living             |                  33 |                        21.65 |                 4 |                 407.25 |                 4 |                         0
+Copper Lane            | Apparel & Footwear        |                   6 |                        19.46 |                 2 |                 180.52 |                 1 |                         0
+(50 rows)

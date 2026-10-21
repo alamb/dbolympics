@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Post-erasure data footprint: what remains in sessions, logins, and access log",
+    "--question",
+    "After a data subject's erasure request is completed, what login/session and access-log history still remains, and for how long?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Bea\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per completed erasure request (request_type='erasure', status='completed')\", \"columns_requested\": [\"dsar public_id\", \"tenant name\", \"subject_user_id\", \"completed_at (date)\", \"days since completed\", \"sessions remaining (count where sessions.user_id = subject_user_id)\", \"most recent session started_at\", \"login_attempts remaining (count where login_attempts.user_id = subject_user_id)\", \"most recent login_attempts occurred_at\", \"access_log rows remaining (count where access_log.actor_user_id = subject_user_id)\", \"most recent access_log occurred_at\"], \"details\": \"Source: data_subject_requests filtered to request_type='erasure' AND status='completed' (expect 39 rows per Monday's reconciliation report), left-joined to sessions, login_attempts, and access_log on the subject's user_id. This is the direct evidence Henrik asked for: whether 'erasure' actually clears authentication/access history or whether it lingers indefinitely. Platform-wide, full history. Order by completed_at ascending (oldest erasures first, since those have had the most time for any retention process to clear them).\", \"builds_on\": [\"Pre-2023 data subject requests: backfill or data quality issue?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

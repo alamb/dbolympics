@@ -1,0 +1,57 @@
+=== Report 1: Knowledge base article effectiveness (written by Ines) ===
+Engineer's note: Report is platform-wide across all tenants (no tenant filter was specified, since the question is about KB effectiveness in general rather than a particular merchant); article titles are not guaranteed unique across tenants, so if the Support Ops Manager wants this scoped to a single merchant or needs tenant/merchant name shown, let me know and I'll re-run. helpful_rate and platform_avg_helpful_rate are rounded to 4 decimals; rows with zero feedback show helpful_rate as null as requested.
+REPORT: Knowledge base article effectiveness
+QUESTION: Which knowledge base articles get used, and are the ones we have actually rated as helpful by customers?
+title                                | knowledge_category_name | view_count | helpful_count | not_helpful_count | helpful_rate | total_published_articles | platform_avg_helpful_rate
+-------------------------------------+-------------------------+------------+---------------+-------------------+--------------+--------------------------+--------------------------
+Managing email preferences           | Account                 |      25117 |           400 |                98 |       0.8032 |                     1709 |                    0.7556
+When will I get my refund?           | Returns & Refunds       |      22126 |           309 |                49 |       0.8631 |                     1709 |                    0.7556
+Size guide                           | Products                |      17245 |           351 |               138 |       0.7178 |                     1709 |                    0.7556
+Size guide                           | Products                |      15590 |           219 |               108 |       0.6697 |                     1709 |                    0.7556
+My item arrived damaged              | Returns & Refunds       |      14406 |           173 |                45 |       0.7936 |                     1709 |                    0.7556
+Size guide                           | Products                |      12492 |           341 |                62 |       0.8462 |                     1709 |                    0.7556
+Managing email preferences           | Account                 |      11859 |           251 |                54 |        0.823 |                     1709 |                    0.7556
+My parcel is late - what now?        | Orders & Delivery       |      11546 |           126 |                48 |       0.7241 |                     1709 |                    0.7556
+Managing email preferences           | Account                 |      10673 |           375 |               117 |       0.7622 |                     1709 |                    0.7556
+Size guide                           | Products                |      10577 |           141 |                31 |       0.8198 |                     1709 |                    0.7556
+Size guide                           | Products                |      10094 |           161 |                76 |       0.6793 |                     1709 |                    0.7556
+How can I track my order?            | Orders & Delivery       |       9541 |           326 |               144 |       0.6936 |                     1709 |                    0.7556
+Do you ship internationally?         | Orders & Delivery       |       9024 |           353 |                70 |       0.8345 |                     1709 |                    0.7556
+How do I return an item?             | Returns & Refunds       |       8935 |           100 |                13 |        0.885 |                     1709 |                    0.7556
+When will I get my refund?           | Returns & Refunds       |       8751 |           118 |                26 |       0.8194 |                     1709 |                    0.7556
+How do I return an item?             | Returns & Refunds       |       8688 |            87 |                33 |        0.725 |                     1709 |                    0.7556
+How can I track my order?            | Orders & Delivery       |       8549 |           247 |                41 |       0.8576 |                     1709 |                    0.7556
+How do I reset my password?          | Account                 |       8216 |           121 |                55 |       0.6875 |                     1709 |                    0.7556
+Which payment methods do you accept? | Payments                |       7719 |            93 |                35 |       0.7266 |                     1709 |                    0.7556
+My parcel is late - what now?        | Orders & Delivery       |       7532 |           267 |                78 |       0.7739 |                     1709 |                    0.7556
+(20 rows)
+
+=== Report 2: Ticket volume and speed by topic tag (written by Omar) ===
+Engineer's note: Tags are matched by name across all tenants (support_tags is tenant-scoped, but the report grain is topic/tag name, not merchant), so a tag name used by several merchants is combined into one row. Breach rates are breached-ticket-count ÷ ticket_count for that tag (not restricted to tickets that actually had an SLA policy assigned), and avg response/resolution minutes only average over tickets that have a non-null first_response_at/resolved_at respectively. total_tagged_tickets_2025 and total_tickets_2025 are constants repeated on every row for easy comparison; the report doesn't separately list the total distinct-tag count, which would need its own single-value report if wanted.
+REPORT: Ticket volume and speed by topic tag
+QUESTION: Are certain ticket topics (support tags) driving a disproportionate share of volume or taking much longer to resolve than others?
+tag_name          | ticket_count | avg_first_response_minutes | avg_resolution_minutes | first_response_breach_rate | resolution_breach_rate | total_tagged_tickets_2025 | total_tickets_2025
+------------------+--------------+----------------------------+------------------------+----------------------------+------------------------+---------------------------+-------------------
+delivery          |         1195 |                     1606.5 |                 3045.0 |                     0.3883 |                 0.1757 |                      2320 |               2320
+where-is-my-order |         1057 |                     1703.3 |                 3209.0 |                     0.3955 |                 0.1845 |                      2320 |               2320
+complaint         |          464 |                      859.0 |                 1630.2 |                     0.3815 |                 0.3621 |                      2320 |               2320
+return            |          410 |                     1680.6 |                 2880.1 |                     0.4488 |                 0.2024 |                      2320 |               2320
+product-question  |          247 |                     1857.5 |                 2621.0 |                     0.2146 |                 0.0445 |                      2320 |               2320
+damaged           |          210 |                     1147.0 |                 2016.8 |                     0.3333 |                    0.5 |                      2320 |               2320
+refund            |           65 |                      536.3 |                 1380.0 |                     0.4615 |                 0.3385 |                      2320 |               2320
+payment           |           20 |                      927.9 |                 1251.2 |                       0.25 |                   0.05 |                      2320 |               2320
+account           |            9 |                      108.7 |                 1087.1 |                     0.4444 |                 0.6667 |                      2320 |               2320
+(9 rows)
+
+=== Report 3: CSAT score by resolution speed bucket (written by Felix) ===
+Engineer's note: Resolution time is computed as resolved_at - created_at across all tenants combined (no currency conversion needed since there's no money here); SLA breach share uses an EXISTS check against sla_breaches for breach_kind='resolution'. 5 bucket rows total, well within the 50-row limit.
+REPORT: CSAT score by resolution speed bucket
+QUESTION: Does customer satisfaction after a resolved ticket track with how fast it was resolved and whether it breached SLA, or does something else seem to drive it?
+resolution_time_bucket | ticket_count | avg_csat_score | pct_resolution_sla_breached | avg_resolution_minutes
+-----------------------+--------------+----------------+-----------------------------+-----------------------
+Under 4h               |          109 |           4.38 |                         0.0 |                  115.0
+4-24h                  |          279 |           3.81 |                         5.4 |                  781.0
+1-3 days               |          200 |           2.74 |                        18.5 |                 2410.0
+3-7 days               |           66 |           1.77 |                        74.2 |                 6471.0
+Over 7 days            |           31 |           1.71 |                       100.0 |                24926.0
+(5 rows)

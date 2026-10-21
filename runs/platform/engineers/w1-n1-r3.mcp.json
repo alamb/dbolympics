@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Internal Health Check Reliability by Month",
+    "--question",
+    "How did the rate of failed internal health checks trend across 2025?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Grace\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per calendar month of 2025\", \"columns_requested\": [\"month\", \"total_checks\", \"unhealthy_checks\", \"unhealthy_rate_pct\", \"avg_latency_ms\", \"distinct_components_checked\"], \"details\": \"Table system_health_checks. Filter checked_at in 2025. Group by month of checked_at. unhealthy_checks = count where is_healthy=false. unhealthy_rate_pct rounded 2dp. avg_latency_ms rounded whole number over non-null latency_ms. Platform-wide across all tenants/components. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

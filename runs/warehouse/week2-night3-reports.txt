@@ -1,0 +1,46 @@
+=== Report 1: Is the December 31 correction one single batch event, or genuinely independent per merchant? (written by Bea) ===
+Engineer's note: Grain is the distinct exact occurred_at timestamp among 2025 adjustment movements; warehouse/tenant joins are used only for the distinct counts, not to filter rows. The report will show however many distinct timestamp values exist (expected to be well under 50); if it turns out to exceed 50, let me know and I'll add a cap or pre-aggregate further.
+REPORT: Is the December 31 correction one single batch event, or genuinely independent per merchant?
+QUESTION: Did the 407 stock_movements kind='adjustment' events in 2025 all fire at the exact same timestamp (suggesting one system/data event), or do different merchants' corrections have distinct timestamps (consistent with independent, organic annual stocktakes)?
+occurred_at                | event_count | distinct_tenants | distinct_warehouses | total_abs_quantity
+---------------------------+-------------+------------------+---------------------+-------------------
+2025-12-31 22:59:59.999999 |         406 |               59 |                  59 |               4066
+2025-05-19 09:00:00        |           1 |                1 |                   1 |                  1
+(2 rows)
+
+=== Report 2: Do the zero-activity 'Warehouse' sites hold real inventory? (written by Felix) ===
+Engineer's note: The request names 10 warehouse/tenant pairs but refers to "9 zero-activity sites" — I included all 10 listed pairs since that's the explicit list given; please flag if one should be dropped.
+REPORT: Do the zero-activity 'Warehouse' sites hold real inventory?
+QUESTION: The apparel merchants' secondary sites named '...Warehouse' (as opposed to '...Fulfilment Centre') showed zero stock-count activity all year — are these empty/inactive shells, or do they hold meaningful live inventory that is simply never being counted (a blind spot)?
+warehouse_name      | tenant_name          | total_stock_on_hand | distinct_variants_stocked | pct_of_tenant_total_stock_units
+--------------------+----------------------+---------------------+---------------------------+--------------------------------
+Aarhus Warehouse    | Oakhurst Tailoring   |                   0 |                         0 |                             0.0
+Boston Warehouse    | Cragsley Outfitters  |                   0 |                         0 |                             0.0
+Brussels Warehouse  | Studio Vrij          |                   0 |                         0 |                             0.0
+Calgary Warehouse   | Cragsley Outfitters  |                   0 |                         0 |                             0.0
+Glasgow Warehouse   | Thistlecombe         |                   0 |                         0 |                             0.0
+Groningen Warehouse | Studio Vrij          |                   0 |                         0 |                             0.0
+Limerick Warehouse  | Marrowby & Vane      |                   0 |                         0 |                             0.0
+Preston Warehouse   | Marrowby & Vane      |                   0 |                         0 |                             0.0
+Toulouse Warehouse  | Rue Lafayette Studio |                   0 |                         0 |                             0.0
+Uppsala Warehouse   | Velvet Ash           |                   0 |                         0 |                             0.0
+(10 rows)
+
+=== Report 3: Is the ~1.08 adjustments-per-variant ratio apparel-specific or company-wide? (written by Felix) ===
+Engineer's note: Grouped by tenants.industry (the free-text field on the tenants table) since that's the only industry/vertical attribute available; adjustment counts are all stock_adjustments rows (table has no distinction between "routine" and other reasons) in 2025, reached via stock_location_id -> stock_locations -> warehouses -> tenants.
+REPORT: Is the ~1.08 adjustments-per-variant ratio apparel-specific or company-wide?
+QUESTION: Is the near-constant rate of about 1.08 routine stock-adjustments per distinct affected variant per year a quirk of the apparel/footwear vertical, or does it hold across all merchant verticals — i.e., is the whole routine discrepancy stream essentially a flat background rate of roughly one single-unit miss per SKU per year, regardless of product type?
+industry                  | total_routine_adjustments_2025 | distinct_variants_with_adjustment | adjustments_per_variant | distinct_tenants_in_industry
+--------------------------+--------------------------------+-----------------------------------+-------------------------+-----------------------------
+Sports & Outdoor          |                           1343 |                              1181 |                   1.137 |                           13
+Jewelry & Accessories     |                            206 |                               185 |                   1.114 |                            6
+Industrial Supplies (B2B) |                            165 |                               150 |                     1.1 |                            5
+Office Supplies (B2B)     |                             99 |                                90 |                     1.1 |                            4
+Apparel & Footwear        |                           6503 |                              6000 |                   1.084 |                           25
+Pet Supplies              |                            225 |                               209 |                   1.077 |                           10
+Home & Living             |                            589 |                               552 |                   1.067 |                           16
+Consumer Electronics      |                            293 |                               275 |                   1.065 |                            9
+Food & Coffee             |                            244 |                               231 |                   1.056 |                           11
+Beauty                    |                            410 |                               389 |                   1.054 |                           15
+Books & Stationery        |                            117 |                               111 |                   1.054 |                            6
+(11 rows)

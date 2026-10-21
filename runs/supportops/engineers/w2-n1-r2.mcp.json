@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Macro usage_count audit trail reconciliation",
+    "--question",
+    "Can we independently verify what macros.usage_count is actually counting, using the audit trail, before we repeat that number anywhere?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Ines\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per macro, for the 5 highest-usage macros from last week's report\", \"columns_requested\": [\"macro_title\", \"current_usage_count (from macros table today)\", \"logged_update_event_count (rows in change_history where entity_table = 'macros', entity_id = this macro, and changed_columns includes 'usage_count')\", \"sum_of_logged_increments (sum of after_data.usage_count minus before_data.usage_count across those logged events)\", \"first_logged_update_at\", \"last_logged_update_at\", \"macro_created_at\"], \"details\": \"Source tables: macros, change_history (entity_schema/entity_table = 'macros', filter changed_columns array containing 'usage_count'; parse before_data/after_data json for the usage_count field). No date window \\u2014 we want the full history since macro_created_at. Pick the same 5 macros as the top rows of last week's 'Macro usage overview' report (by tenant + title, since titles repeat across tenants \\u2014 use the macro id if you have it, otherwise match on title + usage_count from that report). Order by current_usage_count descending. Goal: see whether sum_of_logged_increments and logged_update_event_count come anywhere close to explaining current_usage_count, or whether most of the counter's growth has no audit trail behind it at all \\u2014 flag either way.\", \"builds_on\": [\"Macro usage overview\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Image-Count Buckets: Product Age, Status, and Vertical Mix",
+    "--question",
+    "Are zero-image product listings systematically different from one-plus-image listings (older, more likely draft/archived, or concentrated in certain verticals), rather than the image count itself being the driver?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per product image-count bucket (0, 1, 2-3, 4-6, 7+), across ALL products regardless of status (not just active ones, to test the status hypothesis)\", \"columns_requested\": [\"image_count_bucket\", \"product_count\", \"avg_days_since_created\", \"pct_status_draft\", \"pct_status_archived\", \"pct_status_active\", \"pct_apparel_footwear_industry\", \"pct_b2b_industry (Office Supplies + Industrial Supplies combined)\", \"avg_variants_per_product\"], \"details\": \"Tables: products (all statuses, all deleted_at values included this time), product_media (kind='image', counted per product to form the bucket), tenants (for industry), product_variants. avg_days_since_created = average of (2025-12-31 minus products.created_at) in days. pct_status_draft/archived/active = share of products in that bucket with that products.status value. pct_apparel_footwear_industry and pct_b2b_industry = share of products in the bucket belonging to tenants with that industry. avg_variants_per_product = average count of product_variants (any status) per product in the bucket. Round averages to 1 decimal, percentages to 1 decimal. Order by image_count_bucket in natural ascending order (0, 1, 2-3, 4-6, 7+).\", \"builds_on\": [\"Catalog Richness vs Sales Performance by Image Count Bucket\", \"Image-Richness vs Sales Within Apparel & Footwear\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

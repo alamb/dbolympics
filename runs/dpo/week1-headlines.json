@@ -1,0 +1,5 @@
+[
+ "🔒 Privacy audit: our email-retention rule (delete after 730 days) is configured for all 120 merchants but has never actually run — we're still holding ~44,000+ customer emails that are over 2 years old.",
+ "⚖️ 3 shoppers' erasure requests were correctly put on hold for payment disputes, but those holds are now 289–954 days old (up to 2.6 years) and need review before we can say the requests are truly resolved.",
+ "📉 Marketing-email opt-in rate has slipped from 99.4% to ~90% since 2023, with a sharp spike in opt-outs in July–August 2025 — worth watching if we rely on consent for marketing."
+]

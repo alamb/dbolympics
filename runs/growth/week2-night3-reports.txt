@@ -1,0 +1,62 @@
+=== Report 1: At what point in their order history do customers start referring? (written by Viktor) ===
+Engineer's note: Orders-before-referral counts any order status (per request, "any status"), matched by orders.user_id = referrals.referrer_user_id within the same tenant; placed_at is used as the order date and NULL placed_at orders are excluded from both the pre-referral count and the 2025 count since they can't be dated.
+REPORT: At what point in their order history do customers start referring?
+QUESTION: Is there a typical order-count threshold after which a customer becomes a referrer, which would tell us when to prompt the referral ask?
+orders_before_first_referral_bucket | referrer_count | share_of_referrers_pct | avg_total_2025_orders
+------------------------------------+----------------+------------------------+----------------------
+1                                   |             97 |                   17.5 |                  2.57
+2                                   |             77 |                   13.9 |                  3.14
+3                                   |             55 |                    9.9 |                  3.27
+4-5                                 |             86 |                   15.5 |                  4.27
+6+                                  |            239 |                   43.1 |                  9.78
+(5 rows)
+
+=== Report 2: Does the unattributed-orders blind spot differ by vertical or by new-vs-repeat customers? (written by Felix) ===
+Engineer's note: industry is read straight from tenants.industry (free text set by each tenant, not a controlled vertical list), so rows reflect however tenants have populated that field rather than a fixed taxonomy of ~9-10 verticals; 'new customer' is based on each user's earliest non-null placed_at order across their full history, scoped to their tenant.
+REPORT: Does the unattributed-orders blind spot differ by vertical or by new-vs-repeat customers?
+QUESTION: Among orders with no linked marketing attribution, is there a pattern by vertical or by whether the buyer is a new or repeat customer that would tell us if this blind spot is worth chasing?
+industry                  | attribution_status | orders_count | share_of_industry_orders_pct | new_customer_order_pct | avg_order_value_eur
+--------------------------+--------------------+--------------+------------------------------+------------------------+--------------------
+Apparel & Footwear        | attributed         |         6968 |                         97.1 |                   22.0 |               184.0
+Apparel & Footwear        | unattributed       |          207 |                          2.9 |                   21.3 |               181.0
+Beauty                    | attributed         |         1424 |                         90.9 |                   19.9 |               103.0
+Beauty                    | unattributed       |          142 |                          9.1 |                    7.0 |                32.0
+Books & Stationery        | attributed         |          152 |                         95.6 |                   17.1 |                53.0
+Books & Stationery        | unattributed       |            7 |                          4.4 |                   14.3 |                29.0
+Consumer Electronics      | attributed         |          562 |                         97.6 |                   29.5 |              1026.0
+Consumer Electronics      | unattributed       |           14 |                          2.4 |                   28.6 |              1942.0
+Food & Coffee             | attributed         |         3151 |                         43.6 |                    9.1 |                67.0
+Food & Coffee             | unattributed       |         4082 |                         56.4 |                    1.5 |                 1.0
+Home & Living             | attributed         |         1617 |                         97.2 |                   24.1 |               149.0
+Home & Living             | unattributed       |           46 |                          2.8 |                   17.4 |               153.0
+Industrial Supplies (B2B) | attributed         |          768 |                         99.2 |                    8.5 |              1889.0
+Industrial Supplies (B2B) | unattributed       |            6 |                          0.8 |                    0.0 |              2253.0
+Jewelry & Accessories     | attributed         |           49 |                         98.0 |                   36.7 |               216.0
+Jewelry & Accessories     | unattributed       |            1 |                          2.0 |                  100.0 |               286.0
+Office Supplies (B2B)     | attributed         |          522 |                         99.1 |                    8.0 |              3050.0
+Office Supplies (B2B)     | unattributed       |            5 |                          0.9 |                    0.0 |               643.0
+Pet Supplies              | attributed         |          822 |                         56.6 |                   12.9 |                63.0
+Pet Supplies              | unattributed       |          631 |                         43.4 |                    2.5 |                 3.0
+Sports & Outdoor          | attributed         |          992 |                         97.5 |                   26.3 |               368.0
+Sports & Outdoor          | unattributed       |           25 |                          2.5 |                   24.0 |               288.0
+(22 rows)
+
+=== Report 3: Is the attribution blind spot growing, shrinking, or stable over 2025? (written by Omar) ===
+Engineer's note: EUR conversion uses exchange_rates with base_code='EUR', quote_code=order currency, matched on the order's placed_at calendar date (EUR orders use rate 1 directly); months with no orders in 2025 would not appear since the grain is derived from orders.placed_at itself, but given order volume this is expected to cover all 12 months.
+REPORT: Is the attribution blind spot growing, shrinking, or stable over 2025?
+QUESTION: Across the months of 2025, what share of orders and revenue can we trace to a marketing touchpoint, and is that coverage changing over time?
+month   | orders_count | attributed_orders_count | attribution_coverage_pct | total_revenue_eur | attributed_revenue_eur
+--------+--------------+-------------------------+--------------------------+-------------------+-----------------------
+2025-01 |         1827 |                    1418 |                     77.6 |          590933.0 |               581931.0
+2025-02 |         1400 |                    1012 |                     72.3 |          434674.0 |               431919.0
+2025-03 |         1638 |                    1197 |                     73.1 |          422216.0 |               418009.0
+2025-04 |         1568 |                    1150 |                     73.3 |          479142.0 |               472688.0
+2025-05 |         1691 |                    1287 |                     76.1 |          489232.0 |               471861.0
+2025-06 |         1509 |                    1116 |                     74.0 |          352794.0 |               348894.0
+2025-07 |         1648 |                    1232 |                     74.8 |          373491.0 |               367645.0
+2025-08 |         1564 |                    1133 |                     72.4 |          364953.0 |               358672.0
+2025-09 |         1712 |                    1275 |                     74.5 |          472423.0 |               468375.0
+2025-10 |         1879 |                    1442 |                     76.7 |          521689.0 |               499927.0
+2025-11 |         2645 |                    2171 |                     82.1 |          837654.0 |               824058.0
+2025-12 |         3112 |                    2594 |                     83.4 |          705947.0 |               693468.0
+(12 rows)

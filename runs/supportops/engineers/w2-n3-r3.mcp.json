@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Event name inventory for knowledge-base engagement signal",
+    "--question",
+    "Which event_name values in the events table actually correspond to a customer viewing a knowledge-base/help article, so we can build a trustworthy KB-engagement metric next week instead of guessing?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Felix\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per distinct event_name, platform-wide, 2025\", \"columns_requested\": [\"event_name\", \"event_count (occurred_at in 2025)\", \"distinct_user_count\"], \"details\": \"Window: events.occurred_at between 2025-01-01 and 2025-12-31. Source table: events. No filtering on event_name \\u2014 return all distinct values with their counts so we can visually spot anything knowledge/article/help-related (last week's page_views path-pattern guess returned zero matches, so we need the real signal). Order by event_count descending, top 30 rows, and note the total number of distinct event_name values found even if more than 30.\", \"builds_on\": [\"Monthly ticket volume vs. knowledge-base engagement trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

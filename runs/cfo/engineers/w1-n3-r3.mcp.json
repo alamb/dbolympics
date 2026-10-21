@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Apparel & Footwear Refund Rate Trend by Quarter, 2024-2025",
+    "--question",
+    "Within the outlier Apparel & Footwear vertical, is the elevated refund rate structural/stable or getting worse over time, and how does it compare to the company average each quarter?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one calendar quarter (2024-Q1 through 2025-Q4), restricted to the Apparel & Footwear vertical\", \"columns_requested\": [\"quarter\", \"merchant_count (Apparel & Footwear tenants with qualifying payments that quarter)\", \"payment_count\", \"gross_captured_eur\", \"amount_refunded_eur\", \"refund_rate_pct\", \"company_avg_refund_rate_pct (all verticals, same quarter, for comparison)\"], \"details\": \"Source: payments joined to tenants where tenants.industry = 'Apparel & Footwear', filtered to status reflecting captured/refunded/partially_refunded with captured_at between 2024-01-01 and 2025-12-31, converted to EUR the same way as the company-wide refund trend report (exchange_rates matched on currency_code and date(captured_at)). Group by calendar quarter. The company_avg_refund_rate_pct column should be the all-tenant, all-vertical refund rate for that same quarter (volume-weighted: total amount_refunded_eur / total gross_captured_eur across every tenant), to show the gap each quarter. Order chronologically 2024-Q1 to 2025-Q4 (8 rows).\", \"builds_on\": [\"Refund Rate by Merchant Vertical, 2025\", \"Merchant Refund Rate Outliers, 2025 (merchants with 50+ captured payments)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

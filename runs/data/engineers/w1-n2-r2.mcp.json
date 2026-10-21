@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Invoice revenue: order-linked vs subscription-only",
+    "--question",
+    "Is invoice revenue additional revenue on top of what we already count in orders, or does some of it double-count order revenue we've already booked?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Viktor\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"calendar month, 2023-01 through 2025-12, based on invoice paid_at month\", \"columns_requested\": [\"month\", \"invoice_paid_total_eur\", \"invoice_order_linked_eur\", \"invoice_subscription_only_eur\", \"invoice_other_eur\", \"pct_order_linked\"], \"details\": \"Population: invoices with status='paid', grouped by month of paid_at. invoice_paid_total_eur = sum of invoices.total, converted to EUR via exchange_rates (base_code='EUR', rate matched to paid_at date and invoices.currency_code). invoice_order_linked_eur = sum of invoices.total where invoices.order_id is not null (these invoices are tied directly to an order and may already be reflected in orders.grand_total). invoice_subscription_only_eur = sum of invoices.total where invoices.order_id is null and invoices.subscription_id is not null (recurring billing with no linked order - likely incremental revenue not in the orders table at all). invoice_other_eur = sum of invoices.total where both order_id and subscription_id are null. pct_order_linked = invoice_order_linked_eur / invoice_paid_total_eur * 100, rounded to 1 decimal. Tables: invoices, exchange_rates. Order by month ascending.\", \"builds_on\": [\"Monthly revenue by source\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

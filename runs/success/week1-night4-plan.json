@@ -1,0 +1,61 @@
+{
+ "notes": "Trimming detail length after earlier submission issues; same 3 reports as planned, worded more concisely to stay within limits.",
+ "requests": [
+  {
+   "title": "Top merchants: year-over-year holiday-quarter growth",
+   "question": "For the biggest merchants, is Oct-Dec revenue really growing year over year, or is the recent growth just holiday seasonality?",
+   "grain": "one row per merchant (tenant)",
+   "columns": [
+    "merchant name",
+    "industry",
+    "revenue EUR Oct-Dec 2025",
+    "revenue EUR Oct-Dec 2024",
+    "revenue YoY growth pct",
+    "orders Oct-Dec 2025",
+    "orders Oct-Dec 2024",
+    "order YoY growth pct"
+   ],
+   "details": "Tables orders, tenants, exchange_rates. Window A is placed_at Oct 1 to Dec 31 2025. Window B is placed_at Oct 1 to Dec 31 2024. Exclude cancelled orders. Convert to EUR using daily exchange_rates matched to placed_at date. growth pct equals A minus B divided by B, blank if B is zero. Order by window A revenue descending, tie-break tenant_id. Cap 50 rows.",
+   "builds_on": [
+    "Merchant size and recent growth trend"
+   ]
+  },
+  {
+   "title": "Merchant risk signals: refunds, cancellations, unpaid invoices, shopper drop-off",
+   "question": "Which merchants show warning signs right now: rising refunds or cancellations, unpaid invoices, or falling shopper activity?",
+   "grain": "one row per merchant (tenant)",
+   "columns": [
+    "merchant name",
+    "industry",
+    "refund rate last 90 days",
+    "refund rate prior 90 days",
+    "cancellation rate last 90 days",
+    "cancellation rate prior 90 days",
+    "overdue invoice amount EUR",
+    "web sessions last 90 days",
+    "web sessions prior 90 days",
+    "session growth pct"
+   ],
+   "details": "Tables payment_refunds joined to payments for refund rate, equal to refund EUR divided by captured payment EUR per period. Orders for cancellation rate, equal to cancelled orders divided by all orders placed per period. Invoices for overdue amount, equal to amount_due in EUR where status is past_due, or status is open with due date already passed as of 2026-01-05. Web_sessions for session counts per period. Convert money via exchange_rates. Periods: last 90 days is Oct 3 to Dec 31 2025; prior 90 days is Jul 5 to Oct 2 2025. Order by overdue invoice amount EUR descending, tie-break refund rate last 90 days descending, then tenant_id. Cap 50 rows.",
+   "builds_on": [
+    "Merchant size and recent growth trend"
+   ]
+  },
+  {
+   "title": "Merchant customer base health: repeat purchase rate",
+   "question": "For each merchant, how much of their customer base is repeat buyers versus one-and-done, over the last 12 months?",
+   "grain": "one row per merchant (tenant)",
+   "columns": [
+    "merchant name",
+    "industry",
+    "distinct customers with at least one order in last 12 months",
+    "repeat customers with at least two orders in last 12 months",
+    "repeat purchase rate pct",
+    "total orders last 12 months",
+    "average orders per customer last 12 months"
+   ],
+   "details": "Table orders: count distinct user_id per tenant with order counts over placed_at Jan 1 to Dec 31 2025, excluding cancelled orders. Join tenants for name and industry. repeat purchase rate pct equals repeat customers divided by distinct customers. average orders per customer equals total orders divided by distinct customers. Order by distinct customers descending, tie-break repeat purchase rate descending, then tenant_id. Cap 50 rows.",
+   "builds_on": []
+  }
+ ]
+}

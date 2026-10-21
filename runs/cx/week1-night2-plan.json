@@ -1,0 +1,58 @@
+{
+ "notes": "Reading report 1: year-end (Nov/Dec) spikes in volume, response and resolution time repeat every year (2023, 2024, 2025) — that looks like seasonal/holiday load and is somewhat expected, though worth noting for the memo. What's NOT seasonal is the 2025-05/2025-06 spike (resolution hours jump to 52.7/87.2, response to 26.5/45.1, breach rate to 36.9/45.6%) — nothing comparable appears in 2023 or 2024 mid-year, so I want to find the cause rather than assume it's noise. Report 3 shows delivery + where-is-my-order tags are already >65% of tagged tickets in the last 6 months and growing share while complaint/return/product-question shrink in share — that's the platform-level theme Daniel asked about in priority #2, and it may also explain the resolution-time trend in #1 if delivery tickets take longer to resolve and are concentrated in the spike months. Tonight I'm chasing both of these (merchant concentration of the May-Jun spike, and whether delivery-tagged tickets specifically explain slow/volatile resolution times), plus opening priority #3 (returns/refunds) with a foundational trend report so we have something in hand for that question this week. I don't need a new slot for a plain YoY same-month pivot — I can build that directly off report 1's numbers for the memo.",
+ "requests": [
+  {
+   "title": "Delivery-related vs other tickets: volume and resolution speed",
+   "question": "Are delivery/where-is-my-order tickets driving the recent growth in ticket volume and the slower/more volatile resolution times seen in the monthly trend?",
+   "grain": "one calendar month, platform-wide, split into two ticket groups (delivery-related vs other)",
+   "columns": [
+    "month (YYYY-MM)",
+    "tickets total",
+    "tickets delivery-related",
+    "delivery share of tickets (%)",
+    "avg first response hours, delivery-related",
+    "avg first response hours, other",
+    "avg resolution hours, delivery-related",
+    "avg resolution hours, other"
+   ],
+   "details": "Source: tickets joined to ticket_tags_map and support_tags. Define a ticket as 'delivery-related' if it has at least one tag whose support_tags.name is 'delivery' or 'where-is-my-order' (case-insensitive match); all other tickets are 'other'. Classify at the ticket level (distinct ticket ids), not the tag-row level, so a ticket is counted once even if it carries both tags or additional tags. Window: tickets.created_at from 2024-07-01 through 2025-12-31 (18 months) to cover the Dec-2024 spike, the Jan-2025 carryover, the May/Jun-2025 anomaly, and the Nov/Dec-2025 spike. avg first response hours = extract(epoch from first_response_at - created_at)/3600 averaged over tickets in that group/month with first_response_at not null; avg resolution hours = extract(epoch from resolved_at - created_at)/3600 averaged over tickets in that group/month with resolved_at not null. Round hour figures to 1 decimal, share to 1 decimal. Order by month ascending. Expect 18 rows.",
+   "builds_on": [
+    "Support response & resolution time trend, monthly",
+    "Ticket topic mix and recent shift"
+   ]
+  },
+  {
+   "title": "Ticket spike in May-June 2025: which merchants drove it",
+   "question": "Was the May-June 2025 jump in ticket volume and resolution time concentrated in a few merchants, or broad-based across the platform?",
+   "grain": "one row per tenant (merchant), among tenants with at least 5 tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "tickets created, May-Jun 2025 (combined)",
+    "avg monthly tickets, other 2025 months (Jan-Apr, Jul-Dec, per-month average)",
+    "spike ratio (May-Jun monthly rate ÷ other-months monthly average)",
+    "share of May-Jun 2025 tickets tagged delivery or where-is-my-order (%)"
+   ],
+   "details": "Source: tickets joined to tenants (for name), and ticket_tags_map/support_tags for the delivery-tag share. 'Tickets created, May-Jun 2025' = count of tickets with created_at between 2025-05-01 and 2025-06-30 inclusive, per tenant. 'avg monthly tickets, other 2025 months' = count of that tenant's tickets with created_at in 2025 but outside May-Jun, divided by 10 (the 10 other months). Spike ratio = (May-Jun combined count / 2) divided by the other-months monthly average; if the other-months average is 0, show NULL rather than erroring. Delivery-tag share uses the same ticket-level classification as the companion report (tag name 'delivery' or 'where-is-my-order', case-insensitive, counted once per distinct ticket). Only include tenants with >=5 tickets created in 2025 total. Order by 'tickets created, May-Jun 2025' descending, tie-break by merchant name ascending. Report will cap at 50 printed rows per house standard; note total qualifying tenant count in the footer.",
+   "builds_on": [
+    "Support response & resolution time trend, monthly"
+   ]
+  },
+  {
+   "title": "Returns and refunds: volume and time-to-resolve trend",
+   "question": "How often do shoppers end up requesting a return/refund, and how long does that process take to resolve, and is it changing over time?",
+   "grain": "one calendar month, platform-wide",
+   "columns": [
+    "month (YYYY-MM)",
+    "orders placed",
+    "returns requested",
+    "return rate (%)",
+    "returns refunded (count)",
+    "avg days requested-to-refunded",
+    "median days requested-to-refunded",
+    "returns rejected (%)"
+   ],
+   "details": "Source: order_returns (for request/approval/refund lifecycle) and orders (for volume denominator). Grain the month on order_returns.requested_at for return-side columns, and on orders.placed_at for 'orders placed'. Return rate = returns requested that month / orders placed that same month, as a percentage rounded to 1 decimal -- note in the report that this is an approximation since a return in month M may relate to an order placed in an earlier month, not necessarily the same month's orders. 'avg/median days requested-to-refunded' = extract(epoch from refunded_at - requested_at)/86400, averaged/median over returns in that month with status='refunded' and refunded_at not null. 'returns rejected (%)' = count of order_returns with status='rejected' that month / total returns requested that month, as a percentage rounded to 1 decimal. Window: 2023-01-01 through 2025-12-31 (36 months). Round day figures to 1 decimal. Order by month ascending.",
+   "builds_on": []
+  }
+ ]
+}

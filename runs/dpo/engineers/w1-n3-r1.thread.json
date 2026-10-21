@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  status,\n  count(*) as total_requests,\n  count(completed_at) as completed_count,\n  count(*) - count(completed_at) as not_completed_count,\n  min(received_at) as oldest_received_at,\n  max(received_at) as newest_received_at,\n  avg(case when completed_at is null then date(DATE '2026-01-05') - date(received_at) end) as avg_age_days_not_completed\nfrom data_subject_requests\ngroup by status\norder by total_requests desc, status asc",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: status, total_requests, completed_count, not_completed_count, oldest_received_at, newest_received_at, avg_age_days_not_completed"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "select\n  status,\n  count(*) as total_requests,\n  count(completed_at) as completed_count,\n  count(*) - count(completed_at) as not_completed_count,\n  min(received_at) as oldest_received_at,\n  max(received_at) as newest_received_at,\n  avg(case when completed_at is null then date(DATE '2026-01-05') - date(received_at) end) as avg_age_days_not_completed\nfrom data_subject_requests\ngroup by status\norder by total_requests desc, status asc",
+  "note": "One row per data_subject_requests.status across full history, platform-wide (no tenant filter, as requested). avg_age_days_not_completed is null when every row of that status already has completed_at set.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups all `data_subject_requests` by `status` and reports total count, completed vs. not-completed counts, the oldest/newest `received_at`, and the average age (in days, relative to 2026-01-05) of the not-completed rows — which will directly show whether statuses like `rejected` systematically leave `completed_at` null or whether it's just a few stragglers."
+ }
+]

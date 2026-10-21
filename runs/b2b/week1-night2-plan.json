@@ -1,0 +1,58 @@
+{
+ "requests": [
+  {
+   "title": "New Business Pipeline: Stage Where Lost Opportunities Were Last Seen",
+   "question": "Among B2B wholesale opportunities that were actually lost in new-customer acquisition (not renewals), which stage were they sitting in just before they were marked Closed Lost — i.e. where is the real graveyard?",
+   "grain": "one row per New-business pipeline stage (plus one row for opportunities with no recorded stage transition)",
+   "columns": [
+    "stage_name",
+    "stage_order",
+    "lost_opportunities_last_seen_here (count)",
+    "pct_of_total_lost_in_new_business",
+    "total_lost_opportunities_new_business (constant, for reference)"
+   ],
+   "details": "Night 1's stage report showed that for every wholesale tenant, the 'New business' pipeline has ZERO opportunities currently open or closed at Prospecting/Qualification/Proposal/Negotiation — all closed opportunities show only as 'Closed Won' or 'Closed Lost' (the terminal stages). This means opportunities.stage_id only reflects the FINAL state and does not preserve where a lost deal actually stalled before dying — the earlier 'graveyard stage' question cannot be answered from current stage_id alone. This report reconstructs it from history. Scope: opportunities where tenant_id is a wholesale merchant (tenants.industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'), pipeline_id = the tenant's 'New business' pipeline (join pipelines on name = 'New business'), is_closed = true, is_won = false. For each such opportunity, look at change_history where entity_table = 'opportunities', entity_id = opportunities.id, changed_columns includes 'stage_id', ordered by occurred_at. Take the most recent such change event and read before_data->>'stage_id' as the stage the opportunity was in immediately before that final change (presumed to be the move into Closed Lost); join that id to opportunity_stages for stage_name/stage_order. If an opportunity has no change_history row with a stage_id change at all, bucket it as 'No stage transition recorded' (it was apparently created or recorded as lost without a logged progression). Group by the resulting stage (or the no-record bucket), count opportunities, and compute each group's share of all lost New-business opportunities for this tenant set. Order by lost_opportunities_last_seen_here descending. Please flag in the report notes if change_history has little or no coverage for these opportunities (e.g., most rows fall into 'No transition recorded'), since that would mean the audit trail can't answer this and we should say so plainly rather than over-interpret a small sample.",
+   "builds_on": [
+    "B2B Wholesale Pipeline: Opportunities by Merchant and Stage"
+   ]
+  },
+  {
+   "title": "New Business Only: Won vs Lost Opportunity Characteristics",
+   "question": "Restricted to genuine new-customer acquisition deals (excluding renewals), what reliably differs between won and lost opportunities — deal size, activities before close, days open, or concentration among accounts and reps?",
+   "grain": "one row per closed outcome (won or lost), New business pipeline only",
+   "columns": [
+    "outcome (won / lost)",
+    "opportunities (count)",
+    "average amount in EUR",
+    "median amount in EUR",
+    "average activities per opportunity before close",
+    "average days open (closed_at - created_at)",
+    "distinct accounts involved",
+    "distinct owning reps (owner_user_id) involved"
+   ],
+   "details": "This re-runs last night's won-vs-lost comparison but adds pipeline_id = the tenant's 'New business' pipeline (join pipelines on name = 'New business') to the filter, because the prior report pooled 'New business' (acquisition) and 'Renewals' (existing-customer renew/churn) opportunities together under the same won/lost labels — two very different sales motions with likely different base win rates (the Renewals pipeline's 'Renewed' stage carries a 1.0 default win_probability vs 0.1-0.75 for New business stages), which could distort the comparison. Same tenant scope as before (industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'), opportunities where is_closed = true, split by is_won. Convert amount to EUR via exchange_rates (base_code='EUR', quote_code = opportunity currency_code, rate as_of closed_at date or nearest prior day). Activities before close = count of activities rows with activities.opportunity_id = opportunities.id and occurred_at <= closed_at, averaged per opportunity within each outcome group. Order 'won' row first, then 'lost'.",
+   "builds_on": [
+    "B2B Wholesale Opportunities: Won vs Lost Characteristics"
+   ]
+  },
+  {
+   "title": "New Business Only: Deal Cycle Time Trend by Month",
+   "question": "Restricted to genuine new-customer acquisition deals (excluding renewals), how long does it take to close an opportunity, and is that cycle time trending up or down over the last three years?",
+   "grain": "one row per calendar month (based on closed_at month), New business pipeline only",
+   "columns": [
+    "month (YYYY-MM)",
+    "opportunities_closed (count)",
+    "closed_won (count)",
+    "closed_lost (count)",
+    "win_rate_pct",
+    "avg_cycle_days (closed_at - created_at)",
+    "median_cycle_days (closed_at - created_at)"
+   ],
+   "details": "Re-runs last night's cycle-time trend but adds pipeline_id = the tenant's 'New business' pipeline (join pipelines on name = 'New business') to the filter, for the same reason as the won/lost report: pooling in Renewals (which likely close faster and win far more often, given 'Renewed' has a 1.0 win_probability) could be masking or distorting the true acquisition-cycle trend. Same tenant scope (industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'), opportunities where is_closed = true and closed_at is not null, full history 2023-01-01 through 2025-12-31, grouped by month of closed_at (calendar_days.month_label or equivalent). Round avg/median cycle days to 1 decimal. Order by month ascending.",
+   "builds_on": [
+    "B2B Wholesale Deal Cycle Time Trend by Month"
+   ]
+  }
+ ],
+ "notes": "Night 1's big finding is a data-model gotcha, not yet a business trend: every wholesale tenant's 'New business' pipeline shows zero opportunities (open or closed) at Prospecting/Qualification/Proposal/Negotiation — closed deals only ever show as the terminal Closed Won/Closed Lost stage. That means current stage_id can't answer 'where do deals die' for lost opportunities; it only tells us the final outcome. It also means Report 3 (won/lost) and Report 2 (cycle time) from night 1 silently pooled two very different populations together: 'New business' (true lead-to-signed-deal acquisition, which is what Patrick and Samuel are actually asking about) and 'Renewals' (existing-customer renew/churn, where 'Renewed' carries a 1.0 default win probability and is a fundamentally easier motion). Tonight I'm spending all three slots fixing this at the root: (1) reconstruct the real graveyard stage from change_history for New-business-only lost opportunities, (2) redo the won/lost characteristics comparison scoped to New business only, (3) redo the cycle-time trend scoped to New business only. This keeps priorities 1-2-3 intact but makes them actually answer the question Patrick asked, rather than a renewals-diluted version of it. I'm holding Samuel's stale-pipeline-risk question and Patrick's #4/#5 for night 3, once I see whether change_history actually has usable coverage for the graveyard question (flagged as a risk in request 1) and whether the split reports change the picture."
+}

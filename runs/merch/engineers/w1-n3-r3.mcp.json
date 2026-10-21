@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Collections and Bundles Adoption by Merchant",
+    "--question",
+    "How much are merchants leaning on curated collections and bundles rather than flat product listings, and does that line up with stronger sales?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per merchant (tenant), same top-50-by-revenue set as the Merchant Catalog Profile report\", \"columns_requested\": [\"merchant_name\", \"industry\", \"active_collection_count\", \"pct_active_products_in_a_collection\", \"active_bundle_count\", \"pct_active_products_in_a_bundle\", \"revenue_eur_last_12mo\", \"avg_order_value_eur_last_12mo\"], \"details\": \"active_collection_count = count of non-deleted collections (deleted_at is null) for the tenant. pct_active_products_in_a_collection = share of the tenant's active, non-deleted products that appear in at least one collection_products row pointing to a non-deleted collection. active_bundle_count = count of product_bundles with is_active = true for the tenant. pct_active_products_in_a_bundle = share of the tenant's active, non-deleted products that have at least one of their variants referenced in bundle_items belonging to an active bundle. revenue_eur_last_12mo and avg_order_value_eur_last_12mo use the same order window and EUR conversion as the Merchant Catalog Profile report (orders placed 2025-01-01 to 2025-12-31, status not cancelled, exchange_rates base_code=EUR quote_code=order currency_code as_of placed_at date); avg_order_value_eur_last_12mo = revenue_eur_last_12mo / orders_last_12mo. Round percentages to 1 decimal, money to whole EUR. Order by revenue_eur_last_12mo descending, tie-break by merchant_name; print the top 50 (same ~120-tenant universe) and note total rows returned.\", \"builds_on\": [\"Merchant Catalog Profile\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

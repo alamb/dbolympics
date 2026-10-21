@@ -1,0 +1,60 @@
+{
+ "notes": "Report 1 showed overall low DSAR volume but exposed a real red flag for Ines: 3 requests have sat open since 2023-05, 2024-07, and 2025-03 (now 0.5–2.5 years old) with no completion — these are the \"legal deadline risk\" she asked about, and the aggregate monthly view hides who/what they are. Also portability requests were 0 in every single month across 3 years, worth confirming in the drill-down rather than assuming it's a data artifact. Report 2 was truncated at 50 rows mid-way through marketing_email's monthly series (2024-02), and marketing_email showed a real declining opt-in trend (99.4%→94.4%) that I need to see through to 2025-12; analytics_cookies showed a suspiciously perfect 100% opt-in with zero withdrawals ever recorded across 36 months, which I'm deferring rather than burning a slot on tonight, but will flag/verify later if time allows. Report 3 came back clean — only 6 compliance_events total, all resolved, no backlog, no unresolved aging — so I consider Ines's question 3 answered for now and am moving a slot to question 4 (retention vs. policy), starting with a cheap inventory of what retention_policies actually exist before committing to the harder actual-vs-policy comparison next.",
+ "requests": [
+  {
+   "title": "Currently open data subject requests: age and overdue detail",
+   "question": "Which specific data subject requests are still open right now, how old are they, and which are overdue?",
+   "grain": "one row per data_subject_requests record where completed_at is null as of 2026-01-05",
+   "columns": [
+    "request public_id",
+    "tenant name",
+    "request type",
+    "status",
+    "received at (date)",
+    "due at (date, or blank if not set)",
+    "days since received (2026-01-05 minus received_at)",
+    "days overdue (2026-01-05 minus due_at, 0 or blank if due_at is null or in the future)",
+    "assigned to (users.full_name via assigned_to_user_id, 'unassigned' if null)"
+   ],
+   "details": "Source: data_subject_requests joined to tenants (tenant name) and users (assigned_to_user_id -> full_name). Filter: completed_at IS NULL. Use literal date 2026-01-05 for all age math, not CURRENT_DATE. This should return a small number of rows (expected around 5, matching the still_open_count totals from last night's monthly report: 2023-05, 2024-07, 2025-03, and two from 2025-12). Order by received_at ascending so the oldest, most at-risk requests print first.",
+   "builds_on": [
+    "Data subject requests: monthly volume, closure time, and overdue backlog"
+   ]
+  },
+  {
+   "title": "Marketing-email consent opt-in trend, full history",
+   "question": "Has the marketing-email opt-in rate meaningfully changed over the full 3-year history, and did the early decline continue or stabilize?",
+   "grain": "one row per calendar month, purpose fixed to 'marketing_email'",
+   "columns": [
+    "month (YYYY-MM)",
+    "grants recorded in month",
+    "withdrawals recorded in month",
+    "expirations recorded in month",
+    "users with any consent record as of month end",
+    "net active opt-ins at month end",
+    "active opt-in rate at month end (%, 1 decimal)"
+   ],
+   "details": "Same logic as last night's consent report (consent_records, effective status via most-recent-row-per-user-per-purpose-as-of-month-end using a window function), but filtered to purpose = 'marketing_email' only, and spanning the full 2023-01 through 2025-12 range so none of the 36 months are cut off by the row limit. Platform-wide, all tenants. Order by month ascending.",
+   "builds_on": [
+    "Consent trend by purpose and month: grants, withdrawals, and net opt-in rate"
+   ]
+  },
+  {
+   "title": "Retention policy inventory: what rules exist and where",
+   "question": "What data-retention policies has Tidewick actually configured, for which entity tables, with what retention windows and expiry actions?",
+   "grain": "one row per retention_policies record",
+   "columns": [
+    "tenant name",
+    "policy name",
+    "entity schema",
+    "entity table",
+    "retention days",
+    "action on expiry",
+    "is active",
+    "last run at"
+   ],
+   "details": "Source: retention_policies joined to tenants for the name. No filtering — list every configured policy (active and inactive) so we can see coverage gaps as well as configured rules. This is a lookup/inventory step to identify which entity tables have a policy before comparing actual record ages against the stated retention_days in a follow-up report. Order by entity_table, then tenant name.",
+   "builds_on": []
+  }
+ ]
+}

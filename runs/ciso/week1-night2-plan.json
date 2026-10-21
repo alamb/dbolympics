@@ -1,0 +1,63 @@
+{
+ "notes": "Reading critically: (1) login volumes look like a calm baseline — failure rate holds 5-8% and avg attempts-per-IP stays ~1.5 all 26 weeks, which doesn't look like credential stuffing. But the week of 2025-11-24 jumps ~41% in total attempts (and max-attempts-per-single-IP jumps to 24, the second-highest in the series) while failure rate stays normal — plausibly just Black Friday/Cyber Monday shopping traffic, but I want to confirm it's broad-based across tenants rather than concentrated on one tenant/IP before ruling out an attack. (2) MFA report 2 is a bombshell: shopper MFA is 0.0% for every one of the 50 worst-covered tenants, and staff MFA tops out at 50% even among the better of that bottom 50 — but this report only shows the worst half of tenants by staff rate, so I don't yet have the company-wide headline number Henrik actually needs to quote, nor do I know if MFA adoption is improving over time or flat. (3) Report 3's 50-row page got entirely consumed by the single \"Owner\" system role (26 permissions, tied for the most) across ~50 tenants, out of 434 qualifying tenant-role rows — I haven't seen any non-Owner privileged roles yet, so I can't say anything about custom role hygiene. I did spot two dormant privileged accounts worth keeping (Aurum & Ash: Owner account active in status but last login 2024-12-26, over a year stale, on a churned tenant; Halden Boots: Owner last login 2025-10-03). Tonight's three requests: a monthly MFA-adoption trend giving the defensible overall number and trajectory, a tenant breakdown of the anomalous Nov 24 week to test the Black-Friday-vs-attack hypothesis, and a company-wide rollup by role name (collapsing the 434 tenant-role rows) to see privileged access beyond \"Owner\" and its dormancy rate.",
+ "requests": [
+  {
+   "title": "Platform-wide MFA adoption trend by month, staff vs. shoppers",
+   "question": "What is the actual company-wide MFA adoption rate today for staff and for shoppers, and has it been improving or flat over the past year?",
+   "grain": "one row per calendar month (month_label), platform-wide across all tenants",
+   "columns": [
+    "month_label (YYYY-MM, month end snapshot)",
+    "staff users as of month end",
+    "staff users with confirmed MFA as of month end",
+    "staff MFA rate (%)",
+    "shopper users as of month end",
+    "shopper users with confirmed MFA as of month end",
+    "shopper MFA rate (%)"
+   ],
+   "details": "Source: users (tenant_id, is_staff, created_at, deleted_at) and mfa_devices (user_id, confirmed_at). For each of the 12 months Jan 2025 through Dec 2025 (use calendar_days distinct month_start/month_label values), take month_end = last day of that month. 'Staff users as of month end' = count of users with is_staff = true, created_at <= month_end, and (deleted_at is null or deleted_at > month_end). 'Staff users with confirmed MFA as of month end' = of those, count with at least one mfa_devices row where confirmed_at <= month_end. Same logic for shoppers (is_staff = false). Rates rounded to 1 decimal percent. This is a cumulative snapshot each month, not new signups in that month. Order by month_label ascending (already unique).",
+   "builds_on": [
+    "MFA adoption rate by merchant, staff vs. shoppers"
+   ]
+  },
+  {
+   "title": "Login attempts by tenant during the week of 2025-11-24 spike",
+   "question": "The week of 2025-11-24 showed a 41% jump in total login attempts platform-wide versus the prior week — is that jump broad-based across many merchants (consistent with Black Friday/Cyber Monday shopping traffic) or concentrated in one or a few tenants with elevated failure rates or IP concentration (consistent with a credential-stuffing attempt)?",
+   "grain": "one row per tenant, for login_attempts occurring 2025-11-24 00:00 through 2025-11-30 23:59:59 UTC only",
+   "columns": [
+    "tenant name",
+    "tenant status",
+    "total login attempts",
+    "successful logins",
+    "failed logins",
+    "failure rate (%)",
+    "distinct emails attempted",
+    "distinct IP addresses",
+    "max attempts from a single IP",
+    "this tenant's share of platform total attempts that week (%)"
+   ],
+   "details": "Source: login_attempts joined to tenants, filtered to occurred_at between 2025-11-24 00:00:00 and 2025-11-30 23:59:59 inclusive (the ISO week that showed the spike in the prior weekly report). Compute each tenant's counts plus its percentage share of the platform-wide total attempts in that window (rounded to 1 decimal). Include every tenant with at least one attempt in the window. Order by total login attempts descending, tenant name as tie-break; note total tenant rows returned vs. the 50-row cap.",
+   "builds_on": [
+    "Weekly sign-in attempt volume and failure pattern"
+   ]
+  },
+  {
+   "title": "Privileged role landscape by role name, company-wide",
+   "question": "Beyond the default 'Owner' role (which filled the entire first page of the prior report), what other roles across merchants carry significant permissions, how widely are they assigned, and how dormant are the users holding them?",
+   "grain": "one row per distinct role name (roles.name), aggregated across all tenants that have a role with that name",
+   "columns": [
+    "role name",
+    "tenant count (distinct tenants with a role of this name)",
+    "share of those instances flagged is_system (%)",
+    "average permission count granted (across tenant instances of this role)",
+    "max permission count seen for this role name",
+    "total users currently assigned (summed across tenants, via user_roles, excluding deleted users)",
+    "total users dormant (status = active and last_login_at is null or before 2025-10-05, summed across tenants)",
+    "dormant rate among assigned users (%)"
+   ],
+   "details": "Source: roles joined to role_permissions (for permission counts per role instance), user_roles joined to users (excluding users.deleted_at is not null) for assignment and dormancy. Restrict to role instances with >=1 permission and >=1 assigned non-deleted user (same population as the prior 'Privileged roles per merchant' report, i.e. drawn from that same 434-row qualifying set, but now grouped by role_name instead of by tenant+role so the whole landscape fits on one page). 'Dormant' = users.status = 'active' and (last_login_at is null or last_login_at < 2025-10-05). Dormant rate = total dormant / total assigned, rounded to 1 decimal percent. Order by total users assigned descending, then role name as tie-break; cap at 50 rows and note how many distinct role names exist in total.",
+   "builds_on": [
+    "Privileged roles per merchant: grant size and dormancy"
+   ]
+  }
+ ]
+}

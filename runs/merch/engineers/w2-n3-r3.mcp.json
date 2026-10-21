@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Bundle Adoption Rate by Vertical",
+    "--question",
+    "Is bundle adoption really concentrated in specific verticals, and how strong is that pattern across the whole merchant base, not just the list of bundle-users?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per tenant industry (vertical)\", \"columns_requested\": [\"industry\", \"merchant_count\", \"merchants_using_bundles\", \"pct_merchants_using_bundles\", \"avg_pct_products_bundled_among_users\"], \"details\": \"merchant_count = count of non-deleted tenants in that industry. merchants_using_bundles = count of those tenants with at least one product_bundles row where is_active = true. pct_merchants_using_bundles = merchants_using_bundles / merchant_count * 100, rounded to 1 decimal. avg_pct_products_bundled_among_users = average of pct_active_products_in_a_bundle (as defined in the Collections and Bundles Adoption and Merchants Using Bundles reports) across only the merchants_using_bundles in that industry; null/blank if zero users. Order by pct_merchants_using_bundles descending, tie-break by industry name.\", \"builds_on\": [\"Merchants Using Bundles: Raw Profile\", \"Collections and Bundles Adoption by Merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

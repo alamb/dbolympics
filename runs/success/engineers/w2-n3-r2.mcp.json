@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Marketing engagement before shoppers go quiet: lapsed vs active shoppers",
+    "--question",
+    "Do shoppers who stop engaging with campaigns go quiet sooner, and does disengagement show up before they lapse?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Ines\", \"situation\": \"churn-task-force\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per shopper group and time window before reference date\", \"columns_requested\": [\"shopper group\", \"window before reference\", \"shopper count\", \"messages sent\", \"messages opened\", \"open rate pct\", \"messages clicked\", \"click rate pct\"], \"details\": \"Two groups, each needing at least 3 lifetime orders excluding cancelled: 'lapsed' = last order placed_at 180 to 365 days before 2025-12-31; 'active' = last order within 90 days of 2025-12-31. Reference date is the user's own last order date for lapsed, and 2025-12-31 for active. Two windows per group: '0-90 days before reference' and '91-180 days before reference'. From campaign_messages (sent_at, opened_at, clicked_at) count sent, opened, clicked per group/window; open rate pct is opened divided by sent; click rate pct is clicked divided by sent; shopper count is distinct users in that window. Order by shopper group, then window ascending. Expect 4 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

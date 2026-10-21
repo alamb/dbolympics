@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t.industry,\n  COUNT(*) FILTER (WHERE pr.created_at >= DATE '2024-12-01' AND pr.created_at < DATE '2025-01-01') AS dec2024_review_count,\n  ROUND(AVG(pr.rating) FILTER (WHERE pr.created_at >= DATE '2024-12-01' AND pr.created_at < DATE '2025-01-01')::numeric, 2) AS dec2024_avg_rating,\n  COUNT(*) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01') AS dec2025_review_count,\n  ROUND(AVG(pr.rating) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01')::numeric, 2) AS dec2025_avg_rating,\n  ROUND(\n    (AVG(pr.rating) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01')\n     - AVG(pr.rating) FILTER (WHERE pr.created_at >= DATE '2024-12-01' AND pr.created_at < DATE '2025-01-01'))::numeric\n  , 2) AS rating_change_pts,\n  ROUND(\n    100.0 * COUNT(*) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01' AND pr.rating <= 2)\n    / NULLIF(COUNT(*) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01'), 0)\n  , 1) AS dec2025_pct_1_2_star\nFROM product_reviews pr\nJOIN products p ON p.id = pr.product_id AND p.tenant_id = pr.tenant_id\nJOIN tenants t ON t.id = pr.tenant_id\nWHERE pr.is_approved = true\n  AND (\n    (pr.created_at >= DATE '2024-12-01' AND pr.created_at < DATE '2025-01-01')\n    OR (pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01')\n  )\nGROUP BY t.industry\nORDER BY rating_change_pts ASC NULLS LAST, t.industry ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: industry, dec2024_review_count, dec2024_avg_rating, dec2025_review_count, dec2025_avg_rating, rating_change_pts, dec2025_pct_1_2_star"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and produces the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t.industry,\n  COUNT(*) FILTER (WHERE pr.created_at >= DATE '2024-12-01' AND pr.created_at < DATE '2025-01-01') AS dec2024_review_count,\n  ROUND(AVG(pr.rating) FILTER (WHERE pr.created_at >= DATE '2024-12-01' AND pr.created_at < DATE '2025-01-01')::numeric, 2) AS dec2024_avg_rating,\n  COUNT(*) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01') AS dec2025_review_count,\n  ROUND(AVG(pr.rating) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01')::numeric, 2) AS dec2025_avg_rating,\n  ROUND(\n    (AVG(pr.rating) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01')\n     - AVG(pr.rating) FILTER (WHERE pr.created_at >= DATE '2024-12-01' AND pr.created_at < DATE '2025-01-01'))::numeric\n  , 2) AS rating_change_pts,\n  ROUND(\n    100.0 * COUNT(*) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01' AND pr.rating <= 2)\n    / NULLIF(COUNT(*) FILTER (WHERE pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01'), 0)\n  , 1) AS dec2025_pct_1_2_star\nFROM product_reviews pr\nJOIN products p ON p.id = pr.product_id AND p.tenant_id = pr.tenant_id\nJOIN tenants t ON t.id = pr.tenant_id\nWHERE pr.is_approved = true\n  AND (\n    (pr.created_at >= DATE '2024-12-01' AND pr.created_at < DATE '2025-01-01')\n    OR (pr.created_at >= DATE '2025-12-01' AND pr.created_at < DATE '2026-01-01')\n  )\nGROUP BY t.industry\nORDER BY rating_change_pts ASC NULLS LAST, t.industry ASC",
+  "note": "Grouped by tenants.industry (the vertical field); verticals with zero approved reviews in both Decembers are naturally excluded since they contribute no rows. rating_change_pts and the 1-2 star share are NULL/0 only if a vertical had no reviews in the relevant month.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups approved product reviews by `tenants.industry`, comparing full-calendar-month December 2024 vs December 2025 counts and average ratings, with the rating delta and the Dec-2025 1-2 star share, ordered worst-decline first."
+ }
+]

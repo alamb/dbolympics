@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ledger-to-Payment Reconciliation Pattern at Scale, 2025",
+    "--question",
+    "Across all of 2025's payments, does the 'ledger credit = payment + refund' pattern seen in the sample hold universally, and how large are the 'no ledger entries' and 'other mismatch' buckets?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Grace\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one reconciliation category, over all payments captured in 2025\", \"columns_requested\": [\"reconciliation_category\", \"payment_count\", \"pct_of_payments\", \"total_payment_amount_eur\", \"total_ledger_credit_eur\", \"total_ledger_debit_eur\"], \"details\": \"Source: payments with status in a captured/refunded/partially_refunded state and captured_at in 2025. For each payment, aggregate linked ledger_entries (via payment_id) into total credit amount and total debit amount, converting each ledger_entries.amount to EUR via exchange_rates matched on ledger_entries.currency_code and date(ledger_entries.occurred_at) \\u2014 do not assume the ledger entry's currency matches the payment's currency, convert each independently. Also convert payments.amount and amount_refunded to EUR via exchange_rates on captured_at. Classify each payment into exactly one reconciliation_category: 'no ledger entries' (zero linked ledger_entries rows); else 'credit = net amount' if total_ledger_credit_eur is within 1% (or \\u20ac1, whichever is larger) of (payment_amount_eur - amount_refunded_eur); else 'credit = payment + refund' if total_ledger_credit_eur is within the same tolerance of (payment_amount_eur + amount_refunded_eur); else 'other mismatch'. Count payments and sum amounts per category; pct_of_payments is each category's share of all qualifying 2025 payments. Order by payment_count descending.\", \"builds_on\": [\"Audit Sample: End-to-End Transaction Walkthrough, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

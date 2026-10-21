@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Shopper satisfaction (CSAT) trend, monthly",
+    "--question",
+    "How satisfied are shoppers with support interactions overall, and is satisfaction trending up or down?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one calendar month, platform-wide\", \"columns_requested\": [\"month (YYYY-MM)\", \"CSAT responses\", \"avg score (1-5)\", \"median score (1-5)\", \"% satisfied (score >= 4)\", \"% dissatisfied (score <= 2)\"], \"details\": \"Source: csat_responses. Grain the month on submitted_at. Window: 2023-01-01 through 2025-12-31 (36 months). avg/median score computed directly over csat_responses.score for that month. '% satisfied' = count of responses with score>=4 / total responses that month, percentage rounded to 1 decimal; '% dissatisfied' = count with score<=2 / total responses that month, percentage rounded to 1 decimal. Round avg score to 2 decimals, median to 1 decimal. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

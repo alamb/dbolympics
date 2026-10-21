@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Incrementality re-cut: order value matched by basket size (item count), 2025",
+    "--question",
+    "Controlling for how many distinct items are in the order, do discounted orders (our four main marketing promotions) still show a higher average order value than non-discounted orders, or does the earlier lift mostly reflect that discounts land on already-bigger baskets?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Felix\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per item-count bucket (1 item, 2 items, 3 items, 4 items, 5+ items)\", \"columns_requested\": [\"item count bucket\", \"discounted order count (orders in 2025 carrying 'Welcome 10% off', 'Black Friday 2025', 'January Sale 2025', or 'Summer Sale 2025')\", \"avg discounted order subtotal, pre-discount (EUR)\", \"non-discounted order count (same tenants' other 2025 orders with no row in order_discounts)\", \"avg non-discounted order subtotal (EUR)\", \"lift (EUR)\", \"lift (%)\"], \"details\": \"Source: order_discounts + discounts (name in the four promotion names) + orders (status != 'cancelled', placed_at in 2025, currency_code, tenant_id, user_id) for the discounted side; item count = count of distinct order_items rows per order (not quantity sum). For the comparison side, restrict to the same set of tenants that ran at least one of these four discounts in 2025, and use their other 2025 orders with no row in order_discounts, bucketed the same way by order_items count. Convert subtotal to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Group orders with 5 or more items into a single '5+' bucket. Order by item count bucket ascending. Print all 5 buckets.\", \"builds_on\": [\"Aggregate within-customer basket-size lift by promotion family, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

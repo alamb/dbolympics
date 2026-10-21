@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  direction,\n  count(*) as transaction_count,\n  count(order_id) as transactions_with_order_id,\n  round(100.0 * count(order_id) / nullif(count(*), 0), 2) as pct_with_order_id,\n  count(distinct order_id) as distinct_order_ids_referenced\nfrom loyalty_transactions\nwhere occurred_at >= date '2023-01-01'\n  and occurred_at < date '2026-01-01'\ngroup by direction\norder by transaction_count desc, direction",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: direction, transaction_count, transactions_with_order_id, pct_with_order_id, distinct_order_ids_referenced"
+ },
+ {
+  "kind": "text",
+  "text": "Looks good — submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "select\n  direction,\n  count(*) as transaction_count,\n  count(order_id) as transactions_with_order_id,\n  round(100.0 * count(order_id) / nullif(count(*), 0), 2) as pct_with_order_id,\n  count(distinct order_id) as distinct_order_ids_referenced\nfrom loyalty_transactions\nwhere occurred_at >= date '2023-01-01'\n  and occurred_at < date '2026-01-01'\ngroup by direction\norder by transaction_count desc, direction",
+  "note": "Grain is one row per direction value as requested, covering all tenants and the full 2023-01-01 to 2025-12-31 window (upper bound applied as occurred_at < 2026-01-01).",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report will show, per `direction` value (e.g. earn/redeem), how many loyalty_transactions rows exist, how many have a non-null `order_id`, the percentage with an order_id, and how many distinct orders are referenced — which directly answers whether `order_id` linkage is usable for the redemption-to-order hypothesis or whether a time-proximity matching approach is needed instead."
+ }
+]

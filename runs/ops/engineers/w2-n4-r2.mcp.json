@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-level delivery reliability by carrier group and quarter, 2025 (unified source)",
+    "--question",
+    "Did Albion Parcel's reliability break down specifically in Q4 while Landfall Freight and Lowlands Express stayed consistently weak all year, when measured in one single consistent query?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per carrier_group and calendar quarter of placed_at, 2025\", \"columns_requested\": [\"carrier_group ('Albion Parcel', 'Landfall Freight', 'Lowlands Express', or 'All other carriers')\", \"quarter (e.g. 2025-Q1)\", \"orders_fully_delivered\", \"avg_delivery_days\", \"pct_within_5_days\", \"share_of_quarter_orders_pct\"], \"details\": \"Same scoping and single-carrier attribution rule as the full-year carrier report (orders placed_at in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null). Group by quarter of orders.placed_at (use calendar_days.quarter_num/quarter_start) and by carrier_group, where carrier_group = the shipment's carrier name if it is 'Albion Parcel', 'Landfall Freight', or 'Lowlands Express', else 'All other carriers' (all remaining carriers summed together). Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order by quarter ascending, then carrier_group in this fixed order: Albion Parcel, Landfall Freight, Lowlands Express, All other carriers. Expect 16 rows (4 quarters x 4 groups).\", \"builds_on\": [\"Order-level delivery reliability: Albion Parcel vs rest, baseline vs collapse, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Do B2B wholesale merchants get routine stock counts, or only the annual catch-up?",
+    "--question",
+    "Do the B2B wholesale/office-supply merchants behind the December 31 correction run any routine, day-to-day stock-count activity during the year, or does their stock sit untouched in bulk storage until a single year-end true-up?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Omar\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"tenant, restricted to the 8 merchants identified in last week's 'Which merchants drove the December 31 correction' report (Deskline Supplies, OfficeHub Nordic, Kontor24 B\\u00fcrobedarf, Hanse Industriebedarf, Castell Fasteners, Midland Safety Wear, Ballycorran Industrial Supply, Polder Packaging)\", \"columns_requested\": [\"tenant_name\", \"total_stock_locations (count of stock_locations across this tenant's warehouses)\", \"pct_locations_kind_bulk (% of those locations with kind='bulk')\", \"pct_locations_kind_pick (% of those locations with kind='pick')\", \"routine_stock_adjustments_2025 (count of stock_adjustments rows at this tenant's locations, created_at in 2025)\", \"distinct_variants_with_routine_adjustment\", \"dec31_correction_abs_units (sum of abs(quantity) from stock_movements where kind='adjustment' and occurred_at::date = '2025-12-31', at this tenant's locations)\", \"dec31_correction_distinct_variants\"], \"details\": \"Join stock_locations to warehouses (warehouse_id) and warehouses to tenants (tenant_id), filtered to the 8 named tenants. routine_stock_adjustments_2025: stock_adjustments where created_at between 2025-01-01 and 2025-12-31 (half-open bound), joined via stock_location_id to the tenant's locations. dec31_correction columns: stock_movements where kind='adjustment' and occurred_at falls on 2025-12-31 specifically (the date of the batch identified previously), joined via stock_location_id. Order by dec31_correction_abs_units descending, tie-break by tenant_name.\", \"builds_on\": [\"Which merchants drove the December 31 bulk stock correction\", \"Stock-count discrepancies by storage-location kind, company-wide\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

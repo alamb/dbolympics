@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Carts.remind Failure Root Cause: Error Messages",
+    "--question",
+    "Did the 20 carts.remind failures in Nov 2025 share a common root cause (pointing to one shared bug/config issue) or look like scattered, tenant-specific problems (pointing to load/capacity)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Omar\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per failed carts.remind job run (20 rows expected)\", \"columns_requested\": [\"tenant_name\", \"queued_at\", \"started_at\", \"finished_at\", \"error_message\", \"attempt\"], \"details\": \"Table job_runs joined to jobs (handler='carts.remind') and tenants, filtered to status='failed' and queued_at in November 2025 (the same 20 rows identified in last week's handler breakdown). Show the full error_message text and attempt number for each failed run so we can see if they cluster around one error string/cause or vary. Order by queued_at ascending, tie-break tenant_name ascending.\", \"builds_on\": [\"2025 Job Failures by Job Type (Handler)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

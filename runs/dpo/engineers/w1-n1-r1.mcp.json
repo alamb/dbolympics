@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Data subject requests: monthly volume, closure time, and overdue backlog",
+    "--question",
+    "How many access/erasure/portability/rectification/restriction requests are we receiving each month, how long do they typically take to close, and how many are overdue or still open?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per calendar month of request receipt (based on data_subject_requests.received_at), from 2023-01 through 2025-12\", \"columns_requested\": [\"month (YYYY-MM)\", \"requests received (total)\", \"access requests received\", \"erasure requests received\", \"portability requests received\", \"rectification + restriction requests received (combined)\", \"completed count (received_at in this month AND completed_at is not null, as of 2026-01-05)\", \"median days to close (completed_at - received_at, in days, for requests completed as of 2026-01-05; null if none completed)\", \"still open count (received in this month, completed_at is null, as of 2026-01-05)\", \"overdue count (received in this month, completed_at is null, due_at is not null, due_at < 2026-01-05)\"], \"details\": \"Source: data_subject_requests. Group by date_trunc('month', received_at) or join to calendar_days on received_at date to get month_label. request_type is one of access/erasure/rectification/portability/restriction per the catalog \\u2014 combine rectification and restriction into one column to stay within the column budget. 'Completed' = completed_at is not null (do not assume a specific status string; confirm status values via dry run if useful, but completed_at is the authoritative closure signal). Median days to close should only use rows with completed_at not null. Overdue is evaluated as of the reporting date 2026-01-05 (do not use CURRENT_DATE; hardcode this literal), restricted to rows where due_at is not null. This is platform-wide (all tenants) since the DPO's question is about Tidewick's overall privacy-request posture, not one merchant. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

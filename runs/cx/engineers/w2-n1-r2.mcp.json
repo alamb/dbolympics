@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket channel mix, by merchant",
+    "--question",
+    "Do Cragsley, Marrowby, and Studio Vrij rely more on slower contact channels (e.g. email) than the rest of the book?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per tenant (merchant), among tenants with at least 20 tickets created in 2025\", \"columns_requested\": [\"merchant name\", \"tickets created, 2025\", \"% channel = email\", \"% channel = chat\", \"% channel = phone\", \"% channel = web\", \"% channel = social\", \"% channel = api\"], \"details\": \"Source: tickets joined to tenants (name). Window: tickets.created_at 2025-01-01 through 2025-12-31. For each tenant, compute the percentage of tickets in 2025 in each tickets.channel value (email, chat, phone, web, social, api), each rounded to 1 decimal; the six percentages should sum to ~100 per row. Only include tenants with >=20 tickets created in 2025 (same threshold as the staffing report, for a consistent peer set). Order by tickets created descending, tie-break merchant name ascending. Cap at 50 rows; note total qualifying tenant count.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

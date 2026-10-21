@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Discounting baseline: monthly coupon usage and discount rate",
+    "--question",
+    "How much discounting is happening platform-wide each month, and how often are coupon codes actually used?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per calendar month (2025)\", \"columns_requested\": [\"month - YYYY-MM label for the order's placed_at month\", \"orders_count - count of orders with placed_at in that month and status not in ('cancelled')\", \"orders_with_discount_count - count of those orders where discount_total > 0\", \"discount_rate_pct - orders_with_discount_count / orders_count * 100, rounded to 1 decimal\", \"total_order_revenue_eur - sum of orders.grand_total (net of discount) converted to EUR for that month's orders, rounded to 0 decimals\", \"total_discount_amount_eur - sum of orders.discount_total converted to EUR for that month's orders, rounded to 0 decimals\", \"discount_share_of_gmv_pct - total_discount_amount_eur / (total_order_revenue_eur + total_discount_amount_eur) * 100, rounded to 1 decimal (discount as a share of pre-discount gross merchandise value)\", \"distinct_coupons_used - count of distinct coupon_id in coupon_redemptions where redeemed_at falls in that month\", \"avg_discount_per_discounted_order_eur - total_discount_amount_eur / nullif(orders_with_discount_count,0), rounded to 0 decimals\"], \"details\": \"Primary source: orders (placed_at for month bucketing, status != 'cancelled', discount_total/grand_total for discount figures). Convert each order's currency_code amounts to EUR using exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of = date of placed_at; EUR itself = rate 1). Secondary source: coupon_redemptions.redeemed_at for distinct_coupons_used, same month bucketing, no currency conversion needed for that count. No tenant filter \\u2014 platform-wide. Cover months 2025-01 through 2025-12 only (use calendar_days or date_trunc on placed_at). Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

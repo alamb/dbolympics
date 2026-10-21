@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  status,\n  request_type,\n  COUNT(*) AS count_requests,\n  COUNT(completed_at) AS count_with_completed_at,\n  COUNT(*) - COUNT(completed_at) AS count_without_completed_at,\n  SUM(CASE WHEN completed_at IS NULL AND due_at < TIMESTAMP '2025-12-31 00:00:00' THEN 1 ELSE 0 END) AS count_overdue_open,\n  ROUND(100.0 * SUM(CASE WHEN due_at IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_due_at_null,\n  ROUND(AVG(CASE WHEN due_at IS NOT NULL THEN EXTRACT(EPOCH FROM (due_at - received_at)) / 86400.0 END), 1) AS avg_sla_window_days,\n  MIN(CASE WHEN completed_at IS NULL THEN received_at END) AS oldest_open_received_at\nFROM data_subject_requests\nWHERE received_at >= DATE '2023-01-01' AND received_at < DATE '2026-01-01'\nGROUP BY status, request_type\nORDER BY status, request_type",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: status, request_type, count_requests, count_with_completed_at, count_without_completed_at, count_overdue_open, pct_due_at_null, avg_sla_window_days, oldest_open_received_at"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  status,\n  request_type,\n  COUNT(*) AS count_requests,\n  COUNT(completed_at) AS count_with_completed_at,\n  COUNT(*) - COUNT(completed_at) AS count_without_completed_at,\n  SUM(CASE WHEN completed_at IS NULL AND due_at < TIMESTAMP '2025-12-31 00:00:00' THEN 1 ELSE 0 END) AS count_overdue_open,\n  ROUND(100.0 * SUM(CASE WHEN due_at IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_due_at_null,\n  ROUND(AVG(CASE WHEN due_at IS NOT NULL THEN EXTRACT(EPOCH FROM (due_at - received_at)) / 86400.0 END), 1) AS avg_sla_window_days,\n  MIN(CASE WHEN completed_at IS NULL THEN received_at END) AS oldest_open_received_at\nFROM data_subject_requests\nWHERE received_at >= DATE '2023-01-01' AND received_at < DATE '2026-01-01'\nGROUP BY status, request_type\nORDER BY status, request_type",
+  "note": "oldest_open_received_at is NULL (not blank) for any status/request_type group where every row has a completed_at, since SQL has no blank/empty concept for timestamps. count_overdue_open uses the literal cutoff due_at < 2025-12-31 as requested, not today's date.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups all DSARs (2023‑01‑01 through 2025‑12‑31 received dates) by `status` and `request_type`, and for each group shows total count, how many have/lack `completed_at`, how many are null-`completed_at` with `due_at` before 2025‑12‑31 (the \"overdue open\" check), the share missing `due_at`, the average SLA window in days, and the earliest `received_at` among still-open (null `completed_at`) rows — which will directly show whether \"overdue\" rows cluster under genuinely open statuses or under closed/completed statuses with missing timestamps."
+ }
+]

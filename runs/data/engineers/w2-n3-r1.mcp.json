@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Diagnose zero-value B2B deal tenants in native currency",
+    "--question",
+    "Are the 6 B2B-CRM tenants showing exactly 0.0 revenue/contract value/receivables genuinely inactive, or is this a currency-conversion or join artifact hiding real activity?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Grace\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"tenant\", \"columns_requested\": [\"tenant_name\", \"tenant_default_currency_code\", \"deal_currency_codes\", \"deal_count\", \"deals_with_positive_value_count\", \"raw_contract_value_total\", \"raw_deal_line_items_total\", \"orders_count_2025\", \"payments_captured_count_2025\"], \"details\": \"Population: the same 9 tenants that have at least one row in the deals table (as in last night's report). For each: tenant_default_currency_code = tenants.default_currency_code. deal_currency_codes = a comma-separated list (string_agg, distinct) of deals.currency_code values used by that tenant's deals. deal_count = count of deals rows. deals_with_positive_value_count = count of those deals where contract_value > 0. raw_contract_value_total = sum of deals.contract_value with NO currency conversion (plain native-currency sum; if multiple currencies appear for one tenant, note this but still sum raw). raw_deal_line_items_total = sum of (deal_line_items.quantity * deal_line_items.unit_price * (1 - deal_line_items.discount_pct)) across all deal_line_items belonging to this tenant's deals, also with no currency conversion, as a cross-check against raw_contract_value_total. orders_count_2025 = count of this tenant's orders (any status) placed in 2025, to check if the tenant has any order activity at all. payments_captured_count_2025 = count of this tenant's payments with status in ('captured','refunded','partially_refunded') and captured_at in 2025. Tables: deals, deal_line_items, tenants, orders, payments. Order by deal_count descending.\", \"builds_on\": [\"B2B wholesale tenants identified by CRM deal activity, with revenue and receivables\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

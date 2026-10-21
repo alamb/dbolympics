@@ -1,0 +1,52 @@
+{
+ "notes": "Night 2 results, read critically:\n\nReport 1 (corrected near-miss) now sums cleanly: 98 (tenant,email) pairs, 6 succeeded within 1h, 2 within 24h, 12 later in the month, and 78 (79.6%) never succeeded at all in February. That's an important nuance for Aylin: the overwhelming majority of repeat-failers simply never got in — this looks more like failed/abandoned attempts than a wave of accounts being compromised. Only 8 pairs (across the same handful of merchants) are genuine near-misses worth a closer look.\n\nReport 2 (incidents): clean and reassuring — only 8 compliance_events total in 3 years (4 high, 4 medium), 100% resolved, nothing open, average resolution 7-18 days. Good answer for question #3, no further digging needed.\n\nReport 3 (retention exposure) raised a new problem I have to resolve before telling Aylin/Rosa anything: compliance_events (earliest 2021-10-23), data_subject_requests (earliest 2020-04-24), and change_history (earliest 2021-11-10) all show records predating 2023-01-01 — but the company history is only supposed to start 2023-01-01 (per the system cutover). access_log and login_attempts correctly start right at 2023-01-01/02. This is either a handful of bad/seed timestamps or something more systematic, and I won't quote \"this data goes back to 2020\" without checking which it is first.\n\nTonight (3 slots): (1) a quick year-bucketed row-count diagnostic on the three tables with impossible pre-2023 dates, to see if it's a handful of outliers or a real pattern; (2) a pattern diagnostic on the Feb 2025 spike at the 3 affected merchants (user-agent diversity and day-of-month concentration) to give Aylin a firmer read on bug-vs-attack, since last night's volume numbers (many distinct emails and IPs, very low max-per-account) already lean toward a technical issue rather than credential stuffing; (3) a quarterly history of failed-login rates at those same 3 merchants, to see whether Feb 2025 was an isolated event or part of a recurring pattern — relevant since these are the same merchants already flagged elsewhere for support/response problems.",
+ "requests": [
+  {
+   "title": "Row counts by year for tables with pre-2023 timestamps",
+   "question": "Are the pre-2023 dates in change_history, compliance_events, and data_subject_requests a handful of outlier rows, or a systematic chunk of data — given the warehouse's history is only supposed to start 2023-01-01?",
+   "grain": "one row per combination of table_name (change_history, compliance_events, data_subject_requests) and calendar year of its relevant timestamp (occurred_at for change_history/compliance_events, received_at for data_subject_requests), from the earliest year present through 2025",
+   "columns": [
+    "table_name",
+    "year",
+    "row_count"
+   ],
+   "details": "Sources: change_history (occurred_at), compliance_events (occurred_at), data_subject_requests (received_at). Purpose: last night's retention-exposure report showed earliest dates of 2021-10-23, 2020-04-24, and 2021-11-10 for these three tables respectively, which is impossible given the stated 2023-01-01 history start — need to see whether pre-2023 rows are a tiny handful (likely bad seed/migration timestamps, safe to treat as noise) or a meaningful share (a real data-quality issue to escalate). Order by table_name, year ascending.",
+   "builds_on": [
+    "How far back does data go in tables without a retention policy?"
+   ]
+  },
+  {
+   "title": "February 2025 failed-login pattern diagnostics for the 3 affected merchants",
+   "question": "At the 3 merchants that drove the February 2025 spike, do the failed logins look automated/bot-like (concentrated in a narrow time window, few user agents) or more like a broad client-side bug (spread across the month, many different user agents)?",
+   "grain": "one row per tenant, for the 3 merchants identified last week (Cragsley Outfitters, Marrowby & Vane, Studio Vrij), restricted to their failed login_attempts in February 2025",
+   "columns": [
+    "tenant_name",
+    "distinct_user_agents",
+    "top_user_agent_share_pct (share of this tenant's Feb failed attempts from the single most common user_agent string)",
+    "distinct_calendar_days_with_failures (out of 28)",
+    "max_failed_attempts_single_day",
+    "pct_failed_attempts_in_top_3_days"
+   ],
+   "details": "Source: login_attempts, filtered to these 3 tenants and succeeded=false, occurred_at in February 2025. Purpose: distinguish a likely automated/attack pattern (few user agents, failures clustered in a short burst of days) from a likely broad technical/client bug (many distinct user agents similar to normal traffic, failures spread fairly evenly across most of the month) — directly feeds Aylin's read on whether this was a near-miss security event or an internal issue. Order by tenant_name.",
+   "builds_on": [
+    "February 2025 failed login concentration by merchant"
+   ]
+  },
+  {
+   "title": "Quarterly failed-login rate history for the 3 Feb-2025-affected merchants",
+   "question": "For the 3 merchants behind the February 2025 spike, was that an isolated one-quarter event, or do they show a recurring pattern of elevated login failures over the full history?",
+   "grain": "one row per combination of tenant (the same 3 merchants) and calendar quarter, from 2023-Q1 through 2025-Q4",
+   "columns": [
+    "tenant_name",
+    "quarter (YYYY-Q#)",
+    "total_attempts",
+    "failed_attempts",
+    "pct_failed"
+   ],
+   "details": "Source: login_attempts, filtered to these 3 tenants (Cragsley Outfitters, Marrowby & Vane, Studio Vrij), all quarters 2023-2025 (12 quarters x 3 tenants = 36 rows, include quarters with zero activity as 0 rather than omitting). Purpose: context for whether Feb 2025 (Q1 2025) was a one-off anomaly or whether these merchants — already flagged elsewhere for the heaviest support ticket load and worst response times — show other elevated-failure quarters too. Order by tenant_name, then quarter ascending.",
+   "builds_on": [
+    "February 2025 failed login concentration by merchant"
+   ]
+  }
+ ]
+}

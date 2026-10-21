@@ -1,0 +1,114 @@
+=== Report 1: Merchant Catalog Profile (written by Omar) ===
+Engineer's note: Printed top 50 tenants by last-12mo EUR revenue (full non-deleted tenant universe is ~120 rows, per the request). Tenants with no active products/orders in the window show 0/NULL for the affected ratios (NULLIF avoids divide-by-zero); EUR amounts for orders already in EUR use rate=1 since exchange_rates has no EUR→EUR self-row.
+REPORT: Merchant Catalog Profile
+QUESTION: How large and content-rich is each merchant's catalog, and how does that relate to their recent sales volume?
+merchant_name                 | industry                  | active_product_count | active_variant_count | avg_variants_per_product | pct_products_with_primary_image | pct_products_with_description | avg_reviews_per_product | avg_rating | orders_last_12mo | revenue_eur_last_12mo
+------------------------------+---------------------------+----------------------+----------------------+--------------------------+---------------------------------+-------------------------------+-------------------------+------------+------------------+----------------------
+Kontor24 Bürobedarf           | Office Supplies (B2B)     |                   72 |                   99 |                     1.38 |                           100.0 |                          65.3 |                    0.61 |       4.25 |              259 |              837423.0
+Cragsley Outfitters           | Apparel & Footwear        |                  328 |                 4213 |                    12.84 |                            99.7 |                          72.9 |                    2.06 |       3.91 |             3486 |              695716.0
+Ballycorran Industrial Supply | Industrial Supplies (B2B) |                   62 |                  163 |                     2.63 |                           100.0 |                          66.1 |                    0.69 |       4.02 |              339 |              530870.0
+Ampfeld Elektronik            | Consumer Electronics      |                  178 |                  410 |                      2.3 |                           100.0 |                          74.2 |                    0.48 |       4.40 |              432 |              488140.0
+OfficeHub Nordic              | Office Supplies (B2B)     |                   59 |                   96 |                     1.63 |                           100.0 |                          67.8 |                    0.49 |       4.21 |              167 |              399338.0
+Castell Fasteners             | Industrial Supplies (B2B) |                   38 |                   82 |                     2.16 |                           100.0 |                          63.2 |                    0.47 |       4.11 |              156 |              376054.0
+Midland Safety Wear           | Industrial Supplies (B2B) |                   53 |                  105 |                     1.98 |                           100.0 |                          66.0 |                    0.49 |       4.46 |              140 |              300677.0
+Deskline Supplies             | Office Supplies (B2B)     |                   45 |                   61 |                     1.36 |                           100.0 |                          80.0 |                    0.16 |       3.43 |               75 |              285178.0
+Marrowby & Vane               | Apparel & Footwear        |                  210 |                 2708 |                     12.9 |                            99.5 |                          74.8 |                    1.56 |       3.59 |             1674 |              275391.0
+Cinder Peak Sports Co.        | Sports & Outdoor          |                  102 |                  771 |                     7.56 |                            99.0 |                          73.5 |                    0.54 |       4.15 |              328 |              122665.0
+Hanse Industriebedarf         | Industrial Supplies (B2B) |                   63 |                   89 |                     1.41 |                           100.0 |                          65.1 |                    0.17 |       4.46 |               72 |              113320.0
+Brennquell Kaffee             | Food & Coffee             |                  175 |                  233 |                     1.33 |                           100.0 |                          70.3 |                     2.8 |       4.39 |             4132 |              110605.0
+Studio Vrij                   | Apparel & Footwear        |                  139 |                 1806 |                    12.99 |                            99.3 |                          64.0 |                    0.91 |       3.37 |              599 |              107896.0
+Polder Packaging              | Industrial Supplies (B2B) |                   38 |                   64 |                     1.68 |                           100.0 |                          63.2 |                    0.08 |       5.00 |               55 |               95255.0
+Gratlinie Outdoor             | Sports & Outdoor          |                   97 |                  847 |                     8.73 |                            99.0 |                          76.3 |                    0.46 |       3.82 |              226 |               93271.0
+Fennel & Flint                | Home & Living             |                   93 |                  244 |                     2.62 |                            98.9 |                          66.7 |                    0.55 |       3.69 |              379 |               64080.0
+Petalcourt Beauty             | Beauty                    |                  120 |                  273 |                     2.28 |                            99.2 |                          69.2 |                    1.05 |       3.85 |              674 |               60927.0
+Papeterie Grossiste           | Office Supplies (B2B)     |                   78 |                   97 |                     1.24 |                           100.0 |                          73.1 |                    0.04 |       5.00 |               16 |               40038.0
+Kayak Corner                  | Sports & Outdoor          |                   56 |                  372 |                     6.64 |                            98.2 |                          67.9 |                    0.29 |       4.38 |              101 |               39065.0
+Wiesgrund Wohnen              | Home & Living             |                  106 |                  233 |                      2.2 |                            99.1 |                          74.5 |                    0.37 |       3.87 |              285 |               36991.0
+Linden & Loom                 | Home & Living             |                   86 |                  190 |                     2.21 |                            98.8 |                          73.3 |                    0.65 |       4.07 |              251 |               36506.0
+Fell & Fjell                  | Sports & Outdoor          |                   52 |                  235 |                     4.52 |                            98.1 |                          76.9 |                    0.23 |       3.75 |               79 |               35677.0
+Sourdough Club                | Food & Coffee             |                   59 |                   86 |                     1.46 |                           100.0 |                          67.8 |                    0.75 |       3.75 |              303 |               29078.0
+Ampere & Co.                  | Consumer Electronics      |                   69 |                  153 |                     2.22 |                           100.0 |                          73.9 |                    0.22 |       4.80 |               60 |               28717.0
+Rue Lafayette Studio          | Apparel & Footwear        |                   69 |                  902 |                    13.07 |                            98.6 |                          72.5 |                    0.52 |       3.89 |              171 |               27220.0
+Ridgeback Gear                | Sports & Outdoor          |                   49 |                  229 |                     4.67 |                            98.0 |                          73.5 |                    0.37 |       4.39 |              104 |               26907.0
+Grind Collective              | Food & Coffee             |                   79 |                   89 |                     1.13 |                           100.0 |                          75.9 |                    1.71 |       4.12 |             1094 |               24732.0
+Oakhurst Tailoring            | Apparel & Footwear        |                   54 |                  769 |                    14.24 |                            98.1 |                          83.3 |                    0.26 |       3.71 |              155 |               24024.0
+Velvet Ash                    | Apparel & Footwear        |                   68 |                  898 |                    13.21 |                            98.5 |                          77.9 |                    0.38 |       4.27 |              130 |               23591.0
+Kibblewick                    | Pet Supplies              |                  176 |                  308 |                     1.75 |                           100.0 |                          69.3 |                    0.36 |       3.84 |              651 |               22531.0
+Wohnglück                     | Home & Living             |                   81 |                  209 |                     2.58 |                            98.8 |                          70.4 |                     0.3 |       4.63 |              142 |               20893.0
+Ostwind Mode                  | Apparel & Footwear        |                   56 |                  787 |                    14.05 |                            98.2 |                          67.9 |                    0.34 |       4.05 |              119 |               20839.0
+Coastline Interiors           | Home & Living             |                   81 |                  192 |                     2.37 |                            98.8 |                          72.8 |                     0.3 |       4.00 |              149 |               20669.0
+Circuit Harbor                | Consumer Electronics      |                   93 |                  208 |                     2.24 |                           100.0 |                          69.9 |                    0.01 |       3.00 |               18 |               18807.0
+Willow & Wren                 | Home & Living             |                   64 |                  123 |                     1.92 |                            98.4 |                          73.4 |                    0.31 |       3.15 |               95 |               18796.0
+Honeycomb Larder              | Food & Coffee             |                   77 |                   77 |                      1.0 |                           100.0 |                          81.8 |                    0.88 |       3.72 |              610 |               17170.0
+Juniper Apothecary            | Beauty                    |                   53 |                  104 |                     1.96 |                            98.1 |                          73.6 |                    0.17 |       4.44 |              149 |               17052.0
+Pixelhaus                     | Consumer Electronics      |                   73 |                  167 |                     2.29 |                           100.0 |                          86.3 |                    0.01 |       5.00 |                6 |               17012.0
+Spice Route Box               | Food & Coffee             |                   75 |                  109 |                     1.45 |                           100.0 |                          68.0 |                    0.81 |       3.64 |              766 |               16621.0
+Nordic Bloom Cosmetics        | Beauty                    |                   68 |                  151 |                     2.22 |                            98.5 |                          69.1 |                    0.18 |       4.08 |              135 |               16425.0
+Strandgut                     | Apparel & Footwear        |                   80 |                  995 |                    12.44 |                            98.8 |                          71.3 |                    0.08 |       3.50 |               45 |               12612.0
+Bytefield                     | Consumer Electronics      |                   46 |                  107 |                     2.33 |                           100.0 |                          73.9 |                    0.04 |       1.50 |               22 |               12458.0
+The Balm Room                 | Beauty                    |                   36 |                   82 |                     2.28 |                            97.2 |                          72.2 |                    0.44 |       4.56 |              101 |               12420.0
+Thistlecombe                  | Apparel & Footwear        |                  155 |                 1870 |                    12.06 |                            96.8 |                          67.7 |                     0.1 |       4.13 |               87 |               11735.0
+Noordzee Surfwear             | Apparel & Footwear        |                   48 |                  615 |                    12.81 |                            97.9 |                          83.3 |                    0.17 |       4.50 |               61 |               10540.0
+Meadow Row                    | Apparel & Footwear        |                   68 |                  810 |                    11.91 |                            98.5 |                          57.4 |                    0.03 |       4.50 |               24 |                9825.0
+Basecamp Nord                 | Sports & Outdoor          |                   37 |                  251 |                     6.78 |                            97.3 |                          70.3 |                    0.05 |       3.00 |               39 |                9674.0
+Velo Noord                    | Sports & Outdoor          |                   39 |                  267 |                     6.85 |                            97.4 |                          74.4 |                    0.18 |       4.29 |               30 |                9650.0
+Sorella Skin                  | Beauty                    |                   69 |                  140 |                     2.03 |                            98.6 |                          72.5 |                    0.16 |       4.09 |               94 |                9557.0
+Hautnah                       | Beauty                    |                   44 |                  103 |                     2.34 |                            97.7 |                          65.9 |                     0.2 |       4.56 |               91 |                9171.0
+(50 rows)
+
+=== Report 2: Catalog Richness vs Sales Performance by Image Count Bucket (written by Omar) ===
+Engineer's note: avg_rating is the mean of each product's own average star rating within the bucket (products with zero reviews are excluded from that average, but counted at 0 for avg_reviews_per_product and sales); revenue/units are averaged over all active products in the bucket, including those with no 2025 sales (counted as 0).
+REPORT: Catalog Richness vs Sales Performance by Image Count Bucket
+QUESTION: Do products with more images, a proxy for richer catalog content, see higher engagement and sales than sparser listings?
+image_count_bucket | product_count | pct_with_description | avg_reviews_per_product | avg_rating | avg_units_sold_per_product_last_12mo | avg_revenue_per_product_eur_last_12mo
+-------------------+---------------+----------------------+-------------------------+------------+--------------------------------------+--------------------------------------
+0                  |            85 |                97.65 |                     0.0 |       NULL |                                 1.14 |                                  62.0
+1                  |           800 |                70.75 |                    0.45 |       3.83 |                                 3.77 |                                 265.0
+2-3                |          3987 |                 70.3 |                     0.4 |       3.82 |                                 3.32 |                                 183.0
+4-6                |          3183 |                70.81 |                    0.42 |       3.92 |                                  3.5 |                                 192.0
+7+                 |           259 |                71.04 |                    0.31 |       3.65 |                                 3.32 |                                 521.0
+(5 rows)
+
+=== Report 3: Monthly Review Volume and Rating Trend (written by Bea) ===
+Engineer's note: Grain is one row per calendar month 2023-01 through 2025-12 (36 rows), built from the full calendar so months with zero approved reviews still appear with 0/blank measures rather than being dropped; percentages are null when review_count is 0 since there's no base to divide by.
+REPORT: Monthly Review Volume and Rating Trend
+QUESTION: How is customer review volume and average rating trending over time across the platform?
+month   | review_count | avg_rating | pct_1_2_star | pct_5_star | pct_verified_purchase
+--------+--------------+------------+--------------+------------+----------------------
+2023-01 |           31 |       4.03 |         16.1 |       58.1 |                 100.0
+2023-02 |           90 |       3.82 |         21.1 |       47.8 |                 100.0
+2023-03 |           73 |       3.85 |         23.3 |       50.7 |                 100.0
+2023-04 |          107 |       3.97 |         18.7 |       55.1 |                 100.0
+2023-05 |          117 |       4.05 |         17.9 |       60.7 |                 100.0
+2023-06 |          113 |       3.92 |         21.2 |       54.0 |                 100.0
+2023-07 |           92 |       4.08 |         15.2 |       60.9 |                 100.0
+2023-08 |          130 |       4.07 |         14.6 |       53.8 |                 100.0
+2023-09 |          132 |        4.1 |         14.4 |       58.3 |                 100.0
+2023-10 |          158 |       3.99 |         19.0 |       55.1 |                 100.0
+2023-11 |          146 |       4.11 |         13.0 |       59.6 |                 100.0
+2023-12 |          308 |       3.81 |         22.7 |       50.6 |                 100.0
+2024-01 |          219 |       4.13 |         14.2 |       60.3 |                 100.0
+2024-02 |          192 |       4.12 |         12.0 |       56.8 |                 100.0
+2024-03 |          189 |       4.18 |         12.7 |       62.4 |                 100.0
+2024-04 |          164 |       4.11 |         15.2 |       57.9 |                 100.0
+2024-05 |          142 |       4.15 |         12.0 |       56.3 |                 100.0
+2024-06 |          197 |       4.15 |         12.2 |       59.9 |                 100.0
+2024-07 |          188 |       4.06 |         15.4 |       56.9 |                 100.0
+2024-08 |          169 |       4.06 |         16.0 |       58.0 |                 100.0
+2024-09 |          173 |       4.19 |         11.0 |       60.7 |                 100.0
+2024-10 |          187 |        4.1 |         14.4 |       58.8 |                 100.0
+2024-11 |          230 |       4.02 |         18.3 |       57.0 |                 100.0
+2024-12 |          392 |       3.94 |         16.1 |       50.8 |                 100.0
+2025-01 |          310 |       3.93 |         19.7 |       55.2 |                 100.0
+2025-02 |          197 |       4.09 |         14.2 |       57.4 |                 100.0
+2025-03 |          204 |       4.11 |         12.7 |       55.9 |                 100.0
+2025-04 |          205 |       4.07 |         15.1 |       56.6 |                 100.0
+2025-05 |          205 |       4.07 |         15.6 |       56.1 |                 100.0
+2025-06 |          217 |       3.89 |         20.3 |       53.0 |                 100.0
+2025-07 |          161 |       4.07 |         15.5 |       58.4 |                 100.0
+2025-08 |          224 |       4.21 |         13.4 |       62.5 |                 100.0
+2025-09 |          188 |       3.96 |         14.9 |       46.8 |                 100.0
+2025-10 |          245 |       4.16 |         12.2 |       60.4 |                 100.0
+2025-11 |          258 |       4.22 |         12.8 |       64.3 |                 100.0
+2025-12 |          454 |       3.71 |         25.8 |       46.7 |                 100.0
+(36 rows)

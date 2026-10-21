@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchants Affected by the Sync-Webhook Stuck-Retry Pattern and Their Size",
+    "--question",
+    "How many merchants have ERP/WMS/Accounting sync webhooks stuck in retry, and is this concentrated in our biggest accounts or spread across the long tail?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Grace\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per tenant that has at least one ERP sync, WMS sync, or ACCOUNTING sync webhook\", \"columns_requested\": [\"tenant_name\", \"total_sync_deliveries_2025\", \"success_rate_pct\", \"pending_or_retrying_rate_pct\", \"total_orders_2025\", \"total_revenue_eur_2025\", \"revenue_rank\"], \"details\": \"Tables: webhook_deliveries joined to webhooks (match webhooks.name in the sync-integration set actually present in the data - 'ERP sync', 'WMS sync', 'ACCOUNTING sync', confirm exact distinct values and include any close variants) joined to tenants. Filter created_at in 2025. Aggregate all of a tenant's sync-type webhooks together: total_sync_deliveries_2025 = count of deliveries; success_rate_pct = share with status='success'; pending_or_retrying_rate_pct = share with status in ('pending','retrying'), both rounded 2dp. total_orders_2025 = count of orders with placed_at in 2025; total_revenue_eur_2025 = sum of orders.grand_total converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=date(placed_at)), rounded to 2dp. revenue_rank = dense rank of ALL tenants (not just this subset) by total_revenue_eur_2025 descending, so we can see where these merchants sit platform-wide. Order by pending_or_retrying_rate_pct descending, tie-break tenant_name ascending. Return all qualifying tenants (note total count in the report even if under 50).\", \"builds_on\": [\"2025 Webhook Delivery Reliability by Endpoint\", \"Webhook Delivery Reliability: Carts.remind-Affected Tenants vs Others, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

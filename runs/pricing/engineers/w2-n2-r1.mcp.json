@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Corrected categorization of all 291 active-bucket orphan subscription-delivery orders",
+    "--question",
+    "With a query that doesn't silently drop unmatched orders, how do all 291 orphan orders (customer's most-recent subscription status = 'active') actually break down: preceded their first subscription, fell between two subscription stints, or genuinely unexplained?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Bea\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per explanation category, covering the full 291-order population\", \"columns_requested\": [\"category: 'preceded first-ever subscription' (no other subscription row exists with started_at <= order date) / 'fell between two subscription stints' (an older subscription row exists with started_at <= order date, but its own started_at/ended_at window plus status history does not cover the order date) / 'unexplained'\", \"order count\", \"% of the 291-order bucket\", \"distinct customers\", \"total discount amount (EUR)\"], \"details\": \"Source: identical population to last week's report (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at in 2025, status != 'cancelled', no overlapping subscription with status in trialing/active/past_due) restricted to the subset whose most-recent subscription (by started_at) has status='active' (291 orders). For each order, use a LEFT JOIN or NOT EXISTS pattern (not an INNER JOIN) against subscriptions to find any OTHER subscription row for that user+tenant with started_at <= order.placed_at that is not the most-recent one; classify based on whether such a row exists and whether it covers placed_at. Every one of the 291 orders must land in exactly one category \\u2014 add a check that order counts sum to 291 (note this explicitly in the report). Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by order count descending. Print all categories.\", \"builds_on\": [\"Is the 'active' 18% of orphan subscription-delivery orders a categorization artifact or a real gap?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "notes": "Night 1 reshapes the picture a lot. The 30-table census shows that products (615 rows, 91 tenants, 0% audit coverage) and users (39 rows, 69.2% coverage) are the ONLY two tables where a soft-delete has ever happened in three years — every other one of the 28 tables shows zero soft-deleted rows ever, so I can't test coverage there at all; this isn't evidence those tables are \"fine,\" just that the question doesn't apply yet. That reframes #1 from \"is it everywhere\" to \"it's concentrated in products, and separately, orders look terrible\" — order cancellations matched an audit_log row only 0.2% of the time (3 of 1,712). But before I report that as a hard gap, I need to check the table built specifically for this — order_status_history — since generic audit_log missing it doesn't mean Tidewick has no record at all; that's tonight's top priority, since it could flip the finding. I also need to pin down the invoice-void result, which came back as \"0 events\" only because the engineer excluded void invoices with a null voided_at timestamp — I don't yet know if that's because no invoice has ever been voided, or because voided invoices exist but aren't timestamped (itself a data-quality finding). On #3, report 3 showed 100% of churned tenants' users are still \"active\" status and sessions were never explicitly revoked (46-300 per tenant) — but \"never revoked\" isn't the same as \"still valid\"; I need to check whether those sessions' expiry dates have actually lapsed before I can size the real exposure.",
+ "requests": [
+  {
+   "title": "Order status history coverage for cancelled orders",
+   "question": "Generic audit_log barely covers order cancellations (0.2%) — but does the purpose-built order_status_history table actually capture who cancelled each order and when?",
+   "grain": "one row per tenant that has at least one cancelled order",
+   "columns": [
+    "tenant name",
+    "cancelled orders (orders.status = 'cancelled', all-time)",
+    "matching order_status_history rows (same order_id, to_status = 'cancelled')",
+    "coverage rate (%)",
+    "of matches, rows with a non-null changed_by_user_id (a named actor, not just a timestamp)"
+   ],
+   "details": "Source: orders where status = 'cancelled', left-joined to order_status_history on order_status_history.order_id = orders.id and order_status_history.to_status = 'cancelled' (same tenant_id). coverage_rate = orders with at least one such matching history row / total cancelled orders for that tenant, rounded to 1 decimal percent. Also report how many of the matched rows have changed_by_user_id is not null, since a transition logged with no actor still doesn't answer 'who'. Order by coverage rate ascending (worst first), cancelled orders count descending as tie-break, tenant name as final tie-break. Cap at 50 rows; note total tenant count if more (expect ~90 per last night's report 2).",
+   "builds_on": [
+    "Audit traceability of order cancellations and invoice voids"
+   ]
+  },
+  {
+   "title": "Invoice void and uncollectible traceability, with timestamp completeness check",
+   "question": "Has any invoice actually been voided or marked uncollectible on the platform, and if so, is the event dated and traceable in audit_log — or was last night's zero result just because voided_at is missing?",
+   "grain": "one row per terminal invoice status: 'void' and 'uncollectible'",
+   "columns": [
+    "invoice status",
+    "total invoices in this status (all-time, regardless of voided_at)",
+    "of those, rows with a populated voided_at timestamp",
+    "of those, rows with voided_at null (undated, can't tell when it happened)",
+    "matching audit_log rows (any action, entity_table = 'invoices', entity_id = invoices.id)",
+    "coverage rate among all invoices in this status (%)",
+    "distinct tenants represented"
+   ],
+   "details": "Source: invoices where status in ('void','uncollectible'), grouped by status. Do NOT filter out rows with null voided_at from the total count this time — count all of them, then separately report how many have voided_at populated vs null, so we can tell whether last night's zero was 'no voids ever happened' or 'voids happened but aren't timestamped.' Coverage test is an EXISTS against audit_log by (entity_table='invoices', entity_id=invoices.id, same tenant_id), any action. Order by total invoices descending, status as tie-break (only 2 rows expected).",
+   "builds_on": [
+    "Audit traceability of order cancellations and invoice voids"
+   ]
+  },
+  {
+   "title": "Validity of never-revoked sessions on churned tenants",
+   "question": "The 9 churned tenants show 46-300 sessions per tenant that were never explicitly revoked — but are those sessions actually still usable today (expiry in the future), or did they just naturally expire without anyone bothering to revoke them?",
+   "grain": "one row per churned tenant",
+   "columns": [
+    "tenant name",
+    "sessions never revoked (revoked_at is null)",
+    "of those, still within expiry as of 2026-01-05 (expires_at > 2026-01-05, i.e. genuinely usable today)",
+    "of those, already naturally expired (expires_at <= 2026-01-05)",
+    "latest expires_at among never-revoked sessions",
+    "latest last_seen_at among never-revoked sessions (most recent real use)"
+   ],
+   "details": "Source: sessions joined to tenants where tenants.status = 'churned', filtered to revoked_at is null. Split by expires_at compared to the fixed reference date 2026-01-05 (no CURRENT_DATE per house standards). This tells us whether the 'never revoked' finding from last night is a live, exploitable risk (sessions still valid today) or a historical bookkeeping gap (sessions long since expired on their own). Order by 'still within expiry' descending, tenant name as tie-break. Expect 9 rows (one per churned tenant from the prior report).",
+   "builds_on": [
+    "Access still open on churned tenants, by surface"
+   ]
+  }
+ ]
+}

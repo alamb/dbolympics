@@ -1,0 +1,14 @@
+#!/bin/bash
+# The image first sets the database up with a server of its own on the socket only, then starts
+# the server of the run, which also listens on TCP: wait for that one, then start the query
+# program, for the whole run: the runner's protocol on /run/dbo/dbo.sock.
+for _ in $(seq 1 6000); do
+    if (exec 3<>/dev/tcp/127.0.0.1/5432) 2>/dev/null; then
+        nohup ./query >/run/dbo/query.log 2>&1 &
+        echo $! > query.pid
+        exit 0
+    fi
+    sleep 0.1
+done
+echo "PostgreSQL did not start within 10 minutes" >&2
+exit 1

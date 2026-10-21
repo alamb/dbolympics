@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Corrected 2025 revenue and receivables by B2B tenant",
+    "--question",
+    "What is the real 2025 revenue and open receivables for all 9 verified B2B wholesale tenants, now that the EUR-conversion bug that zeroed out 6 of them is fixed?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Bea\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"tenant\", \"columns_requested\": [\"tenant_name\", \"currency_code\", \"total_2025_revenue_eur\", \"pct_of_total_2025_revenue\", \"open_amount_due_eur\", \"pct_amount_due_overdue\"], \"details\": \"Population: the same 9 tenants with at least one deals row (Ballycorran Industrial Supply, Kontor24 Burobedarf, OfficeHub Nordic, Midland Safety Wear, Castell Fasteners, Hanse Industriebedarf, Polder Packaging, Deskline Supplies, Papeterie Grossiste). IMPORTANT currency handling to avoid repeating a prior bug: when converting an amount whose currency_code is 'EUR', do NOT join exchange_rates for quote_code='EUR' (no such self-referential identity row may exist) - instead treat the EUR rate as 1.0 directly (e.g. CASE WHEN currency_code = 'EUR' THEN amount ELSE amount / rate END, with the exchange_rates join being a LEFT JOIN only consulted for non-EUR currencies, so EUR rows are never dropped). total_2025_revenue_eur = sum of this tenant's payments.amount where status in ('captured','refunded','partially_refunded') and captured_at in 2025, converted per the above rule using payments.currency_code and captured_at date. pct_of_total_2025_revenue = total_2025_revenue_eur / (sum of total_2025_revenue_eur across ALL tenants company-wide, computed with the same correct EUR-handling rule) * 100, rounded to 1 decimal. open_amount_due_eur = sum of invoices.amount_due for this tenant where status in ('open','past_due') and amount_due > 0, as of snapshot 2025-12-31, converted per the same EUR rule using invoices.currency_code and as_of=2025-12-31. pct_amount_due_overdue = (sum of amount_due where due_at < 2025-12-31) / open_amount_due_eur * 100, rounded to 1 decimal (NULL if open_amount_due_eur is 0). Tables: deals, tenants, payments, invoices, exchange_rates. Order by total_2025_revenue_eur descending.\", \"builds_on\": [\"B2B wholesale tenants identified by CRM deal activity, with revenue and receivables\", \"Diagnose zero-value B2B deal tenants in native currency\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

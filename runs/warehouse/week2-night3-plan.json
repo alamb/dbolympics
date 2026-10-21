@@ -1,0 +1,55 @@
+{
+ "notes": "Night 2 gave me strong, consistent answers to both #3 and #4, but surfaced one claim serious enough to verify before I put it in writing, plus two follow-ups worth a cheap check before I close this out.\n\n#3: B2B tenants' pick locations behave completely normally — routine stock_adjustments volume (14-57/year) is proportional to their (small) catalog size, same as everyone else. The Dec-31 correction (134-1,058 units per tenant) is 7-23x larger than each tenant's entire year of routine pick activity, which fits \"bulk locations never get day-to-day counted, so drift accumulates for a year.\" But all 8 independent merchants' correction events landed at exactly 2025-12-31 22:59:59.999999 in the sample I've seen — that's not plausible as eight separate companies' organic annual stocktakes finishing at the identical microsecond. I want to confirm this is true across all 407 events, not just the top 30 I happened to see, before telling Tomasz whether this looks like a real process or a data artifact.\n\n#4: Resolved cleanly — distinct_pick_locations is 1 for every apparel warehouse, so \"per-location rate\" collapses to \"per-catalog-size rate,\" and adjustments-per-distinct-variant is a near-constant ~1.07-1.09 across every apparel site regardless of size (Atlanta 1506/1380=1.09, Reading 1058/977=1.08, down to Tampere 14/13=1.08). The product-level drill-down confirms no hot SKU/size/color (max 5 events across 2,927 variants). This is not a \"few bad sites, fix with training\" story — it's a flat background rate that scales with SKU count. I want to check one more thing before generalizing: is that ~1.08 ratio apparel-specific, or does it hold company-wide across verticals? If it's universal, that's a much cleaner, stronger closing statement for the whole two-week engagement.\n\nAlso noticed: several apparel merchants have a second site literally named \"...Warehouse\" (not \"...Fulfilment Centre\") with zero adjustment activity all year. Before I call that \"not a problem,\" I want to know if those sites actually hold live inventory (a real blind spot) or are empty/inactive.\n\nTonight's three requests: (A) confirm or rule out the single-timestamp artifact across the full 407-event Dec-31 batch; (B) check whether the zero-activity \"Warehouse\" sites hold meaningful stock; (C) test whether the ~1.08 adjustments-per-variant ratio is apparel-specific or a company-wide constant.",
+ "requests": [
+  {
+   "title": "Is the December 31 correction one single batch event, or genuinely independent per merchant?",
+   "question": "Did the 407 stock_movements kind='adjustment' events in 2025 all fire at the exact same timestamp (suggesting one system/data event), or do different merchants' corrections have distinct timestamps (consistent with independent, organic annual stocktakes)?",
+   "grain": "distinct occurred_at timestamp value, among stock_movements where kind='adjustment' and occurred_at in 2025",
+   "columns": [
+    "occurred_at (the exact timestamp value)",
+    "event_count (rows sharing this exact timestamp)",
+    "distinct_tenants",
+    "distinct_warehouses",
+    "total_abs_quantity"
+   ],
+   "details": "Source: stock_movements where kind='adjustment', occurred_at between 2025-01-01 and 2025-12-31 (half-open bound: >= 2025-01-01 and < 2026-01-01). Group by the exact occurred_at value (to the microsecond, as stored). Join stock_locations->warehouses->tenants only to count distinct tenants/warehouses per timestamp group, not to filter. Order by event_count descending, tie-break by occurred_at ascending. Expect very few distinct timestamp values (ideally this fits well under 50 rows); note the total distinct timestamp count.",
+   "builds_on": [
+    "Scale of adjustment-kind stock movements by month, 2025",
+    "Do B2B wholesale merchants get routine stock counts, or only the annual catch-up?"
+   ]
+  },
+  {
+   "title": "Do the zero-activity 'Warehouse' sites hold real inventory?",
+   "question": "The apparel merchants' secondary sites named '...Warehouse' (as opposed to '...Fulfilment Centre') showed zero stock-count activity all year — are these empty/inactive shells, or do they hold meaningful live inventory that is simply never being counted (a blind spot)?",
+   "grain": "warehouse, restricted to the 9 zero-activity sites identified last night (Aarhus Warehouse/Oakhurst Tailoring, Boston Warehouse/Cragsley Outfitters, Brussels Warehouse/Studio Vrij, Calgary Warehouse/Cragsley Outfitters, Glasgow Warehouse/Thistlecombe, Groningen Warehouse/Studio Vrij, Limerick Warehouse/Marrowby & Vane, Preston Warehouse/Marrowby & Vane, Toulouse Warehouse/Rue Lafayette Studio, Uppsala Warehouse/Velvet Ash)",
+   "columns": [
+    "warehouse_name",
+    "tenant_name",
+    "total_stock_on_hand (sum of stock_items.quantity across all stock_locations in this warehouse)",
+    "distinct_variants_stocked (count of distinct variant_id in stock_items with quantity > 0 at this warehouse)",
+    "pct_of_tenant_total_stock_units (this warehouse's total_stock_on_hand / that tenant's total stock_on_hand across all its warehouses combined * 100, rounded 1dp)"
+   ],
+   "details": "Join stock_items to stock_locations (stock_location_id) to warehouses (warehouse_id), filtered to the 10 named warehouse+tenant pairs listed above (match by warehouse name and tenant name together, since warehouse names like 'Uppsala Warehouse' are not globally unique). For pct_of_tenant_total_stock_units, compute each tenant's grand total stock_items.quantity across ALL of its warehouses (not just the named one) as the denominator. Order by total_stock_on_hand descending, tie-break by warehouse_name.",
+   "builds_on": [
+    "Apparel/footwear discrepancies by warehouse: scale effect or genuine elevated rate?"
+   ]
+  },
+  {
+   "title": "Is the ~1.08 adjustments-per-variant ratio apparel-specific or company-wide?",
+   "question": "Is the near-constant rate of about 1.08 routine stock-adjustments per distinct affected variant per year a quirk of the apparel/footwear vertical, or does it hold across all merchant verticals — i.e., is the whole routine discrepancy stream essentially a flat background rate of roughly one single-unit miss per SKU per year, regardless of product type?",
+   "grain": "tenant industry (tenants.industry)",
+   "columns": [
+    "industry",
+    "total_routine_adjustments_2025 (count of stock_adjustments rows at tenants of this industry, created_at in 2025)",
+    "distinct_variants_with_adjustment",
+    "adjustments_per_variant (total_routine_adjustments_2025 / distinct_variants_with_adjustment, rounded 3dp)",
+    "distinct_tenants_in_industry"
+   ],
+   "details": "Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound), joined via stock_location_id -> stock_locations -> warehouses -> tenants, grouped by tenants.industry. Order by adjustments_per_variant descending, tie-break by industry alphabetically. Expect well under 50 rows (one per distinct industry string).",
+   "builds_on": [
+    "Apparel/footwear discrepancies by warehouse: scale effect or genuine elevated rate?",
+    "Reasons behind routine stock_adjustments entries, 2025"
+   ]
+  }
+ ]
+}

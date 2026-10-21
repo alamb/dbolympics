@@ -1,0 +1,61 @@
+=== Report 1: Albion Parcel monthly on-time performance at Marrowby & Vane (written by Grace) ===
+Engineer's note: Shipment counts include all shipped-in-month shipments for Marrowby & Vane / Albion Parcel; avg_delivery_days and pct_delivered_within_3_days are computed only over the subset with both shipped_at and delivered_at populated, so months with no delivered shipments will show null for those two metrics.
+REPORT: Albion Parcel monthly on-time performance at Marrowby & Vane
+QUESTION: Did Albion Parcel's on-time performance at Marrowby & Vane specifically collapse in November-December 2025, and has it recovered by year end?
+month_label | shipment_count | avg_delivery_days | pct_delivered_within_3_days
+------------+----------------+-------------------+----------------------------
+2025-01     |            121 |               2.0 |                        84.3
+2025-02     |             50 |               2.0 |                        94.0
+2025-03     |             77 |               2.2 |                        79.2
+2025-04     |             70 |               2.3 |                        75.7
+2025-05     |             76 |               2.4 |                        75.0
+2025-06     |             73 |               2.2 |                        75.3
+2025-07     |             86 |               2.2 |                        86.0
+2025-08     |             60 |               2.2 |                        88.3
+2025-09     |             85 |               2.1 |                        80.0
+2025-10     |             80 |               2.4 |                        77.5
+2025-11     |             85 |               5.2 |                        36.5
+(11 rows)
+
+=== Report 2: Studio Vrij carrier performance by month, May-July focus (written by Omar) ===
+Engineer's note: shipment_count reflects all shipments shipped that month for the carrier; avg_delivery_days and pct_delivered_within_3_days are computed only over the subset of those with a non-null delivered_at, as requested. Rows span all 12 months of 2025 (not just May-July) so the analyst can see the before/during/after pattern.
+REPORT: Studio Vrij carrier performance by month, May-July focus
+QUESTION: Which of Studio Vrij's carriers caused the May-July 2025 delivery breakdown, and did its performance fully recover afterward?
+carrier          | month_label | shipment_count | avg_delivery_days | pct_delivered_within_3_days
+-----------------+-------------+----------------+-------------------+----------------------------
+Lowlands Express | 2025-01     |             23 |               2.4 |                        78.3
+Lowlands Express | 2025-02     |             12 |               2.0 |                        83.3
+Lowlands Express | 2025-03     |             23 |               2.2 |                        73.9
+Lowlands Express | 2025-04     |             17 |               2.0 |                        76.5
+Lowlands Express | 2025-05     |             49 |               2.4 |                        71.4
+Lowlands Express | 2025-06     |             37 |               2.5 |                        64.9
+Lowlands Express | 2025-07     |             28 |               2.6 |                        60.7
+Lowlands Express | 2025-08     |             11 |               2.1 |                        81.8
+Lowlands Express | 2025-09     |             24 |               2.4 |                        75.0
+Lowlands Express | 2025-10     |             34 |               3.1 |                        52.9
+Lowlands Express | 2025-11     |             35 |               2.2 |                        88.6
+Lowlands Express | 2025-12     |             54 |               2.8 |                        67.3
+Polder Post      | 2025-01     |             16 |               2.2 |                        75.0
+Polder Post      | 2025-02     |              7 |               2.0 |                        85.7
+Polder Post      | 2025-03     |             13 |               3.1 |                        30.8
+Polder Post      | 2025-04     |             12 |               3.1 |                        50.0
+Polder Post      | 2025-05     |             18 |               2.1 |                        88.9
+Polder Post      | 2025-06     |             17 |               2.6 |                        70.6
+Polder Post      | 2025-07     |              8 |               2.3 |                        75.0
+Polder Post      | 2025-08     |             10 |               2.7 |                        60.0
+Polder Post      | 2025-09     |              7 |               3.2 |                        42.9
+Polder Post      | 2025-10     |             16 |               3.1 |                        50.0
+Polder Post      | 2025-11     |             20 |               2.6 |                        65.0
+Polder Post      | 2025-12     |             44 |               2.7 |                        61.0
+(24 rows)
+
+=== Report 3: Ticket performance with known carrier-incident months excluded (written by Felix) ===
+Engineer's note: avg_resolution_minutes_after_exclusion is averaged only over tickets with a non-null resolved_at (unresolved tickets have no resolution time to measure); resolution_breach_rate_after_exclusion is the share of all tickets in the filtered window (resolved or not) that have a sla_breaches row with breach_kind='resolution'.
+REPORT: Ticket performance with known carrier-incident months excluded
+QUESTION: Once we strip out the known carrier-incident months, do Marrowby & Vane and Studio Vrij still look worse than Cragsley Outfitters, or does that fully explain the gap?
+tenant_name         | excluded_period       | ticket_count_after_exclusion | avg_resolution_minutes_after_exclusion | resolution_breach_rate_after_exclusion
+--------------------+-----------------------+------------------------------+----------------------------------------+---------------------------------------
+Cragsley Outfitters | None                  |                          400 |                                 2348.0 |                                   29.8
+Marrowby & Vane     | Excludes Nov-Dec 2025 |                          138 |                                 2909.0 |                                   22.5
+Studio Vrij         | Excludes May-Jul 2025 |                           71 |                                  985.0 |                                    7.0
+(3 rows)

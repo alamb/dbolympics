@@ -1,0 +1,65 @@
+{
+ "notes": "Two things from last night need resolving before I trust the numbers for the regulator: (1) report 1 showed DSAR received_at dates as early as 2020-04-24 and 2022-08-25 — before the stated 2023-01-01 warehouse history start — which could be legitimate backfilled compliance records carried over from the pre-migration system, or could be a data quality artifact; I need to see these specific rows and compare received_at to created_at to tell which. (2) report 2 showed all 11 data_exports linked to a DSAR, but completed_export_count was 0, and the engineer flagged uncertainty about whether 'completed' is even the right status string for that table — if genuinely zero exports ever finished, that's a real fulfillment failure (shoppers who filed access requests may never have actually received their data), separate from the \"portability doesn't exist as a request_type\" question I already closed. Both are quick, cheap diagnostics. With priorities 2 and 4 now largely resolved (volumes reconcile to 60 pending the pre-2023 check; retention is fine everywhere except email_log, confirmed last night), I'm using my third slot to start priority 1 for Ines: looking for whatever internal evidence exists (payment status, support ticket activity) on the 3 held accounts, since there's no explicit \"dispute\" table and the legal holds aren't linked to a specific order/payment — I have to reconstruct it from the subject_user_id.",
+ "requests": [
+  {
+   "title": "Pre-2023 data subject requests: backfill or data quality issue?",
+   "question": "Are the data subject requests received before 2023-01-01 legitimate historical/backfilled compliance records, or a data quality artifact?",
+   "grain": "one row per data_subject_requests record with received_at before 2023-01-01",
+   "columns": [
+    "public_id",
+    "tenant name",
+    "request_type",
+    "status",
+    "received_at (timestamp)",
+    "completed_at (timestamp, blank if none)",
+    "created_at (when this row was written into our system)",
+    "days between received_at and created_at",
+    "notes (truncated to 200 chars)"
+   ],
+   "details": "Source: data_subject_requests filtered to received_at < '2023-01-01', platform-wide, full history. The key diagnostic is the gap between received_at and created_at: a large gap (row created well after 2023, e.g. during a migration) supports 'legitimate backfill with original historical date preserved'; a near-zero gap would be suspicious since the new platform/warehouse history is stated to start 2023-01-01. Order by received_at ascending.",
+   "builds_on": [
+    "Privacy request volume reconciliation: counts by type and status"
+   ]
+  },
+  {
+   "title": "Data export fulfillment audit: are access/portability exports actually completing?",
+   "question": "Is 'zero completed data exports' real, or is 'completed' simply the wrong status string for this table — and are shoppers who filed access requests actually receiving their data?",
+   "grain": "one row per data_exports.status value",
+   "columns": [
+    "status",
+    "count",
+    "earliest requested_at",
+    "latest requested_at",
+    "count with completed_at not null",
+    "count with file_url not null (artifact actually produced)",
+    "average row_count (for rows where row_count is not null)"
+   ],
+   "details": "Source: data_exports, platform-wide, full history (all 11 rows from last night's linked set, in case there are more unlinked ones this surfaces as well). Group by status exactly as stored. This resolves whether last night's completed_export_count = 0 was a wrong assumption about the status string, or whether it's genuinely true that no export has ever been marked complete — in which case we need to check whether file_url/completed_at tell a different, more reassuring story. Order by count descending.",
+   "builds_on": [
+    "Portability requests: formal DSAR count vs. unlinked data exports"
+   ]
+  },
+  {
+   "title": "Evidence check on the 3 legal-hold-linked chargeback disputes",
+   "question": "For the 3 accounts under a payment-dispute legal hold, what internal evidence (payment status, support ticket activity) suggests whether the underlying dispute is still active or has gone stale?",
+   "grain": "one row per legal hold (3 rows: Marrowby & Vane, Rue Lafayette Studio, Cragsley Outfitters)",
+   "columns": [
+    "tenant name",
+    "subject_user_id",
+    "hold placed_at (date)",
+    "days since placed (2026-01-05 minus placed_at)",
+    "latest payment status for this user (most recent by updated_at, via orders.user_id = subject_user_id joined to payments)",
+    "latest payment updated_at (date)",
+    "latest payment amount and currency",
+    "open ticket count for this user (tickets.requester_user_id, status not in solved/closed)",
+    "most recent ticket last_message_at for this user (date)",
+    "days since that last ticket activity"
+   ],
+   "details": "Source: legal_holds (the 3 active rows identified last week) joined by subject_user_id to orders -> payments (most recent payment by updated_at for that user) and to tickets (requester_user_id = subject_user_id). legal_holds has no populated entity_schema/entity_table/entity_id for these rows, so there's no direct link to a specific disputed payment — this report approximates by looking at the user's most recent payment activity and most recent support ticket activity as indirect evidence of whether the case is still live or has gone quiet. Use literal date 2026-01-05 for age math. Order by days since placed, descending.",
+   "builds_on": [
+    "Legal holds: active scope, coverage, and staleness",
+    "Linking rejected erasure requests to active legal holds"
+   ]
+  }
+ ]
+}

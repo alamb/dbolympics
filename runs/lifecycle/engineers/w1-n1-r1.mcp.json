@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty points and referral reward cost by month",
+    "--question",
+    "How much is the loyalty/referral programme costing the business each month - points value issued and redeemed, outstanding points liability, and referral rewards paid - and is that cost trending up or down?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Ines\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one calendar month (platform-wide, all tenants combined)\", \"columns_requested\": [\"month (YYYY-MM)\", \"points earned value (EUR)\", \"points redeemed value (EUR)\", \"net points liability change (EUR)\", \"cumulative points liability outstanding (EUR, running total since 2023-01-01)\", \"referral rewards paid (EUR)\", \"referral redemptions (count)\", \"new loyalty enrollments (count)\"], \"details\": \"Time window: 2023-01-01 through 2025-12-31, grouped by calendar month (use calendar_days.month_label or date_trunc on occurred_at). Points value: from loyalty_transactions, convert points to currency using the points' loyalty_programs.points_per_currency and loyalty_programs.currency_code (amount_in_program_currency = points / points_per_currency), split by direction (treat the 'earn' direction as positive issuance and the other direction as redemption). Then convert that program-currency amount to EUR using exchange_rates (base_code='EUR', quote_code=program currency, as_of = the transaction date; EUR_amount = amount_in_currency / rate). Net points liability change = earned value - redeemed value for the month; cumulative liability outstanding = running sum of net change from the start of history through the end of that month. Referral rewards paid: sum of referral_redemptions.reward_amount by redeemed_at month, converted from referral_redemptions.currency_code to EUR the same way. Referral redemptions count: count of referral_redemptions rows per month. New loyalty enrollments: count of loyalty_accounts.enrolled_at per month. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

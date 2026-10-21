@@ -1,0 +1,58 @@
+=== Report 1: Diagnose zero-value B2B deal tenants in native currency (written by Grace) ===
+Engineer's note: Population is all 9 tenants with at least one deals row, as requested. raw_contract_value_total and raw_deal_line_items_total are unconverted native-currency sums (noted per the request that multi-currency tenants would mix units); deal_currency_codes lets the analyst spot those cases directly in the output.
+REPORT: Diagnose zero-value B2B deal tenants in native currency
+QUESTION: Are the 6 B2B-CRM tenants showing exactly 0.0 revenue/contract value/receivables genuinely inactive, or is this a currency-conversion or join artifact hiding real activity?
+tenant_name                   | tenant_default_currency_code | deal_currency_codes | deal_count | deals_with_positive_value_count | raw_contract_value_total | raw_deal_line_items_total | orders_count_2025 | payments_captured_count_2025
+------------------------------+------------------------------+---------------------+------------+---------------------------------+--------------------------+---------------------------+-------------------+-----------------------------
+Ballycorran Industrial Supply | EUR                          | EUR                 |        136 |                             136 |              575400.0000 |          4213971.15300000 |               344 |                          329
+Kontor24 Bürobedarf           | EUR                          | EUR                 |        114 |                             114 |             1202700.0000 |         12268715.23800000 |               264 |                          258
+OfficeHub Nordic              | NOK                          | NOK                 |         78 |                              78 |             7727000.0000 |         91967858.50000000 |               170 |                          167
+Midland Safety Wear           | EUR                          | EUR                 |         77 |                              77 |              448600.0000 |          4104679.40400000 |               144 |                          134
+Castell Fasteners             | USD                          | USD                 |         68 |                              68 |              644900.0000 |          3387103.99100000 |               159 |                          154
+Hanse Industriebedarf         | EUR                          | EUR                 |         32 |                              32 |              215400.0000 |          1170888.52400000 |                72 |                           72
+Polder Packaging              | EUR                          | EUR                 |         21 |                              21 |              107400.0000 |           687934.85400000 |                55 |                           52
+Deskline Supplies             | GBP                          | GBP                 |         11 |                              11 |              101100.0000 |          1661629.57200000 |                75 |                           72
+Papeterie Grossiste           | EUR                          | EUR                 |          6 |                               6 |               46100.0000 |           881720.60100000 |                18 |                           17
+(9 rows)
+
+=== Report 2: Castell Fasteners open invoices in detail (written by Bea) ===
+Engineer's note: Joined invoices directly to tenants on tenant_id (name = 'Castell Fasteners'); billing_profiles was not needed since invoices carries tenant_id. Amounts are shown as stored in the invoice's native currency_code, no FX conversion applied, per request.
+REPORT: Castell Fasteners open invoices in detail
+QUESTION: What are Castell Fasteners' actual open invoices, so we can reconcile my €14,481 open-receivables figure against Merchant Success's reported €5,080 and present one consistent number to the board?
+invoice_number | status   | currency_code |     total | amount_due | issued_at                  | due_at                     | days_overdue
+---------------+----------+---------------+-----------+------------+----------------------------+----------------------------+-------------
+INV-100296     | open     | USD           | 4197.8000 |  4197.8000 | 2025-12-02 22:19:09.742515 | 2026-01-31 22:19:09.742515 |            0
+INV-100287     | past_due | USD           | 2578.5700 |  2578.5700 | 2025-11-07 17:28:00        | 2025-12-07 17:28:00        |           24
+INV-100301     | open     | USD           | 2321.3800 |  2321.3800 | 2025-12-12 19:01:00        | 2026-01-11 19:01:00        |            0
+INV-100302     | open     | USD           | 2121.4200 |  2012.9400 | 2025-12-12 15:07:00        | 2026-02-10 15:07:00        |            0
+INV-100297     | open     | USD           | 1933.7900 |  1933.7900 | 2025-12-05 16:35:00        | 2026-01-04 16:35:00        |            0
+INV-100303     | past_due | USD           | 1337.2400 |  1337.2400 | 2025-12-15 16:10:00        | 2025-12-29 16:10:00        |            2
+INV-100288     | open     | USD           | 1090.6100 |  1090.6100 | 2025-11-13 01:59:27.183141 | 2026-01-12 01:59:27.183141 |            0
+INV-100304     | open     | USD           |  806.3300 |   806.3300 | 2025-12-22 20:35:00        | 2026-01-21 20:35:00        |            0
+INV-100298     | open     | USD           |  517.0800 |   517.0800 | 2025-12-08 18:54:00        | 2026-01-07 18:54:00        |            0
+INV-100299     | open     | USD           |  210.2400 |   210.2400 | 2025-12-08 23:06:04.856472 | 2026-01-07 23:06:04.856472 |            0
+INV-100300     | past_due | USD           |  178.5700 |   178.5700 | 2025-12-11 23:28:00.085125 | 2025-12-25 23:28:00.085125 |            6
+(11 rows)
+
+=== Report 3: Late-refund share as a percentage of each merchant's own refund volume (written by Viktor) ===
+Engineer's note: Late is defined as payment_refunds.processed_at strictly after the settling payout's paid_at; refunds whose payment never appears in payout_items are excluded from the late bucket (per spec) but still count in total_refunds. company_avg_pct_late_2025 is computed company-wide (all tenants, not just the top 15) and repeated on every row.
+REPORT: Late-refund share as a percentage of each merchant's own refund volume
+QUESTION: Is Cragsley Outfitters' outsized share of company-wide late refunds just proportional to how big it is, or does it refund late at a higher rate than other large merchants?
+tenant_name            | total_refunds_2025_eur | late_refunds_2025_eur | pct_of_own_refunds_late | company_avg_pct_late_2025
+-----------------------+------------------------+-----------------------+-------------------------+--------------------------
+Cragsley Outfitters    |     169010.91182854303 |    159217.51324604754 |                    94.2 |                      83.7
+Marrowby & Vane        |      62492.02059736718 |     57291.44628112623 |                    91.7 |                      83.7
+OfficeHub Nordic       |     29640.921945628725 |     659.0626346225799 |                     2.2 |                      83.7
+Cinder Peak Sports Co. |     16718.356136629656 |    15670.993847422224 |                    93.7 |                      83.7
+Fell & Fjell           |      5909.871943508494 |      5470.31143406717 |                    92.6 |                      83.7
+Velvet Ash             |      5814.409241830303 |     5483.716447166978 |                    94.3 |                      83.7
+Petalcourt Beauty      |      4571.768079432371 |     3590.343860438063 |                    78.5 |                      83.7
+Bytefield              |      4487.985128653481 |     4487.985128653481 |                   100.0 |                      83.7
+Fennel & Flint         |     3790.5924802646105 |    3505.9284095856133 |                    92.5 |                      83.7
+Oakhurst Tailoring     |     3594.0848337948937 |    2602.7819582550646 |                    72.4 |                      83.7
+Kayak Corner           |      3384.095018658191 |     2707.641419036956 |                    80.0 |                      83.7
+Willow & Wren          |     2413.0786385413694 |    2413.0786385413694 |                   100.0 |                      83.7
+Fjordline Wear         |     2321.0617591726004 |     1881.079397977649 |                    81.0 |                      83.7
+Thistlecombe           |     2304.0121591147863 |    2024.1239057408218 |                    87.9 |                      83.7
+Courtside Collective   |      1731.818487369363 |     1731.818487369363 |                   100.0 |                      83.7
+(15 rows)

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Apparel and Footwear: loyalty member vs non-member behavior by tenure",
+    "--question",
+    "Within Apparel and Footwear alone, where 72% of loyalty members sit, do members still look worse off than non-members on orders, revenue and refunds once we also control for how long they have been a customer?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Omar\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per combination of account-tenure band and loyalty segment (member vs non-member), restricted to the Apparel and Footwear vertical\", \"columns_requested\": [\"tenure_band\", \"segment\", \"customer_count\", \"avg_lifetime_orders\", \"avg_lifetime_revenue_eur\", \"avg_order_value_eur\", \"refund_rate_pct\"], \"details\": \"Same population, segment and metric definitions as the earlier 'Loyalty member vs non-member behavior by account tenure' report, but filtered to users whose tenant has tenants.industry = 'Apparel & Footwear' only. Population: users (is_staff = false) in Apparel and Footwear tenants with at least one order 2023-01-01 to 2025-12-31. Tenure band = time from users.created_at to 2025-12-31, bucketed as: 'under 6 months', '6 to 12 months', '12 to 24 months', 'over 24 months'. Segment = 'loyalty member' if present in loyalty_accounts, else 'non-member'. Revenue/AOV use non-cancelled orders converted to EUR via exchange_rates (as_of placed_at, fallback created_at). avg_lifetime_orders and refund_rate_pct use all orders (any status); refund = payments.amount_refunded greater than 0 OR an order_returns row. Order rows by tenure_band (youngest to oldest), then segment ('loyalty member' before 'non-member').\", \"builds_on\": [\"Loyalty member vs non-member behavior by account tenure\", \"Loyalty member refund rate by merchant vertical\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,59 @@
+{
+ "notes": "Report 1's big finding: all 3 of the long-overdue DSARs are status='rejected' yet have completed_at = NULL — my original monthly report (night 1) treated 'completed_at IS NULL' as the sole \"still open\" signal, which may be wrongly counting rejected (i.e., actually-decided) requests as backlog. Before I hand Ines a number, I need to know whether 'rejected' is a systemic gap (completed_at never set on rejections) or an isolated failure on these 3 — that reshapes the whole answer to her question 1, so it's the top priority tonight. Report 3 (retention policy inventory) was dominated by one audit_log policy repeated per tenant and got truncated at 50 of 720 rows before showing any other entity_table — I need a properly aggregated view of what policies actually exist before I can check reality against them (item 4). With only this night and one more left, I'm also opening item 5 (legal holds) tonight since it looks like a single, self-contained report I can likely close in one shot, leaving night 4 free for the retention actual-vs-policy comparison and any remaining loose ends.",
+ "requests": [
+  {
+   "title": "Data subject request status audit: does completed_at reflect true closure?",
+   "question": "Across all data subject requests (not just currently open ones), which status values leave completed_at null, and is that a systemic pattern (e.g. all rejections) or isolated to a few records?",
+   "grain": "one row per distinct data_subject_requests.status value, across full history",
+   "columns": [
+    "status",
+    "total requests with this status",
+    "count with completed_at not null",
+    "count with completed_at null",
+    "oldest received_at in this status",
+    "newest received_at in this status",
+    "avg age in days of the completed_at-null rows (2026-01-05 minus received_at, averaged, null if none)"
+   ],
+   "details": "Source: data_subject_requests, no date filter (full history), platform-wide. Group by status. This is a diagnostic to check whether 'rejected' (and any other terminal-sounding status) systematically never gets a completed_at stamp, which would mean my earlier 'still open'/'overdue' counts (based on completed_at IS NULL) overstate the real backlog. Use literal date 2026-01-05 for age math. Order by total requests with this status descending.",
+   "builds_on": [
+    "Currently open data subject requests: age and overdue detail"
+   ]
+  },
+  {
+   "title": "Retention policy landscape: distinct rules by entity table",
+   "question": "What retention rules actually exist across entity tables, collapsing the one-row-per-tenant duplication, so I can see real coverage and variation?",
+   "grain": "one row per distinct combination of (entity_schema, entity_table, retention_days, action_on_expiry)",
+   "columns": [
+    "entity schema",
+    "entity table",
+    "retention days",
+    "action on expiry",
+    "tenant count using this exact combination",
+    "active count (is_active = true)",
+    "never-run count (last_run_at is null)"
+   ],
+   "details": "Source: retention_policies. Group by (entity_schema, entity_table, retention_days, action_on_expiry) instead of listing one row per tenant, since last night's report showed the same audit_log/730/archive combination repeated across ~120 tenants and got truncated before reaching other entity tables. This should surface every entity table that has a policy (likely a handful: audit_log, access_log, data_exports, consent_records, etc.) and flag any table where retention_days or action_on_expiry varies across tenants. Order by entity_table, then tenant_count descending.",
+   "builds_on": [
+    "Retention policy inventory: what rules exist and where"
+   ]
+  },
+  {
+   "title": "Legal holds: active scope, coverage, and staleness",
+   "question": "How many legal holds are currently active, what do they cover, and are any stale (placed long ago with no recent review or release)?",
+   "grain": "one row per legal_holds record",
+   "columns": [
+    "tenant name",
+    "hold name",
+    "reason (truncated)",
+    "entity table scope (if set)",
+    "subject user id (if set, scope is a specific data subject)",
+    "is active",
+    "placed at (date)",
+    "released at (date, blank if still active)",
+    "days since placed (2026-01-05 minus placed_at, for active holds only)"
+   ],
+   "details": "Source: legal_holds joined to tenants for the name. Include all rows (active and released) so released ones give context on typical hold duration, but order so active holds print first, oldest placed_at first, to surface any that look stale (placed many months/years ago and never released). Use literal date 2026-01-05 for age math, not CURRENT_DATE. If the table has close to or more than 50 rows, note the total count so we know whether this needs a narrower follow-up.",
+   "builds_on": []
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Shopper authentication method mix: OAuth-linked vs password-only",
+    "--question",
+    "Since shopper accounts have 0% MFA, what actually stands in for a second factor today — are most shoppers authenticating through an OAuth provider (Google/Apple/etc., which carries its own security), or are they overwhelmingly raw password-only accounts with no backup at all?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per authentication method category among shopper (is_staff = false) users\", \"columns_requested\": [\"method category ('OAuth-linked' = has \\u22651 oauth_accounts row, 'password-only' = no oauth_accounts row)\", \"shopper user count\", \"share of all shoppers (%)\", \"of those, confirmed MFA count (expected near-zero, included to double-check for any overlap)\", \"of those, users with at least one login_attempt in the last 90 days (2025-10-05 to 2025-12-31), i.e. recently active\"], \"details\": \"Source: users where is_staff = false and deleted_at is null, left-joined to oauth_accounts (user_id) to classify into the two categories, and to mfa_devices (confirmed_at is not null) and login_attempts (occurred_at in the window, matched by email or user_id) for the other two measures. Share of all shoppers = category count / total shoppers, rounded to 1 decimal percent. Only 2 rows expected (OAuth-linked, password-only); order by shopper user count descending.\", \"builds_on\": [\"Platform-wide MFA adoption trend by month, staff vs. shoppers\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

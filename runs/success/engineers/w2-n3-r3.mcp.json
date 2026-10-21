@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Support experience before shoppers go quiet: lapsed vs active shoppers",
+    "--question",
+    "Do shoppers who get slower or worse support go quiet sooner, and does that show up before they lapse?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Bea\", \"situation\": \"churn-task-force\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per shopper group and time window before reference date\", \"columns_requested\": [\"shopper group\", \"window before reference\", \"shopper count\", \"tickets\", \"avg first response hours\", \"avg csat score\"], \"details\": \"Same two groups and windows as the marketing-engagement report: 'lapsed' (last order 180-365 days before 2025-12-31) vs 'active' (last order within 90 days), reference date is last order date for lapsed and 2025-12-31 for active, windows '0-90 days before reference' and '91-180 days before reference'. From tickets (created_at, first_response_at, requester_user_id) count tickets and avg first response hours per group/window; from csat_responses (submitted_at, score, respondent_user_id) avg score per group/window. Order by shopper group, then window ascending. Expect 4 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

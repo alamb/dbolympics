@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Flagged compliance/security incidents: volume, severity and resolution time",
+    "--question",
+    "How many compliance/security incidents have been flagged, how severe are they, how long do they typically take to resolve, and is anything still sitting open a long time?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Omar\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per compliance_events.severity value, across all tenants, all occurred_at dates from 2023-01-01 through 2025-12-31\", \"columns_requested\": [\"severity\", \"total_events\", \"resolved_count\", \"unresolved_count\", \"pct_resolved\", \"avg_days_to_resolve (resolved_at - occurred_at, resolved events only)\", \"median_days_to_resolve\", \"oldest_unresolved_age_days (2025-12-31 minus occurred_at, for the oldest unresolved event in this severity)\", \"distinct_event_types\"], \"details\": \"Source: compliance_events. Use 2025-12-31 as the fixed reference date for age calculations (not CURRENT_DATE). This is the deferred 'incidents' question from last week \\u2014 want a clear read on total volume, how severity breaks down, typical time-to-close, and whether any severity tier has old unresolved events that would look bad to a security reviewer. Order by total_events descending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

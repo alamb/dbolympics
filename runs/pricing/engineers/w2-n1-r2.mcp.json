@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Monthly trend of confirmed lapsed-subscriber free-delivery leakage, 2023-2025",
+    "--question",
+    "Is the confirmed leakage (free deliveries going to customers whose subscription had already been canceled) a slow-burning historical gap, steady, or accelerating?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Viktor\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per calendar month, 2023-01 through 2025-12\", \"columns_requested\": [\"month (YYYY-MM)\", \"orphan orders where most-recent subscription status = 'canceled' (count)\", \"distinct customers\", \"total discount amount (EUR)\", \"cumulative total discount amount, running sum since 2023-01 (EUR)\"], \"details\": \"Source: order_discounts + discounts (name='Subscription delivery (prepaid)') + orders (placed_at across full history 2023-01-01 to 2025-12-31, status != 'cancelled', user_id, tenant_id) restricted to orders with no overlapping subscription (status in trialing/active/past_due, same overlap definition as before) AND whose customer's most-recent subscription (by started_at) has status = 'canceled' (the confirmed-leakage group, ~82% of orphans, ~\\u20ac57k in 2025 alone). Join to calendar_days (or extract month from placed_at) to get month_label. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by month ascending. Print all 36 months.\", \"builds_on\": [\"Subscription-delivery discount orders with no overlapping active subscription\", \"Subscription status distribution behind orphan comped-delivery orders\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

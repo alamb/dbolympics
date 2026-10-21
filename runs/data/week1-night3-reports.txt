@@ -1,0 +1,35 @@
+=== Report 1: Order-to-payment gap re-measured with refund-inclusive payment status (written by Bea) ===
+Engineer's note: Grain is orders.status (8 possible rows), each order counted once for orders_with_money_collected_count even if it has multiple captured/refunded payments (gross/net are summed across all its linked payments). Money conversion uses exchange_rates on placed_at date for order totals and on captured_at date for payment amounts, per the request.
+REPORT: Order-to-payment gap re-measured with refund-inclusive payment status
+QUESTION: How much of the gap between order value and 'captured' payments is really just that refunded/partially-refunded payments were excluded by my status filter, versus a genuine hole where money was never collected?
+order_status | order_count | orders_grand_total_eur | orders_with_money_collected_count | gross_collected_eur | net_collected_eur |   gap_vs_gross_eur | gap_vs_gross_pct
+-------------+-------------+------------------------+-----------------------------------+---------------------+-------------------+--------------------+-----------------
+fulfilled    |       18540 |      4863934.962385263 |                             16619 |   4822446.930504212 | 4433540.985117448 |  41488.03188105114 |              0.9
+cancelled    |         788 |     158380.30196644366 |                               259 |  46949.160132157034 |               0.0 | 111431.14183428662 |             70.4
+refunded     |         923 |     125051.87291907084 |                               923 |  118419.97198707449 | 2606.396122521615 |  6631.900931996352 |              5.3
+(3 rows)
+
+=== Report 2: Refund timing relative to payout settlement (written by Viktor) ===
+Engineer's note: Grain is the three timing buckets as specified (3 rows total). A payment can appear in at most one payout (payout_items.payment_id is unique), so each refund maps to 0 or 1 payout for bucketing; avg_days_lag is NULL for the before/not-yet-settled buckets as requested.
+REPORT: Refund timing relative to payout settlement
+QUESTION: When a payment is refunded, does the refund happen before its payout settles (so it can cleanly reduce that payout) or after (so the clawback has no clean home in the payout data), and how much money is affected?
+timing_bucket                         | refund_count | refund_amount_eur | pct_of_total_refund_amount | avg_days_lag
+--------------------------------------+--------------+-------------------+----------------------------+-------------
+refund after payout paid_at           |         7455 |         983341.22 |                       85.5 |         20.9
+refund before payout paid_at          |          577 |         167042.45 |                       14.5 |         NULL
+payment not yet settled in any payout |            1 |            330.69 |                        0.0 |         NULL
+(3 rows)
+
+=== Report 3: Customer headcount by definition (written by Felix) ===
+Engineer's note: Counts are pooled across all tenants (non-staff users only), as requested. "created_at <= 2025-12-31" and "placed_at <= 2025-12-31" were implemented as "< 2026-01-01" to include the full last day.
+REPORT: Customer headcount by definition
+QUESTION: Do different reasonable definitions of 'how many customers we have' or 'how many are active' give meaningfully different headcounts?
+definition                               | user_count | pct_of_all_customers
+-----------------------------------------+------------+---------------------
+All customers (ever created)             |      11258 |                100.0
+Status = active                          |      11183 |                 99.3
+Placed at least one order, ever          |       9640 |                 85.6
+Placed at least one order in trailing 12 |       6159 |                 54.7
+Logged in within last 90 days of data    |       5396 |                 47.9
+Has an active or trialing subscription   |        411 |                  3.7
+(6 rows)

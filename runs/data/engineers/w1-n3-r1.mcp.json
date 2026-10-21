@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-to-payment gap re-measured with refund-inclusive payment status",
+    "--question",
+    "How much of the gap between order value and 'captured' payments is really just that refunded/partially-refunded payments were excluded by my status filter, versus a genuine hole where money was never collected?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Bea\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"order status\", \"columns_requested\": [\"order_status\", \"order_count\", \"orders_grand_total_eur\", \"orders_with_money_collected_count\", \"gross_collected_eur\", \"net_collected_eur\", \"gap_vs_gross_eur\", \"gap_vs_gross_pct\"], \"details\": \"Same population as the prior order-status report: orders with placed_at between 2023-01-01 and 2025-06-30 inclusive. Group by orders.status. order_count and orders_grand_total_eur as before (grand_total converted to EUR via exchange_rates using orders.currency_code and placed_at date). orders_with_money_collected_count = count of those orders with at least one linked payments row (payments.order_id = orders.id) whose status is in ('captured','refunded','partially_refunded') - i.e. any payment that was successfully captured at some point, whether or not it was later refunded. gross_collected_eur = sum of payments.amount for those linked payments (the original captured amount, before any refund), converted to EUR via payments.currency_code and captured_at date. net_collected_eur = sum of (payments.amount - payments.amount_refunded) for those same linked payments, converted the same way - this is what the merchant actually kept after refunds. gap_vs_gross_eur = orders_grand_total_eur - gross_collected_eur. gap_vs_gross_pct = gap_vs_gross_eur / orders_grand_total_eur * 100, rounded to 1 decimal. Tables: orders, payments, exchange_rates. Order by orders_grand_total_eur descending.\", \"builds_on\": [\"Order-to-payment gap by order status, aged cohort\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

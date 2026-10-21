@@ -1,0 +1,101 @@
+=== Report 1: Refund Rate by Vertical and Quarter, 2025 (written by Viktor) ===
+Engineer's note: Grain is tenants.industry x calendar quarter of captured_at, 2025 only; amounts converted EUR-per-local via exchange_rates (EUR base, local quote, as_of=capture date) as specified. Quarter is labeled Q1-Q4 (year omitted since the report is scoped to 2025 only).
+REPORT: Refund Rate by Vertical and Quarter, 2025
+QUESTION: Which vertical(s) outside Apparel & Footwear drove the rise in company-wide refund rate through 2025, especially the Q2-Q3 spike?
+vertical                  | quarter | merchant_count | payment_count | gross_captured_eur | amount_refunded_eur | refund_rate_pct
+--------------------------+---------+----------------+---------------+--------------------+---------------------+----------------
+Apparel & Footwear        | Q1      |             11 |          1150 | 216621.44091669368 |  44831.176879493345 |            20.7
+Apparel & Footwear        | Q2      |             11 |          1169 |  198881.2193894893 |   44578.07783795187 |           22.41
+Apparel & Footwear        | Q3      |             11 |          1212 | 192047.59636464564 |   42818.10689885081 |            22.3
+Apparel & Footwear        | Q4      |             11 |          2298 |  470544.8364552379 |   91672.61863472672 |           19.48
+Beauty                    | Q1      |              6 |           280 |  25818.54401057241 |  1085.7447446305723 |            4.21
+Beauty                    | Q2      |              7 |           228 |  25725.83935097318 |     619.50811391392 |            2.41
+Beauty                    | Q3      |              8 |           284 | 29641.158365632327 |  3150.3888966371146 |           10.63
+Beauty                    | Q4      |              7 |           459 | 44113.676007047616 |   2923.057264107972 |            6.63
+Books & Stationery        | Q1      |              3 |            27 | 1355.1836199234158 |   58.63298735958467 |            4.33
+Books & Stationery        | Q2      |              3 |            26 | 1434.8048158637575 |   75.81729784451257 |            5.28
+Books & Stationery        | Q3      |              4 |            17 |  817.6496332968031 |  11.501861056716475 |            1.41
+Books & Stationery        | Q4      |              4 |            45 |  2023.393101739535 |    40.8426243531702 |            2.02
+Consumer Electronics      | Q1      |              2 |             7 | 8090.2199209759565 |   57.04991401762959 |            0.71
+Consumer Electronics      | Q2      |              2 |             8 | 1029.9743631223505 |                 0.0 |             0.0
+Consumer Electronics      | Q3      |              2 |             9 | 11249.432963260206 |                 0.0 |             0.0
+Consumer Electronics      | Q4      |              3 |            21 | 12334.929902163894 |   4479.206917994399 |           36.31
+Food & Coffee             | Q1      |              3 |           330 | 18354.785502809722 |  62.383472348541886 |            0.34
+Food & Coffee             | Q2      |              3 |           355 |  18249.53217315367 |   269.9056568395979 |            1.48
+Food & Coffee             | Q3      |              3 |           363 | 15662.413332444743 |  180.75184916705518 |            1.15
+Food & Coffee             | Q4      |              5 |           482 | 24928.853024262517 |   368.7037831923822 |            1.48
+Home & Living             | Q1      |              9 |           167 | 27894.272465097492 |   2433.823480440758 |            8.73
+Home & Living             | Q2      |              9 |           154 | 23751.388145572895 |  2898.7327936654633 |            12.2
+Home & Living             | Q3      |              9 |           158 | 24198.566575605862 |  1015.1305518444232 |             4.2
+Home & Living             | Q4      |              9 |           347 |  55031.91113703543 |   3289.176261514632 |            5.98
+Industrial Supplies (B2B) | Q1      |              1 |            30 |  67009.71065267481 |                 0.0 |             0.0
+Industrial Supplies (B2B) | Q2      |              1 |            42 | 130168.99482296039 |   667.9769975297136 |            0.51
+Industrial Supplies (B2B) | Q3      |              1 |            35 |  86880.28106375752 |                 0.0 |             0.0
+Industrial Supplies (B2B) | Q4      |              1 |            47 | 102428.63827279814 |   879.2332472909086 |            0.86
+Jewelry & Accessories     | Q1      |              1 |             3 |  708.3609146047186 |                 0.0 |             0.0
+Jewelry & Accessories     | Q2      |              1 |             4 |  789.8097417728766 |                 0.0 |             0.0
+Jewelry & Accessories     | Q3      |              1 |             1 | 474.09138186513644 |                 0.0 |             0.0
+Jewelry & Accessories     | Q4      |              1 |             6 | 1029.6122237688733 |                 0.0 |             0.0
+Office Supplies (B2B)     | Q1      |              2 |            61 | 269281.99522658327 |   538.7285520011415 |             0.2
+Office Supplies (B2B)     | Q2      |              2 |            43 | 139804.73630781923 |   6759.114464105353 |            4.83
+Office Supplies (B2B)     | Q3      |              2 |            60 | 156766.32653283176 |  23267.743667366227 |           14.84
+Office Supplies (B2B)     | Q4      |              2 |            75 |  141893.6413073626 |                 0.0 |             0.0
+Pet Supplies              | Q1      |              5 |           241 | 10973.548507433949 |  137.34976084931193 |            1.25
+Pet Supplies              | Q2      |              6 |           252 | 12697.327961349287 |   68.52328917673564 |            0.54
+Pet Supplies              | Q3      |              7 |           264 | 13981.660023570754 |  248.39446202754175 |            1.78
+Pet Supplies              | Q4      |              7 |           338 |  17623.34787040026 |   423.2845831840298 |             2.4
+Sports & Outdoor          | Q1      |              4 |           133 | 48481.881703017454 |   4748.589361778662 |            9.79
+Sports & Outdoor          | Q2      |              4 |           136 |  53277.39476609937 |     8671.6034168609 |           16.28
+Sports & Outdoor          | Q3      |              4 |           122 |  50531.48401879147 |    7597.09439253762 |           15.03
+Sports & Outdoor          | Q4      |              5 |           151 | 56351.904767109656 |    6598.52473055408 |           11.71
+(44 rows)
+
+=== Report 2: Merchant-Level Quarterly Refund Rate, 2025 (excluding Apparel & Footwear) (written by Ines) ===
+Engineer's note: Grain is one row per qualifying tenant (>=20 payments in 2025), so the count of tenants excluded by that threshold isn't a column here; if you need that single number, request it as a separate one-row check next time. Quarters with zero qualifying gross for a tenant show a null refund rate (no division by zero).
+REPORT: Merchant-Level Quarterly Refund Rate, 2025 (excluding Apparel & Footwear)
+QUESTION: Which specific non-Apparel merchant(s) caused the refund-rate spike in 2025-Q2/Q3?
+merchant_name          | vertical                  | gross_captured_eur_fy2025 | refund_rate_q1_pct | refund_rate_q2_pct | refund_rate_q3_pct | refund_rate_q4_pct | refund_rate_fy2025_pct
+-----------------------+---------------------------+---------------------------+--------------------+--------------------+--------------------+--------------------+-----------------------
+Fell & Fjell           | Sports & Outdoor          |                  36116.68 |                2.4 |               7.97 |              34.28 |               4.36 |                   16.2
+Trailmark              | Sports & Outdoor          |                   7428.21 |               NULL |               2.28 |              24.84 |              39.42 |                  31.37
+OfficeHub Nordic       | Office Supplies (B2B)     |                 426010.27 |                0.0 |               6.59 |              20.98 |                0.0 |                   6.96
+Linden & Loom          | Home & Living             |                  37516.18 |               5.88 |              14.69 |               16.4 |               6.84 |                   9.44
+Gratlinie Outdoor      | Sports & Outdoor          |                  94789.94 |              11.77 |               6.02 |              14.48 |              17.01 |                  12.51
+Petalcourt Beauty      | Beauty                    |                  61911.92 |               2.53 |               2.34 |              12.83 |                7.0 |                   6.52
+Ampere & Co.           | Consumer Electronics      |                  28882.99 |               2.06 |               0.85 |              12.42 |               1.33 |                   2.65
+Nordic Bloom Cosmetics | Beauty                    |                  17564.54 |              11.96 |                0.0 |              12.19 |               8.67 |                   7.94
+Willow & Wren          | Home & Living             |                  18796.06 |              18.55 |                2.7 |               11.2 |              12.23 |                  12.78
+Ridgeback Gear         | Sports & Outdoor          |                  27032.69 |              13.81 |               4.64 |              10.42 |              23.61 |                  13.41
+Wiesgrund Wohnen       | Home & Living             |                  37511.41 |               8.82 |               3.22 |               9.85 |               8.08 |                   7.58
+Saffron & Sage         | Beauty                    |                   9866.32 |                0.0 |                0.0 |               9.62 |              11.76 |                   7.48
+Polder Packaging       | Industrial Supplies (B2B) |                  90872.65 |                0.0 |                0.0 |               9.08 |                0.0 |                   2.79
+Juniper Apothecary     | Beauty                    |                  17551.04 |               4.71 |               5.69 |               8.85 |               1.82 |                   4.75
+Fern & Fable           | Home & Living             |                   5535.53 |                0.0 |                0.0 |               8.59 |               7.32 |                    5.6
+Cinder Peak Sports Co. | Sports & Outdoor          |                 123713.44 |              13.07 |              16.06 |               7.57 |              16.02 |                  13.51
+Midland Safety Wear    | Industrial Supplies (B2B) |                 297398.75 |                0.0 |               0.02 |                7.3 |               4.14 |                   3.78
+Chocolaterie Mireille  | Food & Coffee             |                   5122.68 |                0.0 |                0.0 |                6.5 |               0.65 |                   2.16
+Mirelle                | Beauty                    |                   4582.59 |                0.0 |                0.0 |               5.99 |               1.23 |                   1.92
+Spice Route Box        | Food & Coffee             |                  26524.61 |               0.18 |               0.49 |               5.66 |               0.21 |                    1.4
+Ondine Botanicals      | Beauty                    |                   2193.24 |                0.0 |                0.0 |               5.41 |              30.38 |                   8.94
+Basecamp Nord          | Sports & Outdoor          |                   9869.46 |                0.0 |                7.5 |                5.3 |               8.16 |                   5.59
+Velo Noord             | Sports & Outdoor          |                   9780.02 |              14.31 |              31.83 |               5.16 |               8.48 |                  11.39
+The Balm Room          | Beauty                    |                  13879.18 |               6.22 |               2.06 |               4.55 |               6.44 |                   5.28
+Wohnglück              | Home & Living             |                  21016.27 |               5.16 |              11.82 |               4.45 |                7.0 |                   6.79
+Kayak Corner           | Sports & Outdoor          |                  39742.21 |              12.31 |               9.65 |               4.32 |               3.38 |                   8.51
+Fennel & Flint         | Home & Living             |                  64363.83 |               7.67 |              10.76 |               4.29 |               3.96 |                   5.84
+Feather & Fin          | Pet Supplies              |                  10162.91 |                1.1 |                0.0 |                3.9 |                8.7 |                   4.09
+Coastline Interiors    | Home & Living             |                   20804.3 |               2.76 |              15.09 |               3.24 |               6.03 |                   6.39
+Honeycomb Larder       | Food & Coffee             |                  31948.08 |                0.0 |                1.6 |               3.18 |               0.06 |                   0.99
+(30 rows)
+
+=== Report 3: Refund Figures Cross-Check: Payments vs Order Returns, 2025 (written by Grace) ===
+Engineer's note: Both totals are converted to EUR by dividing the merchant-currency amount by the EUR exchange_rates.rate matched on the event date (captured_at for payments, refunded_at for order_returns), per currency, before summing. difference_eur = payments figure minus order_returns figure; difference_pct is that difference as a percent of the payments figure (null if the payments figure is zero for a quarter).
+REPORT: Refund Figures Cross-Check: Payments vs Order Returns, 2025
+QUESTION: Do the payments-table refund amounts we've been reporting agree with the independent order_returns (RMA) records, or is one source overstating/understating refunds?
+quarter | amount_refunded_eur_from_payments | refund_total_eur_from_order_returns | difference_eur | difference_pct_of_payments_figure
+--------+-----------------------------------+-------------------------------------+----------------+----------------------------------
+2025-Q1 |                          53953.48 |                            74426.38 |       -20472.9 |                            -37.95
+2025-Q2 |                          64609.26 |                            54413.77 |       10195.49 |                             15.78
+2025-Q3 |                          78289.11 |                            46541.26 |       31747.85 |                             40.55
+2025-Q4 |                         110674.65 |                            134322.6 |      -23647.95 |                            -21.37
+(4 rows)

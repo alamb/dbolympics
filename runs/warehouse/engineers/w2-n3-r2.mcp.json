@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Do the zero-activity 'Warehouse' sites hold real inventory?",
+    "--question",
+    "The apparel merchants' secondary sites named '...Warehouse' (as opposed to '...Fulfilment Centre') showed zero stock-count activity all year — are these empty/inactive shells, or do they hold meaningful live inventory that is simply never being counted (a blind spot)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Felix\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"warehouse, restricted to the 9 zero-activity sites identified last night (Aarhus Warehouse/Oakhurst Tailoring, Boston Warehouse/Cragsley Outfitters, Brussels Warehouse/Studio Vrij, Calgary Warehouse/Cragsley Outfitters, Glasgow Warehouse/Thistlecombe, Groningen Warehouse/Studio Vrij, Limerick Warehouse/Marrowby & Vane, Preston Warehouse/Marrowby & Vane, Toulouse Warehouse/Rue Lafayette Studio, Uppsala Warehouse/Velvet Ash)\", \"columns_requested\": [\"warehouse_name\", \"tenant_name\", \"total_stock_on_hand (sum of stock_items.quantity across all stock_locations in this warehouse)\", \"distinct_variants_stocked (count of distinct variant_id in stock_items with quantity > 0 at this warehouse)\", \"pct_of_tenant_total_stock_units (this warehouse's total_stock_on_hand / that tenant's total stock_on_hand across all its warehouses combined * 100, rounded 1dp)\"], \"details\": \"Join stock_items to stock_locations (stock_location_id) to warehouses (warehouse_id), filtered to the 10 named warehouse+tenant pairs listed above (match by warehouse name and tenant name together, since warehouse names like 'Uppsala Warehouse' are not globally unique). For pct_of_tenant_total_stock_units, compute each tenant's grand total stock_items.quantity across ALL of its warehouses (not just the named one) as the denominator. Order by total_stock_on_hand descending, tie-break by warehouse_name.\", \"builds_on\": [\"Apparel/footwear discrepancies by warehouse: scale effect or genuine elevated rate?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

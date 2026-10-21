@@ -1,0 +1,63 @@
+{
+ "notes": "Big catch from last night: the \"directional unit economics\" report is mathematically misleading, not just rough — every vertical shows net contribution of -300% to -1450% of fee revenue, because it nets full order-value refunds and full shipping outlays against our thin processing-fee take (e.g. Apparel refunds of €281k vs. €33k fee revenue). Refunds and shipping are gross merchandise/logistics flows, not Tidewick's P&L costs on a 1:1 basis with our fee revenue — comparing them directly produces a result that would badly mislead the board if presented as-is. The Deskline Supplies shipping-cost check came back ambiguous rather than conclusive: costs are spread across many carrier/service lanes (not one bad row), but with extreme within-lane variance (€5 to €9,509 in the same lane) that's plausible for a B2B freight mix but still needs an Ops/Finance sanity check before I'd trust it in a model. On the platform-billing-risk side: only 4 merchants are past_due/suspended/churned, all small (<€1.3k TTM fee revenue each) — not a board-level concern on its own. Tonight I'm using all 3 slots to put the unit-economics scoping on solid footing before month-end: (1) redo the vertical view as comparable rates against gross volume rather than raw euros against fee revenue, (2) the same clean rate view at merchant grain for the top accounts (since the board wants merchant-level too), and (3) a direct check on whether shipping cost is actually a net cost or a wash once customer-paid shipping is netted against carrier cost — this resolves a real \"whose cost is this\" ambiguity I flagged rather than assuming an answer. I'm not spending a further slot chasing Finance's €93,583 discrepancy blindly; that needs a joint query walkthrough with Tobias's team, which I'll propose directly rather than guess at in another report.",
+ "requests": [
+  {
+   "title": "Vertical unit economics, rate-based view, 2025",
+   "question": "Which verticals look efficient versus costly to serve, measured as comparable rates against gross payment volume rather than misleading absolute euros against our thin fee take?",
+   "grain": "one row per merchant vertical (tenants.industry)",
+   "columns": [
+    "vertical",
+    "merchant count",
+    "gross payment volume (EUR, 2025)",
+    "fee revenue (EUR, 2025)",
+    "take rate (%, fee revenue / gross volume)",
+    "refund rate (%, order_returns.refund_total / gross volume)",
+    "shipping cost rate (%, shipments.shipping_cost / gross volume)",
+    "order count (2025)",
+    "tickets per 100 orders"
+   ],
+   "details": "Source: payouts (status='paid', paid_at in [2025-01-01,2026-01-01), EUR via exchange_rates as_of paid_at) for gross volume and fee revenue, rolled up from tenant to tenants.industry. order_returns (status='refunded', dated by refunded_at falling back to requested_at, refund_total converted to EUR via exchange_rates as_of that date) for refund amount — same source as last night's report, for consistency. shipments (shipped_at in 2025, shipping_cost converted to EUR as_of shipped_at) joined via fulfillments->orders->tenant_id for shipping cost. orders (status in 'paid','partially_fulfilled','fulfilled','refunded', placed_at in 2025) for order count. tickets (created_at in 2025) for ticket count, giving tickets per 100 orders = 100*tickets/orders. All three rate columns (refund rate, shipping cost rate, and implicitly ticket rate) should be expressed against gross payment volume or order count — not against fee revenue — so verticals are comparable on a like-for-like basis. Group null/blank industry into 'Unspecified'. Order by gross payment volume EUR descending, tie-break by vertical name ascending.",
+   "builds_on": [
+    "Directional unit economics by vertical, 2025 (first pass)",
+    "Revenue by vertical, trailing 12 months (corrected)"
+   ]
+  },
+  {
+   "title": "Merchant unit economics, rate-based view: top 20 by volume, 2025",
+   "question": "Among our largest merchants, which look efficient versus costly to serve on a like-for-like rate basis?",
+   "grain": "one row per merchant (tenant), top 20 by gross payment volume",
+   "columns": [
+    "merchant name",
+    "vertical",
+    "gross payment volume (EUR, 2025)",
+    "fee revenue (EUR, 2025)",
+    "take rate (%, fee revenue / gross volume)",
+    "refund rate (%, order_returns.refund_total / gross volume)",
+    "shipping cost rate (%, shipments.shipping_cost / gross volume)",
+    "tickets per 100 orders"
+   ],
+   "details": "Same sources, filters, EUR conversion and rate definitions as tonight's vertical-level unit-economics report, but aggregated per tenant instead of per vertical, limited to the top 20 merchants ranked by 2025 gross payment volume (EUR). This gives the board a merchant-level cut using the corrected, comparable methodology (rates against gross volume, not against fee revenue). Order by gross payment volume EUR descending.",
+   "builds_on": [
+    "Vertical unit economics, rate-based view, 2025",
+    "Merchant revenue concentration, trailing 12 months"
+   ]
+  },
+  {
+   "title": "Shipping cost recovery: customer-paid shipping vs. carrier cost, by vertical, 2025",
+   "question": "Is shipping actually a net cost exposure, or does what we collect from customers for shipping roughly cover what we pay carriers?",
+   "grain": "one row per merchant vertical (tenants.industry)",
+   "columns": [
+    "vertical",
+    "order count (2025)",
+    "shipping revenue collected from customers (EUR, sum of orders.shipping_total)",
+    "shipping cost paid to carriers (EUR, sum of shipments.shipping_cost)",
+    "shipping margin (EUR, revenue minus cost)",
+    "shipping margin as % of shipping revenue collected"
+   ],
+   "details": "Source: orders (status in 'paid','partially_fulfilled','fulfilled','refunded', placed_at in [2025-01-01,2026-01-01), shipping_total converted to EUR via exchange_rates as_of placed_at date) joined to tenants for industry, for the revenue side; shipments (shipped_at in the same 2025 window, shipping_cost converted to EUR as_of shipped_at date) joined via fulfillments->orders->tenant_id, for the cost side. Both sums rolled up to vertical. This is meant to settle whether 'shipping cost' from the cost-driver inventory represents a real net cost exposure (if margin is sharply negative) or is largely self-funded by what customers already pay for shipping (if margin is near zero or positive) — directly feeding how we frame shipping in the unit-economics model. Group null/blank industry into 'Unspecified'. Order by shipping margin EUR ascending (worst recovery first), tie-break by vertical name ascending.",
+   "builds_on": [
+    "Cost-driver volume inventory by merchant, 2025"
+   ]
+  }
+ ]
+}

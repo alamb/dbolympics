@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT t.name AS tenant_name,\n  COUNT(*) AS customers,\n  ROUND(100.0 * SUM(CASE WHEN cust.before_cnt > 0 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_with_session_before,\n  ROUND(100.0 * SUM(CASE WHEN cust.after_cnt > 0 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_with_session_after,\n  ROUND(AVG(cust.after_cnt), 2) AS avg_sessions_after_first_order_per_customer\nFROM (\n  SELECT fo.tenant_id, fo.user_id, fo.first_order_at,\n    (SELECT COUNT(*) FROM web_sessions ws WHERE ws.tenant_id = fo.tenant_id AND ws.user_id = fo.user_id AND ws.started_at <= fo.first_order_at) AS before_cnt,\n    (SELECT COUNT(*) FROM web_sessions ws WHERE ws.tenant_id = fo.tenant_id AND ws.user_id = fo.user_id AND ws.started_at > fo.first_order_at) AS after_cnt\n  FROM (\n    SELECT tenant_id, user_id, MIN(placed_at) AS first_order_at\n    FROM orders\n    WHERE tenant_id IN (SELECT id FROM tenants WHERE name IN ('Brennquell Kaffee','Spice Route Box','Grind Collective','Honeycomb Larder'))\n    GROUP BY tenant_id, user_id\n  ) fo\n) cust\nJOIN tenants t ON t.id = cust.tenant_id\nGROUP BY t.name\nORDER BY t.name",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, customers, pct_with_session_before, pct_with_session_after, avg_sessions_after_first_order_per_customer"
+ },
+ {
+  "kind": "text",
+  "text": "Compiles cleanly and matches the requested grain and columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT t.name AS tenant_name,\n  COUNT(*) AS customers,\n  ROUND(100.0 * SUM(CASE WHEN cust.before_cnt > 0 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_with_session_before,\n  ROUND(100.0 * SUM(CASE WHEN cust.after_cnt > 0 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_with_session_after,\n  ROUND(AVG(cust.after_cnt), 2) AS avg_sessions_after_first_order_per_customer\nFROM (\n  SELECT fo.tenant_id, fo.user_id, fo.first_order_at,\n    (SELECT COUNT(*) FROM web_sessions ws WHERE ws.tenant_id = fo.tenant_id AND ws.user_id = fo.user_id AND ws.started_at <= fo.first_order_at) AS before_cnt,\n    (SELECT COUNT(*) FROM web_sessions ws WHERE ws.tenant_id = fo.tenant_id AND ws.user_id = fo.user_id AND ws.started_at > fo.first_order_at) AS after_cnt\n  FROM (\n    SELECT tenant_id, user_id, MIN(placed_at) AS first_order_at\n    FROM orders\n    WHERE tenant_id IN (SELECT id FROM tenants WHERE name IN ('Brennquell Kaffee','Spice Route Box','Grind Collective','Honeycomb Larder'))\n    GROUP BY tenant_id, user_id\n  ) fo\n) cust\nJOIN tenants t ON t.id = cust.tenant_id\nGROUP BY t.name\nORDER BY t.name",
+  "note": "Customers are distinct (tenant_id,user_id) pairs from orders (any status) per tenant; web_sessions are matched by tenant_id+user_id (anonymous pre-login sessions without a user_id are not linked to a customer and so can't be counted as 'before' browsing for them). All 4 named subscription tenants are included by name match against tenants.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. One note for the analyst: since `web_sessions` only link to a customer once `user_id` is set, any anonymous pre-signup browsing (common for a \"browse once to sign up\" pattern) won't show up in `pct_with_session_before` — that's a real limitation of the session-to-user linkage, not a query choice, and worth flagging if the before-percentage comes back low."
+ }
+]

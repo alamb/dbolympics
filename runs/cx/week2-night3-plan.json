@@ -1,0 +1,61 @@
+{
+ "notes": "Night 2 results are decisive on complexity: Cragsley (1.36 tags/ticket, 3.46 messages/ticket) and Marrowby (1.43, 3.29) are actually at the LOW end of complexity among all 22 qualifying merchants - Studio Vrij is mid-pack (1.64, 3.71). So \"harder issues\" is refuted as an explanation; it really does look like a volume/staffing story. The SLA-target report also refutes the \"unrealistic target\" theory for the broad urgent-miss problem - every merchant evaluated uses the identical 8-hour urgent target, so the wide spread in miss rates (14%-100%) reflects genuine differences in execution speed, not target calibration. The quarterly load report is the key new finding: all three hotspots (and comparison peer Grind Collective) run a completely flat agent headcount all four quarters, but ticket volume surges hard in specific quarters - Cragsley and Marrowby both spike in Q4 (tickets-per-agent roughly doubles vs Q1-Q3), Studio Vrij spikes specifically in Q2 (the already-known fulfillment incident), and Grind Collective also spikes in Q4 even harder than Cragsley. That's a strong lead: nobody scales support staff for volume surges, and it's not unique to the three named merchants. I want to (1) confirm urgent-ticket performance specifically degrades in the same quarters where each merchant's load spiked (a within-merchant causal test), (2) check whether this \"flat staffing through a seasonal/incident surge\" pattern is common across the whole qualifying book, not just these four - that determines if it's a platform-level guidance opportunity, and (3) characterize whether the big three's inflated average (vs. median) urgent resolution time is a few catastrophic outlier tickets or generally slow handling, since that changes what the fix would look like (triage/escalation vs. core speed).",
+ "requests": [
+  {
+   "title": "Quarterly urgent-ticket performance, hotspot merchants vs comparison peer",
+   "question": "Does urgent-ticket resolution specifically get worse in the same quarters where each merchant's ticket-per-agent load spiked?",
+   "grain": "one row per tenant and calendar quarter in 2025, for Cragsley Outfitters, Marrowby & Vane, Studio Vrij, and Grind Collective, urgent-priority tickets only",
+   "columns": [
+    "merchant name",
+    "quarter (2025-Q1..Q4)",
+    "urgent tickets evaluated (sla_policy_id not null)",
+    "urgent miss rate (%)",
+    "avg actual resolution hours (urgent)",
+    "median actual resolution hours (urgent)"
+   ],
+   "details": "Source: tickets (priority='urgent') joined to sla_policies via tickets.sla_policy_id, filtered to the four named tenants. Grain the quarter on tickets.created_at within 2025. Exclude tickets with null sla_policy_id from all columns (same 'evaluable' definition as prior urgent-SLA reports). 'Miss rate' = tickets missing the resolution target (resolved_at null as of 2025-12-31, or resolved_at later than created_at + resolution_target_minutes), as a percentage of evaluable urgent tickets that quarter, rounded to 1 decimal. avg/median actual resolution hours = extract(epoch from resolved_at - created_at)/3600 over evaluable urgent tickets with resolved_at not null that quarter, rounded to 1 decimal (show NULL if zero such tickets). Order by merchant name ascending, then quarter ascending. Expect 16 rows; note if any quarter has zero evaluable urgent tickets for a tenant.",
+   "builds_on": [
+    "Ticket load per agent over 2025, hotspot merchants vs a comparable peer",
+    "Urgent-ticket SLA target vs actual resolution time, by merchant"
+   ]
+  },
+  {
+   "title": "Q4-vs-rest-of-year ticket load per agent, all qualifying merchants",
+   "question": "Is 'flat support staffing through a seasonal ticket surge' a pattern specific to the three hotspot merchants, or common across the book?",
+   "grain": "one row per tenant, among tenants with at least 20 tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "tickets created, Q1-Q3 2025 (combined)",
+    "avg distinct agents handling tickets, Q1-Q3 (average of the three quarterly counts)",
+    "tickets per agent per quarter, Q1-Q3 average",
+    "tickets created, Q4 2025",
+    "distinct agents handling tickets, Q4",
+    "tickets per agent, Q4"
+   ],
+   "details": "Source: tickets joined to tenants. Window: tickets.created_at in 2025. Q1-Q3 = Jan-Sep 2025 combined; Q4 = Oct-Dec 2025. 'avg distinct agents, Q1-Q3' = average across the three individual quarters of count distinct assignee_agent_id (excluding null) per quarter, rounded to 1 decimal. 'tickets per agent per quarter, Q1-Q3 average' = (Q1-Q3 combined tickets ÷ 3) ÷ avg distinct agents Q1-Q3, rounded to 1 decimal. 'tickets per agent, Q4' = Q4 tickets ÷ distinct agents handling tickets in Q4 (excluding null), rounded to 1 decimal. Only include tenants with >=20 tickets created in 2025 (same threshold as the earlier staffing/channel/complexity reports, for a consistent peer set of 22). Order by 'tickets per agent, Q4' descending (worst Q4 crunch first), tie-break merchant name ascending. Expect at most 22 rows.",
+   "builds_on": [
+    "Support agent staffing vs ticket volume, by merchant",
+    "Ticket load per agent over 2025, hotspot merchants vs a comparable peer"
+   ]
+  },
+  {
+   "title": "Urgent-ticket resolution-time distribution, slow merchants vs a fast baseline",
+   "question": "Is the big three's inflated average urgent resolution time caused by a handful of extreme-delay tickets, or by generally slow handling across the board?",
+   "grain": "one row per tenant, for Cragsley Outfitters, Marrowby & Vane, Studio Vrij, Grind Collective, and Wiesgrund Wohnen (included as a fast-performing baseline), urgent-priority tickets only, 2025",
+   "columns": [
+    "merchant name",
+    "urgent tickets evaluated",
+    "% resolved within 8h (meets target)",
+    "% resolved 8-24h",
+    "% resolved 1-3 days",
+    "% resolved 3-7 days",
+    "% resolved after 7 days or still unresolved as of 2025-12-31"
+   ],
+   "details": "Source: tickets (priority='urgent') joined to sla_policies via tickets.sla_policy_id, filtered to the five named tenants. Window: tickets.created_at in 2025-01-01 through 2025-12-31, excluding tickets with null sla_policy_id (same evaluable definition as prior reports). resolution_hours = extract(epoch from resolved_at - created_at)/3600 for tickets with resolved_at not null; tickets with resolved_at null as of 2025-12-31 fall into the last bucket ('after 7 days or still unresolved') regardless of elapsed time. Bucket boundaries: <=8h, >8-24h, >24-72h (1-3 days), >72-168h (3-7 days), >168h or unresolved. Each tenant's five percentages should sum to ~100 (rounded to 1 decimal each). Order by merchant name ascending. Expect exactly 5 rows.",
+   "builds_on": [
+    "Urgent-ticket SLA target vs actual resolution time, by merchant",
+    "Quarterly urgent-ticket performance, hotspot merchants vs comparison peer"
+   ]
+  }
+ ]
+}

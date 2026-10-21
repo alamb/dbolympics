@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Subscription merchants: do customers browse before vs. after their first order?",
+    "--question",
+    "Is the near-zero web-session count for subscription merchants a tracking blind spot, or does it reflect real behavior — customers browsing once to sign up and then never browsing again?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Viktor\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per subscription-merchant tenant\", \"columns_requested\": [\"tenant name\", \"customers (distinct users with at least one order)\", \"pct of customers with any session before their first order\", \"pct of customers with any session after their first order\", \"avg sessions after first order, per customer\"], \"details\": \"Tenants: the 4 Food & Coffee subscription merchants (Brennquell Kaffee, Spice Route Box, Grind Collective, Honeycomb Larder). For each tenant, customers = distinct users (tenant_id, user_id) with at least one order (any status) in orders. For each customer, first_order_at = min(orders.placed_at). pct_with_session_before = % of customers with at least one web_sessions row where started_at <= first_order_at. pct_with_session_after = % of customers with at least one web_sessions row where started_at > first_order_at (any time after, through 2025-12-31). avg_sessions_after_first_order_per_customer = average count of web_sessions rows with started_at > first_order_at, across all customers (including those with zero). Round percentages to 1 decimal and the average to 2 decimals. Order rows by tenant name.\", \"builds_on\": [\"Session-tracking coverage vs order volume for top merchants, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

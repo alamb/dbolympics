@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Aggregate within-customer basket-size lift by promotion family, 2025",
+    "--question",
+    "Across all tenants running each major marketing promotion, do customers buy bigger baskets (pre-discount subtotal) when using the code, stated as one clean weighted number per promotion family?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Viktor\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per promotion family name: 'Welcome 10% off', 'Black Friday 2025', 'January Sale 2025', 'Summer Sale 2025'\", \"columns_requested\": [\"promotion name\", \"discount instances aggregated (distinct discounts.id count across tenants)\", \"discounted order count (sum across all instances)\", \"distinct customers (sum across instances, not deduplicated across tenants)\", \"avg discounted order subtotal, order-weighted (EUR)\", \"avg comparison order subtotal (same customers' other non-discounted 2025 orders), order-weighted (EUR)\", \"subtotal lift (EUR)\", \"subtotal lift (%)\", \"% of discounted customers who had at least one comparison order\"], \"details\": \"Source: order_discounts + discounts (name in the four promotion names above, across all tenants/instances) + orders (subtotal, currency_code, placed_at in 2025, status != 'cancelled', user_id, tenant_id). For each promotion name, sum subtotal_eur and count across all discounted orders tenant-wide to get the order-weighted average (i.e. total EUR / total orders, not an average of per-tenant averages). For comparison, for every (user_id, tenant_id) that appears as a discounted customer under that promotion name, pull all their other 2025 orders for that tenant with no row in order_discounts, and similarly sum subtotal_eur and count across all of them tenant-wide for the order-weighted comparison average. Convert to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by subtotal lift (%) ascending. Print all 4 rows.\", \"builds_on\": [\"Corrected incrementality read: pre-discount basket size on top marketing discounts, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

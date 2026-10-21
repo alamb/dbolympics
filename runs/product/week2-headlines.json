@@ -1,0 +1,5 @@
+[
+ "🔑 The checkout cliff is really a login wall: carts from shoppers who never log in convert at 0% (0 of ~8,900 in 2025), while logged-in shoppers convert at 51-68% — getting people to log in matters more than anything else in the cart.",
+ "📉 The cart drop-off is a long-standing structural pattern, not a recent problem: conversion held flat (~32-38%) every month in 2025, and a specific email-system bug in late November left no detectable dent — so it's not something that broke, it's something to redesign.",
+ "📧 We don't actually have an abandoned-cart reminder email today: what looked like a 'recovery nudge' last week turned out to be order/shipping confirmations, not a dedicated reminder — that's a real gap, and a real opportunity, to build."
+]

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Checkout funnel by device type and arrival channel",
+    "--question",
+    "Once a cart is created, is the drop-off to a paid order a single cliff or a slow bleed across stages, and does it differ by device or by how the shopper arrived?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Felix\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per device type and acquisition channel combination\", \"columns_requested\": [\"device type\", \"channel\", \"carts started\", \"carts with items (subtotal > 0)\", \"orders placed from cart (orders.cart_id not null)\", \"orders paid (status not in pending, cancelled)\", \"cart \\u2192 item % \", \"item \\u2192 order %\", \"order \\u2192 paid %\", \"overall cart \\u2192 paid %\"], \"details\": \"Time window: carts.created_at in 2025-10-01 to 2025-12-31. Base table: carts (tenant_id, user_id, created_at, subtotal, status). Join orders on orders.cart_id = carts.id for the 'orders placed' and 'orders paid' stages (orders.status not in ('pending','cancelled') = paid). For device type and channel: since there is no direct FK from carts to web_sessions, approximate by matching each cart's user_id to that user's most recent web_sessions row with started_at <= carts.created_at on the same calendar day (fall back to 'unknown' device/channel if no matching session exists); derive device type from web_sessions.user_agent (bucket as mobile/tablet/desktop/unknown via simple pattern match), and channel from web_sessions.utm_source (null/blank -> 'direct', otherwise the utm_source value, grouped to top 6 values + 'other'). If this join looks unreliable or returns mostly 'unknown', say so in the report notes rather than forcing it. Order rows by carts started descending; tie-break by device type, then channel.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

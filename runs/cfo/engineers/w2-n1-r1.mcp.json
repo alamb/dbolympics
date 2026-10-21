@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Audit Sample: End-to-End Transaction Walkthrough, 2025",
+    "--question",
+    "For a representative sample of 2025 transactions, does the shopper payment amount, any refund, the resulting merchant payout (gross/fee/net), and the linked ledger entries all tie out consistently?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Grace\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one sampled payment captured in 2025\", \"columns_requested\": [\"order_number\", \"merchant_name\", \"currency_code\", \"payment_amount (captured)\", \"amount_refunded\", \"net_amount (payment_amount - amount_refunded)\", \"payout_item_amount (amount of this payment settled into a payout, from payout_items)\", \"payout_item_fee_amount\", \"payout_net_amount (payout_item_amount - payout_item_fee_amount)\", \"ledger_debit_credit_diff (sum of ledger_entries.amount for this payment_id where direction='debit' minus direction='credit'; should be 0)\", \"ledger_credit_total (sum of ledger_entries.amount for this payment_id where direction='credit', to compare against payment_amount)\", \"reconciliation_flag ('OK' if net_amount equals payout_net_amount plus payout_item_fee_amount and ledger_debit_credit_diff is 0 and not yet settled payments are labeled 'PENDING PAYOUT', else 'CHECK')\"], \"details\": \"Source: payments (status captured/refunded/partially_refunded, captured_at in 2025) as the base. LEFT JOIN payout_items on payment_id (some payments may not be in a payout yet \\u2014 show as NULL, not excluded). LEFT JOIN ledger_entries on payment_id, aggregated by direction. Join orders on payments.order_id for order_number, and tenants for merchant_name. Build the sample as: (a) the 8 largest payments by payment_amount (converted to EUR for ranking only, print native currency), spread across different tenants where possible; (b) 8 payments with amount_refunded > 0, choosing a mix of fully refunded (amount_refunded = amount) and partially refunded, across different tenants; (c) 9 additional payments chosen by taking every Nth row ordered by payments.id (deterministic pseudo-random) to represent typical/unremarkable transactions, including at least 2 that have no matching payout_items row yet if any exist. Do not convert money columns to EUR (keep each row in its own currency_code so the diff/reconciliation checks are exact, not rounded by conversion). Order by sample category then by payment_amount descending within category; 25 rows total.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,57 @@
+{
+ "notes": "Night 3 brought the access-governance story to a clean, actionable finding: all 16 dormant Owner/Administrator accounts sit on CHURNED tenants only (9 tenants), with one as stale as 599 days since last login — meaning the real gap isn't \"someone's not reviewing active-merchant access,\" it's that user accounts simply never get deactivated when a tenant churns (status still reads 'active'). That's a crisp, fixable finding for the memo. The API-key report came back almost too clean — zero active keys anywhere show as never-used or unused 90+ days, even though the same report shows oldest-active-key ages running into the thousands of days (one at 2,743 days, ~7.5 years, which predates Tidewick's 2023 warehouse cutover and even stretches toward the 2018 founding). That combination — heavily used, never rotated — is exactly the \"long-lived token nobody rotates\" risk Henrik named, so I want a platform-wide age/rotation distribution rather than relying on a handful of per-tenant data points. The audit-log report surfaced the most actionable gap of the week: 'delete' actions show only 27 events company-wide across three years, across just 16 of 120 tenants (13.3%) — implausibly low for an e-commerce platform this size, and worth testing directly against actual soft-deletions in the database rather than assuming it's a true absence of deletes.\n\nTonight (final night) I'm spending all 3 slots closing out the two topics we hadn't quantified yet (API-key rotation hygiene, audit-trail completeness) plus checking whether existing compliance monitoring is a real control or just theoretical, since that's the credibility test for \"can we reconstruct who did what\" claims in the memo.",
+ "requests": [
+  {
+   "title": "Audit-trail coverage of actual soft-deletions, by entity table",
+   "question": "For tables where the app actually soft-deletes rows (deleted_at), does audit_log's 'delete' action consistently capture those deletions, or is there a real gap between what was deleted and what the audit trail shows?",
+   "grain": "one row per entity table, for a fixed set of 6 tables known to support soft-deletion: products, users, discounts, coupons, campaigns, promotions",
+   "columns": [
+    "entity table",
+    "total soft-deleted rows (deleted_at is not null, all-time, 2023-01-01 through 2025-12-31)",
+    "matching audit_log rows (action = 'delete' and entity_table = this table, all-time)",
+    "coverage rate (matching audit_log rows / soft-deleted rows, %)",
+    "distinct tenants with at least one soft-deleted row here",
+    "earliest deleted_at",
+    "most recent deleted_at"
+   ],
+   "details": "Source: for each of the 6 named tables, count rows with deleted_at is not null (that table itself, e.g. products.deleted_at, users.deleted_at, discounts.deleted_at, coupons.deleted_at, campaigns.deleted_at, promotions.deleted_at). Separately count audit_log rows with action = 'delete' and entity_table equal to that table's name (match on the literal table name string, ignore entity_schema). Coverage rate = matching audit_log rows / total soft-deleted rows, rounded to 1 decimal percent (cap at 100% if audit_log somehow has more rows than soft-deletes, and note if that happens). This is a UNION/stack of 6 independent per-table counts into one 6-row report, not a join across tables. Order by coverage rate ascending (worst gaps first), entity table name as tie-break.",
+   "builds_on": [
+    "Audit log coverage by action type"
+   ]
+  },
+  {
+   "title": "Active API key age distribution (rotation hygiene)",
+   "question": "Platform-wide, how old are our currently active API keys — do we have a meaningful population of long-lived, apparently never-rotated credentials, even though usage patterns look healthy?",
+   "grain": "one row per age bucket of currently active api_keys",
+   "columns": [
+    "age bucket (fixed labels: 'under 90 days', '90 days-1 year', '1-2 years', '2-4 years', '4+ years', based on 2026-01-05 minus created_at)",
+    "active key count in bucket",
+    "share of all active keys (%)",
+    "distinct tenants represented in bucket",
+    "oldest key age in days within bucket",
+    "count with last_used_at is null (never used) in bucket",
+    "count with last_used_at before 2025-10-05 (unused 90+ days) in bucket"
+   ],
+   "details": "Source: api_keys where status = 'active'. Compute age_days = 2026-01-05 minus created_at (fixed reference date per house standards, no CURRENT_DATE). Bucket into the 5 fixed ranges above. Share of all active keys = bucket count / total active keys across all buckets, rounded to 1 decimal percent. Order rows by bucket from youngest to oldest in the fixed sequence listed (not alphabetical) so the trend from new to old is readable top to bottom.",
+   "builds_on": [
+    "API key hygiene by merchant"
+   ]
+  },
+  {
+   "title": "Compliance event resolution health by severity",
+   "question": "When compliance_events flags something (suspicious access, retention overruns, failed DSAR SLAs, etc.), is it actually getting resolved, or are flagged incidents piling up unresolved — is existing monitoring a real control or just theoretical?",
+   "grain": "one row per severity level in compliance_events",
+   "columns": [
+    "severity",
+    "total events (all-time, 2023-01-01 through 2025-12-31)",
+    "resolved count",
+    "unresolved count",
+    "resolution rate (%)",
+    "oldest unresolved event age in days (2026-01-05 minus occurred_at, unresolved only)",
+    "most recent event occurred_at"
+   ],
+   "details": "Source: compliance_events (severity, resolved, occurred_at, resolved_at). Group by severity. resolution_rate = resolved count / total events, rounded to 1 decimal percent. 'Oldest unresolved event age in days' computed only over rows where resolved = false, as 2026-01-05 minus occurred_at (fixed reference date, no CURRENT_DATE); null if no unresolved rows in that severity. Order by unresolved count descending, severity as tie-break.",
+   "builds_on": []
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+=== Report 1: Data subject request status audit: does completed_at reflect true closure? (written by Felix) ===
+Engineer's note: One row per data_subject_requests.status across full history, platform-wide (no tenant filter, as requested). avg_age_days_not_completed is null when every row of that status already has completed_at set.
+REPORT: Data subject request status audit: does completed_at reflect true closure?
+QUESTION: Across all data subject requests (not just currently open ones), which status values leave completed_at null, and is that a systemic pattern (e.g. all rejections) or isolated to a few records?
+status      | total_requests | completed_count | not_completed_count | oldest_received_at         | newest_received_at         | avg_age_days_not_completed
+------------+----------------+-----------------+---------------------+----------------------------+----------------------------+---------------------------
+completed   |             55 |              55 |                   0 | 2020-04-24 22:06:57.286184 | 2025-10-18 12:53:44.859874 |                       NULL
+rejected    |              3 |               0 |                   3 | 2023-05-26 18:29:11.494494 | 2025-03-21 06:44:26.231555 |          596.6666666666666
+in_progress |              1 |               0 |                   1 | 2025-12-29 04:46:25.41114  | 2025-12-29 04:46:25.41114  |                        7.0
+received    |              1 |               0 |                   1 | 2025-12-06 01:50:30.669686 | 2025-12-06 01:50:30.669686 |                       30.0
+(4 rows)
+
+=== Report 2: Retention policy landscape: distinct rules by entity table (written by Bea) ===
+Engineer's note: Grain is (entity_schema, entity_table, retention_days, action_on_expiry) as requested; active_count and never_run_count are counts of policy rows (one per tenant) within that combination that are active / never run, not distinct tenant counts, since a tenant could in principle differ on those flags while matching the same rule shape.
+REPORT: Retention policy landscape: distinct rules by entity table
+QUESTION: What retention rules actually exist across entity tables, collapsing the one-row-per-tenant duplication, so I can see real coverage and variation?
+entity_schema | entity_table         | retention_days | action_on_expiry | tenant_count | active_count | never_run_count
+--------------+----------------------+----------------+------------------+--------------+--------------+----------------
+audit         | audit_log            |            730 | archive          |          120 |          120 |               9
+comms         | email_log            |            730 | delete           |          120 |            0 |             120
+analytics     | events               |           1095 | delete           |          120 |          120 |               9
+ops           | job_runs             |             90 | delete           |          120 |          120 |               9
+analytics     | page_views           |           1095 | delete           |          120 |          120 |               9
+ops           | system_health_checks |             35 | delete           |          120 |          120 |               9
+(6 rows)
+
+=== Report 3: Legal holds: active scope, coverage, and staleness (written by Felix) ===
+Engineer's note: Query returns every legal_holds row (active first, oldest placed_at first) with no artificial LIMIT; the report pipeline's standard 50-row cap and total-row note will indicate whether a narrower follow-up (e.g. active-only or per-tenant) is needed. Reason text truncated to 200 characters.
+REPORT: Legal holds: active scope, coverage, and staleness
+QUESTION: How many legal holds are currently active, what do they cover, and are any stale (placed long ago with no recent review or release)?
+tenant_name          | hold_name                 | reason_truncated                         | entity_table_scope | subject_user_id | is_active | placed_at_date | released_at_date | days_since_placed
+---------------------+---------------------------+------------------------------------------+--------------------+-----------------+-----------+----------------+------------------+------------------
+Marrowby & Vane      | Chargeback dispute 841484 | Payment dispute pending with the card ne |               NULL |            1933 | true      | 2023-05-27     |             NULL |               954
+Rue Lafayette Studio | Chargeback dispute 214867 | Payment dispute pending with the card ne |               NULL |            5911 | true      | 2024-07-10     |             NULL |               544
+Cragsley Outfitters  | Chargeback dispute 206882 | Payment dispute pending with the card ne |               NULL |            6446 | true      | 2025-03-22     |             NULL |               289
+(3 rows)

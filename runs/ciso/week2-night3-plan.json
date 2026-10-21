@@ -1,0 +1,56 @@
+{
+ "notes": "Big reversal on #1 tonight's results refine, not confirm, last week's alarm: order_status_history shows 100% coverage of cancellations across every one of the 50 tenants printed — Tidewick DOES have a timestamped record of every cancellation, just not in generic audit_log. But matching_rows_with_actor is 0 for every tenant — the WHO is missing even though the WHEN is solid. That's a much narrower, more precise finding than \"we can't reconstruct order history.\" Invoice voids turn out to not exist at all (0 ever), so that's a non-issue; but 85 \"uncollectible\" write-offs across 11 tenants have genuinely 0% audit trail and no purpose-built history table standing in — that's the real, confirmed financial-document gap. And the churn-session risk mostly evaporates: all never-revoked sessions on all 9 churned tenants are already naturally expired (0 still valid) — so the real residual churn risk is just account status (100% of users, all 9 tenants) plus the 2 tenants with a live API key/webhook found last week.\n\nWith #1 and #3 now reasonably well-characterized, tonight I'm clearing Henrik's remaining two questions: whether the \"no actor\" gap in order_status_history is specific to cancellations or systemic across all transitions (quick, sharpens the #1 story), what actually stands in for shopper MFA (oauth-linked login vs raw password), and who specifically holds the oldest active API keys so we can judge concentration/sensitivity for #4.",
+ "requests": [
+  {
+   "title": "Actor attribution in order_status_history, across all transition types",
+   "question": "Is the missing 'who changed this' actor specific to order cancellations, or does order_status_history never record an actor for any status transition?",
+   "grain": "one row per to_status value in order_status_history",
+   "columns": [
+    "to_status",
+    "total transitions (all-time, 2023-01-01 to 2025-12-31)",
+    "transitions with a non-null changed_by_user_id",
+    "share with an actor recorded (%)",
+    "distinct tenants represented"
+   ],
+   "details": "Source: order_status_history grouped by to_status (pending, confirmed, paid, partially_fulfilled, fulfilled, cancelled, refunded). For each, count total rows, count rows where changed_by_user_id is not null, and the percentage. This tells us whether the actor gap found for cancellations is a systemic property of the table (same for every transition type) or specific to cancellations. Order by total transitions descending, to_status as tie-break (expect 7 rows).",
+   "builds_on": [
+    "Order status history coverage for cancelled orders"
+   ]
+  },
+  {
+   "title": "Shopper authentication method mix: OAuth-linked vs password-only",
+   "question": "Since shopper accounts have 0% MFA, what actually stands in for a second factor today — are most shoppers authenticating through an OAuth provider (Google/Apple/etc., which carries its own security), or are they overwhelmingly raw password-only accounts with no backup at all?",
+   "grain": "one row per authentication method category among shopper (is_staff = false) users",
+   "columns": [
+    "method category ('OAuth-linked' = has ≥1 oauth_accounts row, 'password-only' = no oauth_accounts row)",
+    "shopper user count",
+    "share of all shoppers (%)",
+    "of those, confirmed MFA count (expected near-zero, included to double-check for any overlap)",
+    "of those, users with at least one login_attempt in the last 90 days (2025-10-05 to 2025-12-31), i.e. recently active"
+   ],
+   "details": "Source: users where is_staff = false and deleted_at is null, left-joined to oauth_accounts (user_id) to classify into the two categories, and to mfa_devices (confirmed_at is not null) and login_attempts (occurred_at in the window, matched by email or user_id) for the other two measures. Share of all shoppers = category count / total shoppers, rounded to 1 decimal percent. Only 2 rows expected (OAuth-linked, password-only); order by shopper user count descending.",
+   "builds_on": [
+    "Platform-wide MFA adoption trend by month, staff vs. shoppers"
+   ]
+  },
+  {
+   "title": "Detail list of the oldest active API keys (4+ years), by tenant",
+   "question": "Henrik wants to know if the oldest, longest-unrotated API keys are concentrated among a few tenants/integrations and whether any show signs of broad/elevated access rather than narrow, routine use — here's the actual list.",
+   "grain": "one row per api_keys row in the '4+ years' active age bucket (created_at more than 4 years before 2026-01-05, status = 'active')",
+   "columns": [
+    "tenant name",
+    "tenant status",
+    "key name",
+    "age in days (2026-01-05 minus created_at)",
+    "last_used_at",
+    "days since last use",
+    "associated rate_limits scope, if any (limit_scope from rate_limits where api_key_id matches)",
+    "associated rate_limits max_requests per window, if any"
+   ],
+   "details": "Source: api_keys where status = 'active' and created_at < (2026-01-05 minus 4 years), left-joined to tenants and to rate_limits (api_key_id = api_keys.id) for scope context — if a key has multiple rate_limits rows, include all of them as additional rows for that key (or note in the report if a key has more than one scope). Order by age in days descending (oldest first), tenant name as tie-break. Cap at 50 rows; note total matching keys (expect ~76 based on last week's age-bucket report).",
+   "builds_on": [
+    "Active API key age distribution (rotation hygiene)"
+   ]
+  }
+ ]
+}

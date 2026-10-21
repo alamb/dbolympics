@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "February 2025 failed login concentration by merchant",
+    "--question",
+    "Did the February 2025 failed-login spike concentrate in a handful of merchants (and within them, a handful of emails or IPs), or was it spread evenly across the platform?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Felix\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per tenant (merchant), restricted to login_attempts with occurred_at between 2025-02-01 and 2025-02-28 inclusive (UTC)\", \"columns_requested\": [\"tenant_name\", \"total_attempts_feb\", \"failed_attempts_feb\", \"pct_failed_feb\", \"distinct_emails_with_any_failed_attempt\", \"distinct_ips_with_any_failed_attempt\", \"max_failed_attempts_single_ip\", \"max_failed_attempts_single_email\"], \"details\": \"Source: login_attempts joined to tenants for the name. Filter strictly to February 2025. Order by failed_attempts_feb descending so the most-affected merchants sort to the top; note the total number of tenants with any February login activity even if only the top 50 are printed. Purpose: see whether the spike is a handful of merchants/accounts/sources (a likely credential-stuffing or targeted-account event) versus a platform-wide even rise (more consistent with a client bug or outage).\", \"builds_on\": [\"Failed login attempts and suspicious access patterns by month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

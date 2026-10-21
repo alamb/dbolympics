@@ -1,0 +1,6 @@
+audit,audit_log,730,archive,120,120,9
+comms,email_log,730,delete,120,0,120
+analytics,events,1095,delete,120,120,9
+ops,job_runs,90,delete,120,120,9
+analytics,page_views,1095,delete,120,120,9
+ops,system_health_checks,35,delete,120,120,9

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Fennel & Flint and Wiesgrund Wohnen: Historical December Pattern, 2023-2025",
+    "--question",
+    "Is the December rating dip a recurring yearly pattern for these two merchants (like we found at Cragsley), or something new and specific to 2025?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per merchant per year, December only, for 2023, 2024, 2025\", \"columns_requested\": [\"merchant_name\", \"year\", \"dec_review_count\", \"dec_avg_rating\", \"dec_pct_1_2_star\", \"dec_orders_count\"], \"details\": \"Filter to tenants named Fennel & Flint and Wiesgrund Wohnen. dec_review_count/dec_avg_rating/dec_pct_1_2_star computed over approved product_reviews with created_at in December of that year (same definitions as prior review-trend reports). dec_orders_count = count of that merchant's orders with placed_at in December of that year and status not cancelled, for volume context. Round avg_rating to 2 decimals, pct to 1 decimal. Order by merchant_name, then year ascending.\", \"builds_on\": [\"Fennel & Flint and Wiesgrund Wohnen: Review Sentiment vs Delivery Performance, Monthly\", \"Cragsley Outfitters: Rating Trend Over Time\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

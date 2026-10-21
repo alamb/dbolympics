@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order fulfillment stage breakdown, monthly 2025",
+    "--question",
+    "When total delivery time lengthens (e.g. during peak), is the slowdown in warehouse processing (pick/pack/ship) or in carrier transit?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per calendar month of order placement, 2025 only\", \"columns_requested\": [\"month (YYYY-MM)\", \"orders_qualifying (count used for this report)\", \"avg_processing_days (placed_at to fulfillment.shipped_at)\", \"avg_transit_days (fulfillment.shipped_at to fulfillment.delivered_at)\", \"avg_total_days (placed_at to fulfillment.delivered_at)\", \"pct_within_5_days_total\"], \"details\": \"Scope: orders with placed_at in 2025-01-01 through 2025-12-31, status='fulfilled', restricted to orders with exactly one row in fulfillments (same simplifying rule as the warehouse report, for clean stage attribution) where that fulfillment has shipped_at and delivered_at both not null. processing_days = DATEDIFF(day, orders.placed_at, fulfillments.shipped_at); transit_days = DATEDIFF(day, fulfillments.shipped_at, fulfillments.delivered_at); total_days = DATEDIFF(day, orders.placed_at, fulfillments.delivered_at) (should roughly equal processing_days + transit_days -- use this as an internal sanity check, note any material mismatch in the report). Round all day averages to 2 decimals, pct to 1 decimal. Group by month_label of placed_at. Order by month ascending. Expect 12 rows. Also report orders_qualifying so I can compare this subset's size against the 'orders_delivered' counts in the original monthly trend report (single-fulfillment orders will be a subset of all delivered orders).\", \"builds_on\": [\"Delivery time trend, monthly (2024-2025)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

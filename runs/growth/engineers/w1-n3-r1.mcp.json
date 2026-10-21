@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Are discounted orders healthier across verticals, or just in B2B?",
+    "--question",
+    "Does the 'discounted orders have higher AOV, bigger baskets, and fewer returns' pattern hold in consumer verticals, or is it mainly an artifact of B2B wholesale contract pricing?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per industry vertical and order group (discounted vs full price)\", \"columns_requested\": [\"industry - tenants.industry\", \"order_group - 'discounted' (orders.discount_total > 0) or 'full price' (= 0)\", \"orders_count - count of orders placed_at in 2025 for that industry/group\", \"avg_order_value_eur - average orders.grand_total converted to EUR, rounded to 0 decimals\", \"avg_items_per_order - average of sum(order_items.quantity) per order, rounded to 1 decimal\", \"return_rate_pct - share of orders in that cell with at least one linked order_returns row, *100, rounded to 1 decimal\", \"cancelled_rate_pct - share of orders with status='cancelled', *100, rounded to 1 decimal\"], \"details\": \"Source: orders joined to tenants (for industry) and order_items (summed quantity per order); filter placed_at in 2025-01-01..2026-01-01 exclusive, no status filter otherwise. Same discounted/full-price split and same EUR conversion approach as last night's 'Do discounted orders look healthy' report, but now crossed with tenants.industry. Order by industry ascending, then order_group ascending ('discounted' before 'full price'). Expect roughly 8-9 industries x 2 rows (~16-18 rows total), well under the limit.\", \"builds_on\": [\"Do discounted orders look healthy, or just cheaper?\", \"Which merchants drove the January and July discount-rate spikes\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

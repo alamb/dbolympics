@@ -1,0 +1,60 @@
+{
+ "notes": "Night 3 take-aways — one genuinely important finding, one bug, one solid result:\n\nReport 1 (audit coverage sweep): decisive and concerning. Across all 13 identity/access-control tables I checked (roles, user_roles, role_permissions, permissions, teams, team_members, api_keys, invitations, mfa_devices, sessions, service_accounts, personal_access_tokens — plus singular/plural variants), only the `users` table shows ANY audit_log/audit_log_archive activity at all (delete, export, login, logout, update — no `create`, oddly). Role and permission grant/revocation events are simply not captured in the audit trail, at any point in the 3-year history. This confirms last night's all-zero result wasn't a query bug — it's a real gap. This has to go into the memo plainly for both Aylin (we cannot evidence who granted/revoked a given access right, only today's snapshot) and Rosa (this is exactly the kind of audit-trail incompleteness she asked me to flag before it goes into a customer-facing answer).\n\nReport 2 (DSAR rejection timing) failed on execution: a cast error pulling in an unrelated product_variant row's after_data, which tells me the query matched change_history on entity_id alone without also constraining entity_table — entity_id isn't globally unique across tables, so it collided with an unrelated row. This is a fixable query bug, not a data problem, and worth one retry since it's the last loose end on our top priority (#3) — the only thing standing between us and a clean, fully-evidenced DSAR story.\n\nReport 3 (MFA adoption): first real evidence for priority #2. Confirmed-MFA coverage for active staff is 54.9% (57.8% any device) — material but not universal, worth citing with the caveat that ~45% of merchant admin accounts are not MFA-protected. Customer-facing accounts show 0% MFA entirely (not even attempted) — expected if MFA is currently a staff-only feature, but worth stating plainly rather than silently.\n\nNo sync reply from Aylin arrived before lock-in, so I'm proceeding on her original stated priority order: #1 and #3 are solid for the memo (with the audit-gap and rejection-timestamp caveats to close out), so tonight's last 3 slots go to: (1) a defensively-rewritten retry of the DSAR rejection-timing query, (2) the other half of priority #2 — failed-login and suspicious-access patterns over time, since we've only covered MFA adoption so far, and (3) a quick retention-policy inventory for the audit/compliance tables, which gives us a toehold on priority #4 (ahead of #5, which Aylin said to drop first) and directly tests Rosa's \"are we quietly losing history early\" concern given what we now know about the audit-trail gap.",
+ "requests": [
+  {
+   "title": "Resolution timing of rejected DSARs via audit trail (retry)",
+   "question": "For the data subject requests that were rejected without a completed_at timestamp, can the audit/change-history trail tell us when the rejection decision was actually made, and was it within the due date?",
+   "grain": "one row per rejected data_subject_requests record (expect 3 rows), no subject-identifying columns included",
+   "columns": [
+    "request_type",
+    "received_at",
+    "due_at",
+    "rejection_event_timestamp (occurred_at of the matching change_history or audit_log row)",
+    "days_received_to_rejection_event",
+    "within_due_at (rejection_event_timestamp <= due_at)",
+    "source (change_history or audit_log or neither_found)"
+   ],
+   "details": "Same question as last night's failed attempt. That query errored by casting after_data generically and picked up an unrelated product_variant row, because entity_id alone isn't unique across tables. Please this time: (1) in change_history, require BOTH entity_table = 'data_subject_requests' AND entity_id = data_subject_requests.id in the join condition before touching after_data at all; (2) only ever read after_data as JSON/text via a ->> or equivalent text accessor for the 'status' key — never CAST it or any JSON column to a numeric type; (3) take the earliest matching change_history row per request where after_data->>'status' = 'rejected'; (4) if none exists, fall back to audit_log (same entity_table/entity_id equality filter) with action='update', taking the latest occurred_at, and mark source accordingly; (5) if neither source has a match, leave rejection_event_timestamp null and mark source='neither_found'. Do not include subject_email or subject_user_id. Order by received_at ascending.",
+   "builds_on": [
+    "Resolution timing of rejected DSARs via audit trail"
+   ]
+  },
+  {
+   "title": "Failed login attempts and suspicious access patterns by month",
+   "question": "How much login activity fails, is there visible evidence of brute-force-style patterns, and are access-denied events actually being captured as suspicious activity over time?",
+   "grain": "one row per calendar month (occurred_at), platform-wide, from 2023-01 through 2025-12",
+   "columns": [
+    "month (YYYY-MM)",
+    "total_login_attempts (from login_attempts)",
+    "failed_login_attempts (succeeded = false)",
+    "pct_failed",
+    "emails_with_5plus_failed_in_month (distinct email values with >=5 failed login_attempts rows in the month — a brute-force proxy)",
+    "audit_access_denied_events (count from audit_log UNION audit_log_archive where action = 'access_denied', same month)"
+   ],
+   "details": "Sources: login_attempts for the login outcome series; audit_log + audit_log_archive (action='access_denied') as a separate parallel signal of flagged suspicious access, same month grain, not joined row-by-row. Purpose: give Aylin real evidence that failed logins and suspicious access attempts are visible in the data (not just policy), and whether volumes/patterns look stable or show spikes worth a follow-up. Order by month ascending.",
+   "builds_on": [
+    "MFA device adoption by user segment and status"
+   ]
+  },
+  {
+   "title": "Retention policy coverage for audit and compliance-relevant tables",
+   "question": "Do we have retention policies actually defined, active, and consistently enforced for the tables that matter most to this questionnaire (audit log, access log, change history, DSARs, compliance events, login attempts), and could any of them be purging data sooner than the history we'd want to cite?",
+   "grain": "one row per entity_table value, aggregated across all tenants' retention_policies rows, for entity_table in (audit_log, access_log, change_history, data_subject_requests, compliance_events, login_attempts)",
+   "columns": [
+    "entity_table",
+    "tenants_with_policy (count of distinct tenant_id with a retention_policies row for this table)",
+    "pct_tenants_with_policy (out of 120 tenants)",
+    "avg_retention_days",
+    "min_retention_days",
+    "max_retention_days",
+    "pct_policies_active (is_active = true)",
+    "pct_policies_run_in_last_90_days (last_run_at >= 2025-10-03)"
+   ],
+   "details": "Source: retention_policies, grouped by entity_table, counting distinct tenant_id and aggregating retention_days/is_active/last_run_at. Purpose: sanity-check Rosa's concern that we might be 'quietly losing history before our stated retention period is up' — e.g. if audit_log's min_retention_days turns out to be shorter than the ~3 years of history we're already citing in this week's other reports, that's a contradiction worth flagging before we commit to any retention claim in the questionnaire. Order by entity_table.",
+   "builds_on": [
+    "Audit log volume and actor identification by month",
+    "Audit log coverage for identity and access-control tables"
+   ]
+  }
+ ]
+}

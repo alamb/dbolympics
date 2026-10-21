@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Orders in the 14:00-16:00 UTC Window: Nov 28 vs Baseline Days",
+    "--question",
+    "How many orders (and how much revenue) were actually lost in the 14:00-16:00 UTC outage window on Black Friday, compared to the same window on comparable days?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Viktor\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per reference date\", \"columns_requested\": [\"date\", \"label\", \"orders_14_to_16_utc\", \"revenue_eur_14_to_16_utc\", \"total_orders_full_day\", \"pct_of_day_in_window\"], \"details\": \"Table orders, placed_at. For each of 2025-11-21 ('Prior Friday'), 2025-11-28 ('Black Friday 2025'), 2025-12-05 ('Following Friday'), 2024-11-29 ('Black Friday 2024'): orders_14_to_16_utc = count of orders with placed_at >= date 14:00:00 and < date 16:00:00 (UTC); revenue_eur_14_to_16_utc = sum of grand_total for those orders converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=that date), rounded to whole number. total_orders_full_day = count of all orders placed that full UTC day (for context). pct_of_day_in_window = orders_14_to_16_utc / total_orders_full_day * 100, rounded 1dp. Order by date ascending.\", \"builds_on\": [\"Order Volume by Hour on Black Friday 2025 (Nov 28)\", \"Black Friday 2025 Sales vs Surrounding Fridays and Black Friday 2024\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Reconciled full-history (2023-2025) orphan population by tenant and subscription status (single pass)",
+    "--question",
+    "Using the same single-pass, fan-out-safe construction, does the full-history orphan population by tenant and status reproduce the monthly trend's cumulative canceled-bucket total (~€57,658.66, roughly 1,188 orders by hand-summing last week's monthly report)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Omar\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per tenant and subscription-status category (canceled / active / other-or-no-subscription-record)\", \"columns_requested\": [\"tenant name\", \"status category\", \"orphan order count\", \"distinct customers\", \"total discount amount (EUR)\"], \"details\": \"Identical construction and definitions to the 2025-only version above (one row per order_id built first via subqueries/window functions, no fan-out joins, then aggregated), but over the full history: orders.placed_at from 2023-01-01 to 2025-12-31, status != 'cancelled'. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). In the engineer's note, state the grand total order count and EUR total for the 'canceled' category across all tenants, and flag whether it's close to the reference figures above (~1,188 orders, ~\\u20ac57,658.66) or diverges, with a hypothesis why if it diverges. Order by tenant name, then status category. Print all rows.\", \"builds_on\": [\"Monthly trend of confirmed lapsed-subscriber free-delivery leakage, 2023-2025\", \"Reconciled 2025 orphan population by tenant and subscription status (single pass)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

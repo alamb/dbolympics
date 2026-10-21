@@ -1,0 +1,61 @@
+{
+ "notes": "Tomasz was explicit: if only three fit this week, do his #1 (scale), #2 (where it concentrates), #3 (product vs process). I'm doing exactly those three tonight, and folding Tobias's overlapping asks into the same reports rather than spending extra slots: merchant clustering → tenant column in report 2 (each warehouse belongs to one tenant); shrinkage-vs-gain skew → signed net variance columns in reports 1 & 2; velocity/value materiality → velocity and value columns in report 3. I'm deferring Tomasz's #4 (reservation reliability) and #5 (dedicated trend) to a later night, though report 1's month grain gives a free first look at trend.\n\nDefinition check before committing: \"physical count different from stock on record\" should be measured from stock_movements where kind = 'cycle_count' — that's an enumerated, reliable code — rather than stock_adjustments.reason, which is free text with no fixed code list and reasons like \"damage\"/\"shrinkage\" aren't cycle-count-driven surprises, they're logged causes. I don't want the engineer guessing at string matches, so I'm specifying stock_movements.kind='cycle_count' as the source of truth for all three reports, and treating \"count found less than system\" (quantity<0) as shrinkage and \"found more\" (quantity>0) as overage.\n\nValue is costed off supplier_products.unit_cost (preferred supplier, else cheapest active) rather than retail price, since write-off/valuation exposure (Tobias's framing) is a cost-basis question. All money converted to EUR via exchange_rates (base_code=EUR): value_eur = value_in_quote_currency / rate.\n\nAll three reports use the same 12-month window (2025-01-01 to 2025-12-31, the last complete year) so they're comparable to each other.",
+ "requests": [
+  {
+   "title": "Scale of stock count discrepancies by month",
+   "question": "How often do physical cycle counts come back different from the stock quantity we had on record, and how large are those differences in units and estimated value, across 2025?",
+   "grain": "calendar month (Jan 2025 - Dec 2025)",
+   "columns": [
+    "month (YYYY-MM)",
+    "cycle_count_events (count of stock_movements rows with kind='cycle_count')",
+    "warehouses_affected (distinct warehouses with at least one cycle_count event that month)",
+    "units_short (sum of abs(quantity) where quantity<0, i.e. counted less than recorded)",
+    "units_over (sum of quantity where quantity>0, i.e. counted more than recorded)",
+    "net_units_variance (sum of signed quantity; negative = net shrinkage)",
+    "abs_units_variance (sum of abs(quantity), total magnitude of mismatch)",
+    "estimated_value_eur (sum of abs(quantity) * unit cost, converted to EUR)",
+    "avg_abs_units_per_event (abs_units_variance / cycle_count_events, rounded 1dp)"
+   ],
+   "details": "Source: stock_movements where kind='cycle_count', occurred_at between 2025-01-01 and 2025-12-31 inclusive, across all tenants/warehouses. Join stock_locations on stock_location_id to get warehouse_id for the distinct-warehouse count. Cost basis: join supplier_products on variant_id, preferring is_preferred=true; if no preferred row exists for a variant, use the lowest unit_cost among active (is_active=true) supplier_products rows for that variant; if a variant has no supplier_products row, exclude it from estimated_value_eur but still count it in unit/event columns (note the gap in the report notes). Convert supplier_products.currency_code amounts to EUR using exchange_rates (base_code='EUR', quote_code=that currency, as_of = date of stock_movements.occurred_at): value_eur = value_in_currency / rate. Round estimated_value_eur to whole EUR. Order by month ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "Stock discrepancies by warehouse and location type",
+   "question": "Does the stock-count mismatch concentrate in particular warehouses, particular storage-location kinds (e.g. bulk shelving vs pick bins), or particular merchants, in a way that signals valuation/write-off exposure?",
+   "grain": "warehouse and stock-location kind (e.g. one row = one warehouse's 'bulk' locations, another = that warehouse's 'pick' locations)",
+   "columns": [
+    "tenant_name (merchant owning the warehouse)",
+    "warehouse_name",
+    "location_kind (stock_locations.kind)",
+    "cycle_count_events",
+    "net_units_variance (signed; negative = net shrinkage)",
+    "abs_units_variance",
+    "estimated_value_eur (abs variance costed and converted to EUR, same method as report 1)",
+    "share_of_total_value_pct (this row's estimated_value_eur / sum of estimated_value_eur across all rows, *100, rounded 1dp)"
+   ],
+   "details": "Same source and window as 'Scale of stock count discrepancies by month': stock_movements kind='cycle_count', occurred_at in 2025-01-01..2025-12-31. Join stock_locations (for kind and warehouse_id), warehouses (name, tenant_id), tenants (name). Cost/FX conversion identical to report 1 (supplier_products preferred-then-cheapest unit_cost, converted via exchange_rates). Group by tenant, warehouse, location_kind. Order by estimated_value_eur descending, tie-break by abs_units_variance descending, then tenant_name, warehouse_name, location_kind for determinism. Cap at 50 rows (top 50 by value) and note total distinct warehouse/location-kind combinations found in the data even if more than 50 exist.",
+   "builds_on": [
+    "Scale of stock count discrepancies by month"
+   ]
+  },
+  {
+   "title": "Stock discrepancies by product category: handling vs tracking-method issue",
+   "question": "Are stock-count discrepancies spread evenly across product categories, or concentrated in certain categories, lot/serial-tracked items, or high-velocity items — pointing to a handling problem vs a tracking-method problem?",
+   "grain": "product category (products.primary_category_id -> categories)",
+   "columns": [
+    "category_name",
+    "cycle_count_events",
+    "abs_units_variance",
+    "net_units_variance (signed; negative = net shrinkage)",
+    "estimated_value_eur (same costing/FX method as report 1)",
+    "pct_events_lot_or_serial_tracked (% of this category's cycle_count events where stock_movements.lot_id is not null)",
+    "avg_monthly_units_sold (velocity proxy: total order_items.quantity for variants in this category, orders placed in 2025, divided by 12, rounded 1dp)",
+    "variance_per_1000_units_sold (abs_units_variance / (avg_monthly_units_sold*12) * 1000, rounded 1dp; normalizes discrepancy by sales volume so high-velocity categories aren't automatically flagged just for having more activity)"
+   ],
+   "details": "Source: stock_movements where kind='cycle_count', occurred_at in 2025-01-01..2025-12-31, joined to product_variants (variant_id) -> products (product_id) -> categories (primary_category_id) for category_name; treat variants whose product has no primary_category_id as a single 'Uncategorized' row. Lot/serial-tracked flag: stock_movements.lot_id is not null on the cycle_count row itself. Velocity: order_items joined to product_variants on product_variant_id, orders.placed_at in 2025-01-01..2025-12-31, status not in ('cancelled'), summed by the variant's category. Cost/FX conversion identical to report 1. Order by estimated_value_eur descending, tie-break by category_name. Expect well under 50 rows (category count is small); if it is large due to deep category trees, group only by the product's primary_category (no rollup to parent).",
+   "builds_on": [
+    "Scale of stock count discrepancies by month"
+   ]
+  }
+ ]
+}

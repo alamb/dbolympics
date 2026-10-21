@@ -1,0 +1,58 @@
+# chDB: ClickHouse as a library, embedded in the query program, which lives for the whole run. Schema
+# and dialect as for ClickHouse (../clickhouse).
+name = "chdb"
+# the version, kept with the results (by hand)
+version = "26.9.2.1"
+
+
+[load]
+statement = "INSERT INTO {table} SELECT * FROM file('{file}', Parquet)"
+
+[ddl]
+suffix = "ENGINE = MergeTree"
+suffix_without_keys = "ENGINE = MergeTree ORDER BY tuple()"
+
+[dialect]
+# Standard SQL behaviour where ClickHouse's defaults differ (as ../clickhouse/install), and the
+# limits of this run
+settings = [
+    "SET data_type_default_nullable = 1",
+    "SET join_use_nulls = 1",
+    "SET aggregate_functions_null_for_empty = 1",
+    "SET union_default_mode = 'DISTINCT'",
+    "SET format_csv_null_representation = ''",
+    "SET date_time_output_format = 'simple'",
+    "SET output_format_decimal_trailing_zeros = 0",
+    "SET cast_keep_nullable = 1",
+    "SET allow_lossy_numeric_supertype = 1",
+    "SET max_recursive_cte_evaluation_depth = 1000000000000",
+    "SET max_threads = {threads}",
+    "SET max_memory_usage = {memory_bytes%80}",
+]
+
+[dialect.types]
+date = "Date32"
+timestamp = "DateTime64(6)"
+json = "String"
+uuid = "UUID"
+"varchar(length)" = "String"
+"array(element)" = "Array({element})"
+
+[dialect.functions]
+# whole days: the microseconds between the two, divided toward zero (as the day field of the difference)
+"whole_days_between(a, b)" = "intDiv(dateDiff('microsecond', {a}, {b}), 86400000000)"
+# membership with the standard's NULLs: NULL when x is NULL or there is no match but a NULL element
+"equals_any(x, arr)" = "CASE WHEN {arr} IS NULL THEN NULL WHEN empty({arr}) THEN false WHEN {x} IS NULL THEN NULL WHEN has({arr}, {x}) THEN true WHEN has({arr}, NULL) THEN NULL ELSE false END"
+# no integer times an interval
+"add_minutes(ts, n)" = "addMinutes({ts}, {n})"
+"date_diff_days(a, b)" = "dateDiff('day', {a}, {b})"
+"year_month(x)" = "formatDateTime({x}, '%Y-%m')"
+# as for ClickHouse (../clickhouse)
+"bool_or(x)" = "max({x})"
+"percentile_cont(p, x)" = "quantileExactInclusive({p})(toFloat64({x}))"
+# the difference of two timestamps keeps no fractions of a second; microseconds do
+"seconds_between(a, b)" = "CAST(divideDecimal(toDecimal128(dateDiff('microsecond', {a}, {b}), 0), toDecimal128(1000000, 0), 6) AS Nullable(Decimal(18, 6)))"
+"percentile_cont_filter(p, x, condition)" = "quantileExactInclusiveIf({p})(toFloat64({x}), {condition})"
+# binary order, as the benchmark's collation; NULLs are skipped, as by STRING_AGG
+"string_agg_sorted(x, sep)" = "arrayStringConcat(arraySort(groupArray({x})), {sep})"
+"string_agg_distinct_sorted(x, sep)" = "arrayStringConcat(arraySort(groupUniqArray({x})), {sep})"

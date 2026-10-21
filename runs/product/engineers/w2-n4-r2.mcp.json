@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "What kind of email reaches shoppers who recover a stalled cart?",
+    "--question",
+    "Is the email that correlates with cart recovery a deliberate cart-reminder/recovery mechanism, or just general marketing/engagement email that happens to land in that window?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Bea\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per notification template (or 'no template / ad hoc' bucket)\", \"columns_requested\": [\"template code or name\", \"channel\", \"email count\", \"pct of matched emails\"], \"details\": \"Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: the same email_log rows that qualified a cart as 'received_email' in the prior report \\u2014 i.e., email_log rows (tenant_id, user_id matching a stalled cart's owner) with sent_at between the cart's created_at+1h and created_at+48h, for carts created 2025-01-01 to 2025-11-30 that were not already converted within the first hour. Join email_log.template_id to notification_templates to get the template's code/name and channel; group by template (bucket rows with a null template_id as 'no template / ad hoc'). email_count = count of matching email_log rows for that template; pct_of_matched_emails = share of all matched emails. Order rows by email_count descending.\", \"builds_on\": [\"Do stalled carts that receive an email convert more often?\", \"Email nudge effect on stalled carts, controlling for guest vs. logged-in customers\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

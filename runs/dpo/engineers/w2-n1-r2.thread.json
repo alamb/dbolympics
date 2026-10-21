@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  CASE WHEN dsr.id IS NOT NULL THEN 'Y' ELSE 'N' END AS linked_to_dsar,\n  COUNT(*) AS export_count,\n  COUNT(DISTINCT de.subject_user_id) AS distinct_subject_users,\n  MIN(de.requested_at) AS earliest_requested_at,\n  MAX(de.requested_at) AS latest_requested_at,\n  COUNT(*) FILTER (WHERE de.status = 'completed') AS completed_export_count,\n  AVG(de.row_count) FILTER (WHERE de.row_count IS NOT NULL) AS avg_row_count\nFROM data_exports de\nLEFT JOIN data_subject_requests dsr ON dsr.data_export_id = de.id\nGROUP BY 1\nORDER BY linked_to_dsar ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: linked_to_dsar, export_count, distinct_subject_users, earliest_requested_at, latest_requested_at, completed_export_count, avg_row_count"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  CASE WHEN dsr.id IS NOT NULL THEN 'Y' ELSE 'N' END AS linked_to_dsar,\n  COUNT(*) AS export_count,\n  COUNT(DISTINCT de.subject_user_id) AS distinct_subject_users,\n  MIN(CAST(de.requested_at AS date)) AS earliest_requested_at,\n  MAX(CAST(de.requested_at AS date)) AS latest_requested_at,\n  COUNT(*) FILTER (WHERE de.status = 'completed') AS completed_export_count,\n  ROUND(AVG(de.row_count) FILTER (WHERE de.row_count IS NOT NULL), 1) AS avg_row_count\nFROM data_exports de\nLEFT JOIN data_subject_requests dsr ON dsr.data_export_id = de.id\nGROUP BY 1\nORDER BY linked_to_dsar DESC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: linked_to_dsar, export_count, distinct_subject_users, earliest_requested_at, latest_requested_at, completed_export_count, avg_row_count"
+ },
+ {
+  "kind": "text",
+  "text": "This query compiles correctly and matches the requested grain, columns, and ordering (Y before N)."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  CASE WHEN dsr.id IS NOT NULL THEN 'Y' ELSE 'N' END AS linked_to_dsar,\n  COUNT(*) AS export_count,\n  COUNT(DISTINCT de.subject_user_id) AS distinct_subject_users,\n  MIN(CAST(de.requested_at AS date)) AS earliest_requested_at,\n  MAX(CAST(de.requested_at AS date)) AS latest_requested_at,\n  COUNT(*) FILTER (WHERE de.status = 'completed') AS completed_export_count,\n  ROUND(AVG(de.row_count) FILTER (WHERE de.row_count IS NOT NULL), 1) AS avg_row_count\nFROM data_exports de\nLEFT JOIN data_subject_requests dsr ON dsr.data_export_id = de.id\nGROUP BY 1\nORDER BY linked_to_dsar DESC",
+  "note": "Completed export count uses status = 'completed' since data_exports.status has no documented fixed code list in the catalog; please confirm this is the correct 'finished' value if the warehouse uses a different code (e.g. 'done'/'success').",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. One note for Priyanka: the catalog doesn't enumerate fixed status codes for `data_exports.status`, so I used `'completed'` as the \"finished\" indicator — flagged this in the submission note in case the warehouse uses a different literal value."
+ }
+]

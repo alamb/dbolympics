@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH rejected AS (\n  SELECT id, request_type, received_at, due_at\n  FROM data_subject_requests\n  WHERE status = 'rejected' AND completed_at IS NULL\n),\nch AS (\n  SELECT r.id AS request_id, MIN(c.occurred_at) AS ch_ts\n  FROM rejected r\n  JOIN change_history c\n    ON c.entity_table = 'data_subject_requests'\n    AND c.entity_id = r.id\n    AND c.after_data ->> 'status' = 'rejected'\n  GROUP BY r.id\n),\nal AS (\n  SELECT r.id AS request_id, MAX(a.occurred_at) AS al_ts\n  FROM rejected r\n  JOIN audit_log a\n    ON a.entity_table = 'data_subject_requests'\n    AND a.entity_id = r.id\n    AND a.action = 'update'\n  GROUP BY r.id\n)\nSELECT\n  r.request_type,\n  r.received_at,\n  r.due_at,\n  COALESCE(ch.ch_ts, al.al_ts) AS rejection_event_timestamp,\n  CASE WHEN COALESCE(ch.ch_ts, al.al_ts) IS NOT NULL\n       THEN DATE_PART('day', COALESCE(ch.ch_ts, al.al_ts) - r.received_at)\n  END AS days_received_to_rejection_event,\n  CASE WHEN COALESCE(ch.ch_ts, al.al_ts) IS NOT NULL\n       THEN COALESCE(ch.ch_ts, al.al_ts) <= r.due_at\n  END AS within_due_at,\n  CASE WHEN ch.ch_ts IS NOT NULL THEN 'change_history'\n       WHEN al.al_ts IS NOT NULL THEN 'audit_log'\n       ELSE 'neither_found' END AS source\nFROM rejected r\nLEFT JOIN ch ON ch.request_id = r.id\nLEFT JOIN al ON al.request_id = r.id\nORDER BY r.received_at ASC, r.id ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: request_type, received_at, due_at, rejection_event_timestamp, days_received_to_rejection_event, within_due_at, source"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the requested columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH rejected AS (\n  SELECT id, request_type, received_at, due_at\n  FROM data_subject_requests\n  WHERE status = 'rejected' AND completed_at IS NULL\n),\nch AS (\n  SELECT r.id AS request_id, MIN(c.occurred_at) AS ch_ts\n  FROM rejected r\n  JOIN change_history c\n    ON c.entity_table = 'data_subject_requests'\n    AND c.entity_id = r.id\n    AND c.after_data ->> 'status' = 'rejected'\n  GROUP BY r.id\n),\nal AS (\n  SELECT r.id AS request_id, MAX(a.occurred_at) AS al_ts\n  FROM rejected r\n  JOIN audit_log a\n    ON a.entity_table = 'data_subject_requests'\n    AND a.entity_id = r.id\n    AND a.action = 'update'\n  GROUP BY r.id\n)\nSELECT\n  r.request_type,\n  r.received_at,\n  r.due_at,\n  COALESCE(ch.ch_ts, al.al_ts) AS rejection_event_timestamp,\n  CASE WHEN COALESCE(ch.ch_ts, al.al_ts) IS NOT NULL\n       THEN DATE_PART('day', COALESCE(ch.ch_ts, al.al_ts) - r.received_at)\n  END AS days_received_to_rejection_event,\n  CASE WHEN COALESCE(ch.ch_ts, al.al_ts) IS NOT NULL\n       THEN COALESCE(ch.ch_ts, al.al_ts) <= r.due_at\n  END AS within_due_at,\n  CASE WHEN ch.ch_ts IS NOT NULL THEN 'change_history'\n       WHEN al.al_ts IS NOT NULL THEN 'audit_log'\n       ELSE 'neither_found' END AS source\nFROM rejected r\nLEFT JOIN ch ON ch.request_id = r.id\nLEFT JOIN al ON al.request_id = r.id\nORDER BY r.received_at ASC, r.id ASC",
+  "note": "For each rejected-without-completed_at DSAR, the rejection event time is the earliest change_history row (entity_table+entity_id matched, status pulled via ->> text accessor) with after_data->>'status'='rejected'; if none, falls back to the latest matching audit_log 'update' row; otherwise rejection_event_timestamp is null and source='neither_found'. No JSON/number casts are used, and entity_table is always checked alongside entity_id to avoid cross-table id collisions.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The query identifies rejected DSARs missing a `completed_at`, then resolves the actual rejection timestamp via `change_history` first (earliest row where `entity_table`/`entity_id` match the request and `after_data->>'status' = 'rejected'`), falling back to the latest matching `audit_log` update row, and finally `neither_found` if no trail exists — all while avoiding the generic cast and entity_id-collision bug from the prior attempt."
+ }
+]

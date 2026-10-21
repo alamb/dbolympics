@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Daily failed-login and access-denied alignment for the 3 merchants in February 2025",
+    "--question",
+    "Did the February 2025 failure spike hit the same calendar days across all three affected merchants (pointing to one shared platform cause), and was access-denied logging silent specifically on those spike days?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Ines\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per calendar day in February 2025 (28 rows)\", \"columns_requested\": [\"date\", \"cragsley_failed_logins\", \"marrowby_vane_failed_logins\", \"studio_vrij_failed_logins\", \"total_failed_logins_3_merchants\", \"access_denied_events_3_merchants (audit_log UNION audit_log_archive, action='access_denied', tenant_id in these 3 tenants, occurred_at on this date)\"], \"details\": \"Source: login_attempts (succeeded=false, Feb 2025, split by tenant into the three named columns) and audit_log/audit_log_archive (action='access_denied', same 3 tenant_ids, same days). Purpose: last night's report showed each merchant independently has ~74-75% of its failures in its own top-3 days; this checks whether those days coincide across merchants (shared root cause) and whether access_denied events ticked up at all on those specific days or stayed flat (confirming the detection gap at daily, not just monthly, granularity). Order by date ascending.\", \"builds_on\": [\"February 2025 failed login concentration by merchant\", \"February 2025 failed-login pattern diagnostics for the 3 affected merchants\", \"Audit log volume and actor identification by month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

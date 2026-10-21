@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant customer base health: repeat purchase rate",
+    "--question",
+    "For each merchant, how much of their customer base is repeat buyers versus one-and-done, over the last 12 months?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"industry\", \"distinct customers with at least one order in last 12 months\", \"repeat customers with at least two orders in last 12 months\", \"repeat purchase rate pct\", \"total orders last 12 months\", \"average orders per customer last 12 months\"], \"details\": \"Table orders: count distinct user_id per tenant with order counts over placed_at Jan 1 to Dec 31 2025, excluding cancelled orders. Join tenants for name and industry. repeat purchase rate pct equals repeat customers divided by distinct customers. average orders per customer equals total orders divided by distinct customers. Order by distinct customers descending, tie-break repeat purchase rate descending, then tenant_id. Cap 50 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

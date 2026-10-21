@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Processing take-rate trend by quarter",
+    "--question",
+    "Is Tidewick's effective processing take rate (fee revenue as a share of payment volume) rising, falling, or stable over the last two years?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per calendar quarter\", \"columns_requested\": [\"quarter\", \"gross payment volume (EUR)\", \"fee revenue (EUR)\", \"take rate (%, fee revenue / gross volume)\", \"take rate change vs prior quarter (percentage points)\"], \"details\": \"Source: payouts, filtered to status='paid' (per the validated definition; paid_at is always populated for this status). Window: quarters 2024-Q1 through 2025-Q4 (8 quarters), using paid_at to assign the quarter (via calendar_days or date truncation). Convert gross_amount and fee_amount to EUR per payout using exchange_rates (base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at)), then sum per quarter. take_rate_pct = 100 * fee_revenue_eur / gross_volume_eur, rounded to 2 decimals. take_rate_change_pp = this quarter's take rate minus the previous quarter's (null for the first quarter, 2024-Q1). Order by quarter ascending. Note: this only captures the payment-processing side of revenue; I don't believe the warehouse models Tidewick's monthly platform-plan billing of merchants separately, so this report cannot show the platform-fee/processing-fee mix Maren asked about \\u2014 flag if you find a table that does represent that.\", \"builds_on\": [\"Merchant revenue concentration, trailing 12 months\", \"Payout status & date-field reconciliation\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

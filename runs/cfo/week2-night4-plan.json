@@ -1,0 +1,60 @@
+{
+ "notes": "Report 1 from last night looked alarming at first — ledger net revenue running 13.7-15.9% below payments net amount every quarter — but I think I made the same class of mistake as Night 2: \"Sales revenue\"/\"Shipping income\" ledger accounts are booked net of VAT (the VAT portion is credited separately to \"VAT / sales tax payable\"), while my \"payments_net_amount_eur\" was the VAT-inclusive gross-minus-refund figure. Spot-checking the Night 2 ledger detail confirms it: Ampfeld Elektronik #1727's VAT credit (2,653.61) is 15.97% of its gross payment (16,619.99) — right in the middle of the quarterly gaps I'm seeing. So this is very likely just tax-inclusive vs tax-exclusive revenue, not money going missing, but I want to prove it precisely before I tell Tobias it's resolved, since \"the ledger is €200k short this quarter\" is exactly the kind of number an auditor would seize on if I handed it over unexplained.\n\nReport 1's payment-method breakdown is the one genuine, bounded item left: bank_transfer payments are only 19 of the 249 \"other mismatch\" payments by count, but carry 40% of the mismatch euros with an average gap of €898 (vs ~€18-33 for card/wallet/credit) — real money, concentrated in a small, nameable list. Report 3 is a clean, reassuring finding: the no-ledger-entries gap was worst in January (2.17%, €1,241) and has fallen to near-zero by October, with only a small December blip plausibly tied to holiday volume — looks like a fixed/fading issue, not an active control failure.\n\nTonight (last night before the memo): (1) redo the revenue reconciliation correctly by including VAT in the ledger-side total, to get the real tie-out number; (2) pull the actual 19 bank-transfer mismatched payments as a named, handoff-ready list; (3) check whether bank_transfer payments are *systemically* more mismatch-prone as a channel (vs. a handful of one-off accidents) by looking at all 2025 bank_transfer payments, not just the flagged ones.",
+ "requests": [
+  {
+   "title": "2025 Revenue Reconciliation via Ledger Accounts, Including VAT, by Quarter",
+   "question": "Once VAT/sales-tax is included on the ledger side (not just net-of-tax revenue), does the ledger's gross billed amount tie to the payments table's net captured amount each quarter?",
+   "grain": "one calendar quarter, 2025",
+   "columns": [
+    "quarter",
+    "ledger_gross_billed_eur (sum of credit amounts where ledger_accounts.account_type='revenue' OR ledger_accounts.name='VAT / sales tax payable', minus sum of debit amounts where ledger_accounts.account_type='contra_revenue' OR ledger_accounts.name='VAT / sales tax payable', all for ledger_entries.occurred_at in the quarter)",
+    "payments_net_amount_eur (sum of payments.amount - payments.amount_refunded, captured_at in the quarter, status captured/refunded/partially_refunded)",
+    "diff_eur",
+    "diff_pct"
+   ],
+   "details": "Same method as last night's revenue reconciliation report (EUR conversion per-row via exchange_rates on the ledger entry's own occurred_at/currency_code for the ledger side, and on captured_at/currency_code for the payments side), but this time include the 'VAT / sales tax payable' ledger account's credits (at capture) and debits (at refund reversal) in the ledger-side total alongside 'revenue'-type accounts and 'contra_revenue'-type debits, so the ledger total represents the full gross-billed-minus-refunded amount rather than tax-exclusive revenue. Group by calendar quarter of occurred_at (ledger side) / captured_at (payments side). Order chronologically 2025-Q1 to 2025-Q4 (4 rows).",
+   "builds_on": [
+    "2025 Revenue Reconciliation via Correct Ledger Accounts, by Quarter"
+   ]
+  },
+  {
+   "title": "Bank Transfer Payments With Unexplained Ledger Mismatch: Full List, 2025",
+   "question": "Which specific bank-transfer payments have an unexplained ledger mismatch, so they can be handed to the auditors as a named, bounded list?",
+   "grain": "one payment, restricted to the 19 bank_transfer payments in the 'other mismatch' category",
+   "columns": [
+    "order_number",
+    "merchant_name",
+    "payment_captured_at",
+    "currency_code",
+    "payment_amount",
+    "amount_refunded",
+    "ledger_credit_total_eur",
+    "nearest_expected_eur (whichever of net_amount_eur or payment+refund_eur is closer)",
+    "diff_eur"
+   ],
+   "details": "Recompute the same 'other mismatch' classification as this week's reconciliation reports (2025 captured/refunded/partially_refunded payments; ledger credit total per payment_id in EUR vs. net_amount_eur and payment+refund_eur, both in EUR, with the 1%-or-€1 tolerance; excluding 'no ledger entries' payments), restricted to payments.payment_method_id -> payment_methods.kind = 'bank_transfer'. Join orders for order_number and tenants for merchant_name. List all matching payments individually (expect ~19 rows). Order by diff_eur descending.",
+   "builds_on": [
+    "Other-Mismatch Payments: Characterization by Payment Method, 2025"
+   ]
+  },
+  {
+   "title": "Ledger Reconciliation Outcome by Payment Method, All 2025 Payments",
+   "question": "Is bank_transfer systemically more prone to ledger mismatches as a payment channel, or are the 19 flagged payments a rare exception within a much larger, mostly-clean population?",
+   "grain": "one payment_methods.kind, across ALL 2025 captured payments (not just the mismatched ones)",
+   "columns": [
+    "payment_method_kind",
+    "total_payment_count_2025",
+    "count_credit_equals_net",
+    "count_credit_equals_payment_plus_refund",
+    "count_other_mismatch",
+    "count_no_ledger_entries",
+    "pct_clean (count_credit_equals_net + count_credit_equals_payment_plus_refund, as % of total)"
+   ],
+   "details": "Same reconciliation classification used all week (payments captured/refunded/partially_refunded in 2025; per-payment ledger credit total in EUR vs net_amount_eur and payment+refund_eur with 1%-or-€1 tolerance; 'no ledger entries' when zero linked ledger_entries rows). This time classify and count ALL qualifying 2025 payments (not pre-filtered to any mismatch category), joined to payment_methods.kind (null/missing as 'unknown'), and group by kind. Order by total_payment_count_2025 descending.",
+   "builds_on": [
+    "Other-Mismatch Payments: Characterization by Payment Method, 2025",
+    "Ledger-to-Payment Reconciliation Pattern at Scale, 2025"
+   ]
+  }
+ ]
+}

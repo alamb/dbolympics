@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty programme unit economics: points cost vs revenue per customer",
+    "--question",
+    "Putting cost and revenue side by side: how does the points value we issue and redeem per loyalty member compare to the revenue those members actually generate, versus non-members?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Viktor\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per segment: 'loyalty member' vs 'non-member'\", \"columns_requested\": [\"segment\", \"customer_count\", \"total_revenue_eur\", \"revenue_per_customer_eur\", \"total_points_redeemed_cost_eur\", \"redeemed_cost_per_customer_eur\", \"total_points_earned_liability_eur\", \"earned_liability_per_customer_eur\", \"redeemed_cost_pct_of_revenue\"], \"details\": \"Population: same as the original 'Loyalty member vs non-member customer behavior' report (users, is_staff = false, at least one order 2023-01-01 to 2025-12-31, segment by presence in loyalty_accounts). total_revenue_eur = sum of grand_total for non-cancelled orders, converted to EUR via exchange_rates (order currency_code to EUR, rate as_of placed_at); revenue_per_customer_eur = total_revenue_eur divided by customer_count. total_points_redeemed_cost_eur = for loyalty members only, sum of loyalty_transactions with a non-'earn' direction, converting points to currency using that transaction's loyalty account's program points_per_currency and currency_code, then to EUR via exchange_rates as_of occurred_at (same method as the 'Loyalty points and referral reward cost by month' report); this is 0 for non-members. total_points_earned_liability_eur = same conversion but for 'earn'-direction loyalty_transactions (total value ever issued); 0 for non-members. redeemed_cost_per_customer_eur and earned_liability_per_customer_eur divide those totals by customer_count. redeemed_cost_pct_of_revenue = total_points_redeemed_cost_eur divided by total_revenue_eur, as a percentage (0 for non-members). Order rows: 'loyalty member' first, then 'non-member'.\", \"builds_on\": [\"Loyalty points and referral reward cost by month\", \"Loyalty member vs non-member customer behavior\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

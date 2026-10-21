@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "February 2025 repeat-failure accounts: did they succeed afterward?",
+    "--question",
+    "Among the accounts with 5+ failed logins in February 2025, how many went on to log in successfully afterward, and how soon — i.e. was this a near-miss or just noise?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Omar\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per outcome bucket, computed over the cohort of distinct emails with >=5 failed login_attempts rows in February 2025 (previously counted at 102)\", \"columns_requested\": [\"outcome_bucket (succeeded_within_1h / succeeded_within_24h / succeeded_later_in_month / never_succeeded_in_month)\", \"email_count\", \"pct_of_cohort\", \"avg_failed_attempts_before_success (for buckets with a success; blank for never_succeeded)\", \"distinct_tenants_affected\"], \"details\": \"Source: login_attempts. Define the cohort as distinct email values with >=5 failed (succeeded=false) rows in Feb 2025. For each such email, find its last failed attempt in Feb 2025, then look for the first subsequent succeeded=true attempt by that same email within February 2025; bucket by the time gap (within 1h, within 24h, later in the month) or 'never_succeeded_in_month' if none found. Report only the aggregated bucket counts \\u2014 do not print individual email addresses. Order buckets: succeeded_within_1h, succeeded_within_24h, succeeded_later_in_month, never_succeeded_in_month.\", \"builds_on\": [\"Failed login attempts and suspicious access patterns by month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

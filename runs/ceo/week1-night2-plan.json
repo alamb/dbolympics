@@ -1,0 +1,59 @@
+{
+ "notes": "Before building anything else on top of payouts data, I need to resolve a real problem: Report 1 (merchant-level) implies total trailing-12-month fee revenue of ~€53.2k, but Report 3 (vertical-level) sums to ~€93.6k for the same window — a 1.76x gap. The two engineers used different status filters (Omar: status NOT IN bad list + paid_at not null; Bea: status = 'paid' only), and a narrower filter producing a LARGER total than a broader one is backwards, so something else is off too (possibly which date field anchors the window, or paid_at integrity by status). I'm spending one slot tonight on a reconciliation report to pin down the correct definition before I trust any revenue numbers further. The other two slots move to Maren's priority #2 (growth), using orders (which has a documented status enum, so no ambiguity) rather than payouts, so this work isn't blocked by the reconciliation.",
+ "requests": [
+  {
+   "title": "Payout status & date-field reconciliation",
+   "question": "Why do our two trailing-12-month fee-revenue totals disagree, and what is the correct definition of a 'settled' payout?",
+   "grain": "one row per payouts.status value",
+   "columns": [
+    "status",
+    "total payout count (all time)",
+    "count with paid_at between 2025-01-01 and 2025-12-31",
+    "count with paid_at null",
+    "fee revenue EUR (sum fee_amount, converted, for rows with paid_at in that window)",
+    "gross volume EUR (sum gross_amount, converted, same rows)",
+    "earliest paid_at",
+    "latest paid_at",
+    "earliest arrival_date",
+    "latest arrival_date"
+   ],
+   "details": "Source: payouts table only (no join needed). For every distinct value of status, report the counts and date ranges above. Convert gross_amount and fee_amount to EUR using exchange_rates: amount_eur = amount / rate where rate has base_code='EUR', quote_code=payouts.currency_code, as_of = payouts.paid_at date (if paid_at is null, skip that row from the EUR sums but still count it). This should let me see: (a) the full list of status codes and their relative sizes, (b) whether paid_at is reliably populated only for truly settled payouts, and (c) whether arrival_date spans a meaningfully different window than paid_at (which could explain why a prior vertical-level report's total came out ~1.76x higher than a prior merchant-level report's total for the 'same' window). Order by total payout count descending.",
+   "builds_on": [
+    "Merchant revenue concentration, trailing 12 months",
+    "Revenue by vertical, trailing 12 months"
+   ]
+  },
+  {
+   "title": "Merchant and order growth by quarter",
+   "question": "Are we gaining merchants and order volume, and how has that trended over the last two years?",
+   "grain": "one row per calendar quarter",
+   "columns": [
+    "quarter",
+    "new merchants (tenants created that quarter)",
+    "cumulative active merchants (tenants created on or before quarter end, not deleted)",
+    "order count",
+    "GMV EUR",
+    "average order value EUR"
+   ],
+   "details": "Source: tenants (for merchant counts, using created_at and deleted_at) and orders (for order count and GMV, using placed_at). Window: quarters 2024-Q1 through 2025-Q4 (8 quarters). 'New merchants' = count of tenants whose created_at falls within that quarter. 'Cumulative active merchants' = count of tenants with created_at <= the end of that quarter and deleted_at is null (regardless of current status field, since status can change independent of tenure). 'Order count' and 'GMV' should only include orders with status in ('paid','partially_fulfilled','fulfilled','refunded') and placed_at within the quarter (exclude 'pending' and 'cancelled' orders, since those never represent realized volume). Convert orders.grand_total to EUR using exchange_rates (amount_eur = amount / rate, base_code='EUR', quote_code=orders.currency_code, as_of = orders.placed_at date). Average order value = GMV EUR / order count. Order by quarter ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "GMV growth by merchant cohort: new vs existing, per quarter",
+   "question": "Is Tidewick's order-volume growth coming from newly-joined merchants or from existing merchants transacting more?",
+   "grain": "one row per calendar quarter and cohort (new vs existing)",
+   "columns": [
+    "quarter",
+    "cohort (new or existing)",
+    "merchant count (distinct tenants with a qualifying order that quarter)",
+    "order count",
+    "GMV EUR",
+    "share of that quarter's total GMV (%)"
+   ],
+   "details": "Source: orders joined to tenants (on tenant_id) to classify each merchant as 'new' or 'existing' for a given quarter: a tenant is 'new' in a quarter if tenants.created_at falls within that same quarter, otherwise 'existing' (tenants.created_at before quarter start). Window: quarters 2024-Q1 through 2025-Q4 (8 quarters), using orders.placed_at to assign the quarter. Include only orders with status in ('paid','partially_fulfilled','fulfilled','refunded'), matching the growth-by-quarter report in this same batch. Convert orders.grand_total to EUR the same way (amount_eur = amount / rate, base_code='EUR', quote_code=orders.currency_code, as_of = orders.placed_at date). For each quarter there should be exactly two rows (new, existing); share of total GMV = that cohort's GMV EUR divided by the quarter's combined (new+existing) GMV EUR. Order by quarter ascending, then cohort (new before existing).",
+   "builds_on": [
+    "Merchant and order growth by quarter"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B wholesaler receivables aging",
+    "--question",
+    "For our B2B wholesaler merchants, how much of their outstanding receivables is genuinely overdue versus just within normal net terms lag, so we can present that line accurately in the annual accounts?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Omar\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"receivables aging bucket\", \"columns_requested\": [\"aging_bucket\", \"invoice_count\", \"amount_due_eur\", \"pct_of_total_amount_due\", \"avg_days_past_due\", \"avg_net_terms_days\"], \"details\": \"Scope: tenants whose industry indicates a B2B wholesale vertical such as industrial supplies or office equipment, matched via tenants.industry ILIKE patterns for industrial, office, wholesale, or B2B; if none match, instead return the distinct tenants.industry values present so the right filter can be identified. Population: invoices for those tenants with status in open or past_due and amount_due greater than 0, as of the snapshot date 2025-12-31. Bucket each invoice by days overdue, computed as 2025-12-31 minus invoices.due_at: Not yet due when due_at is null or due_at is on or after 2025-12-31, then 1 to 30 days overdue, 31 to 60 days overdue, 61 to 90 days overdue, and 90 plus days overdue. invoice_count is the count of invoices in the bucket. amount_due_eur is the sum of invoices.amount_due converted to EUR via exchange_rates using base_code EUR, quote_code equal to the invoice currency_code, and as_of 2025-12-31. pct_of_total_amount_due is amount_due_eur divided by the total amount_due_eur across all buckets, times 100, rounded to 1 decimal. avg_days_past_due is the average of 2025-12-31 minus due_at in days for the bucket, rounded to 1 decimal, with 0 for Not yet due. avg_net_terms_days is the average of billing_profiles.net_terms_days for the billing profile tied to each invoice, rounded to 1 decimal, for context on what normal lag looks like. Tables: tenants, invoices, billing_profiles, exchange_rates. Order by amount_due_eur descending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

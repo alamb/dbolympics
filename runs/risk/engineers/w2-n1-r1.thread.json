@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t.name AS tenant_name,\n  COUNT(*) AS total_attempts_feb,\n  SUM(CASE WHEN la.succeeded = false THEN 1 ELSE 0 END) AS failed_attempts_feb,\n  ROUND(100.0 * SUM(CASE WHEN la.succeeded = false THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 1) AS pct_failed_feb,\n  COUNT(DISTINCT CASE WHEN la.succeeded = false THEN la.email END) AS distinct_emails_with_any_failed_attempt,\n  COUNT(DISTINCT CASE WHEN la.succeeded = false THEN la.ip_address END) AS distinct_ips_with_any_failed_attempt,\n  (SELECT MAX(cnt) FROM (\n      SELECT COUNT(*) AS cnt\n      FROM login_attempts la2\n      WHERE la2.tenant_id = t.id\n        AND la2.succeeded = false\n        AND la2.occurred_at >= DATE '2025-02-01'\n        AND la2.occurred_at < DATE '2025-03-01'\n      GROUP BY la2.ip_address\n  ) ip_counts) AS max_failed_attempts_single_ip,\n  (SELECT MAX(cnt) FROM (\n      SELECT COUNT(*) AS cnt\n      FROM login_attempts la3\n      WHERE la3.tenant_id = t.id\n        AND la3.succeeded = false\n        AND la3.occurred_at >= DATE '2025-02-01'\n        AND la3.occurred_at < DATE '2025-03-01'\n      GROUP BY la3.email\n  ) email_counts) AS max_failed_attempts_single_email\nFROM login_attempts la\nJOIN tenants t ON t.id = la.tenant_id\nWHERE la.occurred_at >= DATE '2025-02-01'\n  AND la.occurred_at < DATE '2025-03-01'\nGROUP BY t.id, t.name\nORDER BY failed_attempts_feb DESC, tenant_name ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, total_attempts_feb, failed_attempts_feb, pct_failed_feb, distinct_emails_with_any_failed_attempt, distinct_ips_with_any_failed_attempt, max_failed_attempts_single_ip, max_failed_attempts_single_email"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the right columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t.name AS tenant_name,\n  COUNT(*) AS total_attempts_feb,\n  SUM(CASE WHEN la.succeeded = false THEN 1 ELSE 0 END) AS failed_attempts_feb,\n  ROUND(100.0 * SUM(CASE WHEN la.succeeded = false THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 1) AS pct_failed_feb,\n  COUNT(DISTINCT CASE WHEN la.succeeded = false THEN la.email END) AS distinct_emails_with_any_failed_attempt,\n  COUNT(DISTINCT CASE WHEN la.succeeded = false THEN la.ip_address END) AS distinct_ips_with_any_failed_attempt,\n  (SELECT MAX(cnt) FROM (\n      SELECT COUNT(*) AS cnt\n      FROM login_attempts la2\n      WHERE la2.tenant_id = t.id\n        AND la2.succeeded = false\n        AND la2.occurred_at >= DATE '2025-02-01'\n        AND la2.occurred_at < DATE '2025-03-01'\n      GROUP BY la2.ip_address\n  ) ip_counts) AS max_failed_attempts_single_ip,\n  (SELECT MAX(cnt) FROM (\n      SELECT COUNT(*) AS cnt\n      FROM login_attempts la3\n      WHERE la3.tenant_id = t.id\n        AND la3.succeeded = false\n        AND la3.occurred_at >= DATE '2025-02-01'\n        AND la3.occurred_at < DATE '2025-03-01'\n      GROUP BY la3.email\n  ) email_counts) AS max_failed_attempts_single_email\nFROM login_attempts la\nJOIN tenants t ON t.id = la.tenant_id\nWHERE la.occurred_at >= DATE '2025-02-01'\n  AND la.occurred_at < DATE '2025-03-01'\nGROUP BY t.id, t.name\nORDER BY failed_attempts_feb DESC, tenant_name ASC",
+  "note": "Returns one row per tenant with any February 2025 login activity, ordered by failed attempts descending; the standard report printer will cap at 50 rows and note the true row count (i.e. the total number of active tenants), so no separate total-tenants column was added since the grain is one row per tenant.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The query computes, per tenant, total vs. failed February 2025 login attempts, the failure rate, and concentration signals (distinct emails/IPs touched by failures, plus the single busiest IP and email by failed-attempt count) — exactly what's needed to distinguish a concentrated credential-stuffing pattern from a platform-wide bug/outage."
+ }
+]

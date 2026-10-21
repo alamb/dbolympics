@@ -1,0 +1,52 @@
+{
+ "notes": "Reading last night's reports — this is the last night before the memo, so I'm using these 3 slots to close the most important open questions rather than open new ones.\n\nReport 1 (email nudge, guest vs. logged-in) clarifies a lot: guest carts (null user_id) converted at exactly 0.0% (0 of 7,540) — once I think about it, this is almost certainly structural: orders.user_id is not-null in the schema, so a cart can only ever reach status='converted' once it's tied to a logged-in user. That reframes the story — the real \"cliff\" isn't the 1-7 day window per se, it's whether the shopper ever logs in/creates an account at all. Among carts that *are* tied to a logged-in user, received_email converts at 56.0% vs. 20.9% with no email — still a big, consistent gap (and the math cross-checks cleanly against last week's blended 8.1% no-email figure), but I want to know what kind of email that actually is before calling it a proven \"nudge effect,\" since it could just be that more-engaged customers both get more email and convert more.\n\nReport 2 (Cragsley daily, Nov 17-Dec 1) does show Nov 24-25 (36.7%, 31.25%) a bit below the Nov 17-23 average (~41%), with recovery starting Nov 26 as Black Friday demand kicks in — suggestive of a real but small dip, but daily samples are only ~35-55 carts, too noisy to trust without a longer weekday-matched baseline.\n\nReport 3 (single vs. multi-item, by tenant) holds up across all 6 tenants (gap 16-34 points) — good, this isn't a one-merchant artifact. But given report 1's guest-conversion finding, I now need to check whether \"single-item carts convert worse\" is really just another face of \"guest carts convert worse\" (if guests disproportionately add just one item), since that would change the headline recommendation from \"nudge small-basket shoppers\" to \"get people to log in.\"\n\nTonight's 3 requests: (1) the guest-vs-logged-in confound check on the item-count finding — the most important one, since it could change the Q1 headline; (2) what template/channel is actually behind the \"received_email\" recovery effect, to judge whether it's a deliberate cart-recovery mechanism or just general engagement; (3) a weekday-matched baseline for Cragsley (more Mondays/Tuesdays) to get a more statistically grounded read on whether Nov 24-25 was really unusual.",
+ "requests": [
+  {
+   "title": "Single-item vs. multi-item conversion, controlling for guest vs. logged-in status",
+   "question": "Does the 'single-item carts convert worse' pattern hold once we separate out guest (never logged in) carts, or is it mostly just another expression of the guest-vs-logged-in gap?",
+   "grain": "one row per combination of user status (guest / logged-in) and item-count group (single-item / multi-item)",
+   "columns": [
+    "user status (guest / logged-in)",
+    "item count group (single-item / multi-item, 2+)",
+    "cart count",
+    "conversion pct"
+   ],
+   "details": "Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-12-31. user_status = 'guest' if carts.user_id is null, else 'logged_in'. item_count_group = 'single-item' if carts.item_count = 1, 'multi-item' if carts.item_count >= 2 (exclude item_count = 0 if any exist). conversion_pct = share of carts in that cell with status='converted', rounded 1 decimal. 4 rows total. Order rows: logged_in/multi-item, logged_in/single-item, guest/multi-item, guest/single-item.",
+   "builds_on": [
+    "Single-item vs. multi-item cart conversion, by tenant",
+    "Email nudge effect on stalled carts, controlling for guest vs. logged-in customers"
+   ]
+  },
+  {
+   "title": "What kind of email reaches shoppers who recover a stalled cart?",
+   "question": "Is the email that correlates with cart recovery a deliberate cart-reminder/recovery mechanism, or just general marketing/engagement email that happens to land in that window?",
+   "grain": "one row per notification template (or 'no template / ad hoc' bucket)",
+   "columns": [
+    "template code or name",
+    "channel",
+    "email count",
+    "pct of matched emails"
+   ],
+   "details": "Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: the same email_log rows that qualified a cart as 'received_email' in the prior report — i.e., email_log rows (tenant_id, user_id matching a stalled cart's owner) with sent_at between the cart's created_at+1h and created_at+48h, for carts created 2025-01-01 to 2025-11-30 that were not already converted within the first hour. Join email_log.template_id to notification_templates to get the template's code/name and channel; group by template (bucket rows with a null template_id as 'no template / ad hoc'). email_count = count of matching email_log rows for that template; pct_of_matched_emails = share of all matched emails. Order rows by email_count descending.",
+   "builds_on": [
+    "Do stalled carts that receive an email convert more often?",
+    "Email nudge effect on stalled carts, controlling for guest vs. logged-in customers"
+   ]
+  },
+  {
+   "title": "Weekday-matched cart conversion baseline for Cragsley Outfitters, Sep 29 – Nov 25 2025",
+   "question": "Were Nov 24-25 (the start of the reminder-email outage) unusually low for their day of week, or within normal week-to-week variation?",
+   "grain": "one row per calendar date (Mondays and Tuesdays only), Cragsley Outfitters",
+   "columns": [
+    "date",
+    "day of week",
+    "carts created",
+    "overall conversion pct"
+   ],
+   "details": "Tenant: Cragsley Outfitters. Population: carts with created_at on every Monday and Tuesday from 2025-09-29 through 2025-11-25 inclusive (9 Mondays, 9 Tuesdays = 18 rows), using the same overall_conversion_pct definition (share of that day's carts with status='converted', any time) as prior Cragsley reports. This extends the existing Nov 17-Dec 1 daily report backward with same-weekday history so Nov 24 (Monday) and Nov 25 (Tuesday) can be compared against 8 prior weeks of the same weekdays rather than just the single preceding week. Order rows by date ascending.",
+   "builds_on": [
+    "Daily cart conversion at Cragsley Outfitters, Nov 17 – Dec 1 2025"
+   ]
+  }
+ ]
+}

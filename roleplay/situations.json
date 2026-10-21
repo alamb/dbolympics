@@ -1,0 +1,259 @@
+{
+  "situations": [
+    {
+      "id": "board-unit-economics",
+      "lead": "ceo",
+      "with": [
+        "cfo"
+      ],
+      "text": "The board meets at the end of January and wants a clear view of unit economics: per merchant, vertical and country, what Tidewick earns and what it costs us to serve them. Which merchants are worth growing, and which cost more than they bring?"
+    },
+    {
+      "id": "fundraising-diligence",
+      "lead": "ceo",
+      "with": [],
+      "text": "Tidewick is preparing a funding round. The investors' due-diligence questionnaire asks for evidence on revenue quality, merchant and shopper retention by cohort, revenue concentration, and operational health. Everything we claim must be backed by our own data."
+    },
+    {
+      "id": "year-end-audit",
+      "lead": "cfo",
+      "with": [],
+      "text": "The external auditors start the 2025 year-end audit in two weeks. They will want to see that the money adds up across the whole chain: what shoppers paid, what was refunded or credited, what merchants received in payouts, what Tidewick kept, and that invoices agree with all of it. They will also trace sample transactions end to end."
+    },
+    {
+      "id": "pricing-review",
+      "lead": "cfo",
+      "with": [
+        "product"
+      ],
+      "text": "Tidewick is reviewing its plan prices and processing fees for 2026. Before anything is decided, we need to understand which merchants would gain or lose under a change, how they actually use the platform, and how sensitive they look to price."
+    },
+    {
+      "id": "indirect-tax-review",
+      "lead": "cfo",
+      "with": [],
+      "text": "Our tax advisors run their annual review of indirect taxes on cross-border sales for 2024 and 2025: what was charged where, on which products and services, and whether it agrees with what was invoiced and paid."
+    },
+    {
+      "id": "peak-post-mortem",
+      "lead": "ops",
+      "with": [
+        "cx"
+      ],
+      "text": "Peak season is over. Leadership wants an honest post-mortem of how orders flowed end to end during peak, from order to payment, fulfilment, delivery, returns and support, and what it cost in refunds, goodwill and repeat business."
+    },
+    {
+      "id": "peak-2026-planning",
+      "lead": "ops",
+      "with": [],
+      "text": "Planning for the 2026 peak starts now: purchasing, warehouse and carrier capacity, and staffing. Which suppliers, products, warehouses and delivery lanes need attention, and what did last year teach us?"
+    },
+    {
+      "id": "support-cost-review",
+      "lead": "cx",
+      "with": [
+        "cfo"
+      ],
+      "text": "Support costs are under scrutiny. We need to know what drives shoppers to contact merchants' support, which contacts could have been prevented, where in the order journey they arise, and what they cost us and the merchants."
+    },
+    {
+      "id": "marketing-budget-2026",
+      "lead": "growth",
+      "with": [
+        "cfo"
+      ],
+      "text": "The 2026 marketing budget is being set. Finance wants to know which acquisition and retention spend brings customers who are actually profitable, looking at what happens after their first order: repeat purchases, returns, discounts and support."
+    },
+    {
+      "id": "churn-task-force",
+      "lead": "success",
+      "with": [
+        "growth",
+        "cx"
+      ],
+      "text": "Churn has become a board topic, for merchants and for their shoppers. A cross-functional task force wants to understand which experiences precede leaving, and which early signals would let us act before it happens."
+    },
+    {
+      "id": "renewal-account-reviews",
+      "lead": "success",
+      "with": [],
+      "text": "Contracts with several of the largest merchants come up for renewal this quarter. The account team needs thorough account reviews: everything they should know about each merchant's business, how it uses Tidewick, what went well and what went wrong, before they sit down with them."
+    },
+    {
+      "id": "security-questionnaire",
+      "lead": "risk",
+      "with": [
+        "data"
+      ],
+      "text": "An enterprise prospect sent a security and compliance questionnaire covering account security, access control, privacy requests, data retention and audit trails. Sales wants answers backed by evidence from our own systems, not by policy documents."
+    },
+    {
+      "id": "dispute-and-loss-review",
+      "lead": "risk",
+      "with": [
+        "cfo"
+      ],
+      "text": "Our card acquirer asked for a review of disputes, refunds and fraud losses. They want to see where losses arise along the way from sign-up to payment, delivery and refund, and which controls would have caught them."
+    },
+    {
+      "id": "launch-readouts",
+      "lead": "product",
+      "with": [
+        "growth"
+      ],
+      "text": "Product shipped many changes in 2025: features, experiments and new channels. Leadership wants readouts for the important ones: did they help, for whom, and did anything else get worse as a result?"
+    },
+    {
+      "id": "conversion-journey-review",
+      "lead": "product",
+      "with": [],
+      "text": "We are redesigning the shopper journey for 2026. We need to understand the whole path, from the first visit to checkout, delivery, returns and the next purchase, and where shoppers drop out and why."
+    },
+    {
+      "id": "metric-certification",
+      "lead": "data",
+      "with": [
+        "cfo"
+      ],
+      "text": "Before the board pack goes out, Data must certify the key metrics. Do revenue, orders, customers, refunds and payouts agree wherever they are recorded, and where they do not, why not and by how much?"
+    },
+    {
+      "id": "data-inventory",
+      "lead": "data",
+      "with": [],
+      "text": "Leadership asked for an inventory of what our data can and cannot answer: which areas of the warehouse are complete and trustworthy, which are sparse, stale or inconsistent, and what that means for the reports people rely on."
+    },
+    {
+      "id": "access-review",
+      "lead": "ciso",
+      "with": [
+        "dpo"
+      ],
+      "text": "The annual access review is due: who can do what in merchants' admin accounts, which roles and permissions are actually used, which staff accounts and tokens are dormant, and who can reach sensitive data."
+    },
+    {
+      "id": "security-insurance-review",
+      "lead": "ciso",
+      "with": [],
+      "text": "Our cyber insurer and an external penetration test ask how well staff and shopper accounts are protected: how sign-ins succeed and fail, who uses multi-factor authentication, which tokens and service accounts exist and are used, and whether we would notice misuse."
+    },
+    {
+      "id": "regulator-inquiry",
+      "lead": "dpo",
+      "with": [
+        "ciso"
+      ],
+      "text": "A data protection authority asked how we handle privacy: how many privacy requests we receive and how fast we complete them, how consent is recorded, and what remains after an account is deleted."
+    },
+    {
+      "id": "retention-review",
+      "lead": "dpo",
+      "with": [],
+      "text": "Before renewing our data retention policy, the audit committee wants to see what personal data we actually keep, for how long, under which legal holds, and where it gets exported."
+    },
+    {
+      "id": "reliability-review",
+      "lead": "platform",
+      "with": [
+        "success"
+      ],
+      "text": "Leadership wants a review of platform reliability in 2025: failed and slow background jobs, health check failures, rate limiting, webhook delivery problems, and which merchants felt them."
+    },
+    {
+      "id": "integration-health",
+      "lead": "platform",
+      "with": [],
+      "text": "Merchants depend on imports, webhooks, scheduled tasks and API integrations. Which of them fail, how often, for whom, and what does it cost the merchants?"
+    },
+    {
+      "id": "catalog-quality-programme",
+      "lead": "merch",
+      "with": [
+        "product"
+      ],
+      "text": "We want to launch a catalog quality programme for merchants. Does catalog completeness (descriptions, attributes, media, categories) relate to how products are found, bought, reviewed and returned?"
+    },
+    {
+      "id": "assortment-review",
+      "lead": "merch",
+      "with": [
+        "ops"
+      ],
+      "text": "Ahead of 2026 planning, review merchants' assortments: which products, bundles and collections carry sales, what sits unsold, and how reviews relate to returns."
+    },
+    {
+      "id": "promotion-effectiveness",
+      "lead": "pricing",
+      "with": [
+        "cfo"
+      ],
+      "text": "Finance questions the cost of discounts. Which promotions and coupons brought additional sales, which only gave away margin, and is anything being misused?"
+    },
+    {
+      "id": "price-change-review",
+      "lead": "pricing",
+      "with": [],
+      "text": "Merchants changed many prices, price lists and price rules over the last two years. What changed, when, and how did demand and margins respond?"
+    },
+    {
+      "id": "messaging-fatigue",
+      "lead": "lifecycle",
+      "with": [
+        "growth"
+      ],
+      "text": "Unsubscribes and complaints are a concern. How much do merchants message their shoppers across email, SMS and push, and how does frequency relate to engagement, unsubscribes and purchases?"
+    },
+    {
+      "id": "loyalty-programme-review",
+      "lead": "lifecycle",
+      "with": [
+        "cfo"
+      ],
+      "text": "Is the loyalty and referral programme worth it? Do members and referred customers behave differently from others, and what does the programme cost?"
+    },
+    {
+      "id": "b2b-pipeline-review",
+      "lead": "b2b",
+      "with": [
+        "success"
+      ],
+      "text": "B2B merchants say their sales teams struggle. How do their pipelines convert from lead to won deal, how long does it take, and what predicts winning or losing?"
+    },
+    {
+      "id": "key-account-coverage",
+      "lead": "b2b",
+      "with": [],
+      "text": "Are B2B merchants covering their key company accounts: contacts, activity, open opportunities and tasks, and how does coverage relate to what those accounts order?"
+    },
+    {
+      "id": "inventory-accuracy",
+      "lead": "warehouse",
+      "with": [
+        "cfo"
+      ],
+      "text": "Auditors and merchants question inventory accuracy. How often do counts, adjustments and reservations disagree with recorded stock, where, and why?"
+    },
+    {
+      "id": "inbound-review",
+      "lead": "warehouse",
+      "with": [
+        "ops"
+      ],
+      "text": "Inbound goods: how long it takes from a supplier's delivery to sellable stock, how often deliveries are short or rejected, and how that affects availability."
+    },
+    {
+      "id": "helpdesk-efficiency",
+      "lead": "supportops",
+      "with": [
+        "cx"
+      ],
+      "text": "Review how the helpdesk runs: queues and agent groups, use of macros and knowledge articles, SLA targets and breaches, and what makes tickets slow."
+    },
+    {
+      "id": "self-service-review",
+      "lead": "supportops",
+      "with": [],
+      "text": "Could more shoppers help themselves? Which knowledge articles exist, how they are rated, and which contact reasons could be answered without an agent?"
+    }
+  ]
+}

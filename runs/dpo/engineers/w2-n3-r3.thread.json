@@ -1,0 +1,18 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  COUNT(DISTINCT w.user_key) AS withdrawn_users,\n  COUNT(DISTINCT CASE WHEN cm.id IS NOT NULL THEN w.user_key END) AS contacted_after_withdrawal_users,\n  ROUND(100.0 * COUNT(DISTINCT CASE WHEN cm.id IS NOT NULL THEN w.user_key END) / NULLIF(COUNT(DISTINCT w.user_key), 0), 2) AS pct_contacted_after_withdrawal,\n  COUNT(cm.id) AS total_post_withdrawal_sends,\n  MAX(COALESCE(cm.sent_at, cm.created_at)::date - w.withdrawn_at::date) AS max_days_withdrawal_to_send,\n  MAX(COALESCE(cm.sent_at, cm.created_at)) AS most_recent_post_withdrawal_send\nFROM (\n  SELECT\n    tenant_id,\n    user_id,\n    occurred_at AS withdrawn_at,\n    ROW_NUMBER() OVER (ORDER BY tenant_id, user_id) AS user_key\n  FROM (\n    SELECT\n      tenant_id,\n      user_id,\n      status,\n      occurred_at,\n      ROW_NUMBER() OVER (PARTITION BY tenant_id, user_id ORDER BY occurred_at DESC, id DESC) AS rn\n    FROM consent_records\n    WHERE purpose = 'marketing_email'\n  ) ranked\n  WHERE rn = 1 AND status = 'withdrawn'\n) w\nLEFT JOIN campaign_messages cm\n  ON cm.tenant_id = w.tenant_id\n  AND cm.user_id = w.user_id\n  AND COALESCE(cm.sent_at, cm.created_at) > w.withdrawn_at",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: withdrawn_users, contacted_after_withdrawal_users, pct_contacted_after_withdrawal, total_post_withdrawal_sends, max_days_withdrawal_to_send, most_recent_post_withdrawal_send"
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  COUNT(DISTINCT w.user_key) AS withdrawn_users,\n  COUNT(DISTINCT CASE WHEN cm.id IS NOT NULL THEN w.user_key END) AS contacted_after_withdrawal_users,\n  ROUND(100.0 * COUNT(DISTINCT CASE WHEN cm.id IS NOT NULL THEN w.user_key END) / NULLIF(COUNT(DISTINCT w.user_key), 0), 2) AS pct_contacted_after_withdrawal,\n  COUNT(cm.id) AS total_post_withdrawal_sends,\n  MAX(COALESCE(cm.sent_at, cm.created_at)::date - w.withdrawn_at::date) AS max_days_withdrawal_to_send,\n  MAX(COALESCE(cm.sent_at, cm.created_at)) AS most_recent_post_withdrawal_send\nFROM (\n  SELECT\n    tenant_id,\n    user_id,\n    occurred_at AS withdrawn_at,\n    ROW_NUMBER() OVER (ORDER BY tenant_id, user_id) AS user_key\n  FROM (\n    SELECT\n      tenant_id,\n      user_id,\n      status,\n      occurred_at,\n      ROW_NUMBER() OVER (PARTITION BY tenant_id, user_id ORDER BY occurred_at DESC, id DESC) AS rn\n    FROM consent_records\n    WHERE purpose = 'marketing_email'\n  ) ranked\n  WHERE rn = 1 AND status = 'withdrawn'\n) w\nLEFT JOIN campaign_messages cm\n  ON cm.tenant_id = w.tenant_id\n  AND cm.user_id = w.user_id\n  AND COALESCE(cm.sent_at, cm.created_at) > w.withdrawn_at\nORDER BY withdrawn_users",
+  "note": "Single aggregate row as requested: withdrawn-user population defined by each (tenant_id,user_id)'s latest marketing_email consent_records row being 'withdrawn' (platform-wide, full history through 2025-12-31). A send counts as post-withdrawal when COALESCE(sent_at, created_at) is strictly after the withdrawal's occurred_at; max-days and most-recent-send are computed only over users/sends that actually have a post-withdrawal match.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row with: total users whose latest `marketing_email` consent is 'withdrawn', how many of those received a campaign email after withdrawal, the contact rate, total post-withdrawal sends, the worst-case lag in days, and the most recent offending send date — exactly the grain and columns Priyanka asked for."
+ }
+]

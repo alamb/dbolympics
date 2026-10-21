@@ -1,0 +1,56 @@
+{
+ "notes": "Night 1 results reshape the story in an important way. Report 1 shows the stuck-retry pattern touches 56 tenants (not a handful) at wildly different % rates, but many of the worst percentages (e.g. 50%, 38%) are tiny-volume tenants (1-2 stuck deliveries) - a small-sample artifact, not a real signal. When I compute absolute stuck-delivery counts (rate x volume) by hand from that report, ~91% of all stuck deliveries sit with just 4 tenants: Brennquell Kaffee (~1,574 stuck), Cragsley Outfitters (~700), Ampfeld Elektronik (~161), and Marrowby & Vane (~88) - and these are the same 4 of our 10 carts.remind-affected tenants with real order volume. That's the concentration story Diego wants, and I don't need another slot to prove it, it's derivable from what we have. Report 2 shows the platform-wide stuck rate has been flat at ~5.2-6.6% every month all year (not the ~15% I quoted last week, which was a selection-biased view of only the worst 20 endpoints) - so no recent regression at the platform level. Report 3 is a clean, high-confidence answer on carts.remind: all 20 failures are the identical error ('503 Service Unavailable: storefront API') in two one-hour-apart batches on Nov 28, across the same 10 tenants both times - this reads as a brief outage of one shared upstream dependency, not a tenant-specific or load issue, and not really a 'config/feature flag' story as I speculated last week. Tonight I'll: (1) check whether the stuck rate for those same 4 high-impact tenants has itself been stable all year or is recent/worsening (refines Diego's #2 to the account level that matters for the fix-it conversation); (2) pull internal health checks around the Nov 28 14:00-16:00 window to see if monitoring caught the storefront-API blip in real time (closes out #3 with hard evidence); (3) do a first lightweight look at ticket subject lines from the 10 affected tenants in the weeks before Nov 24 to give Diego his requested 'rough read' on whether support was an early warning signal (#4).",
+ "requests": [
+  {
+   "title": "2025 Monthly Sync-Webhook Stuck Rate for the 4 Highest-Impact Tenants",
+   "question": "For the 4 tenants that account for ~91% of all stuck sync-webhook deliveries (Brennquell Kaffee, Cragsley Outfitters, Ampfeld Elektronik, Marrowby & Vane), has their stuck rate been stable all year or is it new/worsening?",
+   "grain": "one row per tenant per calendar month of 2025",
+   "columns": [
+    "tenant_name",
+    "month",
+    "total_sync_deliveries",
+    "pending_or_retrying_rate_pct"
+   ],
+   "details": "Table webhook_deliveries joined to webhooks (name in 'ERP sync','WMS sync','ACCOUNTING sync' and close variants, same matching as the prior sync-webhook report) and tenants, restricted to these 4 tenants: Brennquell Kaffee, Cragsley Outfitters, Ampfeld Elektronik, Marrowby & Vane. Filter created_at in 2025. Group by tenant and month of created_at. pending_or_retrying_rate_pct = share of that tenant-month's sync deliveries with status in ('pending','retrying'), rounded 2dp. Order by tenant_name ascending, month ascending.",
+   "builds_on": [
+    "Merchants Affected by the Sync-Webhook Stuck-Retry Pattern and Their Size",
+    "2025 Monthly Stuck-Retry Rate for Sync Webhooks (ERP/WMS/Accounting)"
+   ]
+  },
+  {
+   "title": "Internal Health Check Signal Around the Nov 28 2025 Storefront API Outage",
+   "question": "Did our internal health checks detect a problem around the two carts.remind failure windows (2025-11-28, roughly 14:40 and 15:40 UTC)?",
+   "grain": "one row per hour and component, for 2025-11-28 between 12:00 and 18:00 UTC",
+   "columns": [
+    "hour",
+    "component",
+    "total_checks",
+    "unhealthy_checks",
+    "unhealthy_rate_pct",
+    "avg_latency_ms"
+   ],
+   "details": "Table system_health_checks. Filter checked_at >= 2025-11-28 12:00:00 and < 2025-11-28 18:00:00. Group by hour of checked_at (truncated to the hour) and component. unhealthy_rate_pct = is_healthy=false count / total_checks * 100, rounded 2dp. avg_latency_ms over non-null latency_ms, rounded to whole number. Order by hour ascending, component ascending.",
+   "builds_on": [
+    "Carts.remind Failure Root Cause: Error Messages",
+    "2025 Q4 Weekly Job Failures vs Health Check Alerts"
+   ]
+  },
+  {
+   "title": "Ticket Subject Lines from Affected Merchants Before the Nov 24 Failures",
+   "question": "In the weeks before the carts.remind failures showed up in our logs, did the 10 affected merchants' shoppers raise tickets that look related to carts, reminders, or duplicate/missing emails?",
+   "grain": "one row per ticket",
+   "columns": [
+    "tenant_name",
+    "created_at",
+    "subject",
+    "status",
+    "priority"
+   ],
+   "details": "Table tickets joined to users (requester_user_id) to get tenant_id, joined to tenants for tenant_name. Filter requester's tenant_id in the 10 carts.remind-affected tenants (Ampfeld Elektronik, Brennquell Kaffee, Cinder Peak Sports Co., Cragsley Outfitters, Fennel & Flint, Gratlinie Outdoor, Kibblewick, Marrowby & Vane, Petalcourt Beauty, Studio Vrij) and created_at >= 2025-10-27 and < 2025-11-24. Additionally filter to tickets whose subject matches (case-insensitive) any of: '%cart%', '%remind%', '%duplicate%', '%missing%', '%email%'. Order by created_at ascending. If more than 50 rows match, note the total count; otherwise return all.",
+   "builds_on": [
+    "Support Ticket Volume Around the Nov 2025 Carts.remind Incident",
+    "Support Tickets: Affected vs Other Tenants, Baseline vs Incident Period"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,58 @@
+{
+ "notes": "Urgent discrepancy to resolve before Friday: last week I told the whole company \"only 1 in 7 orders can be traced to a marketing channel\" (based on an attributions-to-campaigns join), but tonight's report counted attributed orders a different way (any attributions row at all) and got ~75-83% coverage for 2025 — a 5x gap on a number leadership already saw. I need to find out whether that's because many attribution rows have no campaign_id (meaning there's a broader 'we know the source' population that isn't tied to a paid campaign, e.g. organic/referral touches) before I say anything more about Q4. That's my top slot tonight. Second slot characterizes whatever that gap turns out to be, so I can give Chloé (and correct the record for everyone else) one honest, specific number instead of two conflicting ones. Third slot resolves the loyalty data-quality flag from last night (member_revenue_eur reading as exactly €0 for three small verticals) so the Q2 recommendation isn't sitting on an unverified caveat going into the memo. Referral timing (report 1 tonight) is clear enough to use as-is — 43% of referrers only refer after 6+ orders, so no further query needed there.",
+ "requests": [
+  {
+   "title": "Why do last week's and this week's 'attributed orders' counts disagree so much?",
+   "question": "Last week's channel-revenue report (joined attributions to campaigns) found ~14% order coverage; this week's blind-spot report (just checking attributions.order_id) found ~75-83%. What's driving that gap — is it mostly attribution rows with no campaign_id?",
+   "grain": "one row per attribution-linkage category",
+   "columns": [
+    "linkage_category - 'campaign_id is null', 'campaign_id set but no matching campaigns row', or 'campaign_id set and matches a campaigns row'",
+    "attribution_rows_count - count of attributions rows with occurred_at in 2025 and order_id not null, in that category",
+    "distinct_orders_count - count of distinct order_id in that category",
+    "distinct_touch_point_values - count of distinct non-null touch_point values present in that category",
+    "distinct_model_values - count of distinct non-null model values present in that category",
+    "attributed_revenue_eur - sum of attributed_revenue converted to EUR for that category, rounded to 0 decimals"
+   ],
+   "details": "Source: attributions left joined to campaigns on campaign_id. Filter attributions.occurred_at in 2025-01-01..2026-01-01 and order_id is not null, all tenants. Convert attributed_revenue to EUR using exchange_rates (base_code='EUR', quote_code=attributions.currency_code, as_of=occurred_at date, EUR=rate 1). Order by attribution_rows_count descending. Expect exactly 3 rows.",
+   "builds_on": [
+    "Which marketing channels drive orders and revenue",
+    "Is the attribution blind spot growing, shrinking, or stable over 2025?"
+   ]
+  },
+  {
+   "title": "What do the no-campaign attribution touches actually represent?",
+   "question": "For the attribution rows with no linked campaign, what do their touch_point values look like — is this organic/referral/direct traffic we can legitimately call 'known source', or something else?",
+   "grain": "one row per touch_point value",
+   "columns": [
+    "touch_point - attributions.touch_point, coalesced to '(none)' if null",
+    "distinct_orders_count - count of distinct order_id with occurred_at in 2025, order_id not null, campaign_id is null, for that touch_point value",
+    "share_of_no_campaign_orders_pct - distinct_orders_count / total distinct orders in the no-campaign-id population * 100, rounded to 1 decimal",
+    "attributed_revenue_eur - sum of attributed_revenue converted to EUR for that touch_point, rounded to 0 decimals",
+    "avg_weight - average of the weight column for these rows, rounded to 2 decimals"
+   ],
+   "details": "Source: attributions where campaign_id is null, occurred_at in 2025, order_id is not null, all tenants. Convert attributed_revenue to EUR using exchange_rates as of occurred_at date (EUR=rate 1). Order by distinct_orders_count descending, tie-break touch_point ascending. This directly follows up on tonight's linkage-category report to explain the largest bucket in plain terms.",
+   "builds_on": [
+    "Why do last week's and this week's 'attributed orders' counts disagree so much?"
+   ]
+  },
+  {
+   "title": "Why does loyalty member revenue read as €0 for three small verticals?",
+   "question": "Books & Stationery, Food & Coffee, and Pet Supplies show real loyalty members and orders in one report but €0 member revenue in another — is this a currency-conversion gap, and does it change the loyalty cost conclusion?",
+   "grain": "one row per tenant, restricted to tenants in Books & Stationery, Food & Coffee, or Pet Supplies with at least one loyalty member",
+   "columns": [
+    "tenant_name - tenants.name",
+    "industry - tenants.industry",
+    "default_currency_code - tenants.default_currency_code",
+    "members_count - distinct users with a loyalty_accounts row who placed >=1 order with placed_at in 2025 at this tenant",
+    "member_orders_count_2025 - count of those members' orders placed_at in 2025",
+    "member_revenue_local_sum - sum of grand_total in each order's own currency_code, NOT converted, labeled alongside default_currency_code for reference (if a tenant mixes currencies, sum only those matching default_currency_code and flag separately if easier)",
+    "member_revenue_eur_converted - sum of grand_total converted to EUR via exchange_rates (as of placed_at date), rounded to 0 decimals",
+    "orders_missing_exchange_rate_count - count of those members' orders whose currency_code/placed_at date has no matching row in exchange_rates (i.e. would convert to null)"
+   ],
+   "details": "Source: orders joined to tenants (filter industry in ('Books & Stationery','Food & Coffee','Pet Supplies')) and loyalty_accounts (member match on user_id+tenant_id), placed_at in 2025. This is a diagnostic report to find where the EUR conversion is silently dropping revenue to null/zero in the 'Loyalty point economics by vertical' report from two nights ago. Order by tenant_name ascending.",
+   "builds_on": [
+    "Loyalty point economics by vertical: cost and liability"
+   ]
+  }
+ ]
+}

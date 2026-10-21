@@ -1,0 +1,55 @@
+{
+ "requests": [
+  {
+   "title": "B2B Wholesale New-Business Opportunities: Created vs Closed by Month",
+   "question": "Did new-deal creation actually stop or slow down recently, or did deals just happen to all get closed out right as the data ends — i.e., is the 'zero open pipeline' at Dec 2025 a real freeze or a coincidence of timing?",
+   "grain": "one row per calendar month, 2023-01 through 2025-12",
+   "columns": [
+    "month",
+    "opportunities_created",
+    "opportunities_closed"
+   ],
+   "details": "Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), opportunities where pipeline_id = each tenant's 'New business' pipeline. opportunities_created = count where created_at falls in that month, regardless of status. opportunities_closed = count where closed_at falls in that month (is_closed = true). Full history 2023-01-01 through 2025-12-31. This follows up on last night's finding that every month from 2023 through Nov 2025 had a handful of opportunities genuinely open at month-end (sometimes 40-70+ days old), but Dec 2025 (and two earlier isolated months) showed zero — I want to see whether opportunity creation volume for Oct-Dec 2025 looks normal compared to the rest of 2025, or whether it tailed off, which would point to a data-freshness/ingestion gap for very recent records rather than a real pipeline freeze. Order by month ascending.",
+   "builds_on": [
+    "Did B2B Wholesale New-Business Pipeline Ever Carry an Open Balance at Month-End?"
+   ]
+  },
+  {
+   "title": "B2B Wholesale: Dollar-Weighted vs Count-Weighted Win Rate by Rep",
+   "question": "Is Youssef Meijer's pattern of winning small deals but losing his biggest one a one-off, or do several reps actually perform worse on a dollar basis than their deal-count win rate suggests?",
+   "grain": "one row per sales rep (opportunities.owner_user_id) with at least 3 closed New-business opportunities",
+   "columns": [
+    "rep_name",
+    "merchant",
+    "opportunities_closed",
+    "count_win_rate_pct",
+    "total_amount_won_eur",
+    "total_amount_lost_eur",
+    "dollar_weighted_win_rate_pct",
+    "gap_pct_points (count_win_rate_pct minus dollar_weighted_win_rate_pct)"
+   ],
+   "details": "Prompted by the Youssef Meijer case file: he won 4 of 7 deals by count (57.1%) but his 3 losses included a €26,000 deal, so by value he won only €14,100 of €54,800 total pipeline (~25.7%) — a huge gap between count-based and dollar-based win rate. This report checks whether that pattern is common across reps. Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true, grouped by owner_user_id (join users for full_name, tenants for merchant name), excluding reps with fewer than 3 closed opportunities. Convert amount to EUR: if currency_code = 'EUR', amount_eur = amount; otherwise amount_eur = amount / rate from exchange_rates (base_code='EUR', quote_code=currency_code, as_of nearest date on or before closed_at). count_win_rate_pct = closed_won / opportunities_closed * 100. dollar_weighted_win_rate_pct = total_amount_won_eur / (total_amount_won_eur + total_amount_lost_eur) * 100. gap_pct_points = count_win_rate_pct - dollar_weighted_win_rate_pct (positive means the rep's count-based win rate overstates how they're doing in euros, i.e. they're losing their biggest deals). Order by gap_pct_points descending so the reps most like Youssef Meijer float to the top.",
+   "builds_on": [
+    "B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business) — Corrected",
+    "Youssef Meijer: Individual New-Business Opportunities"
+   ]
+  },
+  {
+   "title": "B2B Wholesale: Seasonality of Lost-Deal Cycle Time by Quarter",
+   "question": "Do lost deals linger longest at particular times of year (e.g., end-of-quarter or holiday periods), or is the ~35-day drag before a deal is given up on roughly constant regardless of when it started?",
+   "grain": "one row per calendar quarter, 2023Q1 through 2025Q4",
+   "columns": [
+    "quarter",
+    "lost_opportunities_count",
+    "avg_days_open",
+    "median_days_open"
+   ],
+   "details": "Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true and is_won = false (lost only). Group by the calendar quarter of closed_at (year_num and quarter_num from calendar_days, or equivalent). days_open = closed_at - created_at in days; report avg and median rounded to 1 decimal. Order by quarter ascending (year then quarter number).",
+   "builds_on": [
+    "New Business Only: Won vs Lost Opportunity Characteristics",
+    "B2B Wholesale Deal Cycle Time Trend by Month"
+   ]
+  }
+ ],
+ "notes": "Night 1 gave three clean answers. (1) Activity timing on lost deals: only 40% of lost opportunities have any logged activity in their first quarter of life, rising to 100% in the second quarter and staying high (96.7%, 76.7%) through the third and fourth — this reads as 'actively worked to the end' for the large majority, not 'stalled and forgotten', though ~23% do go quiet before closing. (2) Youssef Meijer's 7 deals span 7 distinct accounts (no territory/account concentration), but his 3 losses include a €26,000 deal — by dollar value he won only ~26% of his pipeline despite a 57% count-based win rate, suggesting he's fine on small/quick deals but struggles to close large ones. (3) The 'zero open pipeline' finding is NOT a 3-year constant — nearly every month-end from 2023 through Nov 2025 had a handful of genuinely open deals (some 40-70+ days old); only Dec 2025 (and two earlier one-off months) show zero. That raises a new question before I can tell Patrick whether this is a real business fact or a data gap. Tonight's three slots: (1) check whether opportunity *creation* volume dropped in Oct-Dec 2025 (would signal a data-freshness/ingestion gap) or stayed normal (meaning it's a real, if unusual, pipeline flush); (2) extend the Youssef finding to all reps via a dollar-weighted vs count-weighted win-rate comparison, to see if 'wins small deals, loses the big one' is a broader pattern worth flagging beyond one rep; (3) Patrick's lower-priority Q4 on seasonality of lost-deal duration, since we have a free slot and it's a quick, well-defined query."
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty member vs non-member behavior by account tenure",
+    "--question",
+    "Does the loyalty-member gap in orders, revenue, AOV and refunds from last night's report persist once we control for how long the customer has had an account, or is it just that members and non-members differ in account age?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Bea\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per combination of account-tenure band and loyalty segment (member vs non-member)\", \"columns_requested\": [\"tenure_band\", \"segment\", \"customer_count\", \"avg_lifetime_orders\", \"avg_lifetime_revenue_eur\", \"avg_order_value_eur\", \"refund_rate_pct\"], \"details\": \"Same population and definitions as last night's 'Loyalty member vs non-member customer behavior' report: all users (is_staff = false) across all tenants with at least one order between 2023-01-01 and 2025-12-31; segment = 'loyalty member' if present in loyalty_accounts (any tenant/program), else 'non-member'. Tenure band = time from users.created_at to 2025-12-31, bucketed as: 'under 6 months', '6 to 12 months', '12 to 24 months', 'over 24 months'. Revenue/AOV use non-cancelled orders converted to EUR via exchange_rates (order currency_code to EUR, rate as_of COALESCE(placed_at, created_at)). avg_lifetime_orders and refund_rate_pct use all orders (any status), same as before (refund = payments.amount_refunded greater than 0 OR an order_returns row). Order rows by tenure_band (youngest to oldest), then segment ('loyalty member' before 'non-member').\", \"builds_on\": [\"Loyalty member vs non-member customer behavior\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

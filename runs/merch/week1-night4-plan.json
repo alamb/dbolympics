@@ -1,0 +1,62 @@
+{
+ "notes": "Night 3 takeaways: (1) The Home & Living December dip report shows most of the 13 merchants have only 1-4 reviews that month, so most of the apparent 'decline' is single bad reviews swinging a tiny average, not a systemic issue — only Fennel & Flint (14 reviews, 3.14 avg, -0.97 vs baseline) and Wiesgrund Wohnen (12 reviews, 3.5 avg, -0.6) have enough volume to be a credible, actionable signal. (2) The platform-wide worst-rated-products list is dominated by just a handful of merchants repeating over and over: Cragsley Outfitters (our #2 merchant by revenue) accounts for roughly 20 of the 50 worst-rated products, Brennquell Kaffee and Marrowby & Vane also recur heavily, and some of these badly-rated items still sell well (e.g. Aeropress Go Pour-Over Kit at Brennquell: 128 units sold, 2.83 avg rating; Corduroy Linen Shirt at Cragsley: 110 units, 2.86 rating) — meaning poor feedback hasn't yet hurt demand but is a real risk. I want to quantify this concentration properly at the merchant level rather than relying on counting rows in a product list. (3) Collections are already near-universal (most merchants show 65-100% of active products in a collection, with a suspicious clustering around exactly 8 collections per merchant — possibly a template default), so they're not a differentiator worth pushing further. Bundles, by contrast, are almost entirely unused even by our biggest merchants (0% for Cragsley, OfficeHub, Castell, Deskline, Marrowby, Cinder Peak) — this is real white space Freya could push. For this final night before the memo, I'm prioritizing: (A) quantifying the poor-rating concentration per top merchant to turn the anecdote into a rankable list, (B) the still-unanswered 'high sales but few/no reviews' piece of Q3, and (C) the dedicated top-merchants-vs-long-tail structural comparison for Q5, which I haven't produced yet and is one of Freya's five named questions.",
+ "requests": [
+  {
+   "title": "Poorly-Rated Product Concentration by Merchant",
+   "question": "Which merchants have the largest share of their reviewed catalog sitting at genuinely poor ratings, rather than a few isolated bad products?",
+   "grain": "one row per merchant (tenant), same top-50-by-revenue set used in the Merchant Catalog Profile report",
+   "columns": [
+    "merchant_name",
+    "industry",
+    "products_with_5plus_reviews",
+    "poor_rated_product_count",
+    "pct_poor_rated_products",
+    "revenue_eur_last_12mo"
+   ],
+   "details": "Tables: products, tenants, product_reviews (is_approved = true). For each merchant, products_with_5plus_reviews = count of distinct products with at least 5 approved reviews (all-time). poor_rated_product_count = count of those products whose average approved-review rating is below 3.0. pct_poor_rated_products = poor_rated_product_count / products_with_5plus_reviews * 100, rounded to 1 decimal (blank if denominator is 0). revenue_eur_last_12mo reuses the same definition as the Merchant Catalog Profile report (orders placed 2025-01-01 to 2025-12-31, status not cancelled, EUR conversion via exchange_rates as of placed_at date) so it can be cross-referenced with that report. Order by poor_rated_product_count descending, tie-break by pct_poor_rated_products descending then merchant_name; print up to 50 rows and note the total returned.",
+   "builds_on": [
+    "Lowest-Rated Products Platform-Wide With Sufficient Review Volume",
+    "Merchant Catalog Profile"
+   ]
+  },
+  {
+   "title": "High-Selling Products With Few or No Reviews",
+   "question": "Which products sell well but have surprisingly little customer review feedback, suggesting a listing or follow-up gap rather than a demand problem?",
+   "grain": "one row per product",
+   "columns": [
+    "product_name",
+    "merchant_name",
+    "industry",
+    "units_sold_last_12mo",
+    "revenue_eur_last_12mo",
+    "review_count",
+    "avg_rating"
+   ],
+   "details": "Tables: products, tenants, order_items joined to orders (placed_at between 2025-01-01 and 2025-12-31, status not cancelled) for units_sold_last_12mo and revenue_eur_last_12mo (converted via exchange_rates, base_code=EUR, quote_code=order currency_code, as_of the order's placed_at date), and product_reviews (is_approved = true, all-time) for review_count and avg_rating (avg_rating blank/null when review_count = 0). Filter to active, non-deleted products with units_sold_last_12mo >= 30 and review_count <= 2. Round revenue to whole EUR, avg_rating to 2 decimals. Order by units_sold_last_12mo descending, tie-break by revenue_eur_last_12mo descending; cap at 50 rows and note how many products in total met the filter.",
+   "builds_on": [
+    "Lowest-Rated Products Platform-Wide With Sufficient Review Volume"
+   ]
+  },
+  {
+   "title": "Catalog Structure: Top Merchants vs Long Tail",
+   "question": "Do our top-revenue merchants' catalogs look structurally different from the long tail in size, categorization, and media richness?",
+   "grain": "one row per merchant revenue tier: Top 10, Next 20 (ranks 11-30), and Rest (ranks 31 and below), ranked by revenue_eur_last_12mo",
+   "columns": [
+    "tier",
+    "merchant_count",
+    "avg_active_products_per_merchant",
+    "avg_variants_per_product",
+    "avg_categories_per_product",
+    "pct_products_with_primary_image",
+    "avg_media_count_per_product",
+    "pct_active_products_in_a_collection",
+    "revenue_share_pct"
+   ],
+   "details": "Rank all non-deleted tenants by the same revenue_eur_last_12mo definition used in the Merchant Catalog Profile report (orders placed 2025-01-01 to 2025-12-31, status not cancelled, EUR conversion via exchange_rates as of placed_at date), then bucket into tiers: rank 1-10 = 'Top 10', rank 11-30 = 'Next 20', rank 31+ = 'Rest'. avg_active_products_per_merchant and avg_variants_per_product use active, non-deleted products/variants as in the Merchant Catalog Profile report. avg_categories_per_product = average count of product_categories rows per active product (categorization depth, not just the single primary_category_id). pct_products_with_primary_image = share of active products with a product_media row where is_primary = true. avg_media_count_per_product = average count of all product_media rows (any kind) per active product. pct_active_products_in_a_collection = share of active products appearing in at least one collection_products row pointing to a non-deleted collection, as in the Collections and Bundles Adoption report. revenue_share_pct = that tier's total revenue_eur_last_12mo divided by the platform total, rounded to 1 decimal. Round other averages to 2 decimals, percentages to 1 decimal. Order rows as Top 10, Next 20, Rest.",
+   "builds_on": [
+    "Merchant Catalog Profile",
+    "Collections and Bundles Adoption by Merchant"
+   ]
+  }
+ ]
+}

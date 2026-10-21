@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Refund Rate by Vertical and Quarter, 2025",
+    "--question",
+    "Which vertical(s) outside Apparel & Footwear drove the rise in company-wide refund rate through 2025, especially the Q2-Q3 spike?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one tenant industry vertical and one calendar quarter, 2025 only\", \"columns_requested\": [\"vertical\", \"quarter\", \"merchant_count\", \"payment_count\", \"gross_captured_eur\", \"amount_refunded_eur\", \"refund_rate_pct\"], \"details\": \"Source: payments joined to tenants (tenants.industry), filtered to status reflecting captured/refunded/partially_refunded with captured_at in calendar year 2025. Convert amount and amount_refunded to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=date(captured_at)), dividing local amount by the matched rate, consistent with the validated method used in prior reports this week. Group by tenants.industry (null industry as 'Unknown') and calendar quarter of captured_at. Order by vertical name ascending, then quarter ascending (expect up to ~44 rows for ~11 verticals x 4 quarters).\", \"builds_on\": [\"Refund Rate by Merchant Vertical, 2025\", \"Company-Wide Refund Rate Trend by Quarter, 2024-2025\", \"Apparel & Footwear Refund Rate Trend by Quarter, 2024-2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

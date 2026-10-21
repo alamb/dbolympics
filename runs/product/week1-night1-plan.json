@@ -1,0 +1,58 @@
+{
+ "notes": "Jonas asked for 5 things but explicitly said: if time-constrained, prioritize #1 (funnel), #2 (checkout drop-off), #5 (repeat purchase) — delivery/returns can wait. I'm spending all 3 slots on those tonight.\n\nSchema reality check before writing specs:\n- There's no FK linking carts/web_sessions directly (carts.session_token isn't a declared FK to web_sessions.anonymous_id), so \"visit\" and \"cart\" stages have to be joined approximately — I've asked the engineer to do a best-effort match by user_id and nearest time, and to flag if that join is too noisy rather than silently forcing it.\n- orders.cart_id IS a real FK, so cart→order→paid is solid.\n- For repeat purchase, I'm using orders.status progression as the \"reached paid\" signal (no need for payments table complexity at this grain) and defining first-time buyer / repeat purchase purely off orders.placed_at per user, which is clean and well-supported by the schema.\n- For device/channel on checkout, I'm leaning on web_sessions.user_agent (parsed for device class) and utm_source (channel), acknowledging this is an approximation since there's no hard session→cart link.\n\nI'm deliberately keeping report 1 to the top ~10 merchants by volume (not all 120) per Jonas's ask to see real differences rather than an averaged-away number, and keeping report 5 to cohorts with a full 90-day observation window given data ends 2025-12-31.",
+ "requests": [
+  {
+   "title": "Storefront-to-order funnel for top merchants, Q4 2025",
+   "question": "Where do shoppers drop off between landing on the storefront and placing a paid order, and does the shape differ across our biggest merchants?",
+   "grain": "one row per tenant (top 10 merchants by paid order volume in Q4 2025)",
+   "columns": [
+    "tenant name",
+    "visits (distinct web_sessions started in period)",
+    "carts created in period",
+    "orders placed in period (any status)",
+    "orders paid in period (status not in pending, cancelled)",
+    "visit → cart %",
+    "cart → order %",
+    "order → paid %",
+    "overall visit → paid %"
+   ],
+   "details": "Time window: 2025-10-01 to 2025-12-31 (orders.placed_at, carts.created_at, web_sessions.started_at all within this range). Tenant selection: rank tenants by count of orders with status not in ('pending','cancelled') and placed_at in this window; keep the top 10, ordered descending by that paid-order count. Tables: tenants (name), web_sessions (visits, started_at, tenant_id), carts (carts created, created_at, tenant_id), orders (orders placed and orders paid, placed_at, status, tenant_id). No FK links web_sessions to carts or carts to orders' session — just count each stage independently per tenant per period (don't try to force a row-level join between visits and carts). Round percentages to 1 decimal. Order final report by overall visit→paid % descending, tie-break by tenant name.",
+   "builds_on": []
+  },
+  {
+   "title": "Checkout funnel by device type and arrival channel",
+   "question": "Once a cart is created, is the drop-off to a paid order a single cliff or a slow bleed across stages, and does it differ by device or by how the shopper arrived?",
+   "grain": "one row per device type and acquisition channel combination",
+   "columns": [
+    "device type",
+    "channel",
+    "carts started",
+    "carts with items (subtotal > 0)",
+    "orders placed from cart (orders.cart_id not null)",
+    "orders paid (status not in pending, cancelled)",
+    "cart → item % ",
+    "item → order %",
+    "order → paid %",
+    "overall cart → paid %"
+   ],
+   "details": "Time window: carts.created_at in 2025-10-01 to 2025-12-31. Base table: carts (tenant_id, user_id, created_at, subtotal, status). Join orders on orders.cart_id = carts.id for the 'orders placed' and 'orders paid' stages (orders.status not in ('pending','cancelled') = paid). For device type and channel: since there is no direct FK from carts to web_sessions, approximate by matching each cart's user_id to that user's most recent web_sessions row with started_at <= carts.created_at on the same calendar day (fall back to 'unknown' device/channel if no matching session exists); derive device type from web_sessions.user_agent (bucket as mobile/tablet/desktop/unknown via simple pattern match), and channel from web_sessions.utm_source (null/blank -> 'direct', otherwise the utm_source value, grouped to top 6 values + 'other'). If this join looks unreliable or returns mostly 'unknown', say so in the report notes rather than forcing it. Order rows by carts started descending; tie-break by device type, then channel.",
+   "builds_on": []
+  },
+  {
+   "title": "Repeat purchase rate and time-to-repeat by first-order cohort month",
+   "question": "Of shoppers who place a first order, how many come back and how long does it take?",
+   "grain": "one row per first-order cohort month (calendar month of each user's first paid order)",
+   "columns": [
+    "cohort month",
+    "first-time buyers",
+    "repeat within 30 days (%)",
+    "repeat within 60 days (%)",
+    "repeat within 90 days (%)",
+    "repeat buyers (any time, count)",
+    "median days to second order (repeat buyers only)"
+   ],
+   "details": "Table: orders (user_id, tenant_id, placed_at, status). Define a 'paid order' as status not in ('pending','cancelled'). For each user, their first-order date is the min placed_at among their paid orders; the cohort month is that date's calendar month. A user's second order is their next paid order (by placed_at) after the first. Compute, per cohort month: count of first-time buyers; the % of those whose second order occurred within 30/60/90 days of their first; the count who ever placed a second order; and the median (days between first and second order) among those who did. Restrict to cohort months from 2023-01 through 2025-10 inclusive, so every cohort has at least a 90-day observation window against data complete through 2025-12-31. Round percentages to 1 decimal and the median to a whole number of days. Order by cohort month ascending.",
+   "builds_on": []
+  }
+ ]
+}

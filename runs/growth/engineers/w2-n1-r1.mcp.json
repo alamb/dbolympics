@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "The real euro cost of discounting, by vertical",
+    "--question",
+    "Beyond return rates, how much revenue does discounting actually cost each vertical once you add up both the discounts given and the refunds paid out on those orders?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per industry and order group (discounted vs full price)\", \"columns_requested\": [\"industry - tenants.industry\", \"order_group - 'discounted' (orders.discount_total > 0) or 'full price' (= 0)\", \"orders_count - count of orders placed_at in 2025 in that industry/group\", \"discount_given_eur - sum of orders.discount_total converted to EUR, rounded to 0 decimals\", \"refund_amount_eur - sum of order_returns.refund_total (joined on order_id) for orders in that group, converted to EUR, rounded to 0 decimals\", \"gmv_eur - sum of orders.subtotal (pre-discount product value) converted to EUR, rounded to 0 decimals\", \"net_leakage_pct - (discount_given_eur + refund_amount_eur) / gmv_eur * 100, rounded to 1 decimal\", \"refund_rate_pct - share of orders in that cell with at least one linked order_returns row, *100, rounded to 1 decimal\"], \"details\": \"Source: orders joined to tenants (industry), order_returns (refund_total, matched on order_id). Filter placed_at in 2025-01-01 to 2026-01-01 exclusive, all tenants. Convert orders.discount_total and orders.subtotal to EUR using exchange_rates as of placed_at date (base_code='EUR', quote_code=order currency, EUR=rate 1); convert order_returns.refund_total to EUR using exchange_rates as of order_returns.refunded_at date (same method). Order by industry ascending, then order_group ascending ('discounted' before 'full price'). Expect ~18-22 rows (industries x 2).\", \"builds_on\": [\"Are discounted orders healthier across verticals, or just in B2B?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

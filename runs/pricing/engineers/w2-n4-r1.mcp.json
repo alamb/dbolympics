@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Reconciled 2025 orphan population by tenant and subscription status (single pass)",
+    "--question",
+    "In one single query, does the 2025 orphan subscription-delivery population split by tenant reproduce last week's known-good totals (Grind Collective 167, Honeycomb Larder 127, Kibblewick 100, Feather & Fin 49, Saffron & Sage 17, The Balm Room 1 — 461 orders, €22,318.18 total), and how does each tenant's orphan pool split by the customer's most-recent subscription status?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Ines\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per tenant and subscription-status category (canceled / active / other-or-no-subscription-record)\", \"columns_requested\": [\"tenant name\", \"status category\", \"orphan order count\", \"distinct customers\", \"total discount amount (EUR)\"], \"details\": \"Source: order_discounts + discounts (name='Subscription delivery (prepaid)') + orders (placed_at 2025-01-01 to 2025-12-31, status != 'cancelled', user_id, tenant_id) + tenants. Build this as ONE query: first produce a single row per order_id with its orphan flag (no overlapping subscription with status in trialing/active/past_due whose started_at/ended_at window covers placed_at) and its most-recent-subscription status (by started_at, any status, or 'no_subscription_record'), using subqueries/window functions rather than joins that could duplicate rows; only then aggregate by tenant and status. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). As a validation step, please confirm in the engineer's note whether each tenant's total orphan order count (summed across status categories) matches the reference figures above, and flag explicitly if not along with a hypothesis why. Order by tenant name, then status category. Print all rows (expect ~6 tenants x up to 3 categories).\", \"builds_on\": [\"Subscription-delivery discount orders with no overlapping active subscription\", \"Tenant-level breakdown of the lapsed-subscriber leakage trend, by half-year\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

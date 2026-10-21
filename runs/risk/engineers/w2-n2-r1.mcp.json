@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "February 2025 repeat-failure accounts: did they succeed afterward? (corrected)",
+    "--question",
+    "Among the accounts with 5+ failed logins in February 2025, how many went on to log in successfully afterward, and how soon — i.e. was this a near-miss or just noise?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Ines\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per outcome bucket, computed over the cohort of distinct (tenant_id, email) pairs with >=5 failed login_attempts rows in February 2025\", \"columns_requested\": [\"outcome_bucket (succeeded_within_1h / succeeded_within_24h / succeeded_later_in_month / never_succeeded_in_month)\", \"pair_count\", \"pct_of_cohort\", \"avg_failed_attempts_before_success (blank for never_succeeded)\", \"distinct_tenants_affected\"], \"details\": \"Fix for last night's broken version: scope the cohort to (tenant_id, email) pairs, not email alone, since login_attempts.email is only unique per tenant and matching on email alone silently conflated unrelated users across merchants. For each pair in the cohort, find the first succeeded=true login_attempts row for that same (tenant_id, email) occurring after that pair's last Feb-2025 failed attempt, within February 2025 only. Classify each pair into exactly one bucket using this precedence: succeeded_within_1h, else succeeded_within_24h, else succeeded_later_in_month, else never_succeeded_in_month. Buckets must be mutually exclusive and exhaustive: pair_count across all 4 rows must sum exactly to the cohort size, and pct_of_cohort must sum to 100%. Do not print individual emails. Order buckets in the sequence listed above.\", \"builds_on\": [\"February 2025 repeat-failure accounts: did they succeed afterward?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

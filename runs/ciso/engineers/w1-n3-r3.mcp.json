@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Audit log coverage by action type",
+    "--question",
+    "Is the audit trail (audit_log) consistently capturing sensitive actions across all merchants and over time, or are some action types thin, recent-only, or concentrated in a handful of tenants — could we credibly reconstruct 'who did what, when' if asked?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per audit_log action type (the 7 enum values: create, update, delete, login, logout, export, access_denied)\", \"columns_requested\": [\"action type\", \"total events (2023-01-01 through 2025-12-31)\", \"events in the last 90 days (2025-10-05 through 2025-12-31)\", \"distinct tenants with at least one such event\", \"share of all 120 tenants represented (%)\", \"distinct actor users recorded\", \"earliest occurred_at\", \"most recent occurred_at\"], \"details\": \"Source: audit_log (tenant_id, action, actor_user_id, occurred_at), full history available (2023-01-01 to 2025-12-31). Group by action. 'Share of all 120 tenants' = distinct tenants with that action / 120, rounded to 1 decimal percent (note if the tenant count assumption of 120 needs adjusting based on what's actually in the tenants table). Order by total events descending, action type as tie-break (only 7 rows expected, well under the cap).\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

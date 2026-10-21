@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  u.full_name AS rep_name,\n  t.name AS merchant,\n  COUNT(*) AS opportunities_closed,\n  SUM(CASE WHEN o.is_won THEN 1 ELSE 0 END) AS closed_won,\n  SUM(CASE WHEN NOT o.is_won THEN 1 ELSE 0 END) AS closed_lost,\n  ROUND(100.0 * SUM(CASE WHEN o.is_won THEN 1 ELSE 0 END) / COUNT(*), 1) AS win_rate_pct,\n  ROUND(AVG(EXTRACT(EPOCH FROM (o.closed_at - o.created_at)) / 86400.0), 1) AS avg_days_open,\n  ROUND(AVG(\n    CASE WHEN o.currency_code = 'EUR' THEN o.amount\n    ELSE o.amount / (\n      SELECT er.rate\n      FROM exchange_rates er\n      WHERE er.base_code = 'EUR'\n        AND er.quote_code = o.currency_code\n        AND er.as_of = CAST(o.closed_at AS date)\n    ) END\n  ), 2) AS avg_amount_eur\nFROM opportunities o\nJOIN users u ON u.id = o.owner_user_id\nJOIN tenants t ON t.id = o.tenant_id\nJOIN pipelines pl ON pl.id = o.pipeline_id AND pl.tenant_id = o.tenant_id\nWHERE o.is_closed = true\n  AND pl.name = 'New business'\n  AND o.tenant_id IN (\n    SELECT tn.id FROM tenants tn WHERE tn.industry IN ('industrial supplies', 'office equipment')\n  )\nGROUP BY o.owner_user_id, u.full_name, t.name\nHAVING COUNT(*) >= 3\nORDER BY win_rate_pct ASC, opportunities_closed DESC, rep_name ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: rep_name, merchant, opportunities_closed, closed_won, closed_lost, win_rate_pct, avg_days_open, avg_amount_eur"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected 8 columns at the requested rep grain."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  u.full_name AS rep_name,\n  t.name AS merchant,\n  COUNT(*) AS opportunities_closed,\n  SUM(CASE WHEN o.is_won THEN 1 ELSE 0 END) AS closed_won,\n  SUM(CASE WHEN NOT o.is_won THEN 1 ELSE 0 END) AS closed_lost,\n  ROUND(100.0 * SUM(CASE WHEN o.is_won THEN 1 ELSE 0 END) / COUNT(*), 1) AS win_rate_pct,\n  ROUND(AVG(EXTRACT(EPOCH FROM (o.closed_at - o.created_at)) / 86400.0), 1) AS avg_days_open,\n  ROUND(AVG(\n    CASE WHEN o.currency_code = 'EUR' THEN o.amount\n    ELSE o.amount / (\n      SELECT er.rate\n      FROM exchange_rates er\n      WHERE er.base_code = 'EUR'\n        AND er.quote_code = o.currency_code\n        AND er.as_of = CAST(o.closed_at AS date)\n    ) END\n  ), 2) AS avg_amount_eur\nFROM opportunities o\nJOIN users u ON u.id = o.owner_user_id\nJOIN tenants t ON t.id = o.tenant_id\nJOIN pipelines pl ON pl.id = o.pipeline_id AND pl.tenant_id = o.tenant_id\nWHERE o.is_closed = true\n  AND pl.name = 'New business'\n  AND o.tenant_id IN (\n    SELECT tn.id FROM tenants tn WHERE tn.industry IN ('industrial supplies', 'office equipment')\n  )\nGROUP BY o.owner_user_id, u.full_name, t.name\nHAVING COUNT(*) >= 3\nORDER BY win_rate_pct ASC, opportunities_closed DESC, rep_name ASC",
+  "note": "I used tenants.industry IN ('industrial supplies','office equipment') as the B2B wholesale tenant filter and pipelines.name = 'New business' as the pipeline filter, matching the verticals and pipeline naming convention described for this series of reports — please confirm these match the exact filter used in the earlier merchant-level report if it differed. The exact count of reps excluded by the <3 closed-deals rule isn't a value I can compute at authoring time (dry runs don't return data); it will be visible as the gap between total distinct owners in scope and the row count printed on this report.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. Summary of what I did:\n\n- Scoped to B2B wholesale tenants via `tenants.industry IN ('industrial supplies','office equipment')`, pipeline = `'New business'`, and `opportunities.is_closed = true`.\n- Grouped by `owner_user_id` (joined to `users` for `rep_name`, `tenants` for `merchant`).\n- `win_rate_pct` = closed_won / opportunities_closed, `avg_days_open` from `closed_at - created_at` in days, `avg_amount_eur` converting each opportunity's amount via `exchange_rates` (EUR base) as of its `closed_at` date.\n- Applied `HAVING COUNT(*) >= 3` to drop low-volume reps, ordered worst win rate first as requested.\n- Flagged in the note that I inferred the wholesale filter from the company's described verticals since the prior report's exact filter wasn't in front of me, and that the excluded-rep count isn't something I can verify without live data access."
+ }
+]

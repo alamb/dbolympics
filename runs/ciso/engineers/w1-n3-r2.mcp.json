@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "API key hygiene by merchant",
+    "--question",
+    "How many API keys does each merchant have, how many are active, and how many of those active keys look abandoned (never used, or unused for a long time)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per tenant\", \"columns_requested\": [\"tenant name\", \"tenant status\", \"total api keys\", \"active api keys\", \"revoked or expired api keys\", \"active keys never used (last_used_at is null)\", \"active keys unused 90+ days (last_used_at < 2025-10-05)\", \"oldest active key age in days (2026-01-05 minus created_at)\", \"service accounts count (from service_accounts table, for context)\"], \"details\": \"Source: api_keys (tenant_id, status, created_at, last_used_at, expires_at) joined to tenants; service_accounts counted separately per tenant (that table has no usage timestamp, so it's included only as a headcount for context, not an activity measure). 'Active' = status = 'active'. Use 2026-01-05 as the fixed reference date for all day-based calculations (per house standards, no CURRENT_DATE). Include every tenant that has at least one api_keys row. Order by 'active keys never used' descending, then 'active keys unused 90+ days' descending, then tenant name as tie-break, so the most abandoned-looking merchants surface first. Cap at 50 rows, note total tenant rows with at least one key.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

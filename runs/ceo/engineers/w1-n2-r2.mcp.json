@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant and order growth by quarter",
+    "--question",
+    "Are we gaining merchants and order volume, and how has that trended over the last two years?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per calendar quarter\", \"columns_requested\": [\"quarter\", \"new merchants (tenants created that quarter)\", \"cumulative active merchants (tenants created on or before quarter end, not deleted)\", \"order count\", \"GMV EUR\", \"average order value EUR\"], \"details\": \"Source: tenants (for merchant counts, using created_at and deleted_at) and orders (for order count and GMV, using placed_at). Window: quarters 2024-Q1 through 2025-Q4 (8 quarters). 'New merchants' = count of tenants whose created_at falls within that quarter. 'Cumulative active merchants' = count of tenants with created_at <= the end of that quarter and deleted_at is null (regardless of current status field, since status can change independent of tenure). 'Order count' and 'GMV' should only include orders with status in ('paid','partially_fulfilled','fulfilled','refunded') and placed_at within the quarter (exclude 'pending' and 'cancelled' orders, since those never represent realized volume). Convert orders.grand_total to EUR using exchange_rates (amount_eur = amount / rate, base_code='EUR', quote_code=orders.currency_code, as_of = orders.placed_at date). Average order value = GMV EUR / order count. Order by quarter ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

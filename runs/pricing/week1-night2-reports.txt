@@ -1,0 +1,46 @@
+=== Report 1: Order economics behind the 'Subscription delivery (prepaid)' discount (written by Viktor) ===
+Engineer's note: The "% of customers with an active subscription overlapping the order's placed_at date" is computed at order grain (share of orders whose customer had a qualifying subscription at placed_at), since overlap is order-date-dependent and a customer could qualify for some of their orders but not others; pct_zero_grand_total uses the original (pre-conversion) grand_total since 0 is currency-invariant.
+REPORT: Order economics behind the 'Subscription delivery (prepaid)' discount
+QUESTION: Is the 'Subscription delivery (prepaid)' discount a real zero-margin giveaway, or does the €0 order revenue reflect that these customers actually pay via a separate subscription invoice?
+tenant_name      | order_count | distinct_customers | avg_subtotal_eur | avg_discount_total_eur | avg_shipping_total_eur | avg_tax_total_eur | avg_grand_total_eur | pct_zero_grand_total | pct_orders_with_active_subscription
+-----------------+-------------+--------------------+------------------+------------------------+------------------------+-------------------+---------------------+----------------------+------------------------------------
+Grind Collective |         650 |                 74 |            37.31 |                  37.31 |                    0.0 |               0.0 |                 0.0 |                100.0 |                                74.3
+Honeycomb Larder |         354 |                 51 |            46.68 |                  46.68 |                    0.0 |               0.0 |                 0.0 |                100.0 |                                64.1
+Kibblewick       |         326 |                 57 |             36.2 |                   36.2 |                    0.0 |               0.0 |                 0.0 |                100.0 |                                69.3
+Feather & Fin    |         106 |                 21 |            52.79 |                  52.79 |                    0.0 |               0.0 |                 0.0 |                100.0 |                                53.8
+Saffron & Sage   |          43 |                  8 |           105.61 |                 105.61 |                    0.0 |               0.0 |                 0.0 |                100.0 |                                60.5
+The Balm Room    |          16 |                  4 |            97.13 |                  97.13 |                    0.0 |               0.0 |                 0.0 |                100.0 |                                93.8
+The Pencil Case  |           3 |                  1 |            67.61 |                  67.61 |                    0.0 |               0.0 |                 0.0 |                100.0 |                               100.0
+Snout & Sons     |           1 |                  1 |            34.81 |                  34.81 |                    0.0 |               0.0 |                 0.0 |                100.0 |                               100.0
+(8 rows)
+
+=== Report 2: Coupons with a configured usage cap: actual breaches of usage_limit or per_customer_limit (written by Omar) ===
+Engineer's note: Used coupon_redemptions' own currency_code/redeemed_at for EUR conversion (both fields already live on that table), so the orders join mentioned in the request wasn't needed. Added a total_matching_coupons column (count of all coupons meeting the breach criteria before the 50-row cutoff) so you know if the list was truncated.
+REPORT: Coupons with a configured usage cap: actual breaches of usage_limit or per_customer_limit
+QUESTION: Among coupons that actually have a usage_limit or per_customer_limit configured, which ones have been redeemed beyond that stated cap?
+coupon_code | tenant_name | status | usage_limit | per_customer_limit | times_redeemed | redemptions_over_usage_limit | max_redemptions_by_customer | customers_exceeding_per_customer_limit | total_discount_redeemed_eur | total_matching_coupons
+------------+-------------+--------+-------------+--------------------+----------------+------------------------------+-----------------------------+----------------------------------------+-----------------------------+-----------------------
+(0 rows)
+
+=== Report 3: Within-customer order value lift on top discount codes, 2025 (written by Bea) ===
+Engineer's note: Restricted to the top 15 discounts (by 2025 discount_amount converted to EUR, excluding 'Subscription delivery (prepaid)'); coupon code is picked as MAX(code) seen on that discount's redemptions since a discount can in principle be tied to more than one code. Rows where a discount's customers had zero other non-discounted 2025 orders show NULL for avg/lift columns and 0% in the last column — watch for discounts with a low distinct_customers count or low pct_customers_with_other_nondiscounted_order, as the within-customer comparison is weak/unavailable there.
+REPORT: Within-customer order value lift on top discount codes, 2025
+QUESTION: For our top discounts, do the same customers spend more per order when using the discount than they do on their own other, non-discounted orders — our best approximate read on incrementality?
+discount_name     | coupon_code | discounted_order_count | distinct_customers | avg_discounted_order_value_eur | avg_other_order_value_eur | lift_eur | lift_pct | pct_customers_with_other_nondiscounted_o
+------------------+-------------+------------------------+--------------------+--------------------------------+---------------------------+----------+----------+-----------------------------------------
+Summer Sale 2025  | automatic   |                     67 |                 60 |                         120.91 |                    155.77 |   -34.87 |    -22.4 |                                     78.3
+Summer Sale 2025  | automatic   |                    146 |                134 |                         159.92 |                    197.84 |   -37.92 |    -19.2 |                                     85.8
+January Sale 2025 | automatic   |                    124 |                101 |                         164.95 |                    179.88 |   -14.93 |     -8.3 |                                     73.3
+Welcome 10% off   | WELCOME10   |                    140 |                140 |                         169.16 |                    184.03 |   -14.87 |     -8.1 |                                     47.1
+Welcome 10% off   | WELCOME10   |                    260 |                260 |                         210.99 |                     207.8 |      3.2 |      1.5 |                                     53.1
+Black Friday 2025 | BF2530      |                     23 |                 22 |                         362.74 |                    271.44 |     91.3 |     33.6 |                                     77.3
+Summer Sale 2025  | automatic   |                     24 |                 19 |                         556.99 |                    267.17 |   289.81 |    108.5 |                                     78.9
+Volume tier 10+   | automatic   |                    104 |                 28 |                         2943.7 |                   1106.97 |  1836.73 |    165.9 |                                     89.3
+Welcome 10% off   | WELCOME10   |                      7 |                  7 |                        3368.82 |                   1127.42 |  2241.39 |    198.8 |                                     42.9
+Volume tier 10+   | automatic   |                    102 |                 32 |                        1934.17 |                    628.77 |  1305.41 |    207.6 |                                     65.6
+Volume tier 50+   | automatic   |                      5 |                  4 |                        6118.39 |                   1414.43 |  4703.96 |    332.6 |                                    100.0
+Volume tier 10+   | automatic   |                     38 |                 12 |                        4939.06 |                     924.9 |  4014.16 |    434.0 |                                     83.3
+Volume tier 50+   | automatic   |                     15 |                 13 |                        6693.34 |                    551.86 |  6141.48 |   1112.9 |                                     84.6
+Welcome 10% off   | WELCOME10   |                      7 |                  7 |                        8487.44 |                    585.53 |  7901.91 |   1349.5 |                                     42.9
+Welcome 10% off   | WELCOME10   |                      4 |                  4 |                       10253.76 |                    542.69 |  9711.07 |   1789.4 |                                    100.0
+(15 rows)

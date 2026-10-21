@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Fennel & Flint and Wiesgrund Wohnen: Review Sentiment vs Delivery Performance, Monthly",
+    "--question",
+    "Did delivery delays coincide with the rating dip at the two Home & Living merchants flagged last week, consistent with the platform-wide carrier breakdown?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per merchant per calendar month, for Fennel & Flint and Wiesgrund Wohnen only, July through December 2025\", \"columns_requested\": [\"merchant_name\", \"month\", \"review_count\", \"avg_rating\", \"pct_1_2_star\", \"shipments_count\", \"pct_delivered_within_5_days\", \"pct_shipped_via_albion_parcel\"], \"details\": \"Filter to tenants named Fennel & Flint and Wiesgrund Wohnen. review_count/avg_rating/pct_1_2_star from approved product_reviews with created_at in that month (same definitions as prior review-trend reports). shipments_count = count of shipments (via fulfillments -> orders -> tenant) with shipped_at in that month. pct_delivered_within_5_days = share of those shipments where delivered_at minus shipped_at is 5 days or less (exclude shipments with no delivered_at from the denominator and numerator, but note how many are excluded). pct_shipped_via_albion_parcel = share of that month's shipments with carrier = 'Albion Parcel' (match carrier name as stored). Round rating to 2 decimals, percentages to 1 decimal. Order by merchant_name, then month ascending.\", \"builds_on\": [\"Home & Living December 2025 Rating Dip: Merchant Breakdown\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

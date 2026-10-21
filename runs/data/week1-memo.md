@@ -1,0 +1,19 @@
+**To:** Rosa Van den Berg
+**From:** Yuki Tanaka
+**Re:** Certification findings — revenue, orders, refunds/payouts, customers, currency
+
+**1. Revenue sources mostly reconcile — except invoices, which aren't a 5th source.** *(Monthly revenue by source; Invoice revenue composition)* The four "revenue" figures diverge (Dec-25: orders €332,982 vs payments captured €323,026 vs payout gross €322,182 vs invoices €79,290), but invoices turned out to be 93-98% order-linked billing documents, not an independent figure — only the small, growing subscription-only slice (€15,128 in Dec-25) is genuinely incremental. **Confident:** invoices should not be added on top of order revenue in the board pack; use order revenue + the subscription-only sliver.
+
+**2. Orders do trace cleanly to money collected — my first read overstated the gap.** *(Orders traced into captured payments; Order-to-payment gap by status, both passes)* A captured-only filter showed 20-40% of order value with no matching payment. Re-running with refunded/partially_refunded payments included (orders aged 6+ months, so timing can't explain it) dropped the gap to **0.9% for fulfilled orders** and **5.3% for refunded orders**. Cancelled orders' apparent 70.4% gap is fully explained: only 259 of 788 were ever charged, and those were refunded to exactly €0 net. **Confident:** orders reconcile to collected cash; any future query on this must include refunded/partially_refunded statuses, not just captured.
+
+**3. Refund timing, not a calculation error, breaks clean per-payout traceability.** *(Refund timing vs payout settlement; Payout net-formula drift by currency)* 85.5% of refund euros are processed *after* the original payment's payout already settled (avg 20.9 days later), and `payout_items` allows only one row per payment ever — so a later clawback has no slot in the original payout. Checked in native currency (no FX noise) across all 6 currencies, net is consistently *below* gross-fee by **-7.7% to -18.4%**, in line with refund volumes — i.e., net ≈ gross − fee − refunds, just not within a single payout row. **Confident** no money is double-counted or hidden; **open**: we cannot currently point to which specific payout absorbed a given refund — that's a real reporting/traceability gap, not a loss.
+
+**4. "How many customers" has no single answer — pick two.** *(Customer headcount by definition)* Range from 11,258 (all accounts) down to 411 (active/trialing subscription, 3.7% — expected, most merchants aren't subscription businesses). "Status=active" (99.3%) is not a usable activity signal. I'd certify two headline numbers: **9,640 ever-purchased** and **6,159 trailing-12-month purchasers**.
+
+**5. FX movement is large enough to matter for USD and NOK rollups.** *(EUR rate movement 2023 vs 2025)* USD moved +11.0% and NOK +10.9% against EUR over the window; GBP -2.9%; DKK/SEK roughly flat. Together USD+NOK tenants are ~€1.69M of 2025 EUR revenue — multi-year EUR growth/decline for them should be reported with FX effect separated out.
+
+**Tobias's B2B receivables:** *(B2B wholesaler receivables aging)* Only 30 open invoices matched, €41,579 due, 90.8% not yet due, 9.2% overdue (max bucket 31-60 days, none beyond). **Low confidence** — 30 invoices feels thin for our wholesaler count; the industry-text filter may be missing tenants. Don't certify this line yet.
+
+**Caveats:** the B2B tenant filter is unverified against actual data; the refund-to-payout clawback mechanism is inferred from a schema constraint, not confirmed with engineering.
+
+**Next steps:** (1) identify B2B wholesaler tenants by name, not industry text-match, and redo receivables; (2) trace a handful of individual refunds forward to find where the deduction actually lands, and loop in engineering; (3) get sign-off on the two certified customer definitions; (4) build a single FX-effect-adjusted revenue view for USD/NOK merchants.

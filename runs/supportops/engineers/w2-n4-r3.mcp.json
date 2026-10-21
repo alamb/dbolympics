@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket performance with known carrier-incident months excluded",
+    "--question",
+    "Once we strip out the known carrier-incident months, do Marrowby & Vane and Studio Vrij still look worse than Cragsley Outfitters, or does that fully explain the gap?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Felix\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per tenant: Marrowby & Vane (excluding Nov-Dec 2025), Studio Vrij (excluding May-Jul 2025), and Cragsley Outfitters (full year, as unadjusted baseline)\", \"columns_requested\": [\"tenant_name\", \"excluded_period (text description, 'None' for Cragsley)\", \"ticket_count_after_exclusion\", \"avg_resolution_minutes_after_exclusion\", \"resolution_breach_rate_after_exclusion\"], \"details\": \"Window: tickets.created_at in 2025, restricted to the three named tenants, across ALL topics/tags (not just delivery), with Marrowby & Vane's November and December 2025 tickets excluded, Studio Vrij's May, June and July 2025 tickets excluded, and Cragsley Outfitters unmodified as the full-year baseline for comparison. Source tables: tickets, sla_breaches (breach_kind='resolution'). Order by resolution_breach_rate_after_exclusion descending. Round rate to 1 decimal percent, minutes to whole numbers. Goal: compare these adjusted rates directly against last week's full-year figures (Marrowby & Vane 39.4%, Studio Vrij 38.6%, Cragsley 29.8%) to see how much of the original gap survives once the known carrier incidents are removed.\", \"builds_on\": [\"Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley\", \"Staffing load vs. ticket complexity, top merchants benchmark\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

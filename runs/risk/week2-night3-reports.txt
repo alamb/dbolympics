@@ -1,0 +1,77 @@
+=== Report 1: Row counts by year for tables with pre-2023 timestamps (written by Ines) ===
+Engineer's note: One row per table and calendar year of its relevant timestamp (occurred_at for change_history/compliance_events, received_at for data_subject_requests), covering every year present in the data (including pre-2023) through 2025, so the analyst can see whether pre-2023 rows are a handful or a systematic share.
+REPORT: Row counts by year for tables with pre-2023 timestamps
+QUESTION: Are the pre-2023 dates in change_history, compliance_events, and data_subject_requests a handful of outlier rows, or a systematic chunk of data — given the warehouse's history is only supposed to start 2023-01-01?
+table_name            | year | row_count
+----------------------+------+----------
+change_history        | 2021 |         1
+change_history        | 2022 |         1
+change_history        | 2023 |      5535
+change_history        | 2024 |     12528
+change_history        | 2025 |     13034
+compliance_events     | 2021 |         1
+compliance_events     | 2023 |         2
+compliance_events     | 2024 |         1
+compliance_events     | 2025 |         5
+data_subject_requests | 2020 |         1
+data_subject_requests | 2021 |         4
+data_subject_requests | 2022 |         7
+data_subject_requests | 2023 |        10
+data_subject_requests | 2024 |        23
+data_subject_requests | 2025 |        15
+(15 rows)
+
+=== Report 2: February 2025 failed-login pattern diagnostics for the 3 affected merchants (written by Grace) ===
+Engineer's note: One row per tenant as requested, computed solely from login_attempts (succeeded=false, Feb 2025) for the three named tenants; distinct_calendar_days_with_failures is a raw count of days with at least one failure (out of the 28 in February), not a percentage.
+REPORT: February 2025 failed-login pattern diagnostics for the 3 affected merchants
+QUESTION: At the 3 merchants that drove the February 2025 spike, do the failed logins look automated/bot-like (concentrated in a narrow time window, few user agents) or more like a broad client-side bug (spread across the month, many different user agents)?
+tenant_name         | distinct_user_agents | top_user_agent_share_pct | distinct_calendar_days_with_failures | max_failed_attempts_single_day | pct_failed_attempts_in_top_3_days
+--------------------+----------------------+--------------------------+--------------------------------------+--------------------------------+----------------------------------
+Cragsley Outfitters |                   17 |                     25.4 |                                   21 |                           1091 |                              74.2
+Marrowby & Vane     |                   11 |                     25.7 |                                   11 |                            493 |                              74.6
+Studio Vrij         |                    8 |                     26.7 |                                    6 |                            196 |                              74.8
+(3 rows)
+
+=== Report 3: Quarterly failed-login rate history for the 3 Feb-2025-affected merchants (written by Bea) ===
+Engineer's note: Grain is tenant x quarter as requested (36 rows, 2023-Q1..2025-Q4), with zero-activity quarters shown as 0 rather than omitted; pct_failed is set to 0 (not null) when total_attempts is 0.
+REPORT: Quarterly failed-login rate history for the 3 Feb-2025-affected merchants
+QUESTION: For the 3 merchants behind the February 2025 spike, was that an isolated one-quarter event, or do they show a recurring pattern of elevated login failures over the full history?
+tenant_name         | quarter | total_attempts | failed_attempts | pct_failed
+--------------------+---------+----------------+-----------------+-----------
+Cragsley Outfitters | 2023-Q1 |           1231 |              72 |       5.85
+Cragsley Outfitters | 2023-Q2 |           1426 |              75 |       5.26
+Cragsley Outfitters | 2023-Q3 |           1503 |              80 |       5.32
+Cragsley Outfitters | 2023-Q4 |           2012 |              97 |       4.82
+Cragsley Outfitters | 2024-Q1 |           1815 |             101 |       5.56
+Cragsley Outfitters | 2024-Q2 |           2118 |             132 |       6.23
+Cragsley Outfitters | 2024-Q3 |           2213 |             119 |       5.38
+Cragsley Outfitters | 2024-Q4 |           2758 |             141 |       5.11
+Cragsley Outfitters | 2025-Q1 |           6609 |            4512 |      68.27
+Cragsley Outfitters | 2025-Q2 |           2418 |             132 |       5.46
+Cragsley Outfitters | 2025-Q3 |           2531 |             144 |       5.69
+Cragsley Outfitters | 2025-Q4 |           3353 |             199 |       5.93
+Marrowby & Vane     | 2023-Q1 |            598 |              29 |       4.85
+Marrowby & Vane     | 2023-Q2 |            653 |              35 |       5.36
+Marrowby & Vane     | 2023-Q3 |            726 |              44 |       6.06
+Marrowby & Vane     | 2023-Q4 |           1055 |              52 |       4.93
+Marrowby & Vane     | 2024-Q1 |            882 |              52 |        5.9
+Marrowby & Vane     | 2024-Q2 |            966 |              69 |       7.14
+Marrowby & Vane     | 2024-Q3 |           1041 |              62 |       5.96
+Marrowby & Vane     | 2024-Q4 |           1305 |              76 |       5.82
+Marrowby & Vane     | 2025-Q1 |           3127 |            2028 |      64.85
+Marrowby & Vane     | 2025-Q2 |           1191 |              70 |       5.88
+Marrowby & Vane     | 2025-Q3 |           1227 |              75 |       6.11
+Marrowby & Vane     | 2025-Q4 |           1646 |              86 |       5.22
+Studio Vrij         | 2023-Q1 |            343 |              25 |       7.29
+Studio Vrij         | 2023-Q2 |            355 |              20 |       5.63
+Studio Vrij         | 2023-Q3 |            388 |              21 |       5.41
+Studio Vrij         | 2023-Q4 |            454 |              24 |       5.29
+Studio Vrij         | 2024-Q1 |            389 |              28 |        7.2
+Studio Vrij         | 2024-Q2 |            402 |              28 |       6.97
+Studio Vrij         | 2024-Q3 |            415 |              14 |       3.37
+Studio Vrij         | 2024-Q4 |            564 |              26 |       4.61
+Studio Vrij         | 2025-Q1 |           1305 |             806 |      61.76
+Studio Vrij         | 2025-Q2 |            617 |              32 |       5.19
+Studio Vrij         | 2025-Q3 |            522 |              34 |       6.51
+Studio Vrij         | 2025-Q4 |            682 |              30 |        4.4
+(36 rows)

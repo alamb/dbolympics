@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Monthly revenue by source",
+    "--question",
+    "If we ask what revenue was in a given month from four different places (orders booked, payments captured, payouts settled, invoices paid), do we get the same answer, and how far apart are they?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Grace\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"calendar month, 2023-01 through 2025-12\", \"columns_requested\": [\"month\", \"orders_booked_revenue_eur\", \"payments_captured_eur\", \"payout_gross_eur\", \"invoice_paid_revenue_eur\", \"refunds_eur\", \"order_count\", \"payment_count\"], \"details\": \"Scope: all tenants combined, global totals. Time window: every calendar month from 2023-01 to 2025-12 (use calendar_days to ensure months with zero activity still appear). orders_booked_revenue_eur = sum of orders.grand_total for non-cancelled orders, grouped by month of placed_at, converted to EUR. payments_captured_eur = sum of payments.amount where status='captured', grouped by month of captured_at, converted to EUR. payout_gross_eur = sum of payouts.gross_amount, grouped by month of paid_at, converted to EUR. invoice_paid_revenue_eur = sum of invoices.total where status='paid', grouped by month of paid_at, converted to EUR. refunds_eur = sum of payment_refunds.amount where status='succeeded', grouped by month of processed_at, converted to EUR. order_count = count of non-cancelled orders placed that month. payment_count = count of captured payments that month. Currency conversion: for each row's native currency_code, convert to EUR using exchange_rates where base_code='EUR', quote_code=<currency>, as_of = the event's date (cast timestamp to date); EUR amount = local amount / rate. Tables: orders, payments, payouts, invoices, payment_refunds, exchange_rates. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

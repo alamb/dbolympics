@@ -1,0 +1,87 @@
+=== Report 1: Linking rejected erasure requests to active legal holds (written by Ines) ===
+Engineer's note: Join tries the exact tenant_id + subject_user_id match first; for any dsar row where subject_user_id is null it automatically falls back to tenant_id-only matching against legal_holds placed within 3 days of received_at, picking the closest-dated hold as the candidate (join_strategy column shows which path was used, or 'no match' if neither found a hold). Reason text truncated to 200 chars for page width.
+REPORT: Linking rejected erasure requests to active legal holds
+QUESTION: Do the 3 long-open 'rejected' data subject requests correspond to the same shopper and tenant as the 3 active legal holds for payment disputes?
+dsar_public_id                       | tenant_name          | dsar_subject_user_id | dsar_request_type | dsar_received_at | legal_hold_name           | legal_hold_subject_user_id | legal_hold_reason                        | legal_hold_is_active | legal_hold_placed_at | days_between | join_strategy        
+-------------------------------------+----------------------+----------------------+-------------------+------------------+---------------------------+----------------------------+------------------------------------------+----------------------+----------------------+--------------+----------------------
+0bd4ff3e-19c5-44d7-9288-04b73f44dccb | Marrowby & Vane      |                 1933 | erasure           | 2023-05-26       | Chargeback dispute 841484 |                       1933 | Payment dispute pending with the card ne | true                 | 2023-05-27           |            1 | subject_user_id match
+e5fcf055-b01f-479e-b995-34d0c5e3eb8c | Rue Lafayette Studio |                 5911 | erasure           | 2024-07-09       | Chargeback dispute 214867 |                       5911 | Payment dispute pending with the card ne | true                 | 2024-07-10           |            1 | subject_user_id match
+89c20516-5f50-4f0e-99c9-616fb24a9eaf | Cragsley Outfitters  |                 6446 | erasure           | 2025-03-21       | Chargeback dispute 206882 |                       6446 | Payment dispute pending with the card ne | true                 | 2025-03-22           |            1 | subject_user_id match
+(3 rows)
+
+=== Report 2: email_log actual retention vs. the stated 730-day delete policy (written by Bea) ===
+Engineer's note: Platform-wide monthly counts from email_log.created_at, Jan 2023–Dec 2025 (36 rows). "Days old" is measured from each month's start to 2026-01-05 as requested, so the flag is conservative (actual oldest/newest rows within a month could differ by up to ~30 days).
+REPORT: email_log actual retention vs. the stated 730-day delete policy
+QUESTION: Since email_log's retention policy is configured but inactive and has never run for any tenant, how much email data are we actually still holding well past the stated 730-day window?
+month   | emails_logged | days_old_as_of_2026_01_05 | exceeds_730_day_retention
+--------+---------------+---------------------------+--------------------------
+2023-01 |          1673 |                      1100 | Y                        
+2023-02 |          1906 |                      1069 | Y                        
+2023-03 |          2260 |                      1041 | Y                        
+2023-04 |          2338 |                      1010 | Y                        
+2023-05 |          2791 |                       980 | Y                        
+2023-06 |          2606 |                       949 | Y                        
+2023-07 |          2744 |                       919 | Y                        
+2023-08 |          2944 |                       888 | Y                        
+2023-09 |          3118 |                       857 | Y                        
+2023-10 |          3667 |                       827 | Y                        
+2023-11 |          5808 |                       796 | Y                        
+2023-12 |          5906 |                       766 | Y                        
+2024-01 |          4693 |                       735 | Y                        
+2024-02 |          3823 |                       704 | N                        
+2024-03 |          4042 |                       675 | N                        
+2024-04 |          4344 |                       644 | N                        
+2024-05 |          4691 |                       614 | N                        
+2024-06 |          4417 |                       583 | N                        
+2024-07 |          4846 |                       553 | N                        
+2024-08 |          4563 |                       522 | N                        
+2024-09 |          4674 |                       491 | N                        
+2024-10 |          5129 |                       461 | N                        
+2024-11 |          6713 |                       430 | N                        
+2024-12 |          9467 |                       400 | N                        
+2025-01 |          6387 |                       369 | N                        
+2025-02 |          4887 |                       338 | N                        
+2025-03 |          5597 |                       310 | N                        
+2025-04 |          5456 |                       279 | N                        
+2025-05 |          5715 |                       249 | N                        
+2025-06 |          5328 |                       218 | N                        
+2025-07 |          5749 |                       188 | N                        
+2025-08 |          5292 |                       157 | N                        
+2025-09 |          5919 |                       126 | N                        
+2025-10 |          6564 |                        96 | N                        
+2025-11 |          8047 |                        65 | N                        
+2025-12 |         11414 |                        35 | N                        
+(36 rows)
+
+=== Report 3: audit_log actual archiving vs. the stated 730-day archive policy (written by Ines) ===
+Engineer's note: Platform-wide (all tenants) monthly count of audit_log rows still in the live table, with age-from-month-start and the >730-day retention flag computed against the literal report date 2026-01-05. 36 rows (2023-01 through 2025-12).
+REPORT: audit_log actual archiving vs. the stated 730-day archive policy
+QUESTION: audit_log's retention policy looks healthy on paper (active, last run 2025-12-31) — but are rows older than 730 days actually leaving the live table as the 'archive' action implies?
+month   | rows_in_live_table | days_old_as_of_report_date | exceeds_730_day_retention
+--------+--------------------+----------------------------+--------------------------
+2023-12 |               3589 |                        766 | Y                        
+2024-01 |               3731 |                        735 | Y                        
+2024-02 |               8448 |                        704 | N                        
+2024-03 |               4067 |                        675 | N                        
+2024-04 |               3474 |                        644 | N                        
+2024-05 |               3688 |                        614 | N                        
+2024-06 |               3588 |                        583 | N                        
+2024-07 |               3991 |                        553 | N                        
+2024-08 |               4273 |                        522 | N                        
+2024-09 |               4000 |                        491 | N                        
+2024-10 |               4299 |                        461 | N                        
+2024-11 |               3824 |                        430 | N                        
+2024-12 |               4547 |                        400 | N                        
+2025-01 |               4187 |                        369 | N                        
+2025-02 |               8786 |                        338 | N                        
+2025-03 |               4543 |                        310 | N                        
+2025-04 |               4097 |                        279 | N                        
+2025-05 |               4486 |                        249 | N                        
+2025-06 |               3955 |                        218 | N                        
+2025-07 |               4525 |                        188 | N                        
+2025-08 |               4777 |                        157 | N                        
+2025-09 |               5030 |                        126 | N                        
+2025-10 |               4709 |                         96 | N                        
+2025-11 |               4446 |                         65 | N                        
+2025-12 |               4902 |                         35 | N                        
+(25 rows)

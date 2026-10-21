@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket load per agent over 2025, hotspot merchants vs a comparable peer",
+    "--question",
+    "Has the staffing gap at Cragsley, Marrowby, and Studio Vrij been widening over the course of 2025 (ticket volume outpacing agent headcount), or has it been consistently stretched all year?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per tenant and calendar quarter in 2025, for Cragsley Outfitters, Marrowby & Vane, Studio Vrij, and Grind Collective (the next-highest tickets-per-agent merchant, included as a comparison peer)\", \"columns_requested\": [\"merchant name\", \"quarter (2025-Q1..Q4)\", \"tickets created that quarter\", \"distinct agents who handled a ticket that quarter\", \"tickets per active agent that quarter\"], \"details\": \"Source: tickets joined to tenants, filtered to the four named tenants (Cragsley Outfitters, Marrowby & Vane, Studio Vrij, Grind Collective). Grain the quarter on tickets.created_at (2025-01-01 through 2025-12-31, 4 quarters). 'distinct agents who handled a ticket' = count distinct tickets.assignee_agent_id (excluding null) for that tenant/quarter. 'tickets per active agent' = tickets that quarter \\u00f7 distinct agents that quarter, rounded to 1 decimal (NULL if zero agents). Order by merchant name ascending, then quarter ascending. Expect exactly 16 rows (4 merchants \\u00d7 4 quarters).\", \"builds_on\": [\"Support agent staffing vs ticket volume, by merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

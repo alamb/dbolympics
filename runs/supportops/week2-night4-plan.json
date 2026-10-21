@@ -1,0 +1,55 @@
+{
+ "notes": "The picture is now very clear and it changes the recommendation completely. Report 1 shows Marrowby & Vane gets 51.6% of shipments from Albion Parcel — the exact carrier the COO team flagged as broken from November onward — while Report 2 shows Marrowby & Vane's delivery-tagged tickets were near-normal all year (240-1,196 min/ticket, Feb-Oct) until November (9,533 min, 61.8% breach) and December (19,274 min, 100% breach). That's a live, ongoing carrier failure, not a staffing gap. Studio Vrij tells a different story: its delivery-ticket resolution time exploded in May-July 2025 (8,528 / 29,549 / 8,763 minutes) and then fully recovered by September-December (83-680 minutes, 0% breach) — this matches almost exactly what the VP Customer Experience team posted last week about a merchant's 'local May 2025 delivery breakdown... not a platform-wide issue.' That was very likely Studio Vrij, and it's already over. Neither merchant looks like a 'hire more agents' case. Tonight I want to (1) pin the Albion Parcel collapse specifically to Marrowby & Vane's own shipments month-by-month to nail the mechanism and check if it's still ongoing, (2) find which of Studio Vrij's carriers caused the May-July spike and confirm it's genuinely resolved, and (3) run the clean controlled comparison Mia actually needs for a decision: strip the known incident months out of each tenant's numbers and see if what's left still looks worse than Cragsley's baseline, or whether the whole gap was the carrier event. On the knowledge-base question: the event_name inventory (Report 3) shows only 8 tracked events platform-wide — none related to viewing a help/KB article — so combined with last week's zero-match page_views test, I'm closing that question as 'not measurable with current instrumentation' rather than spending another slot guessing.",
+ "requests": [
+  {
+   "title": "Albion Parcel monthly on-time performance at Marrowby & Vane",
+   "question": "Did Albion Parcel's on-time performance at Marrowby & Vane specifically collapse in November-December 2025, and has it recovered by year end?",
+   "grain": "one row per month in 2025, for Marrowby & Vane shipments carried by Albion Parcel only",
+   "columns": [
+    "month_label (YYYY-MM)",
+    "shipment_count (shipped_at in that month)",
+    "avg_delivery_days",
+    "pct_delivered_within_3_days"
+   ],
+   "details": "Window: shipments.shipped_at between 2025-01-01 and 2025-12-31, restricted to tenant = Marrowby & Vane and carrier = 'Albion Parcel'. Source table: shipments. Compute avg_delivery_days and pct_delivered_within_3_days only over shipments with both shipped_at and delivered_at populated. Order by month_label ascending. Round avg_delivery_days to 1 decimal, pct to 1 decimal percent.",
+   "builds_on": [
+    "Carrier mix and on-time delivery performance, flagged merchants vs. Cragsley",
+    "Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley"
+   ]
+  },
+  {
+   "title": "Studio Vrij carrier performance by month, May-July focus",
+   "question": "Which of Studio Vrij's carriers caused the May-July 2025 delivery breakdown, and did its performance fully recover afterward?",
+   "grain": "one row per (carrier, month) in 2025, for Studio Vrij's two main carriers (Lowlands Express, Polder Post)",
+   "columns": [
+    "carrier",
+    "month_label (YYYY-MM)",
+    "shipment_count (shipped_at that month)",
+    "avg_delivery_days",
+    "pct_delivered_within_3_days"
+   ],
+   "details": "Window: shipments.shipped_at between 2025-01-01 and 2025-12-31, restricted to tenant = Studio Vrij and carrier in ('Lowlands Express', 'Polder Post'). Source table: shipments. Compute avg_delivery_days and pct_delivered_within_3_days only over shipments with both shipped_at and delivered_at populated. Order by carrier, then month_label ascending. Round avg_delivery_days to 1 decimal, pct to 1 decimal percent.",
+   "builds_on": [
+    "Carrier mix and on-time delivery performance, flagged merchants vs. Cragsley",
+    "Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley"
+   ]
+  },
+  {
+   "title": "Ticket performance with known carrier-incident months excluded",
+   "question": "Once we strip out the known carrier-incident months, do Marrowby & Vane and Studio Vrij still look worse than Cragsley Outfitters, or does that fully explain the gap?",
+   "grain": "one row per tenant: Marrowby & Vane (excluding Nov-Dec 2025), Studio Vrij (excluding May-Jul 2025), and Cragsley Outfitters (full year, as unadjusted baseline)",
+   "columns": [
+    "tenant_name",
+    "excluded_period (text description, 'None' for Cragsley)",
+    "ticket_count_after_exclusion",
+    "avg_resolution_minutes_after_exclusion",
+    "resolution_breach_rate_after_exclusion"
+   ],
+   "details": "Window: tickets.created_at in 2025, restricted to the three named tenants, across ALL topics/tags (not just delivery), with Marrowby & Vane's November and December 2025 tickets excluded, Studio Vrij's May, June and July 2025 tickets excluded, and Cragsley Outfitters unmodified as the full-year baseline for comparison. Source tables: tickets, sla_breaches (breach_kind='resolution'). Order by resolution_breach_rate_after_exclusion descending. Round rate to 1 decimal percent, minutes to whole numbers. Goal: compare these adjusted rates directly against last week's full-year figures (Marrowby & Vane 39.4%, Studio Vrij 38.6%, Cragsley 29.8%) to see how much of the original gap survives once the known carrier incidents are removed.",
+   "builds_on": [
+    "Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley",
+    "Staffing load vs. ticket complexity, top merchants benchmark"
+   ]
+  }
+ ]
+}

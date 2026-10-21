@@ -1,0 +1,17 @@
+{
+ "calls": 675,
+ "turns": 1761,
+ "tokens": {
+  "input_tokens": 3072,
+  "cache_creation_input_tokens": 17542632,
+  "cache_read_input_tokens": 76333530,
+  "output_tokens": 3310313
+ },
+ "api_equivalent_usd": 119.18,
+ "seconds": 21648.1,
+ "failed_tracks": [],
+ "reports": {
+  "ok": 409,
+  "failed": 2
+ }
+}

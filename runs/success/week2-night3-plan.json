@@ -1,0 +1,55 @@
+{
+ "notes": "Last night's result: only 9 merchants are formally 'churned', and they are all tiny (1-11 orders in their final quarter, many with zero prior-period history) - these look like accounts that never gained traction rather than established businesses declining, so there isn't much of a \"warning sign\" trend to extract from them, and ticket/refund signals are mostly flat at zero. To give the task force something more useful, tonight I broaden the net to substantial merchants who have gone quiet without being flagged 'churned' (silent churn), and start on the shopper-level asks from Chloe and Daniel: does marketing disengagement or worse support precede a shopper going quiet. These are both new, independent questions at a different grain, so each gets its own report.",
+ "requests": [
+  {
+   "title": "Silent-churn merchants: substantial accounts gone quiet without a churned flag",
+   "question": "Beyond the 9 formally churned merchants, which substantial merchants have gone quiet without yet being flagged as churned?",
+   "grain": "one row per merchant (tenant), status not churned, no orders in 180+ days, lifetime orders at least 20",
+   "columns": [
+    "merchant name",
+    "industry",
+    "status",
+    "last order date",
+    "days since last order",
+    "lifetime orders",
+    "lifetime revenue EUR"
+   ],
+   "details": "Tenants with status not equal to churned. From orders (excluding cancelled): last order date is max placed_at; include only tenants whose last order date is before 2025-07-09 (180+ days before 2026-01-05) and whose lifetime order count is at least 20. lifetime revenue EUR is sum of grand_total converted to EUR via exchange_rates matched to placed_at. days since last order is 2026-01-05 minus last order date. Order by lifetime revenue EUR descending, tie-break tenant_id. Cap 50 rows, note total count.",
+   "builds_on": [
+    "Pre-churn warning signs across sales, repeat buying, refunds, and support tickets"
+   ]
+  },
+  {
+   "title": "Marketing engagement before shoppers go quiet: lapsed vs active shoppers",
+   "question": "Do shoppers who stop engaging with campaigns go quiet sooner, and does disengagement show up before they lapse?",
+   "grain": "one row per shopper group and time window before reference date",
+   "columns": [
+    "shopper group",
+    "window before reference",
+    "shopper count",
+    "messages sent",
+    "messages opened",
+    "open rate pct",
+    "messages clicked",
+    "click rate pct"
+   ],
+   "details": "Two groups, each needing at least 3 lifetime orders excluding cancelled: 'lapsed' = last order placed_at 180 to 365 days before 2025-12-31; 'active' = last order within 90 days of 2025-12-31. Reference date is the user's own last order date for lapsed, and 2025-12-31 for active. Two windows per group: '0-90 days before reference' and '91-180 days before reference'. From campaign_messages (sent_at, opened_at, clicked_at) count sent, opened, clicked per group/window; open rate pct is opened divided by sent; click rate pct is clicked divided by sent; shopper count is distinct users in that window. Order by shopper group, then window ascending. Expect 4 rows.",
+   "builds_on": []
+  },
+  {
+   "title": "Support experience before shoppers go quiet: lapsed vs active shoppers",
+   "question": "Do shoppers who get slower or worse support go quiet sooner, and does that show up before they lapse?",
+   "grain": "one row per shopper group and time window before reference date",
+   "columns": [
+    "shopper group",
+    "window before reference",
+    "shopper count",
+    "tickets",
+    "avg first response hours",
+    "avg csat score"
+   ],
+   "details": "Same two groups and windows as the marketing-engagement report: 'lapsed' (last order 180-365 days before 2025-12-31) vs 'active' (last order within 90 days), reference date is last order date for lapsed and 2025-12-31 for active, windows '0-90 days before reference' and '91-180 days before reference'. From tickets (created_at, first_response_at, requester_user_id) count tickets and avg first response hours per group/window; from csat_responses (submitted_at, score, respondent_user_id) avg score per group/window. Order by shopper group, then window ascending. Expect 4 rows.",
+   "builds_on": []
+  }
+ ]
+}

@@ -1,0 +1,57 @@
+{
+ "notes": "Key read from last night: no merchant with 20+ lifetime orders has gone silent for 180+ days (0 rows) - established merchants aren't quietly churning, narrowing real merchant churn to the 9 small/new accounts already found. Marketing engagement barely differs between shoppers who later lapse and those who stay active, and support response times before a lapse track the same general degradation active shoppers also saw (likely the holiday ticket surge other teams flagged) rather than a lapse-specific pattern - both look like weak signals so far. Tonight (last night): (A) loosen the silent-churn threshold to check for a softer \"slowing down\" tier among established merchants, (B) test the refund-friction hypothesis directly, and (C) finally deliver the deferred top-15 support/CSAT read.",
+ "requests": [
+  {
+   "title": "Merchants slowing down: order-gap distribution among established merchants",
+   "question": "Among established merchants (not formally churned), how long since their last order, and were they already slowing down before going quiet?",
+   "grain": "one row per merchant (tenant) with lifetime orders at least 20 and status not churned",
+   "columns": [
+    "merchant name",
+    "industry",
+    "status",
+    "last order date",
+    "days since last order",
+    "lifetime orders",
+    "orders in 90 days before last order",
+    "orders in 90 days before that"
+   ],
+   "details": "From orders (excluding cancelled): last order date is max placed_at per tenant; lifetime orders is total count. Restrict to tenants with lifetime orders at least 20 and status not equal to churned. days since last order is 2026-01-05 minus last order date. Also compute orders in the 90 days ending at the last order date, and orders in the 90 days before that, to show the trend into their most recent activity. Order by days since last order descending, tie-break tenant_id ascending. Cap 50 rows, note total count.",
+   "builds_on": [
+    "Silent-churn merchants: substantial accounts gone quiet without a churned flag"
+   ]
+  },
+  {
+   "title": "Refund friction and what follows: fast vs slow refunds",
+   "question": "Where refunds take longer to process, do shoppers rate us worse and come back less often afterward?",
+   "grain": "one row per refund-speed group (fast: processed within 7 days; slow: more than 7 days)",
+   "columns": [
+    "group",
+    "refund count",
+    "avg processing days",
+    "pct with another order within 90 days after",
+    "avg csat score within 30 days after"
+   ],
+   "details": "From payment_refunds (status equal to succeeded, created_at, processed_at), joined via payments to orders to get user_id. processing days is processed_at minus created_at; group is fast if 7 or fewer days, slow if more. pct with another order within 90 days after is the share of refund events where that user placed another order (excluding cancelled) with placed_at between processed_at and processed_at plus 90 days. avg csat score within 30 days after is the average csat_responses.score where submitted_at is between processed_at and processed_at plus 30 days for that user. Order by group. Expect 2 rows.",
+   "builds_on": []
+  },
+  {
+   "title": "Support experience for our top 15 merchants, and whether it tracks with CSAT",
+   "question": "How much support volume do our top merchants generate, how fast is our response, and does that show up in their CSAT?",
+   "grain": "one row per merchant (tenant), limited to the top 15 by last-90-day revenue",
+   "columns": [
+    "merchant name",
+    "industry",
+    "tickets last 90 days",
+    "tickets per 100 orders",
+    "avg first response hours",
+    "avg resolution hours",
+    "csat avg score",
+    "csat response count"
+   ],
+   "details": "Top 15 ranked by last-90-day gross revenue EUR from orders (placed_at Oct 3 through Dec 31 2025, excluding cancelled, converted to EUR via exchange_rates), matching the earlier size and trend report's definition. For those tenants, from tickets (created_at in the same window): ticket count, avg first response hours (first_response_at minus created_at), avg resolution hours (resolved_at minus created_at); tickets per 100 orders is ticket count divided by the tenant's order count in the window, times 100; from csat_responses (submitted_at in the same window): avg score and response count. Order by tickets last 90 days descending, tie-break tenant_id ascending. Cap 50 rows (expect 15).",
+   "builds_on": [
+    "Merchant size and recent growth trend"
+   ]
+  }
+ ]
+}

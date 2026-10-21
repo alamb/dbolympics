@@ -1,0 +1,64 @@
+{
+ "notes": "Two good resolutions from last night: the data_exports status audit shows all 11 exports have completed_at AND file_url populated — they did fulfill, they're just labeled 'expired' because the download link's retention window has since passed, so I'm closing out the \"did access requests actually deliver data\" concern. The pre-2023 DSAR rows show created_at exactly equal to received_at for all 12 — that's the opposite of what I'd expect from a deliberate migration backfill (where insertion would postdate the original event), so I can't confidently call this \"verified legitimate backfill\"; I'm flagging it as an open inconsistency with the documented 2023-01-01 history start that needs an answer from engineering, not more SQL from me. The legal-hold evidence (report 3) is useful but indirect: 2 of 3 accounts already show a partial refund 6–12 months ago with zero ticket activity since, suggesting the disputes may already be effectively resolved while the hold was never released — worth flagging to Ines as \"likely stale, recommend review,\" with the caveat that I matched by \"most recent payment for that user,\" not a guaranteed link to the specific disputed payment. With priorities 1, 2, and 4 now substantially covered, tonight I'm moving to the untouched items: priority 3 (consent reliability — is the analytics_cookies anomaly isolated or systemic?) and Henrik's two unaddressed security asks (what persists in sessions/logins/access_log after erasure; do we actually stop marketing to someone who withdrew consent). Henrik's third ask (closure time for security-data requests) still has no clean way to tag which DSARs touch security data, so I'm deferring it to the final night or flagging it as not currently answerable.",
+ "requests": [
+  {
+   "title": "Consent purpose audit: full history and the analytics_cookies anomaly",
+   "question": "Across the full history, how many consent purposes do we actually track, and is the analytics_cookies 'always 100% opted in, zero withdrawals' pattern unique or does it appear elsewhere?",
+   "grain": "one row per distinct consent_records.purpose value, full history, no date filter",
+   "columns": [
+    "purpose",
+    "total records",
+    "distinct users",
+    "granted count",
+    "withdrawn count",
+    "expired count",
+    "pct of distinct users with at least one withdrawn or expired record ever",
+    "earliest occurred_at",
+    "latest occurred_at"
+   ],
+   "details": "Source: consent_records, platform-wide, full history (not restricted to 2023-2025, in case any purpose has pre-2023 rows similar to what we just found in data_subject_requests). Group by purpose. This confirms whether there are really only 2 purposes in the system (as the row counts implied last week) and gives a definitive, auditable answer on whether 'never withdrawn' is isolated to analytics_cookies or a broader pattern that would undermine describing our consent capture as reliable to a regulator. Order by total records descending.",
+   "builds_on": [
+    "Consent trend by purpose and month: grants, withdrawals, and net opt-in rate"
+   ]
+  },
+  {
+   "title": "Post-erasure data footprint: what remains in sessions, logins, and access log",
+   "question": "After a data subject's erasure request is completed, what login/session and access-log history still remains, and for how long?",
+   "grain": "one row per completed erasure request (request_type='erasure', status='completed')",
+   "columns": [
+    "dsar public_id",
+    "tenant name",
+    "subject_user_id",
+    "completed_at (date)",
+    "days since completed",
+    "sessions remaining (count where sessions.user_id = subject_user_id)",
+    "most recent session started_at",
+    "login_attempts remaining (count where login_attempts.user_id = subject_user_id)",
+    "most recent login_attempts occurred_at",
+    "access_log rows remaining (count where access_log.actor_user_id = subject_user_id)",
+    "most recent access_log occurred_at"
+   ],
+   "details": "Source: data_subject_requests filtered to request_type='erasure' AND status='completed' (expect 39 rows per Monday's reconciliation report), left-joined to sessions, login_attempts, and access_log on the subject's user_id. This is the direct evidence Henrik asked for: whether 'erasure' actually clears authentication/access history or whether it lingers indefinitely. Platform-wide, full history. Order by completed_at ascending (oldest erasures first, since those have had the most time for any retention process to clear them).",
+   "builds_on": [
+    "Pre-2023 data subject requests: backfill or data quality issue?"
+   ]
+  },
+  {
+   "title": "Post-withdrawal marketing suppression check",
+   "question": "When a shopper withdraws marketing_email consent, do we actually stop sending them marketing campaign emails, or does sending continue after withdrawal?",
+   "grain": "single summary row across all users with an effective withdrawn marketing_email consent as of 2026-01-05 (i.e. their most recent consent_records row for purpose='marketing_email' has status='withdrawn', with no later 'granted' row)",
+   "columns": [
+    "users with effective withdrawal as of today (count)",
+    "of those, users who received at least 1 campaign_messages send after their withdrawal date (count)",
+    "pct of withdrawn users contacted after withdrawal",
+    "total post-withdrawal sends across all such users (count)",
+    "max days between withdrawal and a post-withdrawal send (worst case observed)",
+    "most recent post-withdrawal send date observed"
+   ],
+   "details": "Source: consent_records (window function per user to find the latest marketing_email row, filtered to status='withdrawn') joined to campaign_messages on user_id, counting sends where campaign_messages.sent_at (or created_at if sent_at is null) is after the withdrawal's occurred_at. Platform-wide, full history. This is a single aggregate row by design — the underlying population of withdrawn users is in the thousands (per last week's consent trend), so a per-user listing would blow past the row cap; we need the magnitude and worst case, not a row-by-row listing. If the 'contacted after withdrawal' count is non-trivial, that's evidence we don't suppress sends promptly.",
+   "builds_on": [
+    "Marketing-email consent opt-in trend, full history"
+   ]
+  }
+ ]
+}

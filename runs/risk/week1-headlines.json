@@ -1,0 +1,5 @@
+[
+ "Access control: we can show who has access today, but we found zero audit records of role/permission changes over 3 years — so we can't yet prove when access was granted or revoked.",
+ "Data privacy requests: all healthy — ~48 requests since 2023, with a consistent 30-day response window and no real backlog.",
+ "Login security: one sharp anomaly — in Feb 2025, 61% of login attempts failed (7,429 of 12,211), a 10x jump from the normal ~6% baseline, and it wasn't flagged by our suspicious-access alerts at the time."
+]

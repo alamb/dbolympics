@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Payout Reconciliation by Currency (Local vs EUR-Converted)",
+    "--question",
+    "Is the 2025 monthly fee-revenue trend understating totals because some currencies/dates fail to match an exchange rate, causing payouts to be dropped from the EUR-converted total?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one payout currency_code, for 2025\", \"columns_requested\": [\"currency_code\", \"payout_count\", \"gross_volume_local_sum (sum of gross_amount in that currency, unconverted)\", \"gross_volume_eur (converted)\", \"fee_revenue_eur (converted)\", \"payout_count_with_matched_fx_rate\", \"payout_count_missing_fx_rate\", \"avg_eur_rate_used\"], \"details\": \"Source: payouts, filtered to status IN ('paid','completed') and paid_at in calendar year 2025. For each payout, LEFT JOIN exchange_rates on base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at) (treat currency_code='EUR' as rate=1 with no join needed). Do NOT inner-join or filter out unmatched rows \\u2014 keep every payout, and count how many per currency found a matching exchange_rate row vs how many did not (gross_volume_eur/fee_revenue_eur should reflect only the matched rows so the gap vs Night 1's Report 1 total becomes visible per currency). Group by currency_code. Order by payout_count descending, tie-break currency_code ascending.\", \"builds_on\": [\"Tidewick Processing Fee Revenue by Month, 2025\", \"Top Merchants by 2025 Gross Payment Volume and Fee Revenue\", \"Merchant Concentration Trend: 2024 vs 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

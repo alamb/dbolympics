@@ -1,0 +1,65 @@
+{
+ "notes": "Night 2 sharpened three things:\n\n1. Report 1 confirmed 'Subscription delivery (prepaid)' orders are 100%-discounted (subtotal = discount_total exactly, shipping/tax = 0) — so it's not a data artifact, it's a deliberate full comp. But only 54-100% of these free orders overlap an active subscription (as low as 53.8% at Feather & Fin, 60.5% at Saffron & Sage). That means a meaningful share of \"free delivery\" orders have no active subscription on record at the time — either lapsed subscribers still getting shipped, or a real leakage pattern. This is squarely Tobias's \"cost we haven't fully absorbed\" question and needs a direct look before I call it fine.\n\n2. Report 2 came back with zero rows: no coupon in the warehouse has usage_limit or per_customer_limit set at all. That's a clean, if surprising, answer — there is no configured cap anywhere, so \"breach\" isn't the right abuse framing; the right framing is simply uncapped repeat use (which night 1's report already quantified). I'm treating this as settled and won't spend another slot re-asking it.\n\n3. Report 3's \"lift\" is confounded: it compares post-discount grand_total, so a percentage-off code mechanically shows a lower total even with an identical basket — that's why seasonal Sales show \"negative lift\" and Volume-tier discounts (which only trigger on already-large orders) show absurd 300-1000%+ \"lift.\" I need to redo this on pre-discount subtotal (basket size) and keep structural volume-tier discounts separate from true marketing codes, or the read is misleading.\n\nTonight's 3 reports: (A) drill into the subscription-delivery orders with no overlapping active subscription — concentration and whether it traces to lapsed subs or true giveaways; (B) a corrected incrementality read on true marketing discounts using pre-discount subtotal; (C) the still-untouched margin question — do discounted orders return/refund at a higher rate than baseline, eating further into margin. This covers the open pieces of Marco's and Tobias's questions before Thursday's sync.",
+ "requests": [
+  {
+   "title": "Subscription-delivery discount orders with no overlapping active subscription",
+   "question": "Among the fully-comped 'Subscription delivery (prepaid)' orders, are the ones with no active subscription at the time concentrated in a few customers, or traceable to subscriptions that had just lapsed — or are they true unexplained giveaways?",
+   "grain": "one row per tenant, restricted to 'Subscription delivery (prepaid)' discount orders in 2025 that have NO overlapping subscription with status in ('trialing','active','past_due')",
+   "columns": [
+    "tenant name",
+    "orphan order count (no active subscription overlap)",
+    "orphan order count as % of all this discount's orders for the tenant",
+    "distinct customers among orphan orders",
+    "max orphan orders by a single customer",
+    "% of orphan customers whose most recent subscription has status 'canceled' and ended within 30 days before the order (lapsed-subscriber explanation)",
+    "% of orphan customers with no subscription record at all for this tenant (no explanation)",
+    "total discount amount on orphan orders (EUR)"
+   ],
+   "details": "Source: order_discounts + discounts (name = 'Subscription delivery (prepaid)') + orders (placed_at in 2025-01-01 to 2025-12-31, status != 'cancelled', user_id, tenant_id) + tenants. For each such order, determine subscription overlap via subscriptions (same user_id, tenant_id) where started_at <= placed_at and (ended_at is null or ended_at >= placed_at) and status in ('trialing','active','past_due'); orders with no such matching subscription are 'orphan'. For orphan orders, also check each customer's most recent subscription record (by started_at) regardless of status to classify as 'lapsed within 30 days' (status='canceled' and ended_at is not null and ended_at between placed_at - interval 30 days and placed_at) vs 'no subscription record at all'. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by orphan order count descending, tenant name as tie-break. Print all tenants (expect ~8, matching the prior report).",
+   "builds_on": [
+    "Order economics behind the 'Subscription delivery (prepaid)' discount"
+   ]
+  },
+  {
+   "title": "Corrected incrementality read: pre-discount basket size on top marketing discounts, 2025",
+   "question": "Using basket size before the discount is applied (subtotal), do customers actually buy bigger baskets when using our top marketing discount codes, or was the earlier post-discount comparison just showing the mechanical effect of the discount itself?",
+   "grain": "one row per discount (discounts.id), restricted to the top marketing-type discounts by 2025 spend: 'Welcome 10% off', 'Black Friday 2025' (all coupon variants), 'January Sale 2025', 'Summer Sale 2025' — explicitly excluding 'Subscription delivery (prepaid)' and 'Volume tier 10+/50+' (those are a prepaid billing artifact and a structural large-order discount respectively, not marketing incentives)",
+   "columns": [
+    "discount name",
+    "coupon code (or 'automatic')",
+    "discounted order count",
+    "distinct customers",
+    "avg order subtotal on discounted orders, pre-discount (EUR)",
+    "avg order subtotal on the same customers' other non-discounted 2025 orders (EUR)",
+    "subtotal lift (EUR)",
+    "subtotal lift (%)",
+    "% of these customers who placed at least one other order in 2025 with no discount applied"
+   ],
+   "details": "Source: order_discounts + discounts (filtered to the named discounts above) + orders (subtotal, currency_code, placed_at, status != 'cancelled', user_id, tenant_id) for the discounted side; for the comparison side, same customers' (user_id, tenant_id) other 2025 orders with no row in order_discounts, averaging orders.subtotal. Convert to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Use the same set of up to 15 discount rows (by discount_amount_eur) identified in the prior lift report, minus Volume tier and Subscription delivery, so results are directly comparable to that earlier (flawed) pass. Order by subtotal lift (%) ascending, discount name as tie-break. Note how many customers had no comparison orders available.",
+   "builds_on": [
+    "Within-customer order value lift on top discount codes, 2025"
+   ]
+  },
+  {
+   "title": "Return and refund rates on discounted orders vs. baseline, 2025",
+   "question": "Do orders placed under our top discounts return or get refunded at a higher rate than normal, meaning the real cost is higher than the discount line alone suggests?",
+   "grain": "one row per discount (discounts.id), same top-15 discount set used in the lift analyses (by 2025 discount_amount_eur, including Volume tier, excluding Subscription delivery since those orders have no revenue to erode)",
+   "columns": [
+    "discount name",
+    "coupon code (or 'automatic')",
+    "order count",
+    "orders with an RMA opened (order_returns exists, any status)",
+    "return rate (%)",
+    "total refunded amount, status='refunded' (EUR)",
+    "refund amount as % of this discount's total cost",
+    "baseline return rate for the same tenant's other 2025 orders with no discount (%)",
+    "return rate lift (percentage points, discount minus baseline)"
+   ],
+   "details": "Source: order_discounts + discounts (restricted to the 15 discounts) + orders (status != 'cancelled', placed_at in 2025, tenant_id, user_id) + order_returns (order_id, status, refund_total, currency_code, refunded_at) for the discounted side. For baseline, same tenant's other 2025 orders with no row in order_discounts, same return-rate calculation. Convert refund_total to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=refunded_at date, or placed_at if refunded_at is null). 'Refund amount as % of this discount's total cost' = total refunded EUR / discount_amount_eur for that discount (from the night-1 ranking) * 100. Order by return rate lift (percentage points) descending, discount name as tie-break. Note total row count (expect up to 15).",
+   "builds_on": [
+    "Discount cost vs. order volume/revenue by discount, 2025",
+    "Within-customer order value lift on top discount codes, 2025"
+   ]
+  }
+ ]
+}

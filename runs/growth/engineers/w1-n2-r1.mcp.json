@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Direct traffic concentration by merchant",
+    "--question",
+    "Is the dominant 'direct/none' traffic channel spread evenly across merchants, or concentrated in a handful of them?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per tenant\", \"columns_requested\": [\"tenant_name - tenants.name\", \"total_sessions_2025 - count of web_sessions for that tenant with started_at in 2025\", \"direct_sessions_2025 - count of those sessions where utm_source is null/blank\", \"direct_share_of_tenant_pct - direct_sessions_2025 / total_sessions_2025 * 100, rounded to 1 decimal\", \"pct_of_platform_direct_sessions - direct_sessions_2025 / (sum of direct_sessions_2025 across all tenants) * 100, rounded to 1 decimal\"], \"details\": \"Source: web_sessions joined to tenants on tenant_id. Filter started_at between 2025-01-01 and 2025-12-31. 'direct/none' = utm_source is null or trimmed empty string. Compute per-tenant totals and the platform-wide direct total as a window/subquery for the share column. Order by direct_sessions_2025 descending, tie-break by tenant_name ascending, limit to top 15 tenants. This tests whether report 1's 57%-direct / +26% YoY finding is a concentration effect from a few large merchants.\", \"builds_on\": [\"Website traffic channel mix, 2025 vs 2024\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

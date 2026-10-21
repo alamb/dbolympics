@@ -1,0 +1,5 @@
+[
+ "Audit prep: we traced sample transactions end-to-end (shopper payment → refund → merchant payout → our fee) and the bookkeeping holds up — ledger revenue matches payment records within ±2% per quarter once tax is accounted for correctly.",
+ "Found a short list of 54 bank-transfer payments (out of ~21,000 checked) with unexplained ledger mismatches — small in number, largest is €9,200 — flagged for manual review before the external audit starts in 2 weeks.",
+ "Why our refund totals look different depending on the report: ~79% of refunds happen in the same quarter as the purchase, but 20% land in the next quarter — it's a timing difference between two valid ways of counting, not missing or double-counted money."
+]

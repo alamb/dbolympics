@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Existing customer/audience definitions already in use",
+    "--question",
+    "Do any marketing segments or analytics cohorts already encode a definition like 'customers who purchased recently' or 'all customers', so we can certify a customer count the business already uses rather than inventing a new one?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Viktor\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"named audience definition (one row per segment or cohort)\", \"columns_requested\": [\"source\", \"tenant_name\", \"name\", \"is_dynamic\", \"member_count\", \"rules_definition\", \"last_updated\"], \"details\": \"Population: all rows from the 'segments' table (marketing module) UNION ALL all rows from the 'cohorts' table (analytics module), across all tenants. source = literal 'segment' or 'cohort' depending on origin table. tenant_name = joined from tenants. name = segments.name or cohorts.name. is_dynamic = the respective is_dynamic boolean column. member_count = the respective member_count column. rules_definition = the rules (segments) or definition (cohorts) json column, cast to text (truncate to a reasonable length, e.g. 500 characters, if needed for display). last_updated = segments.last_refreshed_at or cohorts.computed_at. Order by member_count descending, limited to the top 50 rows by member_count.\", \"builds_on\": [\"Customer headcount by definition\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

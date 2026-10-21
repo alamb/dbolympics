@@ -1,0 +1,3336 @@
+{
+ "countries": [
+  {
+   "iso2": "GB",
+   "iso3": "GBR",
+   "name": "United Kingdom",
+   "phone_code": "+44",
+   "continent": "Europe",
+   "currency": "GBP",
+   "vat": [
+    {
+     "from": "2011-01-04",
+     "rate": 20.0
+    }
+   ],
+   "timezone": "Europe/London",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 1.0,
+   "regions": [
+    {
+     "code": "ENG-LND",
+     "name": "Greater London",
+     "cities": [
+      {
+       "name": "London",
+       "lat": 51.507,
+       "lon": -0.128,
+       "postal": "E# #@@|E## #@@|N# #@@|N## #@@|NW# #@@|SE## #@@|SW## #@@|W# #@@|W## #@@|EC#@ #@@|WC#@ #@@"
+      },
+      {
+       "name": "Croydon",
+       "lat": 51.372,
+       "lon": -0.1,
+       "postal": "CR# #@@"
+      },
+      {
+       "name": "Bromley",
+       "lat": 51.406,
+       "lon": 0.015,
+       "postal": "BR# #@@"
+      }
+     ]
+    },
+    {
+     "code": "ENG-NW",
+     "name": "North West England",
+     "cities": [
+      {
+       "name": "Manchester",
+       "lat": 53.481,
+       "lon": -2.243,
+       "postal": "M## #@@"
+      },
+      {
+       "name": "Liverpool",
+       "lat": 53.408,
+       "lon": -2.991,
+       "postal": "L## #@@"
+      },
+      {
+       "name": "Preston",
+       "lat": 53.763,
+       "lon": -2.703,
+       "postal": "PR# #@@"
+      }
+     ]
+    },
+    {
+     "code": "ENG-WM",
+     "name": "West Midlands",
+     "cities": [
+      {
+       "name": "Birmingham",
+       "lat": 52.486,
+       "lon": -1.89,
+       "postal": "B## #@@"
+      },
+      {
+       "name": "Coventry",
+       "lat": 52.407,
+       "lon": -1.51,
+       "postal": "CV# #@@"
+      }
+     ]
+    },
+    {
+     "code": "ENG-YH",
+     "name": "Yorkshire and the Humber",
+     "cities": [
+      {
+       "name": "Leeds",
+       "lat": 53.801,
+       "lon": -1.548,
+       "postal": "LS# #@@"
+      },
+      {
+       "name": "Sheffield",
+       "lat": 53.381,
+       "lon": -1.47,
+       "postal": "S## #@@"
+      },
+      {
+       "name": "York",
+       "lat": 53.96,
+       "lon": -1.087,
+       "postal": "YO## #@@"
+      }
+     ]
+    },
+    {
+     "code": "ENG-SE",
+     "name": "South East England",
+     "cities": [
+      {
+       "name": "Brighton",
+       "lat": 50.823,
+       "lon": -0.137,
+       "postal": "BN# #@@"
+      },
+      {
+       "name": "Oxford",
+       "lat": 51.752,
+       "lon": -1.258,
+       "postal": "OX# #@@"
+      },
+      {
+       "name": "Reading",
+       "lat": 51.454,
+       "lon": -0.978,
+       "postal": "RG# #@@"
+      }
+     ]
+    },
+    {
+     "code": "ENG-SW",
+     "name": "South West England",
+     "cities": [
+      {
+       "name": "Bristol",
+       "lat": 51.455,
+       "lon": -2.588,
+       "postal": "BS# #@@"
+      },
+      {
+       "name": "Exeter",
+       "lat": 50.718,
+       "lon": -3.534,
+       "postal": "EX# #@@"
+      }
+     ]
+    },
+    {
+     "code": "ENG-E",
+     "name": "East of England",
+     "cities": [
+      {
+       "name": "Cambridge",
+       "lat": 52.205,
+       "lon": 0.122,
+       "postal": "CB# #@@"
+      },
+      {
+       "name": "Norwich",
+       "lat": 52.63,
+       "lon": 1.297,
+       "postal": "NR# #@@"
+      }
+     ]
+    },
+    {
+     "code": "ENG-NE",
+     "name": "North East England",
+     "cities": [
+      {
+       "name": "Newcastle upon Tyne",
+       "lat": 54.978,
+       "lon": -1.618,
+       "postal": "NE# #@@"
+      }
+     ]
+    },
+    {
+     "code": "ENG-EM",
+     "name": "East Midlands",
+     "cities": [
+      {
+       "name": "Nottingham",
+       "lat": 52.954,
+       "lon": -1.158,
+       "postal": "NG# #@@"
+      },
+      {
+       "name": "Leicester",
+       "lat": 52.637,
+       "lon": -1.14,
+       "postal": "LE# #@@"
+      }
+     ]
+    },
+    {
+     "code": "SCT",
+     "name": "Scotland",
+     "cities": [
+      {
+       "name": "Edinburgh",
+       "lat": 55.953,
+       "lon": -3.189,
+       "postal": "EH## #@@"
+      },
+      {
+       "name": "Glasgow",
+       "lat": 55.864,
+       "lon": -4.252,
+       "postal": "G## #@@"
+      },
+      {
+       "name": "Aberdeen",
+       "lat": 57.15,
+       "lon": -2.094,
+       "postal": "AB## #@@"
+      }
+     ]
+    },
+    {
+     "code": "WLS",
+     "name": "Wales",
+     "cities": [
+      {
+       "name": "Cardiff",
+       "lat": 51.481,
+       "lon": -3.179,
+       "postal": "CF## #@@"
+      },
+      {
+       "name": "Swansea",
+       "lat": 51.621,
+       "lon": -3.944,
+       "postal": "SA# #@@"
+      }
+     ]
+    },
+    {
+     "code": "NIR",
+     "name": "Northern Ireland",
+     "cities": [
+      {
+       "name": "Belfast",
+       "lat": 54.597,
+       "lon": -5.93,
+       "postal": "BT# #@@"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "IE",
+   "iso3": "IRL",
+   "name": "Ireland",
+   "phone_code": "+353",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2021-03-01",
+     "rate": 23.0
+    }
+   ],
+   "timezone": "Europe/Dublin",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 2.0,
+   "regions": [
+    {
+     "code": "D",
+     "name": "Dublin",
+     "cities": [
+      {
+       "name": "Dublin",
+       "lat": 53.35,
+       "lon": -6.26,
+       "postal": "D## @@##"
+      }
+     ]
+    },
+    {
+     "code": "C",
+     "name": "Cork",
+     "cities": [
+      {
+       "name": "Cork",
+       "lat": 51.899,
+       "lon": -8.475,
+       "postal": "T## @@##"
+      }
+     ]
+    },
+    {
+     "code": "G",
+     "name": "Galway",
+     "cities": [
+      {
+       "name": "Galway",
+       "lat": 53.271,
+       "lon": -9.057,
+       "postal": "H## @@##"
+      }
+     ]
+    },
+    {
+     "code": "L",
+     "name": "Limerick",
+     "cities": [
+      {
+       "name": "Limerick",
+       "lat": 52.668,
+       "lon": -8.63,
+       "postal": "V## @@##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "NL",
+   "iso3": "NLD",
+   "name": "Netherlands",
+   "phone_code": "+31",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2012-10-01",
+     "rate": 21.0
+    }
+   ],
+   "timezone": "Europe/Amsterdam",
+   "language": "nl",
+   "address_style": "street_num",
+   "income_index": 1.4,
+   "regions": [
+    {
+     "code": "NH",
+     "name": "Noord-Holland",
+     "cities": [
+      {
+       "name": "Amsterdam",
+       "lat": 52.37,
+       "lon": 4.895,
+       "postal": "10## @@"
+      },
+      {
+       "name": "Haarlem",
+       "lat": 52.387,
+       "lon": 4.646,
+       "postal": "20## @@"
+      },
+      {
+       "name": "Zaandam",
+       "lat": 52.439,
+       "lon": 4.826,
+       "postal": "15## @@"
+      }
+     ]
+    },
+    {
+     "code": "ZH",
+     "name": "Zuid-Holland",
+     "cities": [
+      {
+       "name": "Rotterdam",
+       "lat": 51.924,
+       "lon": 4.478,
+       "postal": "30## @@"
+      },
+      {
+       "name": "Den Haag",
+       "lat": 52.07,
+       "lon": 4.3,
+       "postal": "25## @@"
+      },
+      {
+       "name": "Leiden",
+       "lat": 52.16,
+       "lon": 4.497,
+       "postal": "23## @@"
+      },
+      {
+       "name": "Delft",
+       "lat": 52.012,
+       "lon": 4.357,
+       "postal": "26## @@"
+      }
+     ]
+    },
+    {
+     "code": "UT",
+     "name": "Utrecht",
+     "cities": [
+      {
+       "name": "Utrecht",
+       "lat": 52.091,
+       "lon": 5.122,
+       "postal": "35## @@"
+      },
+      {
+       "name": "Amersfoort",
+       "lat": 52.156,
+       "lon": 5.388,
+       "postal": "38## @@"
+      }
+     ]
+    },
+    {
+     "code": "NB",
+     "name": "Noord-Brabant",
+     "cities": [
+      {
+       "name": "Eindhoven",
+       "lat": 51.441,
+       "lon": 5.47,
+       "postal": "56## @@"
+      },
+      {
+       "name": "Tilburg",
+       "lat": 51.56,
+       "lon": 5.091,
+       "postal": "50## @@"
+      },
+      {
+       "name": "Breda",
+       "lat": 51.589,
+       "lon": 4.776,
+       "postal": "48## @@"
+      }
+     ]
+    },
+    {
+     "code": "GE",
+     "name": "Gelderland",
+     "cities": [
+      {
+       "name": "Nijmegen",
+       "lat": 51.842,
+       "lon": 5.853,
+       "postal": "65## @@"
+      },
+      {
+       "name": "Arnhem",
+       "lat": 51.985,
+       "lon": 5.899,
+       "postal": "68## @@"
+      }
+     ]
+    },
+    {
+     "code": "GR",
+     "name": "Groningen",
+     "cities": [
+      {
+       "name": "Groningen",
+       "lat": 53.219,
+       "lon": 6.567,
+       "postal": "97## @@"
+      }
+     ]
+    },
+    {
+     "code": "LI",
+     "name": "Limburg",
+     "cities": [
+      {
+       "name": "Maastricht",
+       "lat": 50.851,
+       "lon": 5.691,
+       "postal": "62## @@"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "BE",
+   "iso3": "BEL",
+   "name": "Belgium",
+   "phone_code": "+32",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "1996-01-01",
+     "rate": 21.0
+    }
+   ],
+   "timezone": "Europe/Brussels",
+   "language": "nl",
+   "address_style": "street_num",
+   "income_index": 1.25,
+   "regions": [
+    {
+     "code": "BRU",
+     "name": "Brussels",
+     "cities": [
+      {
+       "name": "Brussels",
+       "lat": 50.85,
+       "lon": 4.352,
+       "postal": "1###"
+      }
+     ]
+    },
+    {
+     "code": "VAN",
+     "name": "Antwerp",
+     "cities": [
+      {
+       "name": "Antwerp",
+       "lat": 51.219,
+       "lon": 4.402,
+       "postal": "2###"
+      }
+     ]
+    },
+    {
+     "code": "VOV",
+     "name": "East Flanders",
+     "cities": [
+      {
+       "name": "Ghent",
+       "lat": 51.054,
+       "lon": 3.722,
+       "postal": "9###"
+      }
+     ]
+    },
+    {
+     "code": "WLG",
+     "name": "Liège",
+     "cities": [
+      {
+       "name": "Liège",
+       "lat": 50.633,
+       "lon": 5.567,
+       "postal": "4###"
+      }
+     ]
+    },
+    {
+     "code": "VBR",
+     "name": "Flemish Brabant",
+     "cities": [
+      {
+       "name": "Leuven",
+       "lat": 50.88,
+       "lon": 4.7,
+       "postal": "3###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "LU",
+   "iso3": "LUX",
+   "name": "Luxembourg",
+   "phone_code": "+352",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2023-01-01",
+     "rate": 16.0
+    },
+    {
+     "from": "2024-01-01",
+     "rate": 17.0
+    }
+   ],
+   "timezone": "Europe/Luxembourg",
+   "language": "fr",
+   "address_style": "num_street",
+   "income_index": 2.2,
+   "regions": [
+    {
+     "code": "LU",
+     "name": "Luxembourg",
+     "cities": [
+      {
+       "name": "Luxembourg",
+       "lat": 49.612,
+       "lon": 6.13,
+       "postal": "L-####"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "DE",
+   "iso3": "DEU",
+   "name": "Germany",
+   "phone_code": "+49",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2021-01-01",
+     "rate": 19.0
+    }
+   ],
+   "timezone": "Europe/Berlin",
+   "language": "de",
+   "address_style": "street_num",
+   "income_index": 1.25,
+   "regions": [
+    {
+     "code": "BE",
+     "name": "Berlin",
+     "cities": [
+      {
+       "name": "Berlin",
+       "lat": 52.52,
+       "lon": 13.405,
+       "postal": "1####"
+      }
+     ]
+    },
+    {
+     "code": "HH",
+     "name": "Hamburg",
+     "cities": [
+      {
+       "name": "Hamburg",
+       "lat": 53.551,
+       "lon": 9.994,
+       "postal": "2####"
+      }
+     ]
+    },
+    {
+     "code": "BY",
+     "name": "Bayern",
+     "cities": [
+      {
+       "name": "München",
+       "lat": 48.137,
+       "lon": 11.575,
+       "postal": "80###"
+      },
+      {
+       "name": "Nürnberg",
+       "lat": 49.452,
+       "lon": 11.077,
+       "postal": "90###"
+      },
+      {
+       "name": "Augsburg",
+       "lat": 48.371,
+       "lon": 10.898,
+       "postal": "86###"
+      },
+      {
+       "name": "Regensburg",
+       "lat": 49.013,
+       "lon": 12.102,
+       "postal": "93###"
+      }
+     ]
+    },
+    {
+     "code": "NW",
+     "name": "Nordrhein-Westfalen",
+     "cities": [
+      {
+       "name": "Köln",
+       "lat": 50.938,
+       "lon": 6.96,
+       "postal": "50###"
+      },
+      {
+       "name": "Düsseldorf",
+       "lat": 51.228,
+       "lon": 6.774,
+       "postal": "40###"
+      },
+      {
+       "name": "Dortmund",
+       "lat": 51.514,
+       "lon": 7.468,
+       "postal": "44###"
+      },
+      {
+       "name": "Essen",
+       "lat": 51.456,
+       "lon": 7.012,
+       "postal": "45###"
+      },
+      {
+       "name": "Münster",
+       "lat": 51.96,
+       "lon": 7.626,
+       "postal": "48###"
+      },
+      {
+       "name": "Bonn",
+       "lat": 50.737,
+       "lon": 7.098,
+       "postal": "53###"
+      }
+     ]
+    },
+    {
+     "code": "BW",
+     "name": "Baden-Württemberg",
+     "cities": [
+      {
+       "name": "Stuttgart",
+       "lat": 48.776,
+       "lon": 9.183,
+       "postal": "70###"
+      },
+      {
+       "name": "Karlsruhe",
+       "lat": 49.007,
+       "lon": 8.404,
+       "postal": "76###"
+      },
+      {
+       "name": "Freiburg im Breisgau",
+       "lat": 47.999,
+       "lon": 7.842,
+       "postal": "79###"
+      },
+      {
+       "name": "Heidelberg",
+       "lat": 49.399,
+       "lon": 8.672,
+       "postal": "69###"
+      }
+     ]
+    },
+    {
+     "code": "HE",
+     "name": "Hessen",
+     "cities": [
+      {
+       "name": "Frankfurt am Main",
+       "lat": 50.11,
+       "lon": 8.682,
+       "postal": "60###"
+      },
+      {
+       "name": "Wiesbaden",
+       "lat": 50.083,
+       "lon": 8.24,
+       "postal": "65###"
+      },
+      {
+       "name": "Kassel",
+       "lat": 51.312,
+       "lon": 9.479,
+       "postal": "34###"
+      }
+     ]
+    },
+    {
+     "code": "NI",
+     "name": "Niedersachsen",
+     "cities": [
+      {
+       "name": "Hannover",
+       "lat": 52.376,
+       "lon": 9.732,
+       "postal": "30###"
+      },
+      {
+       "name": "Braunschweig",
+       "lat": 52.269,
+       "lon": 10.521,
+       "postal": "38###"
+      },
+      {
+       "name": "Osnabrück",
+       "lat": 52.279,
+       "lon": 8.047,
+       "postal": "49###"
+      }
+     ]
+    },
+    {
+     "code": "SN",
+     "name": "Sachsen",
+     "cities": [
+      {
+       "name": "Leipzig",
+       "lat": 51.34,
+       "lon": 12.375,
+       "postal": "04###"
+      },
+      {
+       "name": "Dresden",
+       "lat": 51.05,
+       "lon": 13.738,
+       "postal": "01###"
+      }
+     ]
+    },
+    {
+     "code": "HB",
+     "name": "Bremen",
+     "cities": [
+      {
+       "name": "Bremen",
+       "lat": 53.079,
+       "lon": 8.802,
+       "postal": "28###"
+      }
+     ]
+    },
+    {
+     "code": "SH",
+     "name": "Schleswig-Holstein",
+     "cities": [
+      {
+       "name": "Kiel",
+       "lat": 54.323,
+       "lon": 10.123,
+       "postal": "24###"
+      },
+      {
+       "name": "Lübeck",
+       "lat": 53.866,
+       "lon": 10.687,
+       "postal": "23###"
+      }
+     ]
+    },
+    {
+     "code": "RP",
+     "name": "Rheinland-Pfalz",
+     "cities": [
+      {
+       "name": "Mainz",
+       "lat": 49.993,
+       "lon": 8.247,
+       "postal": "55###"
+      }
+     ]
+    },
+    {
+     "code": "TH",
+     "name": "Thüringen",
+     "cities": [
+      {
+       "name": "Erfurt",
+       "lat": 50.978,
+       "lon": 11.029,
+       "postal": "99###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "AT",
+   "iso3": "AUT",
+   "name": "Austria",
+   "phone_code": "+43",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2016-01-01",
+     "rate": 20.0
+    }
+   ],
+   "timezone": "Europe/Vienna",
+   "language": "de",
+   "address_style": "street_num",
+   "income_index": 1.3,
+   "regions": [
+    {
+     "code": "9",
+     "name": "Wien",
+     "cities": [
+      {
+       "name": "Wien",
+       "lat": 48.208,
+       "lon": 16.373,
+       "postal": "1###"
+      }
+     ]
+    },
+    {
+     "code": "6",
+     "name": "Steiermark",
+     "cities": [
+      {
+       "name": "Graz",
+       "lat": 47.07,
+       "lon": 15.439,
+       "postal": "8###"
+      }
+     ]
+    },
+    {
+     "code": "4",
+     "name": "Oberösterreich",
+     "cities": [
+      {
+       "name": "Linz",
+       "lat": 48.306,
+       "lon": 14.286,
+       "postal": "4###"
+      }
+     ]
+    },
+    {
+     "code": "5",
+     "name": "Salzburg",
+     "cities": [
+      {
+       "name": "Salzburg",
+       "lat": 47.809,
+       "lon": 13.055,
+       "postal": "5###"
+      }
+     ]
+    },
+    {
+     "code": "7",
+     "name": "Tirol",
+     "cities": [
+      {
+       "name": "Innsbruck",
+       "lat": 47.269,
+       "lon": 11.404,
+       "postal": "6###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "CH",
+   "iso3": "CHE",
+   "name": "Switzerland",
+   "phone_code": "+41",
+   "continent": "Europe",
+   "currency": "CHF",
+   "vat": [
+    {
+     "from": "2018-01-01",
+     "rate": 7.7
+    },
+    {
+     "from": "2024-01-01",
+     "rate": 8.1
+    }
+   ],
+   "timezone": "Europe/Zurich",
+   "language": "de",
+   "address_style": "street_num",
+   "income_index": 1.55,
+   "regions": [
+    {
+     "code": "ZH",
+     "name": "Zürich",
+     "cities": [
+      {
+       "name": "Zürich",
+       "lat": 47.377,
+       "lon": 8.54,
+       "postal": "8###"
+      }
+     ]
+    },
+    {
+     "code": "GE",
+     "name": "Genève",
+     "cities": [
+      {
+       "name": "Genève",
+       "lat": 46.204,
+       "lon": 6.143,
+       "postal": "12##"
+      }
+     ]
+    },
+    {
+     "code": "BS",
+     "name": "Basel-Stadt",
+     "cities": [
+      {
+       "name": "Basel",
+       "lat": 47.56,
+       "lon": 7.589,
+       "postal": "40##"
+      }
+     ]
+    },
+    {
+     "code": "BE",
+     "name": "Bern",
+     "cities": [
+      {
+       "name": "Bern",
+       "lat": 46.948,
+       "lon": 7.447,
+       "postal": "30##"
+      }
+     ]
+    },
+    {
+     "code": "VD",
+     "name": "Vaud",
+     "cities": [
+      {
+       "name": "Lausanne",
+       "lat": 46.52,
+       "lon": 6.633,
+       "postal": "10##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "FR",
+   "iso3": "FRA",
+   "name": "France",
+   "phone_code": "+33",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2014-01-01",
+     "rate": 20.0
+    }
+   ],
+   "timezone": "Europe/Paris",
+   "language": "fr",
+   "address_style": "num_street",
+   "income_index": 1.05,
+   "regions": [
+    {
+     "code": "IDF",
+     "name": "Île-de-France",
+     "cities": [
+      {
+       "name": "Paris",
+       "lat": 48.857,
+       "lon": 2.352,
+       "postal": "750##"
+      },
+      {
+       "name": "Boulogne-Billancourt",
+       "lat": 48.835,
+       "lon": 2.24,
+       "postal": "92100"
+      },
+      {
+       "name": "Versailles",
+       "lat": 48.805,
+       "lon": 2.12,
+       "postal": "78000"
+      }
+     ]
+    },
+    {
+     "code": "ARA",
+     "name": "Auvergne-Rhône-Alpes",
+     "cities": [
+      {
+       "name": "Lyon",
+       "lat": 45.764,
+       "lon": 4.836,
+       "postal": "6900#"
+      },
+      {
+       "name": "Grenoble",
+       "lat": 45.188,
+       "lon": 5.724,
+       "postal": "38000"
+      }
+     ]
+    },
+    {
+     "code": "PAC",
+     "name": "Provence-Alpes-Côte d'Azur",
+     "cities": [
+      {
+       "name": "Marseille",
+       "lat": 43.297,
+       "lon": 5.37,
+       "postal": "130##"
+      },
+      {
+       "name": "Nice",
+       "lat": 43.71,
+       "lon": 7.262,
+       "postal": "06###"
+      }
+     ]
+    },
+    {
+     "code": "OCC",
+     "name": "Occitanie",
+     "cities": [
+      {
+       "name": "Toulouse",
+       "lat": 43.605,
+       "lon": 1.444,
+       "postal": "31###"
+      },
+      {
+       "name": "Montpellier",
+       "lat": 43.611,
+       "lon": 3.877,
+       "postal": "34###"
+      }
+     ]
+    },
+    {
+     "code": "NAQ",
+     "name": "Nouvelle-Aquitaine",
+     "cities": [
+      {
+       "name": "Bordeaux",
+       "lat": 44.838,
+       "lon": -0.579,
+       "postal": "33###"
+      }
+     ]
+    },
+    {
+     "code": "HDF",
+     "name": "Hauts-de-France",
+     "cities": [
+      {
+       "name": "Lille",
+       "lat": 50.629,
+       "lon": 3.057,
+       "postal": "59###"
+      }
+     ]
+    },
+    {
+     "code": "PDL",
+     "name": "Pays de la Loire",
+     "cities": [
+      {
+       "name": "Nantes",
+       "lat": 47.218,
+       "lon": -1.554,
+       "postal": "44###"
+      }
+     ]
+    },
+    {
+     "code": "GES",
+     "name": "Grand Est",
+     "cities": [
+      {
+       "name": "Strasbourg",
+       "lat": 48.573,
+       "lon": 7.752,
+       "postal": "67###"
+      }
+     ]
+    },
+    {
+     "code": "BRE",
+     "name": "Bretagne",
+     "cities": [
+      {
+       "name": "Rennes",
+       "lat": 48.117,
+       "lon": -1.678,
+       "postal": "35###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "ES",
+   "iso3": "ESP",
+   "name": "Spain",
+   "phone_code": "+34",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2012-09-01",
+     "rate": 21.0
+    }
+   ],
+   "timezone": "Europe/Madrid",
+   "language": "es",
+   "address_style": "street_num",
+   "income_index": 0.9,
+   "regions": [
+    {
+     "code": "MD",
+     "name": "Madrid",
+     "cities": [
+      {
+       "name": "Madrid",
+       "lat": 40.417,
+       "lon": -3.704,
+       "postal": "28###"
+      }
+     ]
+    },
+    {
+     "code": "CT",
+     "name": "Cataluña",
+     "cities": [
+      {
+       "name": "Barcelona",
+       "lat": 41.385,
+       "lon": 2.173,
+       "postal": "08###"
+      }
+     ]
+    },
+    {
+     "code": "VC",
+     "name": "Comunidad Valenciana",
+     "cities": [
+      {
+       "name": "Valencia",
+       "lat": 39.47,
+       "lon": -0.376,
+       "postal": "46###"
+      }
+     ]
+    },
+    {
+     "code": "AN",
+     "name": "Andalucía",
+     "cities": [
+      {
+       "name": "Sevilla",
+       "lat": 37.389,
+       "lon": -5.984,
+       "postal": "41###"
+      },
+      {
+       "name": "Málaga",
+       "lat": 36.721,
+       "lon": -4.421,
+       "postal": "29###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "PT",
+   "iso3": "PRT",
+   "name": "Portugal",
+   "phone_code": "+351",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2016-01-01",
+     "rate": 23.0
+    }
+   ],
+   "timezone": "Europe/Lisbon",
+   "language": "pt",
+   "address_style": "street_num",
+   "income_index": 0.75,
+   "regions": [
+    {
+     "code": "11",
+     "name": "Lisboa",
+     "cities": [
+      {
+       "name": "Lisboa",
+       "lat": 38.722,
+       "lon": -9.139,
+       "postal": "1###-###"
+      }
+     ]
+    },
+    {
+     "code": "13",
+     "name": "Porto",
+     "cities": [
+      {
+       "name": "Porto",
+       "lat": 41.158,
+       "lon": -8.629,
+       "postal": "4###-###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "IT",
+   "iso3": "ITA",
+   "name": "Italy",
+   "phone_code": "+39",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2013-10-01",
+     "rate": 22.0
+    }
+   ],
+   "timezone": "Europe/Rome",
+   "language": "it",
+   "address_style": "street_num",
+   "income_index": 0.95,
+   "regions": [
+    {
+     "code": "MI",
+     "name": "Lombardia",
+     "cities": [
+      {
+       "name": "Milano",
+       "lat": 45.464,
+       "lon": 9.19,
+       "postal": "201##"
+      }
+     ]
+    },
+    {
+     "code": "RM",
+     "name": "Lazio",
+     "cities": [
+      {
+       "name": "Roma",
+       "lat": 41.903,
+       "lon": 12.496,
+       "postal": "001##"
+      }
+     ]
+    },
+    {
+     "code": "TO",
+     "name": "Piemonte",
+     "cities": [
+      {
+       "name": "Torino",
+       "lat": 45.07,
+       "lon": 7.687,
+       "postal": "101##"
+      }
+     ]
+    },
+    {
+     "code": "FI",
+     "name": "Toscana",
+     "cities": [
+      {
+       "name": "Firenze",
+       "lat": 43.77,
+       "lon": 11.255,
+       "postal": "501##"
+      }
+     ]
+    },
+    {
+     "code": "NA",
+     "name": "Campania",
+     "cities": [
+      {
+       "name": "Napoli",
+       "lat": 40.852,
+       "lon": 14.268,
+       "postal": "801##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "SE",
+   "iso3": "SWE",
+   "name": "Sweden",
+   "phone_code": "+46",
+   "continent": "Europe",
+   "currency": "SEK",
+   "vat": [
+    {
+     "from": "1990-07-01",
+     "rate": 25.0
+    }
+   ],
+   "timezone": "Europe/Stockholm",
+   "language": "sv",
+   "address_style": "street_num",
+   "income_index": 1.25,
+   "regions": [
+    {
+     "code": "AB",
+     "name": "Stockholms län",
+     "cities": [
+      {
+       "name": "Stockholm",
+       "lat": 59.329,
+       "lon": 18.069,
+       "postal": "1## ##"
+      },
+      {
+       "name": "Södertälje",
+       "lat": 59.196,
+       "lon": 17.626,
+       "postal": "151 ##"
+      }
+     ]
+    },
+    {
+     "code": "O",
+     "name": "Västra Götalands län",
+     "cities": [
+      {
+       "name": "Göteborg",
+       "lat": 57.709,
+       "lon": 11.975,
+       "postal": "4## ##"
+      }
+     ]
+    },
+    {
+     "code": "M",
+     "name": "Skåne län",
+     "cities": [
+      {
+       "name": "Malmö",
+       "lat": 55.605,
+       "lon": 13.004,
+       "postal": "2## ##"
+      },
+      {
+       "name": "Lund",
+       "lat": 55.705,
+       "lon": 13.191,
+       "postal": "22# ##"
+      }
+     ]
+    },
+    {
+     "code": "C",
+     "name": "Uppsala län",
+     "cities": [
+      {
+       "name": "Uppsala",
+       "lat": 59.859,
+       "lon": 17.639,
+       "postal": "75# ##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "DK",
+   "iso3": "DNK",
+   "name": "Denmark",
+   "phone_code": "+45",
+   "continent": "Europe",
+   "currency": "DKK",
+   "vat": [
+    {
+     "from": "1992-01-01",
+     "rate": 25.0
+    }
+   ],
+   "timezone": "Europe/Copenhagen",
+   "language": "da",
+   "address_style": "street_num",
+   "income_index": 1.4,
+   "regions": [
+    {
+     "code": "84",
+     "name": "Hovedstaden",
+     "cities": [
+      {
+       "name": "København",
+       "lat": 55.676,
+       "lon": 12.568,
+       "postal": "1###"
+      },
+      {
+       "name": "Frederiksberg",
+       "lat": 55.678,
+       "lon": 12.533,
+       "postal": "2000"
+      }
+     ]
+    },
+    {
+     "code": "82",
+     "name": "Midtjylland",
+     "cities": [
+      {
+       "name": "Aarhus",
+       "lat": 56.163,
+       "lon": 10.203,
+       "postal": "8000"
+      }
+     ]
+    },
+    {
+     "code": "83",
+     "name": "Syddanmark",
+     "cities": [
+      {
+       "name": "Odense",
+       "lat": 55.403,
+       "lon": 10.402,
+       "postal": "5000"
+      }
+     ]
+    },
+    {
+     "code": "81",
+     "name": "Nordjylland",
+     "cities": [
+      {
+       "name": "Aalborg",
+       "lat": 57.048,
+       "lon": 9.919,
+       "postal": "9000"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "NO",
+   "iso3": "NOR",
+   "name": "Norway",
+   "phone_code": "+47",
+   "continent": "Europe",
+   "currency": "NOK",
+   "vat": [
+    {
+     "from": "2005-01-01",
+     "rate": 25.0
+    }
+   ],
+   "timezone": "Europe/Oslo",
+   "language": "no",
+   "address_style": "street_num",
+   "income_index": 1.6,
+   "regions": [
+    {
+     "code": "03",
+     "name": "Oslo",
+     "cities": [
+      {
+       "name": "Oslo",
+       "lat": 59.914,
+       "lon": 10.752,
+       "postal": "0###"
+      }
+     ]
+    },
+    {
+     "code": "46",
+     "name": "Vestland",
+     "cities": [
+      {
+       "name": "Bergen",
+       "lat": 60.391,
+       "lon": 5.322,
+       "postal": "50##"
+      }
+     ]
+    },
+    {
+     "code": "50",
+     "name": "Trøndelag",
+     "cities": [
+      {
+       "name": "Trondheim",
+       "lat": 63.431,
+       "lon": 10.395,
+       "postal": "70##"
+      }
+     ]
+    },
+    {
+     "code": "11",
+     "name": "Rogaland",
+     "cities": [
+      {
+       "name": "Stavanger",
+       "lat": 58.97,
+       "lon": 5.733,
+       "postal": "40##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "FI",
+   "iso3": "FIN",
+   "name": "Finland",
+   "phone_code": "+358",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2013-01-01",
+     "rate": 24.0
+    },
+    {
+     "from": "2024-09-01",
+     "rate": 25.5
+    }
+   ],
+   "timezone": "Europe/Helsinki",
+   "language": "fi",
+   "address_style": "street_num",
+   "income_index": 1.1,
+   "regions": [
+    {
+     "code": "18",
+     "name": "Uusimaa",
+     "cities": [
+      {
+       "name": "Helsinki",
+       "lat": 60.17,
+       "lon": 24.938,
+       "postal": "00###"
+      },
+      {
+       "name": "Espoo",
+       "lat": 60.205,
+       "lon": 24.656,
+       "postal": "02###"
+      }
+     ]
+    },
+    {
+     "code": "11",
+     "name": "Pirkanmaa",
+     "cities": [
+      {
+       "name": "Tampere",
+       "lat": 61.498,
+       "lon": 23.761,
+       "postal": "33###"
+      }
+     ]
+    },
+    {
+     "code": "02",
+     "name": "Varsinais-Suomi",
+     "cities": [
+      {
+       "name": "Turku",
+       "lat": 60.452,
+       "lon": 22.267,
+       "postal": "20###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "PL",
+   "iso3": "POL",
+   "name": "Poland",
+   "phone_code": "+48",
+   "continent": "Europe",
+   "currency": "PLN",
+   "vat": [
+    {
+     "from": "2011-01-01",
+     "rate": 23.0
+    }
+   ],
+   "timezone": "Europe/Warsaw",
+   "language": "pl",
+   "address_style": "street_num",
+   "income_index": 0.8,
+   "regions": [
+    {
+     "code": "14",
+     "name": "Mazowieckie",
+     "cities": [
+      {
+       "name": "Warszawa",
+       "lat": 52.23,
+       "lon": 21.012,
+       "postal": "0#-###"
+      }
+     ]
+    },
+    {
+     "code": "12",
+     "name": "Małopolskie",
+     "cities": [
+      {
+       "name": "Kraków",
+       "lat": 50.065,
+       "lon": 19.945,
+       "postal": "3#-###"
+      }
+     ]
+    },
+    {
+     "code": "02",
+     "name": "Dolnośląskie",
+     "cities": [
+      {
+       "name": "Wrocław",
+       "lat": 51.108,
+       "lon": 17.039,
+       "postal": "5#-###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "SK",
+   "iso3": "SVK",
+   "name": "Slovakia",
+   "phone_code": "+421",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2011-01-01",
+     "rate": 20.0
+    },
+    {
+     "from": "2025-01-01",
+     "rate": 23.0
+    }
+   ],
+   "timezone": "Europe/Bratislava",
+   "language": "cs",
+   "address_style": "street_num",
+   "income_index": 0.75,
+   "regions": [
+    {
+     "code": "BL",
+     "name": "Bratislavský kraj",
+     "cities": [
+      {
+       "name": "Bratislava",
+       "lat": 48.149,
+       "lon": 17.107,
+       "postal": "8## ##"
+      }
+     ]
+    },
+    {
+     "code": "KI",
+     "name": "Košický kraj",
+     "cities": [
+      {
+       "name": "Košice",
+       "lat": 48.717,
+       "lon": 21.261,
+       "postal": "040 ##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "CZ",
+   "iso3": "CZE",
+   "name": "Czechia",
+   "phone_code": "+420",
+   "continent": "Europe",
+   "currency": "CZK",
+   "vat": [
+    {
+     "from": "2013-01-01",
+     "rate": 21.0
+    }
+   ],
+   "timezone": "Europe/Prague",
+   "language": "cs",
+   "address_style": "street_num",
+   "income_index": 0.9,
+   "regions": [
+    {
+     "code": "10",
+     "name": "Praha",
+     "cities": [
+      {
+       "name": "Praha",
+       "lat": 50.076,
+       "lon": 14.438,
+       "postal": "1## ##"
+      }
+     ]
+    },
+    {
+     "code": "64",
+     "name": "Jihomoravský",
+     "cities": [
+      {
+       "name": "Brno",
+       "lat": 49.195,
+       "lon": 16.608,
+       "postal": "6## ##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "HU",
+   "iso3": "HUN",
+   "name": "Hungary",
+   "phone_code": "+36",
+   "continent": "Europe",
+   "currency": "HUF",
+   "vat": [
+    {
+     "from": "2012-01-01",
+     "rate": 27.0
+    }
+   ],
+   "timezone": "Europe/Budapest",
+   "language": "hu",
+   "address_style": "street_num",
+   "income_index": 0.75,
+   "regions": [
+    {
+     "code": "BU",
+     "name": "Budapest",
+     "cities": [
+      {
+       "name": "Budapest",
+       "lat": 47.498,
+       "lon": 19.04,
+       "postal": "1###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "GR",
+   "iso3": "GRC",
+   "name": "Greece",
+   "phone_code": "+30",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2016-06-01",
+     "rate": 24.0
+    }
+   ],
+   "timezone": "Europe/Athens",
+   "language": "el",
+   "address_style": "street_num",
+   "income_index": 0.65,
+   "regions": [
+    {
+     "code": "I",
+     "name": "Attiki",
+     "cities": [
+      {
+       "name": "Athina",
+       "lat": 37.984,
+       "lon": 23.728,
+       "postal": "1## ##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "RO",
+   "iso3": "ROU",
+   "name": "Romania",
+   "phone_code": "+40",
+   "continent": "Europe",
+   "currency": "RON",
+   "vat": [
+    {
+     "from": "2017-01-01",
+     "rate": 19.0
+    },
+    {
+     "from": "2025-08-01",
+     "rate": 21.0
+    }
+   ],
+   "timezone": "Europe/Bucharest",
+   "language": "ro",
+   "address_style": "street_num",
+   "income_index": 0.7,
+   "regions": [
+    {
+     "code": "B",
+     "name": "București",
+     "cities": [
+      {
+       "name": "București",
+       "lat": 44.427,
+       "lon": 26.103,
+       "postal": "0#####"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "EE",
+   "iso3": "EST",
+   "name": "Estonia",
+   "phone_code": "+372",
+   "continent": "Europe",
+   "currency": "EUR",
+   "vat": [
+    {
+     "from": "2009-07-01",
+     "rate": 20.0
+    },
+    {
+     "from": "2024-01-01",
+     "rate": 22.0
+    },
+    {
+     "from": "2025-07-01",
+     "rate": 24.0
+    }
+   ],
+   "timezone": "Europe/Tallinn",
+   "language": "en",
+   "address_style": "street_num",
+   "income_index": 0.85,
+   "regions": [
+    {
+     "code": "37",
+     "name": "Harjumaa",
+     "cities": [
+      {
+       "name": "Tallinn",
+       "lat": 59.437,
+       "lon": 24.754,
+       "postal": "1####"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "US",
+   "iso3": "USA",
+   "name": "United States",
+   "phone_code": "+1",
+   "continent": "North America",
+   "currency": "USD",
+   "vat": [
+    {
+     "from": "1900-01-01",
+     "rate": 0.0
+    }
+   ],
+   "timezone": "America/New_York",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 1.55,
+   "regions": [
+    {
+     "code": "NY",
+     "name": "New York",
+     "cities": [
+      {
+       "name": "New York",
+       "lat": 40.713,
+       "lon": -74.006,
+       "postal": "100##"
+      },
+      {
+       "name": "Brooklyn",
+       "lat": 40.678,
+       "lon": -73.944,
+       "postal": "112##"
+      },
+      {
+       "name": "Buffalo",
+       "lat": 42.886,
+       "lon": -78.878,
+       "postal": "142##"
+      }
+     ]
+    },
+    {
+     "code": "CA",
+     "name": "California",
+     "cities": [
+      {
+       "name": "Los Angeles",
+       "lat": 34.052,
+       "lon": -118.244,
+       "postal": "900##"
+      },
+      {
+       "name": "San Francisco",
+       "lat": 37.775,
+       "lon": -122.419,
+       "postal": "941##"
+      },
+      {
+       "name": "San Diego",
+       "lat": 32.716,
+       "lon": -117.161,
+       "postal": "921##"
+      },
+      {
+       "name": "San Jose",
+       "lat": 37.338,
+       "lon": -121.886,
+       "postal": "951##"
+      },
+      {
+       "name": "Sacramento",
+       "lat": 38.582,
+       "lon": -121.494,
+       "postal": "958##"
+      }
+     ]
+    },
+    {
+     "code": "TX",
+     "name": "Texas",
+     "cities": [
+      {
+       "name": "Houston",
+       "lat": 29.76,
+       "lon": -95.37,
+       "postal": "770##"
+      },
+      {
+       "name": "Austin",
+       "lat": 30.267,
+       "lon": -97.743,
+       "postal": "787##"
+      },
+      {
+       "name": "Dallas",
+       "lat": 32.777,
+       "lon": -96.797,
+       "postal": "752##"
+      },
+      {
+       "name": "San Antonio",
+       "lat": 29.424,
+       "lon": -98.494,
+       "postal": "782##"
+      }
+     ]
+    },
+    {
+     "code": "FL",
+     "name": "Florida",
+     "cities": [
+      {
+       "name": "Miami",
+       "lat": 25.762,
+       "lon": -80.192,
+       "postal": "331##"
+      },
+      {
+       "name": "Orlando",
+       "lat": 28.538,
+       "lon": -81.379,
+       "postal": "328##"
+      },
+      {
+       "name": "Tampa",
+       "lat": 27.951,
+       "lon": -82.457,
+       "postal": "336##"
+      }
+     ]
+    },
+    {
+     "code": "IL",
+     "name": "Illinois",
+     "cities": [
+      {
+       "name": "Chicago",
+       "lat": 41.878,
+       "lon": -87.63,
+       "postal": "606##"
+      }
+     ]
+    },
+    {
+     "code": "WA",
+     "name": "Washington",
+     "cities": [
+      {
+       "name": "Seattle",
+       "lat": 47.606,
+       "lon": -122.332,
+       "postal": "981##"
+      }
+     ]
+    },
+    {
+     "code": "CO",
+     "name": "Colorado",
+     "cities": [
+      {
+       "name": "Denver",
+       "lat": 39.739,
+       "lon": -104.99,
+       "postal": "802##"
+      },
+      {
+       "name": "Boulder",
+       "lat": 40.015,
+       "lon": -105.271,
+       "postal": "803##"
+      }
+     ]
+    },
+    {
+     "code": "MA",
+     "name": "Massachusetts",
+     "cities": [
+      {
+       "name": "Boston",
+       "lat": 42.36,
+       "lon": -71.059,
+       "postal": "021##"
+      }
+     ]
+    },
+    {
+     "code": "GA",
+     "name": "Georgia",
+     "cities": [
+      {
+       "name": "Atlanta",
+       "lat": 33.749,
+       "lon": -84.388,
+       "postal": "303##"
+      }
+     ]
+    },
+    {
+     "code": "PA",
+     "name": "Pennsylvania",
+     "cities": [
+      {
+       "name": "Philadelphia",
+       "lat": 39.953,
+       "lon": -75.165,
+       "postal": "191##"
+      },
+      {
+       "name": "Pittsburgh",
+       "lat": 40.441,
+       "lon": -79.996,
+       "postal": "152##"
+      }
+     ]
+    },
+    {
+     "code": "AZ",
+     "name": "Arizona",
+     "cities": [
+      {
+       "name": "Phoenix",
+       "lat": 33.448,
+       "lon": -112.074,
+       "postal": "850##"
+      }
+     ]
+    },
+    {
+     "code": "OR",
+     "name": "Oregon",
+     "cities": [
+      {
+       "name": "Portland",
+       "lat": 45.515,
+       "lon": -122.678,
+       "postal": "972##"
+      }
+     ]
+    },
+    {
+     "code": "MN",
+     "name": "Minnesota",
+     "cities": [
+      {
+       "name": "Minneapolis",
+       "lat": 44.978,
+       "lon": -93.265,
+       "postal": "554##"
+      }
+     ]
+    },
+    {
+     "code": "NC",
+     "name": "North Carolina",
+     "cities": [
+      {
+       "name": "Charlotte",
+       "lat": 35.227,
+       "lon": -80.843,
+       "postal": "282##"
+      },
+      {
+       "name": "Raleigh",
+       "lat": 35.78,
+       "lon": -78.639,
+       "postal": "276##"
+      }
+     ]
+    },
+    {
+     "code": "UT",
+     "name": "Utah",
+     "cities": [
+      {
+       "name": "Salt Lake City",
+       "lat": 40.761,
+       "lon": -111.891,
+       "postal": "841##"
+      }
+     ]
+    },
+    {
+     "code": "MI",
+     "name": "Michigan",
+     "cities": [
+      {
+       "name": "Detroit",
+       "lat": 42.331,
+       "lon": -83.046,
+       "postal": "482##"
+      }
+     ]
+    },
+    {
+     "code": "OH",
+     "name": "Ohio",
+     "cities": [
+      {
+       "name": "Columbus",
+       "lat": 39.961,
+       "lon": -82.999,
+       "postal": "432##"
+      }
+     ]
+    },
+    {
+     "code": "TN",
+     "name": "Tennessee",
+     "cities": [
+      {
+       "name": "Nashville",
+       "lat": 36.163,
+       "lon": -86.781,
+       "postal": "372##"
+      }
+     ]
+    },
+    {
+     "code": "NJ",
+     "name": "New Jersey",
+     "cities": [
+      {
+       "name": "Newark",
+       "lat": 40.736,
+       "lon": -74.172,
+       "postal": "071##"
+      }
+     ]
+    },
+    {
+     "code": "VA",
+     "name": "Virginia",
+     "cities": [
+      {
+       "name": "Richmond",
+       "lat": 37.541,
+       "lon": -77.436,
+       "postal": "232##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "CA",
+   "iso3": "CAN",
+   "name": "Canada",
+   "phone_code": "+1",
+   "continent": "North America",
+   "currency": "CAD",
+   "vat": [
+    {
+     "from": "2008-01-01",
+     "rate": 5.0
+    }
+   ],
+   "timezone": "America/Toronto",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 1.1,
+   "regions": [
+    {
+     "code": "ON",
+     "name": "Ontario",
+     "cities": [
+      {
+       "name": "Toronto",
+       "lat": 43.653,
+       "lon": -79.383,
+       "postal": "M#@ #@#"
+      },
+      {
+       "name": "Ottawa",
+       "lat": 45.421,
+       "lon": -75.697,
+       "postal": "K#@ #@#"
+      }
+     ]
+    },
+    {
+     "code": "BC",
+     "name": "British Columbia",
+     "cities": [
+      {
+       "name": "Vancouver",
+       "lat": 49.283,
+       "lon": -123.121,
+       "postal": "V#@ #@#"
+      }
+     ]
+    },
+    {
+     "code": "QC",
+     "name": "Québec",
+     "cities": [
+      {
+       "name": "Montréal",
+       "lat": 45.502,
+       "lon": -73.567,
+       "postal": "H#@ #@#"
+      }
+     ]
+    },
+    {
+     "code": "AB",
+     "name": "Alberta",
+     "cities": [
+      {
+       "name": "Calgary",
+       "lat": 51.045,
+       "lon": -114.072,
+       "postal": "T#@ #@#"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "MX",
+   "iso3": "MEX",
+   "name": "Mexico",
+   "phone_code": "+52",
+   "continent": "North America",
+   "currency": "MXN",
+   "vat": [
+    {
+     "from": "2010-01-01",
+     "rate": 16.0
+    }
+   ],
+   "timezone": "America/Mexico_City",
+   "language": "es",
+   "address_style": "street_num",
+   "income_index": 0.4,
+   "regions": [
+    {
+     "code": "CMX",
+     "name": "Ciudad de México",
+     "cities": [
+      {
+       "name": "Ciudad de México",
+       "lat": 19.433,
+       "lon": -99.133,
+       "postal": "0####"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "BR",
+   "iso3": "BRA",
+   "name": "Brazil",
+   "phone_code": "+55",
+   "continent": "South America",
+   "currency": "BRL",
+   "vat": [
+    {
+     "from": "1900-01-01",
+     "rate": 0.0
+    }
+   ],
+   "timezone": "America/Sao_Paulo",
+   "language": "pt",
+   "address_style": "street_num",
+   "income_index": 0.35,
+   "regions": [
+    {
+     "code": "SP",
+     "name": "São Paulo",
+     "cities": [
+      {
+       "name": "São Paulo",
+       "lat": -23.551,
+       "lon": -46.633,
+       "postal": "0####-###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "AU",
+   "iso3": "AUS",
+   "name": "Australia",
+   "phone_code": "+61",
+   "continent": "Oceania",
+   "currency": "AUD",
+   "vat": [
+    {
+     "from": "2000-07-01",
+     "rate": 10.0
+    }
+   ],
+   "timezone": "Australia/Sydney",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 1.25,
+   "regions": [
+    {
+     "code": "NSW",
+     "name": "New South Wales",
+     "cities": [
+      {
+       "name": "Sydney",
+       "lat": -33.869,
+       "lon": 151.209,
+       "postal": "2###"
+      }
+     ]
+    },
+    {
+     "code": "VIC",
+     "name": "Victoria",
+     "cities": [
+      {
+       "name": "Melbourne",
+       "lat": -37.814,
+       "lon": 144.963,
+       "postal": "3###"
+      }
+     ]
+    },
+    {
+     "code": "QLD",
+     "name": "Queensland",
+     "cities": [
+      {
+       "name": "Brisbane",
+       "lat": -27.47,
+       "lon": 153.026,
+       "postal": "4###"
+      }
+     ]
+    },
+    {
+     "code": "WA",
+     "name": "Western Australia",
+     "cities": [
+      {
+       "name": "Perth",
+       "lat": -31.95,
+       "lon": 115.86,
+       "postal": "6###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "NZ",
+   "iso3": "NZL",
+   "name": "New Zealand",
+   "phone_code": "+64",
+   "continent": "Oceania",
+   "currency": "NZD",
+   "vat": [
+    {
+     "from": "2010-10-01",
+     "rate": 15.0
+    }
+   ],
+   "timezone": "Pacific/Auckland",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 0.95,
+   "regions": [
+    {
+     "code": "AUK",
+     "name": "Auckland",
+     "cities": [
+      {
+       "name": "Auckland",
+       "lat": -36.849,
+       "lon": 174.763,
+       "postal": "10##"
+      }
+     ]
+    },
+    {
+     "code": "WGN",
+     "name": "Wellington",
+     "cities": [
+      {
+       "name": "Wellington",
+       "lat": -41.287,
+       "lon": 174.776,
+       "postal": "60##"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "JP",
+   "iso3": "JPN",
+   "name": "Japan",
+   "phone_code": "+81",
+   "continent": "Asia",
+   "currency": "JPY",
+   "vat": [
+    {
+     "from": "2019-10-01",
+     "rate": 10.0
+    }
+   ],
+   "timezone": "Asia/Tokyo",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 0.9,
+   "regions": [
+    {
+     "code": "13",
+     "name": "Tokyo",
+     "cities": [
+      {
+       "name": "Tokyo",
+       "lat": 35.676,
+       "lon": 139.65,
+       "postal": "1##-####"
+      }
+     ]
+    },
+    {
+     "code": "27",
+     "name": "Osaka",
+     "cities": [
+      {
+       "name": "Osaka",
+       "lat": 34.694,
+       "lon": 135.502,
+       "postal": "5##-####"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "SG",
+   "iso3": "SGP",
+   "name": "Singapore",
+   "phone_code": "+65",
+   "continent": "Asia",
+   "currency": "SGD",
+   "vat": [
+    {
+     "from": "2023-01-01",
+     "rate": 8.0
+    },
+    {
+     "from": "2024-01-01",
+     "rate": 9.0
+    }
+   ],
+   "timezone": "Asia/Singapore",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 2.1,
+   "regions": [
+    {
+     "code": "SG",
+     "name": "Singapore",
+     "cities": [
+      {
+       "name": "Singapore",
+       "lat": 1.352,
+       "lon": 103.82,
+       "postal": "######"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "HK",
+   "iso3": "HKG",
+   "name": "Hong Kong",
+   "phone_code": "+852",
+   "continent": "Asia",
+   "currency": "HKD",
+   "vat": [
+    {
+     "from": "1900-01-01",
+     "rate": 0.0
+    }
+   ],
+   "timezone": "Asia/Hong_Kong",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 1.3,
+   "regions": [
+    {
+     "code": "HK",
+     "name": "Hong Kong",
+     "cities": [
+      {
+       "name": "Hong Kong",
+       "lat": 22.319,
+       "lon": 114.169,
+       "postal": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "AE",
+   "iso3": "ARE",
+   "name": "United Arab Emirates",
+   "phone_code": "+971",
+   "continent": "Asia",
+   "currency": "AED",
+   "vat": [
+    {
+     "from": "2018-01-01",
+     "rate": 5.0
+    }
+   ],
+   "timezone": "Asia/Dubai",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 1.5,
+   "regions": [
+    {
+     "code": "DU",
+     "name": "Dubai",
+     "cities": [
+      {
+       "name": "Dubai",
+       "lat": 25.205,
+       "lon": 55.271,
+       "postal": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "IN",
+   "iso3": "IND",
+   "name": "India",
+   "phone_code": "+91",
+   "continent": "Asia",
+   "currency": "INR",
+   "vat": [
+    {
+     "from": "2017-07-01",
+     "rate": 18.0
+    }
+   ],
+   "timezone": "Asia/Kolkata",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 0.17,
+   "regions": [
+    {
+     "code": "MH",
+     "name": "Maharashtra",
+     "cities": [
+      {
+       "name": "Mumbai",
+       "lat": 19.076,
+       "lon": 72.878,
+       "postal": "400###"
+      }
+     ]
+    },
+    {
+     "code": "KA",
+     "name": "Karnataka",
+     "cities": [
+      {
+       "name": "Bengaluru",
+       "lat": 12.972,
+       "lon": 77.595,
+       "postal": "560###"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "iso2": "ZA",
+   "iso3": "ZAF",
+   "name": "South Africa",
+   "phone_code": "+27",
+   "continent": "Africa",
+   "currency": "ZAR",
+   "vat": [
+    {
+     "from": "2018-04-01",
+     "rate": 15.0
+    }
+   ],
+   "timezone": "Africa/Johannesburg",
+   "language": "en",
+   "address_style": "num_street",
+   "income_index": 0.28,
+   "regions": [
+    {
+     "code": "GT",
+     "name": "Gauteng",
+     "cities": [
+      {
+       "name": "Johannesburg",
+       "lat": -26.204,
+       "lon": 28.047,
+       "postal": "2###"
+      }
+     ]
+    },
+    {
+     "code": "WC",
+     "name": "Western Cape",
+     "cities": [
+      {
+       "name": "Cape Town",
+       "lat": -33.925,
+       "lon": 18.424,
+       "postal": "8###"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "currencies": [
+  {
+   "code": "GBP",
+   "name": "Pound Sterling",
+   "symbol": "£",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 0.885,
+    "end": 0.875
+   }
+  },
+  {
+   "code": "EUR",
+   "name": "Euro",
+   "symbol": "€",
+   "minor_unit": 2
+  },
+  {
+   "code": "USD",
+   "name": "US Dollar",
+   "symbol": "$",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 1.07,
+    "end": 1.17
+   }
+  },
+  {
+   "code": "SEK",
+   "name": "Swedish Krona",
+   "symbol": "kr",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 11.15,
+    "end": 10.95
+   }
+  },
+  {
+   "code": "DKK",
+   "name": "Danish Krone",
+   "symbol": "kr.",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 7.437,
+    "end": 7.461
+   }
+  },
+  {
+   "code": "NOK",
+   "name": "Norwegian Krone",
+   "symbol": "kr",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 10.51,
+    "end": 11.75
+   }
+  },
+  {
+   "code": "CHF",
+   "name": "Swiss Franc",
+   "symbol": "CHF",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 0.985,
+    "end": 0.93
+   }
+  },
+  {
+   "code": "PLN",
+   "name": "Polish Zloty",
+   "symbol": "zł",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 4.68,
+    "end": 4.24
+   }
+  },
+  {
+   "code": "CZK",
+   "name": "Czech Koruna",
+   "symbol": "Kč",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 24.1,
+    "end": 24.4
+   }
+  },
+  {
+   "code": "HUF",
+   "name": "Hungarian Forint",
+   "symbol": "Ft",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 400,
+    "end": 385
+   }
+  },
+  {
+   "code": "RON",
+   "name": "Romanian Leu",
+   "symbol": "lei",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 4.93,
+    "end": 5.08
+   }
+  },
+  {
+   "code": "CAD",
+   "name": "Canadian Dollar",
+   "symbol": "CA$",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 1.45,
+    "end": 1.61
+   }
+  },
+  {
+   "code": "MXN",
+   "name": "Mexican Peso",
+   "symbol": "MX$",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 20.8,
+    "end": 21.3
+   }
+  },
+  {
+   "code": "BRL",
+   "name": "Brazilian Real",
+   "symbol": "R$",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 5.65,
+    "end": 6.35
+   }
+  },
+  {
+   "code": "AUD",
+   "name": "Australian Dollar",
+   "symbol": "A$",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 1.57,
+    "end": 1.75
+   }
+  },
+  {
+   "code": "NZD",
+   "name": "New Zealand Dollar",
+   "symbol": "NZ$",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 1.69,
+    "end": 2.02
+   }
+  },
+  {
+   "code": "JPY",
+   "name": "Japanese Yen",
+   "symbol": "¥",
+   "minor_unit": 0,
+   "eur_rate": {
+    "start": 140,
+    "end": 183
+   }
+  },
+  {
+   "code": "SGD",
+   "name": "Singapore Dollar",
+   "symbol": "S$",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 1.43,
+    "end": 1.51
+   }
+  },
+  {
+   "code": "HKD",
+   "name": "Hong Kong Dollar",
+   "symbol": "HK$",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 8.33,
+    "end": 9.11
+   }
+  },
+  {
+   "code": "AED",
+   "name": "UAE Dirham",
+   "symbol": "AED",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 3.93,
+    "end": 4.3
+   }
+  },
+  {
+   "code": "INR",
+   "name": "Indian Rupee",
+   "symbol": "₹",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 88.2,
+    "end": 104
+   }
+  },
+  {
+   "code": "ZAR",
+   "name": "South African Rand",
+   "symbol": "R",
+   "minor_unit": 2,
+   "eur_rate": {
+    "start": 18.2,
+    "end": 19.7
+   }
+  }
+ ],
+ "locales": [
+  {
+   "code": "en-GB",
+   "name": "English (United Kingdom)",
+   "native_name": "English (United Kingdom)"
+  },
+  {
+   "code": "en-US",
+   "name": "English (United States)",
+   "native_name": "English (United States)"
+  },
+  {
+   "code": "de-DE",
+   "name": "German (Germany)",
+   "native_name": "Deutsch (Deutschland)"
+  },
+  {
+   "code": "de-AT",
+   "name": "German (Austria)",
+   "native_name": "Deutsch (Österreich)"
+  },
+  {
+   "code": "de-CH",
+   "name": "German (Switzerland)",
+   "native_name": "Deutsch (Schweiz)"
+  },
+  {
+   "code": "nl-NL",
+   "name": "Dutch (Netherlands)",
+   "native_name": "Nederlands (Nederland)"
+  },
+  {
+   "code": "nl-BE",
+   "name": "Dutch (Belgium)",
+   "native_name": "Nederlands (België)"
+  },
+  {
+   "code": "fr-FR",
+   "name": "French (France)",
+   "native_name": "Français (France)"
+  },
+  {
+   "code": "fr-BE",
+   "name": "French (Belgium)",
+   "native_name": "Français (Belgique)"
+  },
+  {
+   "code": "es-ES",
+   "name": "Spanish (Spain)",
+   "native_name": "Español (España)"
+  },
+  {
+   "code": "it-IT",
+   "name": "Italian (Italy)",
+   "native_name": "Italiano (Italia)"
+  },
+  {
+   "code": "pt-PT",
+   "name": "Portuguese (Portugal)",
+   "native_name": "Português (Portugal)"
+  },
+  {
+   "code": "pt-BR",
+   "name": "Portuguese (Brazil)",
+   "native_name": "Português (Brasil)"
+  },
+  {
+   "code": "sv-SE",
+   "name": "Swedish (Sweden)",
+   "native_name": "Svenska (Sverige)"
+  },
+  {
+   "code": "da-DK",
+   "name": "Danish (Denmark)",
+   "native_name": "Dansk (Danmark)"
+  },
+  {
+   "code": "nb-NO",
+   "name": "Norwegian Bokmål (Norway)",
+   "native_name": "Norsk bokmål (Norge)"
+  },
+  {
+   "code": "fi-FI",
+   "name": "Finnish (Finland)",
+   "native_name": "Suomi (Suomi)"
+  },
+  {
+   "code": "pl-PL",
+   "name": "Polish (Poland)",
+   "native_name": "Polski (Polska)"
+  },
+  {
+   "code": "cs-CZ",
+   "name": "Czech (Czechia)",
+   "native_name": "Čeština (Česko)"
+  },
+  {
+   "code": "ja-JP",
+   "name": "Japanese (Japan)",
+   "native_name": "日本語 (日本)"
+  }
+ ],
+ "streets": {
+  "en": [
+   "High Street",
+   "Station Road",
+   "Church Lane",
+   "Park Avenue",
+   "Victoria Road",
+   "Mill Lane",
+   "Queen Street",
+   "King Street",
+   "London Road",
+   "Manor Road",
+   "Green Lane",
+   "The Crescent",
+   "Elm Grove",
+   "Albert Road",
+   "York Road",
+   "Springfield Road",
+   "Grange Road",
+   "Kings Road",
+   "Oak Avenue",
+   "Main Street",
+   "Maple Drive",
+   "Cedar Court",
+   "Lakeview Drive",
+   "Broadway",
+   "Washington Avenue",
+   "Pine Street",
+   "Sunset Boulevard",
+   "Riverside Drive",
+   "Hillcrest Road",
+   "Market Street"
+  ],
+  "de": [
+   "Hauptstraße",
+   "Bahnhofstraße",
+   "Schulstraße",
+   "Gartenstraße",
+   "Dorfstraße",
+   "Bergstraße",
+   "Lindenstraße",
+   "Kirchstraße",
+   "Schillerstraße",
+   "Goethestraße",
+   "Ringstraße",
+   "Waldstraße",
+   "Mozartstraße",
+   "Friedrichstraße",
+   "Am Markt",
+   "Rosenweg",
+   "Birkenweg",
+   "Feldstraße",
+   "Wiesenweg",
+   "Kastanienallee",
+   "Uhlandstraße",
+   "Lessingstraße",
+   "Marktplatz",
+   "Sonnenstraße",
+   "Industriestraße"
+  ],
+  "nl": [
+   "Kerkstraat",
+   "Dorpsstraat",
+   "Molenweg",
+   "Schoolstraat",
+   "Stationsweg",
+   "Hoofdstraat",
+   "Julianastraat",
+   "Beatrixlaan",
+   "Prinsengracht",
+   "Keizersgracht",
+   "Wilhelminastraat",
+   "Nieuwstraat",
+   "Markt",
+   "Parallelweg",
+   "Industrieweg",
+   "Kastanjelaan",
+   "Lindenlaan",
+   "Emmastraat",
+   "Oranjestraat",
+   "Havenstraat"
+  ],
+  "fr": [
+   "Rue de la Paix",
+   "Avenue Victor Hugo",
+   "Rue Nationale",
+   "Boulevard Saint-Michel",
+   "Rue de la République",
+   "Rue Pasteur",
+   "Avenue Jean Jaurès",
+   "Rue du Moulin",
+   "Place de l'Église",
+   "Rue des Écoles",
+   "Rue Voltaire",
+   "Avenue de la Gare",
+   "Rue Gambetta",
+   "Rue des Lilas",
+   "Chemin des Vignes"
+  ],
+  "es": [
+   "Calle Mayor",
+   "Calle Real",
+   "Avenida de la Constitución",
+   "Calle de Alcalá",
+   "Gran Vía",
+   "Calle del Sol",
+   "Plaza Mayor",
+   "Calle Nueva",
+   "Avenida de América",
+   "Calle de la Iglesia"
+  ],
+  "pt": [
+   "Rua Augusta",
+   "Avenida da Liberdade",
+   "Rua de Santa Catarina",
+   "Rua do Comércio",
+   "Rua Direita",
+   "Avenida Paulista"
+  ],
+  "it": [
+   "Via Roma",
+   "Via Garibaldi",
+   "Corso Italia",
+   "Via Mazzini",
+   "Via Dante",
+   "Via Verdi",
+   "Piazza del Popolo",
+   "Via Cavour",
+   "Via Nazionale"
+  ],
+  "sv": [
+   "Storgatan",
+   "Drottninggatan",
+   "Kungsgatan",
+   "Skolgatan",
+   "Kyrkogatan",
+   "Ringvägen",
+   "Södra vägen",
+   "Parkvägen",
+   "Björkvägen",
+   "Strandvägen"
+  ],
+  "da": [
+   "Østergade",
+   "Vestergade",
+   "Nørregade",
+   "Algade",
+   "Skolevej",
+   "Kirkevej",
+   "Strandvejen",
+   "Bredgade",
+   "Søndergade"
+  ],
+  "no": [
+   "Storgata",
+   "Kirkegata",
+   "Strandgata",
+   "Skolegata",
+   "Kongens gate",
+   "Dronningens gate",
+   "Parkveien",
+   "Bjørkeveien"
+  ],
+  "fi": [
+   "Mannerheimintie",
+   "Kauppakatu",
+   "Koulukatu",
+   "Puistokatu",
+   "Rantatie",
+   "Kirkkokatu",
+   "Hämeenkatu",
+   "Aleksanterinkatu"
+  ],
+  "pl": [
+   "ul. Mickiewicza",
+   "ul. Kościuszki",
+   "ul. Słowackiego",
+   "ul. Polna",
+   "ul. Lipowa",
+   "ul. Długa",
+   "ul. Ogrodowa"
+  ],
+  "cs": [
+   "Hlavní",
+   "Nádražní",
+   "Školní",
+   "Husova",
+   "Masarykova"
+  ],
+  "hu": [
+   "Fő utca",
+   "Kossuth Lajos utca",
+   "Petőfi Sándor utca",
+   "Rákóczi út"
+  ],
+  "el": [
+   "Odos Ermou",
+   "Leoforos Vasilissis Sofias",
+   "Odos Athinas"
+  ],
+  "ro": [
+   "Strada Mihai Eminescu",
+   "Bulevardul Unirii",
+   "Strada Victoriei"
+  ]
+ },
+ "us_sales_tax": {
+  "NY": 8.5,
+  "CA": 8.8,
+  "TX": 8.2,
+  "FL": 7.0,
+  "IL": 8.9,
+  "WA": 9.4,
+  "CO": 7.8,
+  "MA": 6.25,
+  "GA": 7.4,
+  "PA": 6.3,
+  "AZ": 8.4,
+  "OR": 0.0,
+  "MN": 8.1,
+  "NC": 7.0,
+  "UT": 7.3,
+  "MI": 6.0,
+  "OH": 7.2,
+  "TN": 9.5,
+  "NJ": 6.6,
+  "VA": 5.8
+ }
+}

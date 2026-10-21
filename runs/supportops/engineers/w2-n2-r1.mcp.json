@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Topic mix and resolution time by tag, flagged merchants vs. Cragsley",
+    "--question",
+    "Is Marrowby & Vane's and Studio Vrij's slowness concentrated in specific topics (especially delivery-related ones), or uniformly slow across all topics, compared to Cragsley Outfitters?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Ines\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per (tenant, tag) combination, restricted to Marrowby & Vane, Studio Vrij, and Cragsley Outfitters\", \"columns_requested\": [\"tenant_name\", \"tag_name\", \"ticket_count (2025)\", \"pct_of_tenant_tickets (this tag's ticket_count / that tenant's total 2025 ticket_count)\", \"avg_resolution_minutes\", \"resolution_breach_rate\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31, restricted to tenant_id for Marrowby & Vane, Studio Vrij, Cragsley Outfitters. Source tables: tickets, ticket_tags_map, support_tags, sla_breaches (breach_kind = 'resolution'). Include every tag used by each of the three tenants (not just top N). Order by tenant_name, then ticket_count descending within tenant. Round pct and rates to 1 decimal percent, minutes to whole numbers. Goal: see whether 'delivery'/'where-is-my-order' (or any other single tag) is both a larger share of volume and notably slower than the platform-wide tag averages from last week (delivery: 3045 min, where-is-my-order: 3209 min) specifically for these two flagged merchants.\", \"builds_on\": [\"Staffing load vs. ticket complexity, top merchants benchmark\", \"Ticket volume and speed by topic tag\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

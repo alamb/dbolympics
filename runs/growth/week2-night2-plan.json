@@ -1,0 +1,56 @@
+{
+ "notes": "Night 1 settled Q1: discounting's real cost is heavily vertical-dependent. Apparel, Beauty, Home & Living, and Sports & Outdoor show discounted orders costing 17-42 percentage points more of GMV (combined discount+refund) than full-price orders in the same vertical — genuine margin leakage worth telling merchants to rein in. Food & Coffee and Pet Supplies show even bigger leakage % (83-89%), but that's near-free subscription trial offers, a different (acquisition-cost) story, not wasteful promo. The coupon-code report found only 5 distinct code templates drive almost all 2025 redemptions platform-wide, with WELCOME10 alone responsible for €51k net cost (discount+refund) — confirms and quantifies Oliver's finding, and the monthly trend confirms leakage worsened into Q3/Q4, tracking the refund-rate creep CEO/CFO flagged. Q1 is in good shape for the memo. Tonight I'm moving to Q2 (loyalty): Ingrid's team already gave the company-wide cost number (19.4% of member revenue redeemed, €669k outstanding liability) and the category-mix correction on returns, so I'm pushing that down to the vertical level (cost) and adding the one 'worth' metric Chloé asked for that we're missing — retention/repeat-purchase rate, controlled by category. Third slot starts Q3 (referrals) at the same vertical grain for comparability, to see where reach is least tapped.",
+ "requests": [
+  {
+   "title": "Loyalty point economics by vertical: cost and liability",
+   "question": "Within each vertical that runs a loyalty program, how much of members' revenue is given back as redeemed points, and how large is the unredeemed points liability sitting on the books?",
+   "grain": "one row per industry with at least one tenant running an active loyalty program",
+   "columns": [
+    "industry - tenants.industry",
+    "members_count - distinct users with a loyalty_accounts row who placed >=1 order with placed_at in 2025 at a tenant in this industry",
+    "member_revenue_eur - sum of grand_total (EUR) of those members' 2025 orders in this industry, rounded to 0 decimals",
+    "points_redeemed_value_eur - sum over loyalty_transactions with the 'points spent/redeemed' direction (e.g. 'burn') in 2025, of points / loyalty_programs.points_per_currency (via the account's program), converted from the program's currency_code to EUR as of each transaction's occurred_at date, rounded to 0 decimals",
+    "redemption_cost_pct - points_redeemed_value_eur / member_revenue_eur * 100, rounded to 1 decimal",
+    "outstanding_points_value_eur - sum of loyalty_accounts.points_balance (current, not time-filtered) / points_per_currency for accounts in this industry, converted to EUR using the exchange rate as of 2025-12-31, rounded to 0 decimals"
+   ],
+   "details": "Source: orders joined to tenants (industry) and loyalty_accounts (member match on user_id+tenant_id) for members_count/member_revenue_eur, same definitions as the 'Is loyalty members' lower spend...' report from last week. loyalty_transactions joined to loyalty_accounts and loyalty_programs (for points_per_currency and currency_code) to compute points_redeemed_value_eur, filtered to occurred_at in 2025 and the ledger direction representing points spent (confirm the exact direction value via dry run; the table description calls this an 'earn/burn' ledger). loyalty_accounts.points_balance (undated, current snapshot) for outstanding_points_value_eur, same conversion logic but valued as of 2025-12-31. Restrict industries to those with a tenant in loyalty_programs where is_active = true. Order by industry ascending.",
+   "builds_on": [
+    "Is loyalty members' lower spend a within-industry effect or a merchant-mix effect?"
+   ]
+  },
+  {
+   "title": "Loyalty worth by vertical: repeat-purchase rate",
+   "question": "Controlling for category, do loyalty members actually come back and buy again more than non-members, or does that pattern not hold either once you look within a vertical?",
+   "grain": "one row per industry and segment (loyalty member vs non-member), industries with an active loyalty program only",
+   "columns": [
+    "industry - tenants.industry",
+    "segment - 'loyalty member' or 'non-member'",
+    "users_count - distinct users in that segment who placed >=1 order with placed_at in 2025 in this industry",
+    "repeat_rate_pct - share of those users with >=2 distinct orders (by placed_at date) in 2025, *100, rounded to 1 decimal",
+    "avg_orders_per_user - average count of 2025 orders per user in that segment, rounded to 2 decimals",
+    "avg_order_value_eur - average grand_total (EUR) of that segment's 2025 orders in this industry, rounded to 0 decimals"
+   ],
+   "details": "Source: orders joined to tenants (industry) and loyalty_accounts (member match on user_id+tenant_id), same member/non-member classification as last week. Restrict to industries with an active loyalty program (loyalty_programs.is_active=true for some tenant in that industry). Filter placed_at in 2025. Convert grand_total to EUR using exchange_rates as of placed_at date (EUR=rate 1). Order by industry ascending, then segment ascending ('loyalty member' before 'non-member'). Expect ~9 industries x 2 rows.",
+   "builds_on": [
+    "Is loyalty members' lower spend a within-industry effect or a merchant-mix effect?"
+   ]
+  },
+  {
+   "title": "Referral reach and value by vertical",
+   "question": "Which verticals already have the most referral-driven customers relative to their size, and does the referrer revenue advantage seen platform-wide hold within each vertical too?",
+   "grain": "one row per industry and segment ('referrer' vs 'non-referrer')",
+   "columns": [
+    "industry - tenants.industry",
+    "segment - 'referrer' (user_id appears in referrals.referrer_user_id) or 'non-referrer'",
+    "users_count - distinct users in that segment who placed >=1 order with placed_at in 2025 in this industry",
+    "share_of_industry_users_pct - users_count / total active 2025 shoppers in that industry * 100, rounded in 2 decimals",
+    "avg_orders_per_user - average count of 2025 orders per user in that segment, rounded to 2 decimals",
+    "avg_order_value_eur - average grand_total (EUR) of that segment's 2025 orders in this industry, rounded to 0 decimals"
+   ],
+   "details": "Source: orders joined to tenants (industry) and referrals (referrer match on user_id+tenant_id = referrer_user_id). Filter placed_at in 2025, all tenants (no restriction to loyalty-only tenants here, since referrals is a separate feature). Convert grand_total to EUR using exchange_rates as of placed_at date (EUR=rate 1). Order by industry ascending, then segment ascending ('non-referrer' then 'referrer', or vice versa — pick one consistent order and state it: 'referrer' before 'non-referrer'). Expect roughly 9-10 industries x 2 rows.",
+   "builds_on": [
+    "Do referred or referring shoppers spend differently than everyone else?"
+   ]
+  }
+ ]
+}

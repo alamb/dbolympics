@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "At what point in their order history do customers start referring?",
+    "--question",
+    "Is there a typical order-count threshold after which a customer becomes a referrer, which would tell us when to prompt the referral ask?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per bucket of orders-placed-before-first-referral\", \"columns_requested\": [\"orders_before_first_referral_bucket - '0 (referred before ordering)', '1', '2', '3', '4-5', or '6+'\", \"referrer_count - count of distinct (tenant_id, referrer_user_id) pairs falling in that bucket\", \"share_of_referrers_pct - referrer_count / total referrers across all buckets * 100, rounded to 1 decimal\", \"avg_total_2025_orders - average of each referrer's full count of 2025 orders (not just pre-referral), rounded to 2 decimals\"], \"details\": \"Source: referrals, deduplicated to one row per (tenant_id, referrer_user_id) by taking the earliest created_at as 'first_referral_at'. For each, count that user's orders (any status) with placed_at strictly before first_referral_at, bucket per the labels above. avg_total_2025_orders = average count of that user's orders with placed_at in 2025 (full year, for context on eventual frequency). Order rows in the fixed sequence 0, 1, 2, 3, 4-5, 6+ (use a CASE-based sort key, not alphabetical). Expect exactly 6 rows.\", \"builds_on\": [\"Do referred or referring shoppers spend differently than everyone else?\", \"Referral reach and value by vertical\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

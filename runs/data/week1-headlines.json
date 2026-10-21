@@ -1,0 +1,5 @@
+[
+ "Revenue checks out: once you count refunded payments correctly, orders match actual money collected to within 1-5% (not the 20-40% gap it looked like at first).",
+ "Refunds are real and not lost or double-counted, but most (85%) land ~3 weeks after the original payout already went out, so we currently can't point to exactly which payout absorbed a given refund.",
+ "\"How many customers do we have\" depends entirely on definition: 11,258 total accounts, but only 6,159 bought in the last 12 months and just 411 have an active subscription — we recommend standardizing on the 6,159 figure as \"active customers.\""
+]

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Subscription-delivery discount orders with no overlapping active subscription",
+    "--question",
+    "Among the fully-comped 'Subscription delivery (prepaid)' orders, are the ones with no active subscription at the time concentrated in a few customers, or traceable to subscriptions that had just lapsed — or are they true unexplained giveaways?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Viktor\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per tenant, restricted to 'Subscription delivery (prepaid)' discount orders in 2025 that have NO overlapping subscription with status in ('trialing','active','past_due')\", \"columns_requested\": [\"tenant name\", \"orphan order count (no active subscription overlap)\", \"orphan order count as % of all this discount's orders for the tenant\", \"distinct customers among orphan orders\", \"max orphan orders by a single customer\", \"% of orphan customers whose most recent subscription has status 'canceled' and ended within 30 days before the order (lapsed-subscriber explanation)\", \"% of orphan customers with no subscription record at all for this tenant (no explanation)\", \"total discount amount on orphan orders (EUR)\"], \"details\": \"Source: order_discounts + discounts (name = 'Subscription delivery (prepaid)') + orders (placed_at in 2025-01-01 to 2025-12-31, status != 'cancelled', user_id, tenant_id) + tenants. For each such order, determine subscription overlap via subscriptions (same user_id, tenant_id) where started_at <= placed_at and (ended_at is null or ended_at >= placed_at) and status in ('trialing','active','past_due'); orders with no such matching subscription are 'orphan'. For orphan orders, also check each customer's most recent subscription record (by started_at) regardless of status to classify as 'lapsed within 30 days' (status='canceled' and ended_at is not null and ended_at between placed_at - interval 30 days and placed_at) vs 'no subscription record at all'. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by orphan order count descending, tenant name as tie-break. Print all tenants (expect ~8, matching the prior report).\", \"builds_on\": [\"Order economics behind the 'Subscription delivery (prepaid)' discount\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

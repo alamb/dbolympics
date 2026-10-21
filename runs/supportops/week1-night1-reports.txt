@@ -1,0 +1,85 @@
+=== Report 1: Ticket volume and staffing by agent group (written by Grace) ===
+Engineer's note: Agent groups are tenant-scoped, so this rolls up all tenants' groups by name (e.g. every merchant's 'Tier 1' group is combined into one row) since the request didn't scope to a particular merchant; ticket/agent counts and the Unassigned-queue footnote are totals across the whole platform for 2025.
+REPORT: Ticket volume and staffing by agent group
+QUESTION: How is ticket volume distributed across our agent groups, and does staffing (agent count) look balanced against that load?
+agent_group_name  | ticket_count | open_ticket_count | agent_count | tickets_per_agent | pct_unassigned | avg_first_response_minutes | avg_resolution_minutes
+------------------+--------------+-------------------+-------------+-------------------+----------------+----------------------------+-----------------------
+Customer Care     |         1035 |                11 |         255 |               4.1 |            0.5 |                       1577 |                   2708
+Returns & Refunds |          639 |                17 |          39 |              16.4 |            0.9 |                       1590 |                   2677
+Delivery Issues   |          524 |                 7 |          36 |              14.6 |            0.2 |                       1384 |                   2908
+Customer Service  |           76 |                 0 |          17 |               4.5 |            0.0 |                        962 |                   1637
+Key Accounts      |           23 |                 0 |           5 |               4.6 |            0.0 |                        536 |                   1593
+Returns & Claims  |           23 |                 0 |           5 |               4.6 |            0.0 |                       1001 |                   1644
+Unassigned queue  |            0 |                 0 |        NULL |              NULL |           NULL |                       NULL |                   NULL
+(7 rows)
+
+=== Report 2: SLA breach rates by agent group (written by Omar) ===
+Engineer's note: Grain is one row per agent_group (grouped by the group's id across all tenants, since the request didn't restrict to a merchant); all tickets with a null agent_group_id are collapsed into a single 'Unassigned queue' row as requested. avg_first_response_minutes and avg_resolution_minutes are computed only over tickets that actually have a first_response_at/resolved_at timestamp (pending ones excluded from those two averages, though still counted in ticket_count_with_sla).
+REPORT: SLA breach rates by agent group
+QUESTION: Which agent groups miss first-response and resolution SLA targets most often, and by how much when they do?
+agent_group_name  | ticket_count_with_sla | first_response_breach_rate | resolution_breach_rate | avg_minutes_over_first_response | avg_minutes_over_resolution | avg_first_response_minutes | avg_resolution_minutes
+------------------+-----------------------+----------------------------+------------------------+---------------------------------+-----------------------------+----------------------------+-----------------------
+Customer Care     |                     2 |                       50.0 |                  100.0 |                              49 |                        1215 |                       2331 |                   3957
+Customer Care     |                     1 |                      100.0 |                  100.0 |                             340 |                        1327 |                       1060 |                   2468
+Customer Care     |                     3 |                        0.0 |                   66.7 |                            NULL |                         800 |                        568 |                   1601
+Returns & Refunds |                    82 |                       73.2 |                   48.8 |                            4675 |                       10530 |                       3733 |                   6162
+Returns & Refunds |                    20 |                       55.0 |                   45.0 |                             830 |                        1668 |                        738 |                   2171
+Delivery Issues   |                    31 |                       58.1 |                   41.9 |                            3736 |                        8691 |                       2496 |                   4943
+Customer Care     |                    81 |                       56.8 |                   40.7 |                            6648 |                       15001 |                       4163 |                   7811
+Customer Care     |                    45 |                       53.3 |                   40.0 |                            4455 |                        8071 |                       2727 |                   4936
+Returns & Refunds |                    41 |                       61.0 |                   36.6 |                            4708 |                       11181 |                       3212 |                   5592
+Delivery Issues   |                    44 |                       47.7 |                   36.4 |                            5602 |                       19789 |                       2989 |                   8746
+Customer Care     |                   106 |                       54.7 |                   35.8 |                            4003 |                        9697 |                       2464 |                   4264
+Returns & Refunds |                    38 |                       57.9 |                   34.2 |                            2328 |                        2184 |                       1631 |                   2138
+Customer Care     |                     3 |                       33.3 |                   33.3 |                              89 |                         372 |                       1504 |                   3592
+Key Accounts      |                     6 |                       16.7 |                   33.3 |                              70 |                         796 |                        213 |                   1389
+Returns & Refunds |                     3 |                        0.0 |                   33.3 |                            NULL |                         119 |                        758 |                   1031
+Returns & Refunds |                   144 |                       63.9 |                   32.6 |                            1602 |                        3278 |                       1458 |                   2629
+Returns & Refunds |                    47 |                       36.2 |                   31.9 |                            4003 |                        6705 |                       1786 |                   3234
+Delivery Issues   |                    16 |                       31.3 |                   31.3 |                            2420 |                        2278 |                       1081 |                   2306
+Delivery Issues   |                    43 |                       46.5 |                   30.2 |                            3662 |                       13353 |                       2071 |                   5153
+Delivery Issues   |                   107 |                       51.4 |                   29.9 |                            1915 |                        4126 |                       1327 |                   2413
+Customer Care     |                    36 |                       44.4 |                   27.8 |                            1977 |                        4589 |                       1181 |                   2662
+Customer Care     |                   149 |                       54.4 |                   26.8 |                            1184 |                        2869 |                       1010 |                   2034
+Delivery Issues   |                    30 |                       43.3 |                   26.7 |                            3751 |                        7421 |                       1943 |                   3162
+Customer Care     |                    50 |                       50.0 |                   26.0 |                            2751 |                        3659 |                       1693 |                   2262
+Customer Care     |                     4 |                       50.0 |                   25.0 |                              54 |                         368 |                        956 |                   1201
+Customer Care     |                     4 |                        0.0 |                   25.0 |                            NULL |                        3576 |                        173 |                   1189
+Customer Care     |                    28 |                       35.7 |                   25.0 |                            1698 |                        4470 |                        865 |                   2182
+Customer Care     |                     4 |                       25.0 |                   25.0 |                            1017 |                         190 |                       1632 |                   2473
+Delivery Issues   |                     4 |                        0.0 |                   25.0 |                            NULL |                         182 |                        154 |                    456
+Key Accounts      |                     4 |                        0.0 |                   25.0 |                            NULL |                         168 |                        128 |                   1083
+Customer Care     |                     5 |                        0.0 |                   20.0 |                            NULL |                         109 |                       1172 |                   1673
+Customer Care     |                    10 |                       20.0 |                   20.0 |                             157 |                         112 |                        212 |                    818
+Delivery Issues   |                    15 |                       46.7 |                   20.0 |                            1028 |                        2219 |                        770 |                   1562
+Delivery Issues   |                    10 |                       20.0 |                   20.0 |                             509 |                         694 |                        333 |                    905
+Customer Care     |                     6 |                       33.3 |                   16.7 |                             688 |                        2127 |                        879 |                   1797
+Customer Care     |                     6 |                        0.0 |                   16.7 |                            NULL |                         723 |                       1166 |                   1942
+Customer Service  |                     6 |                        0.0 |                   16.7 |                            NULL |                        1629 |                        213 |                   1040
+Customer Care     |                    74 |                       32.4 |                   16.2 |                             341 |                        1152 |                        374 |                   1083
+Delivery Issues   |                    25 |                       36.0 |                   16.0 |                            2092 |                        7658 |                       1101 |                   2643
+Returns & Refunds |                    13 |                       30.8 |                   15.4 |                             561 |                        1015 |                       1052 |                   1625
+Key Accounts      |                     7 |                       14.3 |                   14.3 |                              82 |                        2533 |                        169 |                   1529
+Returns & Refunds |                    21 |                       23.8 |                   14.3 |                            1492 |                        1920 |                        585 |                   1141
+Delivery Issues   |                    22 |                       22.7 |                   13.6 |                             397 |                         589 |                        331 |                    957
+Customer Care     |                    16 |                       18.8 |                   12.5 |                             236 |                        1003 |                        225 |                    766
+Returns & Refunds |                    24 |                       25.0 |                   12.5 |                             848 |                        1058 |                        449 |                   1082
+Customer Care     |                    17 |                       23.5 |                   11.8 |                            1630 |                        4500 |                       1487 |                   2454
+Returns & Refunds |                    17 |                       17.6 |                   11.8 |                             376 |                         447 |                       1224 |                   2021
+Customer Care     |                     9 |                       33.3 |                   11.1 |                             217 |                         138 |                        302 |                    891
+Delivery Issues   |                     9 |                       33.3 |                   11.1 |                             233 |                        6610 |                        323 |                   1865
+Delivery Issues   |                     9 |                       22.2 |                   11.1 |                             604 |                         837 |                       1486 |                   2366
+(171 rows, first 50 printed)
+
+=== Report 3: SLA breach rates by priority, with overall headline rate (written by Omar) ===
+Engineer's note: Breach rate = share of in-scope tickets (created in 2025, sla_policy_id not null) with at least one sla_breaches row of that kind, across all tenants/currencies (rates and minute counts are currency-agnostic so no FX conversion needed). "Typical" target minutes per priority are averaged from the sla_policies rows actually attached to those tickets (ticket-weighted), not a flat lookup, since policies can vary by tenant.
+REPORT: SLA breach rates by priority, with overall headline rate
+QUESTION: What is our overall SLA breach rate for 2025, and which priority levels drive the misses?
+priority       | ticket_count_with_sla | typical_first_response_target_minutes | typical_resolution_target_minutes | first_response_breach_rate | resolution_breach_rate | avg_minutes_over_first_response | avg_minutes_over_resolution
+---------------+-----------------------+---------------------------------------+-----------------------------------+----------------------------+------------------------+---------------------------------+----------------------------
+All priorities |                  2320 |                                  NULL |                              NULL |                       37.7 |                   20.3 |                          2493.0 |                      6480.0
+urgent         |                   241 |                                  60.0 |                             480.0 |                       35.3 |                   50.6 |                          2053.0 |                      2617.0
+high           |                   338 |                                 120.0 |                            1440.0 |                       43.5 |                   21.3 |                          1282.0 |                      3476.0
+normal         |                  1518 |                                 480.0 |                            2880.0 |                       39.3 |                   17.7 |                          2864.0 |                      9022.0
+low            |                   223 |                                1440.0 |                            7200.0 |                       20.6 |                    3.6 |                          2314.0 |                      7413.0
+(5 rows)

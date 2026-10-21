@@ -1,0 +1,9 @@
+{
+ "id": "reliability-review",
+ "lead": "platform",
+ "with": [
+  "success"
+ ],
+ "text": "Leadership wants a review of platform reliability in 2025: failed and slow background jobs, health check failures, rate limiting, webhook delivery problems, and which merchants felt them.",
+ "week": 1
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Root cause of the 291 'unexplained' active-bucket orphan orders",
+    "--question",
+    "For the 291 orphan orders whose customer's most-recent subscription is 'active', does that subscription's own start/end dates show it started after the order, show it marked active while already past its end date, or show dates that should have overlapped (meaning the original orphan flag was a bug)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Omar\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per explanation category, covering the full 291-order population\", \"columns_requested\": [\"category: 'subscription started after this order' (S.started_at > order.placed_at) / 'active status but already past its end date' (S.started_at <= placed_at AND S.ended_at is not null AND S.ended_at < placed_at) / 'dates indicate overlap - likely a bug in the original orphan flag' (S.started_at <= placed_at AND (S.ended_at is null OR S.ended_at >= placed_at))\", \"order count\", \"% of the 291-order bucket\", \"distinct customers\", \"total discount amount (EUR)\"], \"details\": \"Source: the exact same 291 orders from last week's report (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at 2025, status != 'cancelled', no overlapping active/trialing/past_due subscription, most-recent subscription by started_at has status='active'). For each order, use S = that same most-recent-by-started_at subscription row (not a different join), and classify purely by comparing S.started_at and S.ended_at to order.placed_at per the three mutually-exclusive, exhaustive categories above. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Add an explicit check that the three category counts sum to 291. Order by order count descending. Print all categories.\", \"builds_on\": [\"Corrected categorization of all 291 active-bucket orphan subscription-delivery orders\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

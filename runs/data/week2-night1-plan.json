@@ -1,0 +1,53 @@
+{
+ "notes": "Rosa's three questions this week are each really \"is this timing, is this concentrated, and is this already solved elsewhere\" - all testable with the right grain. (1) For the portfolio-level revenue gap, the order-level work showed <1-5% residual gap once refunded/partially_refunded payments are included, but that used orders aged 6+ months - I never actually tested whether that residual shrinks with age (timing) or is flat from day one (structural). An age-bucket grain since placed_at will show the ramp-up curve directly: if match rate keeps climbing past 90-180 days it's timing; if it plateaus early at e.g. 95-98% and stays there, that plateau is the real structural ceiling. (2) For refund/payout traceability, Rosa wants concentration AND trend together - I can get both from one grain (tenant) by comparing H1 vs H2 2025 late-refund euros per tenant, which also directly tests whether the problem is spreading or shrinking. (3) For the B2B sizing question, rather than rebuilding my fuzzy industry-text merchant list, I'm pulling revenue by industry vertical directly - this settles both \"how big is B2B wholesale\" and incidentally double-checks my prior ad hoc filter against the real industry categories. I'm holding the customer-definition-usage question (which other systems already use \"ever purchased\" vs \"last 12 months\") for tomorrow night, since it likely means digging into segments/cohorts/CRM definitions rather than a straightforward aggregate query, and I'd rather scope that precisely after seeing tonight's results.",
+ "requests": [
+  {
+   "title": "Order-to-payment match rate by order age",
+   "question": "At the portfolio level, how much of the gap between order value and money collected is just timing (recent orders not yet settled) versus a permanent shortfall that age doesn't fix?",
+   "grain": "order age bucket, measured as (2025-12-31 minus orders.placed_at) in days",
+   "columns": [
+    "age_bucket",
+    "order_count",
+    "orders_grand_total_eur",
+    "matched_money_collected_eur",
+    "match_rate_pct"
+   ],
+   "details": "Population: all orders with status not 'cancelled' and placed_at between 2023-01-01 and 2025-12-31. Bucket each order by its age in days as of 2025-12-31: '0-3 days', '4-7 days', '8-14 days', '15-30 days', '31-60 days', '61-90 days', '91-180 days', '181-365 days', '366+ days'. order_count = count of orders in the bucket. orders_grand_total_eur = sum of orders.grand_total converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=placed_at date). matched_money_collected_eur = sum of linked payments.amount (payments.order_id = orders.id) where payments.status in ('captured','refunded','partially_refunded'), converted to EUR via payments.currency_code and captured_at date (an order's full matched total if it has multiple such payments). match_rate_pct = matched_money_collected_eur / orders_grand_total_eur * 100, rounded to 1 decimal. Tables: orders, payments, exchange_rates. Order by age_bucket from youngest to oldest.",
+   "builds_on": [
+    "Order-to-payment gap re-measured with refund-inclusive payment status"
+   ]
+  },
+  {
+   "title": "Late-refund concentration and trend by merchant",
+   "question": "Is the refund-after-payout-settled problem concentrated in a handful of merchants, and did it get bigger or smaller in the second half of 2025 versus the first?",
+   "grain": "tenant (merchant)",
+   "columns": [
+    "tenant_name",
+    "h1_2025_late_refund_eur",
+    "h2_2025_late_refund_eur",
+    "change_pct",
+    "total_2025_late_refund_eur",
+    "pct_of_all_late_refunds_2025"
+   ],
+   "details": "Population: payment_refunds with status='succeeded' and processed_at in 2025 (2025-01-01 to 2025-12-31) that are 'late' - i.e. processed_at is after the paid_at of the payout that settled the original payment (find the payout via payout_items.payment_id = payment_refunds.payment_id joined to payouts; exclude refunds whose payment has no matching payout_items row or where the refund is before/equal to the payout's paid_at). Group by tenant (join tenants on payment_refunds.tenant_id). h1_2025_late_refund_eur = sum for processed_at in Jan-Jun 2025, converted to EUR via exchange_rates using payment_refunds.currency_code and processed_at date. h2_2025_late_refund_eur = same for Jul-Dec 2025. change_pct = (h2 - h1) / h1 * 100, rounded to 1 decimal (NULL if h1 is 0). total_2025_late_refund_eur = h1 + h2. pct_of_all_late_refunds_2025 = total_2025_late_refund_eur / (sum of total_2025_late_refund_eur across ALL tenants with any late refunds in 2025, not just those shown) * 100, rounded to 1 decimal. Tables: payment_refunds, payout_items, payouts, tenants, exchange_rates. Show only the top 20 tenants by total_2025_late_refund_eur. Order by total_2025_late_refund_eur descending.",
+   "builds_on": [
+    "Refund timing relative to payout settlement"
+   ]
+  },
+  {
+   "title": "2025 revenue share by industry vertical",
+   "question": "How big a slice of our 2025 collected revenue comes from B2B wholesale merchants (industrial supplies, office equipment) versus every other vertical, so we know whether omitting their receivables line from the board pack is material?",
+   "grain": "industry vertical (tenants.industry)",
+   "columns": [
+    "industry",
+    "tenant_count",
+    "total_2025_money_collected_eur",
+    "pct_of_total_revenue"
+   ],
+   "details": "Population: payments with status in ('captured','refunded','partially_refunded') and captured_at in 2025 (2025-01-01 to 2025-12-31). Join payments.tenant_id to tenants to get tenants.industry (group by the literal industry value as stored, do not pre-filter or re-bucket it - show every distinct value that appears, including null/unclassified as its own row labeled '(none)'). tenant_count = count of distinct tenants in that industry with at least one such payment in 2025. total_2025_money_collected_eur = sum of payments.amount converted to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=captured_at date). pct_of_total_revenue = total_2025_money_collected_eur / (sum across all industries) * 100, rounded to 1 decimal. Tables: payments, tenants, exchange_rates. Order by total_2025_money_collected_eur descending.",
+   "builds_on": [
+    "2025 revenue share by industry vertical"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Do referred or referring shoppers spend differently than everyone else?",
+    "--question",
+    "Among shoppers who place orders, do people who were referred in, or who refer others, show different order frequency or spend than everyone else?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per shopper segment: 'referred', 'referrer', or 'neither'\", \"columns_requested\": [\"segment - 'referred' (user_id appears in referral_redemptions.referred_user_id), else 'referrer' (user_id appears in referrals.referrer_user_id), else 'neither'\", \"users_count - count of distinct users in that segment who placed at least one order with placed_at in 2025\", \"orders_count_2025 - count of those users' orders placed_at in 2025\", \"avg_orders_per_user - orders_count_2025 / users_count, rounded to 2 decimals\", \"avg_order_value_eur - average grand_total (EUR) across that segment's 2025 orders, rounded to 0 decimals\", \"total_revenue_eur - sum of grand_total (EUR) for that segment's 2025 orders, rounded to 0 decimals\"], \"details\": \"Source: orders (placed_at in 2025, all tenants), classify each ordering user by checking membership in referral_redemptions.referred_user_id first, then referrals.referrer_user_id, else 'neither' (mutually exclusive, in that priority order, to handle users who are both). Convert grand_total to EUR the same way as prior money reports. Exactly 3 output rows, ordered 'referred', 'referrer', 'neither'.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

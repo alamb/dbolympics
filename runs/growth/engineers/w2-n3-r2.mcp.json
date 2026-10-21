@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Does the unattributed-orders blind spot differ by vertical or by new-vs-repeat customers?",
+    "--question",
+    "Among orders with no linked marketing attribution, is there a pattern by vertical or by whether the buyer is a new or repeat customer that would tell us if this blind spot is worth chasing?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per industry and attribution status ('attributed' vs 'unattributed')\", \"columns_requested\": [\"industry - tenants.industry\", \"attribution_status - 'attributed' if the order's id appears in attributions.order_id, else 'unattributed'\", \"orders_count - count of orders placed_at in 2025 in that industry/status\", \"share_of_industry_orders_pct - orders_count / total 2025 orders for that industry * 100, rounded to 1 decimal\", \"new_customer_order_pct - share of orders in that cell that are the buyer's first order ever (placed_at equal to the minimum placed_at across all of that user's orders in the full dataset, not just 2025), *100, rounded to 1 decimal\", \"avg_order_value_eur - average grand_total (EUR) of orders in that cell, rounded to 0 decimals\"], \"details\": \"Source: orders joined to tenants (industry) and left-joined to attributions (match on order_id, any row = attributed) for 2025 orders, all tenants. 'First order ever' is computed per user_id (scoped to tenant since users are tenant-scoped) across their full order history including pre-2025 orders, to correctly flag new vs repeat. Convert grand_total to EUR using exchange_rates as of placed_at (EUR=rate 1). Order by industry ascending, then attribution_status ascending ('attributed' before 'unattributed'). Expect roughly 9-10 industries x 2 rows.\", \"builds_on\": [\"Which marketing channels drive orders and revenue\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

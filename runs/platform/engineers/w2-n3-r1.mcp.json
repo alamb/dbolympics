@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Checkout/Storefront Outage Timeline, Nov 28 2025",
+    "--question",
+    "Exactly when did the checkout/storefront outage start and end on Nov 28 2025?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Ines\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per 30-minute interval and component, for checkout and storefront only, 13:00-17:00 UTC on 2025-11-28\", \"columns_requested\": [\"interval_start\", \"component\", \"total_checks\", \"unhealthy_checks\", \"unhealthy_rate_pct\", \"avg_latency_ms\"], \"details\": \"Table system_health_checks. Filter checked_at >= 2025-11-28 13:00:00 and < 2025-11-28 17:00:00, component in ('checkout','storefront'). Group by 30-minute interval (floor checked_at to the nearest 30 minutes) and component. unhealthy_rate_pct = is_healthy=false count / total_checks * 100, rounded 2dp. avg_latency_ms over non-null latency_ms, rounded to whole number. Order by interval_start ascending, component ascending.\", \"builds_on\": [\"Internal Health Check Signal Around the Nov 28 2025 Storefront API Outage\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

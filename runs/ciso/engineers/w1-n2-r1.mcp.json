@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Platform-wide MFA adoption trend by month, staff vs. shoppers",
+    "--question",
+    "What is the actual company-wide MFA adoption rate today for staff and for shoppers, and has it been improving or flat over the past year?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per calendar month (month_label), platform-wide across all tenants\", \"columns_requested\": [\"month_label (YYYY-MM, month end snapshot)\", \"staff users as of month end\", \"staff users with confirmed MFA as of month end\", \"staff MFA rate (%)\", \"shopper users as of month end\", \"shopper users with confirmed MFA as of month end\", \"shopper MFA rate (%)\"], \"details\": \"Source: users (tenant_id, is_staff, created_at, deleted_at) and mfa_devices (user_id, confirmed_at). For each of the 12 months Jan 2025 through Dec 2025 (use calendar_days distinct month_start/month_label values), take month_end = last day of that month. 'Staff users as of month end' = count of users with is_staff = true, created_at <= month_end, and (deleted_at is null or deleted_at > month_end). 'Staff users with confirmed MFA as of month end' = of those, count with at least one mfa_devices row where confirmed_at <= month_end. Same logic for shoppers (is_staff = false). Rates rounded to 1 decimal percent. This is a cumulative snapshot each month, not new signups in that month. Order by month_label ascending (already unique).\", \"builds_on\": [\"MFA adoption rate by merchant, staff vs. shoppers\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

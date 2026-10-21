@@ -1,0 +1,64 @@
+{
+ "notes": "Night 2's magnitude check (report 1) landed a bigger finding than expected: cycle_count movements are literally always exactly ±1 unit (min=max=1, 100% of 10,193 events) — confirmed, not a query artifact, since adjustment/receipt/return/shipment all show wide, varied distributions in the same query. That means my night-1 \"scale of the problem\" was built entirely on a stream that, by construction, can never show a large miss. Meanwhile kind='adjustment' events are rare (407 in the year) but average ~10 units and run up to 192 units per event — a completely different animal, and likely the stream that actually matters for Tobias's write-off/valuation question. I under-covered this on night 1 and need to correct course before locking the memo.\n\nAlso from night 2: report 2 confirms cycle-count activity is 100% in 'pick' locations (120 of 157 pick locations active, 0 of 157 bulk, 0 of 157 returns locations) — a clean, decisive answer to \"which location kind\" for that stream, so I don't need to spend more on that question. And report 3 shows reservations are overwhelmingly reliable (99.3% released_on_time, only 0.3% ever stuck past expiry) — Q4 looks like a non-issue, I'll give it one more sanity pass later if time allows but it's not using a slot tonight.\n\nTonight I'm redirecting all three slots to properly characterize the 'adjustment' stream, since it's likely the financially material one: (1) its own monthly scale/trend, parallel to night 1's cycle_count view, so I can compare the two streams side by side in the memo; (2) the actual top individual events (only 407 total, so a top-30 detail table efficiently reveals whether size concentrates by warehouse/tenant/category/product all at once, rather than slicing a thin 407-row base three more ways); (3) a definitional cross-check against the separate stock_adjustments table, since that table is described as the human-entered correction record with a reason, and I want to confirm it's the same universe as stock_movements kind='adjustment' before I tell auditors which number is authoritative.",
+ "requests": [
+  {
+   "title": "Scale of adjustment-kind stock movements by month, 2025",
+   "question": "Unlike cycle_count (always exactly 1 unit), kind='adjustment' movements vary widely (avg ~10 units, max 192) — what is the monthly scale, direction (shrinkage vs gain) and estimated value of this stream, and how does it trend across 2025?",
+   "grain": "calendar month (Jan 2025 - Dec 2025)",
+   "columns": [
+    "month (YYYY-MM)",
+    "adjustment_events (count of stock_movements rows with kind='adjustment')",
+    "units_short (sum of abs(quantity) where quantity<0)",
+    "units_over (sum of quantity where quantity>0)",
+    "net_units_variance (signed sum; negative = net shrinkage)",
+    "abs_units_variance (sum of abs(quantity))",
+    "estimated_value_eur (sum of abs(quantity) * unit cost, converted to EUR — same costing/FX method as prior reports: preferred-then-cheapest supplier_products.unit_cost, converted via exchange_rates on the movement's occurred_at date)",
+    "avg_abs_units_per_event (rounded 1dp)"
+   ],
+   "details": "Source: stock_movements where kind='adjustment', occurred_at in 2025-01-01 to 2025-12-31 (use a half-open bound occurred_at >= 2025-01-01 and < 2026-01-01 as done previously). Same costing/FX approach as the 'Scale of stock count discrepancies by month' report from night 1. Order by month ascending.",
+   "builds_on": [
+    "Scale of stock count discrepancies by month",
+    "Stock movement magnitude by kind, 2025"
+   ]
+  },
+  {
+   "title": "Largest individual stock adjustments in 2025",
+   "question": "With only 407 adjustment-kind events in the year but some as large as 192 units, which specific events are driving the value — do they cluster by warehouse, merchant, location kind, category or product, or are they scattered?",
+   "grain": "one row per stock_movements event (kind='adjustment')",
+   "columns": [
+    "occurred_at (date)",
+    "tenant_name",
+    "warehouse_name",
+    "location_kind",
+    "category_name (product's primary category, via variant->product->category; 'Uncategorized' if none)",
+    "sku (product_variants.sku)",
+    "quantity_signed (the movement's signed quantity; negative = shrinkage)",
+    "estimated_value_eur (abs(quantity) * unit cost, converted to EUR, same method as prior reports)",
+    "reference_type (stock_movements.reference_type, to see what source document generated the entry)"
+   ],
+   "details": "Source: stock_movements where kind='adjustment', occurred_at in 2025-01-01 to 2025-12-31 (half-open bound as above). Join stock_locations (location_kind, warehouse_id), warehouses (name, tenant_id), tenants (name), product_variants (sku, product_id), products (name, primary_category_id), categories (name). Order by estimated_value_eur descending, tie-break by abs(quantity_signed) descending, then occurred_at, then id, for a deterministic top 30. Note the true total row count (407) in the report even though only 30 are printed.",
+   "builds_on": [
+    "Scale of stock count discrepancies by month",
+    "Stock discrepancies by warehouse and location type",
+    "Stock discrepancies by product category: handling vs tracking-method issue"
+   ]
+  },
+  {
+   "title": "Cross-check: stock_adjustments table vs stock_movements adjustment-kind ledger, 2025",
+   "question": "Does the stock_adjustments table (the human-entered correction record with a required reason) cover the same volume as the stock_movements kind='adjustment' ledger, or is one capturing materially more/less than the other — i.e., which is the authoritative source for 'a physical count or review found a quantity discrepancy'?",
+   "grain": "data source (2 rows: 'stock_adjustments table' and 'stock_movements kind=adjustment ledger')",
+   "columns": [
+    "source",
+    "row_count",
+    "total_abs_quantity (sum of abs(quantity_delta) for stock_adjustments, abs(quantity) for stock_movements)",
+    "distinct_variants_affected",
+    "earliest_date",
+    "latest_date"
+   ],
+   "details": "For 'stock_adjustments table': filter created_at (or occurred_at if present — use whichever timestamp column represents when the adjustment was recorded) between 2025-01-01 and 2025-12-31, count rows, sum abs(quantity_delta), count distinct variant_id. For 'stock_movements kind=adjustment ledger': filter occurred_at in the same 2025 window, count rows, sum abs(quantity), count distinct variant_id. Report both rows side by side so I can see whether row counts and totals roughly reconcile (same universe) or diverge (two different things). No row-level join needed — two independent aggregates is sufficient to answer the question. Order with 'stock_adjustments table' first, then the ledger row.",
+   "builds_on": [
+    "Scale of adjustment-kind stock movements by month, 2025"
+   ]
+  }
+ ]
+}

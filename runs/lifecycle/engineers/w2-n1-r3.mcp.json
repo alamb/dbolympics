@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty transaction order-linkage diagnostic by direction",
+    "--question",
+    "Before retesting the rewards-redemption-without-purchase hypothesis, is order_id even populated on redemption-direction loyalty_transactions, or do we need a different way to connect a redemption to an order?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Viktor\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per distinct loyalty_transactions.direction value\", \"columns_requested\": [\"direction\", \"transaction_count\", \"transactions_with_order_id\", \"pct_with_order_id\", \"distinct_order_ids_referenced\"], \"details\": \"Source: loyalty_transactions across all tenants, 2023-01-01 to 2025-12-31. Group by direction. transaction_count = total rows for that direction. transactions_with_order_id = count where order_id is not null. pct_with_order_id = transactions_with_order_id divided by transaction_count as a percentage. distinct_order_ids_referenced = count of distinct non-null order_id values for that direction. This is a diagnostic to determine whether order_id linkage is usable at all for testing the redemption-to-refund hypothesis, or whether an alternative approach (e.g. matching by time proximity between a transaction and the customer's orders) will be needed instead. Order by transaction_count descending.\", \"builds_on\": [\"Refund rate on points-redeeming orders vs other member orders\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

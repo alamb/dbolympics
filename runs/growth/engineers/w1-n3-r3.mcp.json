@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Do loyalty program members behave differently from other shoppers?",
+    "--question",
+    "Among shoppers who actually place orders, do loyalty-program members order more often or spend more per order than non-members?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per shopper segment: 'loyalty member' vs 'non-member'\", \"columns_requested\": [\"segment - 'loyalty member' (user_id appears in loyalty_accounts) or 'non-member'\", \"users_count - count of distinct users in that segment who placed at least one order with placed_at in 2025\", \"orders_count_2025 - count of those users' orders placed_at in 2025\", \"avg_orders_per_user - orders_count_2025 / users_count, rounded to 2 decimals\", \"avg_order_value_eur - average orders.grand_total converted to EUR across that segment's 2025 orders, rounded to 0 decimals\", \"total_revenue_eur - sum of orders.grand_total converted to EUR for that segment's 2025 orders, rounded to 0 decimals\"], \"details\": \"Source: orders (placed_at in 2025, all tenants) left joined to loyalty_accounts on user_id (and tenant_id) to classify each ordering user as a member (has any loyalty_accounts row) or non-member. Restrict to users who placed at least one 2025 order so the comparison is among active shoppers, not all signups. Convert grand_total to EUR via exchange_rates as in prior money reports. Exactly 2 output rows, ordered 'loyalty member' then 'non-member'.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

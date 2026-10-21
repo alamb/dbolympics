@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  entity_table,\n  count(distinct tenant_id) as tenants_with_policy,\n  round(100.0 * count(distinct tenant_id) / 120, 1) as pct_tenants_with_policy,\n  round(avg(retention_days), 1) as avg_retention_days,\n  min(retention_days) as min_retention_days,\n  max(retention_days) as max_retention_days,\n  round(100.0 * sum(case when is_active then 1 else 0 end) / count(*), 1) as pct_policies_active,\n  round(100.0 * sum(case when last_run_at >= date '2025-10-03' then 1 else 0 end) / count(*), 1) as pct_policies_run_in_last_90_days\nfrom retention_policies\nwhere entity_table in ('audit_log', 'access_log', 'change_history', 'data_subject_requests', 'compliance_events', 'login_attempts')\ngroup by entity_table\norder by entity_table",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: entity_table, tenants_with_policy, pct_tenants_with_policy, avg_retention_days, min_retention_days, max_retention_days, pct_policies_active, pct_policies_run_in_last_90_days"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "select\n  entity_table,\n  count(distinct tenant_id) as tenants_with_policy,\n  round(100.0 * count(distinct tenant_id) / 120, 1) as pct_tenants_with_policy,\n  round(avg(retention_days), 1) as avg_retention_days,\n  min(retention_days) as min_retention_days,\n  max(retention_days) as max_retention_days,\n  round(100.0 * sum(case when is_active then 1 else 0 end) / count(*), 1) as pct_policies_active,\n  round(100.0 * sum(case when last_run_at >= date '2025-10-03' then 1 else 0 end) / count(*), 1) as pct_policies_run_in_last_90_days\nfrom retention_policies\nwhere entity_table in ('audit_log', 'access_log', 'change_history', 'data_subject_requests', 'compliance_events', 'login_attempts')\ngroup by entity_table\norder by entity_table",
+  "note": "One row per entity_table as requested, aggregated across all tenants' retention_policies rows; a table only appears here if at least one tenant has defined a policy row for it, so missing rows in the printed report (expect up to 6) mean zero tenants have ever configured a policy for that table.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. One note for Claire: the report will only show rows for entity_table values that have at least one `retention_policies` row somewhere — if any of the six tables (e.g. `access_log` or `login_attempts`) has zero tenants with a defined policy, it simply won't appear in the output, which itself is a strong signal for Rosa's concern (no stated retention commitment at all, rather than a short one)."
+ }
+]

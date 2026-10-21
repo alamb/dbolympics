@@ -1,0 +1,51 @@
+=== Report 1: 2025 Q4 Weekly Job Reliability and Lateness (written by Bea) ===
+Engineer's note: Weeks are grouped by calendar_days.week_start (ISO week of queued_at), so the first and last printed weeks may extend a few days before Oct 1 or after Dec 31 2025 where the ISO week straddles the quarter boundary; all underlying job_runs rows are still restricted to queued_at in [2025-10-01, 2026-01-01).
+REPORT: 2025 Q4 Weekly Job Reliability and Lateness
+QUESTION: Within the window job_runs actually covers (Oct-Dec 2025), how did failure rates and job lateness (queue delay, not just run duration) trend week by week?
+week_start | total_job_runs | failed_runs | failure_rate_pct | avg_queue_delay_seconds | p95_queue_delay_seconds | pct_jobs_queue_delay_over_5min | avg_duration_seconds
+-----------+----------------+-------------+------------------+-------------------------+-------------------------+--------------------------------+---------------------
+2025-09-29 |           1660 |           0 |              0.0 |                     2.6 |                       5 |                            0.0 |                  7.2
+2025-10-06 |           3808 |           0 |              0.0 |                     2.6 |                       5 |                            0.0 |                  4.9
+2025-10-13 |           3785 |           0 |              0.0 |                     2.6 |                       5 |                            0.0 |                  4.7
+2025-10-20 |           3782 |           0 |              0.0 |                     2.5 |                       5 |                            0.0 |                  4.9
+2025-10-27 |           3891 |           0 |              0.0 |                     2.5 |                       5 |                            0.0 |                  5.7
+2025-11-03 |           3798 |           0 |              0.0 |                     2.5 |                       5 |                            0.0 |                  4.9
+2025-11-10 |           3798 |           0 |              0.0 |                     2.5 |                       5 |                            0.0 |                  4.8
+2025-11-17 |           3792 |           0 |              0.0 |                     2.5 |                       5 |                            0.0 |                  5.1
+2025-11-24 |           3861 |          20 |              0.5 |                     2.6 |                       5 |                            0.0 |                  4.9
+2025-12-01 |           3934 |           0 |              0.0 |                     2.5 |                       5 |                            0.0 |                  5.8
+2025-12-08 |           3829 |           0 |              0.0 |                     2.6 |                       5 |                            0.0 |                  5.1
+2025-12-15 |           3828 |           0 |              0.0 |                     2.5 |                       5 |                            0.0 |                  4.9
+2025-12-22 |           3828 |           0 |              0.0 |                     2.6 |                       5 |                            0.0 |                  4.8
+2025-12-29 |           1653 |           0 |              0.0 |                     2.6 |                       5 |                            0.0 |                  3.5
+(14 rows)
+
+=== Report 2: 2025 Job Failures by Job Type (Handler) (written by Bea) ===
+Engineer's note: Per the request, filtered to queued_at in 2025-10-01..2025-12-31 (the only window available for job_runs), even though the title says "2025" — full-year 2025 job_runs data is not present in the warehouse.
+REPORT: 2025 Job Failures by Job Type (Handler)
+QUESTION: Are job failures concentrated in a small number of job types/handlers rather than spread evenly across tenants?
+handler             | total_runs | failed_runs | failure_rate_pct | distinct_tenants_run | distinct_tenants_failed | avg_duration_seconds_failed
+--------------------+------------+-------------+------------------+----------------------+-------------------------+----------------------------
+carts.remind        |      21867 |          20 |             0.09 |                   10 |                      10 |                         1.7
+audit.archive       |        220 |           0 |              0.0 |                  111 |                       0 |                        NULL
+loyalty.release     |       2580 |           0 |              0.0 |                   29 |                       0 |                        NULL
+payouts.reconcile   |      10001 |           0 |              0.0 |                  113 |                       0 |                        NULL
+search.reindex      |       1503 |           0 |              0.0 |                  113 |                       0 |                        NULL
+segments.refresh    |       9987 |           0 |              0.0 |                  113 |                       0 |                        NULL
+sitemap.build       |       1449 |           0 |              0.0 |                  112 |                       0 |                        NULL
+subscriptions.renew |       1640 |           0 |              0.0 |                   18 |                       0 |                        NULL
+(8 rows)
+
+=== Report 3: 2025 Q4 Weekly Job Failures vs Health Check Alerts (written by Ines) ===
+Engineer's note: Weeks are ISO weeks (calendar_days.week_start, Monday-based); only weeks with data in both job_runs and system_health_checks for Nov 1 - Dec 31 2025 are included (inner join), so a week start may be dropped if one source has no rows that week. Platform-wide totals across all tenants.
+REPORT: 2025 Q4 Weekly Job Failures vs Health Check Alerts
+QUESTION: In the window where we have both job_runs and system_health_checks data, did weeks with more unhealthy health checks line up with weeks of more job failures?
+week_start | total_job_runs | failed_job_runs | job_failure_rate_pct | total_health_checks | unhealthy_health_checks | health_check_unhealthy_rate_pct
+-----------+----------------+-----------------+----------------------+---------------------+-------------------------+--------------------------------
+2025-11-24 |           3861 |              20 |                 0.52 |               14832 |                     362 |                            2.44
+2025-12-01 |           3934 |               0 |                  0.0 |               25956 |                     246 |                            0.95
+2025-12-08 |           3829 |               0 |                  0.0 |               25956 |                     250 |                            0.96
+2025-12-15 |           3828 |               0 |                  0.0 |               25956 |                     271 |                            1.04
+2025-12-22 |           3828 |               0 |                  0.0 |               25956 |                     249 |                            0.96
+2025-12-29 |           1653 |               0 |                  0.0 |               11124 |                     115 |                            1.03
+(6 rows)

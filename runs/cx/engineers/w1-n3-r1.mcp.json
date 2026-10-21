@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Delivery performance: Studio Vrij vs platform, 2025",
+    "--question",
+    "Did Studio Vrij's actual shipping/delivery performance deteriorate in May-June 2025, explaining the spike in their delivery-related support tickets, or was it a support-side issue only?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one calendar month in 2025, with paired columns for Studio Vrij and the rest of the platform\", \"columns_requested\": [\"month (YYYY-MM)\", \"Studio Vrij shipments delivered\", \"Studio Vrij avg days placed-to-delivered\", \"Studio Vrij % of shipments over 7 days placed-to-delivered\", \"platform (ex-Studio Vrij) shipments delivered\", \"platform (ex-Studio Vrij) avg days placed-to-delivered\", \"platform (ex-Studio Vrij) % of shipments over 7 days placed-to-delivered\"], \"details\": \"Source: shipments joined to fulfillments (for order_id and tenant scoping) joined to orders (for placed_at). Only include shipments with delivered_at not null. 'Days placed-to-delivered' = extract(epoch from shipments.delivered_at - orders.placed_at)/86400. Grain the month on orders.placed_at (2025-01 through 2025-12). Split into two groups: tenant = the 'Studio Vrij' tenant (join tenants on name to find its id) vs all other tenants combined. '% over 7 days' = share of that group/month's delivered shipments where days placed-to-delivered > 7, as a percentage rounded to 1 decimal. Round avg days to 1 decimal. Note in the report that Nov/Dec 2025 cohorts will be incomplete since some orders placed late in the year may not show a delivered shipment yet (right-censoring), similar to the earlier ticket-resolution caveat. Order by month ascending.\", \"builds_on\": [\"Ticket spike in May-June 2025: which merchants drove it\", \"Delivery-related vs other tickets: volume and resolution speed\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Refund rate on points-redeeming orders vs other member orders",
+    "--question",
+    "Among loyalty members' own orders, do the ones where loyalty points were actually redeemed show a higher refund rate than their other orders - i.e. is the elevated member refund rate concentrated in reward-redeeming purchases, suggesting rewards are being used without real purchase intent?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Grace\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per order type among loyalty members' orders: 'points redeemed on this order' vs 'no points redeemed on this order'\", \"columns_requested\": [\"order_type\", \"order_count\", \"distinct_customers\", \"refund_rate_pct\", \"avg_order_value_eur\", \"avg_points_redeemed_per_order\"], \"details\": \"Population: all orders (any status, 2023-01-01 to 2025-12-31) placed by users who have a row in loyalty_accounts. Classify an order as 'points redeemed on this order' if there exists a loyalty_transactions row with that order_id and a direction other than 'earn' (i.e. a burn/redeem row); otherwise 'no points redeemed on this order'. refund_rate_pct = share of orders in that group with payments.amount_refunded greater than 0 OR an order_returns row, consistent with prior reports' refund definition. avg_order_value_eur = average grand_total of non-cancelled orders in the group, converted to EUR via exchange_rates (order currency_code to EUR, rate as_of placed_at). avg_points_redeemed_per_order = average absolute points value of the matched redeem transaction(s) for the 'points redeemed' group (0 for the other group). Order rows: 'points redeemed on this order' first, then 'no points redeemed on this order'.\", \"builds_on\": [\"Loyalty member order behavior before vs after enrollment\", \"Loyalty member vs non-member behavior by account tenure\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,53 @@
+=== Report 1: Orders in the 14:00-16:00 UTC Window: Nov 28 vs Baseline Days (written by Viktor) ===
+Engineer's note: This aggregates across all tenants/merchants combined (no tenant filter was specified); revenue is converted to EUR per-order using that order's own currency and the exchange rate as_of its placed date. If the VP wants this broken out per merchant or filtered to specific tenants, let me know and I'll rerun.
+REPORT: Orders in the 14:00-16:00 UTC Window: Nov 28 vs Baseline Days
+QUESTION: How many orders (and how much revenue) were actually lost in the 14:00-16:00 UTC outage window on Black Friday, compared to the same window on comparable days?
+date       | label             | orders_14_to_16_utc | revenue_eur_14_to_16_utc | total_orders_full_day | pct_of_day_in_window
+-----------+-------------------+---------------------+--------------------------+-----------------------+---------------------
+2024-11-29 | Black Friday 2024 |                  22 |                   4012.0 |                   227 |                  9.7
+2025-11-21 | Prior Friday      |                   6 |                    699.0 |                    82 |                  7.3
+2025-11-28 | Black Friday 2025 |                   1 |                    103.0 |                   201 |                  0.5
+2025-12-05 | Following Friday  |                   6 |                   1574.0 |                   119 |                  5.0
+(4 rows)
+
+=== Report 2: Checkout/Storefront Severe Outages, Nov-Dec 2025 (written by Ines) ===
+Engineer's note: system_health_checks carries tenant_id, but the request did not ask for a per-tenant breakdown, so checks are aggregated across all tenants per hour/component as specified. If this table is tenant-scoped and Nov 28 outage was specific to one or few tenants, a tenant-level cut may be worth a follow-up report.
+REPORT: Checkout/Storefront Severe Outages, Nov-Dec 2025
+QUESTION: Was the Nov 28 checkout/storefront outage a one-off, or did similarly severe (>=50% unhealthy) readings happen at other times in the window we have data for?
+checked_hour        | component  | total_checks | unhealthy_checks | unhealthy_rate_pct | avg_latency_ms
+--------------------+------------+--------------+------------------+--------------------+---------------
+2025-11-28 14:00:00 | checkout   |          111 |              111 |              100.0 |        10000.0
+2025-11-28 14:00:00 | storefront |          111 |              111 |              100.0 |        10000.0
+(2 rows)
+
+=== Report 3: Payment Attempts During the Nov 28 2025 Outage Window (written by Felix) ===
+Engineer's note: Query is platform-wide (all tenants) since the outage question is about the checkout path generally, not one merchant; hours with zero attempts will simply be absent from the 24-row output, as the request anticipated.
+REPORT: Payment Attempts During the Nov 28 2025 Outage Window
+QUESTION: Did payment processing itself fail or stall during the same 14:00-16:00 UTC window, confirming a full checkout-path outage rather than just the reminder-email job?
+hour | total_payment_attempts | captured_or_authorized_count | failed_count | failure_rate_pct
+-----+------------------------+------------------------------+--------------+-----------------
+   0 |                      4 |                            4 |            0 |              0.0
+   1 |                      5 |                            5 |            0 |              0.0
+   2 |                      2 |                            2 |            0 |              0.0
+   3 |                      2 |                            1 |            1 |             50.0
+   4 |                      4 |                            4 |            0 |              0.0
+   5 |                      2 |                            2 |            0 |              0.0
+   6 |                      6 |                            5 |            1 |            16.67
+   7 |                      4 |                            3 |            1 |             25.0
+   8 |                      9 |                            8 |            1 |            11.11
+   9 |                     13 |                           12 |            1 |             7.69
+  10 |                      3 |                            3 |            0 |              0.0
+  11 |                      7 |                            7 |            0 |              0.0
+  12 |                     15 |                           15 |            0 |              0.0
+  13 |                     14 |                           14 |            0 |              0.0
+  14 |                      3 |                            3 |            0 |              0.0
+  15 |                      2 |                            2 |            0 |              0.0
+  16 |                     17 |                           13 |            4 |            23.53
+  17 |                     11 |                           11 |            0 |              0.0
+  18 |                      9 |                            8 |            1 |            11.11
+  19 |                     18 |                           17 |            1 |             5.56
+  20 |                     17 |                           17 |            0 |              0.0
+  21 |                     18 |                           18 |            0 |              0.0
+  22 |                     13 |                           12 |            1 |             7.69
+  23 |                      6 |                            6 |            0 |              0.0
+(24 rows)

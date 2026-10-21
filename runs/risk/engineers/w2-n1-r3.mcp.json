@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Rejected DSAR timing via the record's own updated_at",
+    "--question",
+    "Using a simpler, reliable timestamp (the request record's own updated_at, not JSON history), roughly when were the 3 rejected-without-completed_at DSARs last touched relative to their received and due dates?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Grace\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per rejected data_subject_requests record with completed_at is null (expect 3 rows)\", \"columns_requested\": [\"request_type\", \"received_at\", \"due_at\", \"updated_at\", \"days_received_to_updated_at\", \"within_due_at (updated_at <= due_at)\"], \"details\": \"Source: data_subject_requests only \\u2014 no change_history or audit_log join this time, to avoid the JSON-casting failure from last week. Treat updated_at as a proxy for 'last touched' (likely the rejection decision, on the assumption nothing else modified these rows afterward); please note this assumption as a caveat on the report rather than presenting it as certain. No subject-identifying columns. Order by received_at ascending.\", \"builds_on\": [\"Resolution timing of rejected DSARs via audit trail (retry)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

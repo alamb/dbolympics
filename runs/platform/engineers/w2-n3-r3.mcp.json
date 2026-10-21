@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Black Friday 2025 Sales vs Surrounding Fridays and Black Friday 2024",
+    "--question",
+    "Despite the checkout outage, how did total Black Friday 2025 sales compare to the Fridays immediately before/after it and to Black Friday 2024 - was the day's performance meaningfully dented?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Ines\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per named reference day\", \"columns_requested\": [\"date\", \"label\", \"total_orders\", \"total_revenue_eur\"], \"details\": \"Table orders, filtered to placed_at on each of these four specific dates (full day, UTC): 2025-11-21 (label 'Prior Friday'), 2025-11-28 (label 'Black Friday 2025'), 2025-12-05 (label 'Following Friday'), 2024-11-29 (label 'Black Friday 2024'). total_revenue_eur = sum of grand_total converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=that date), rounded to whole number. Platform-wide, all tenants. Order by date ascending.\", \"builds_on\": [\"Order Volume by Hour on Black Friday 2025 (Nov 28)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "requests": [
+  {
+   "title": "B2B Wholesale: Dollar-Weighted vs Count-Weighted Win Rate by Merchant",
+   "question": "Does Youssef Meijer's 'wins small deals, loses the big one' pattern show up at the Polder Packaging merchant level too, or is it fully offset by his co-rep (Thijs Dijkstra) once you zoom out?",
+   "grain": "one row per wholesale merchant (tenant)",
+   "columns": [
+    "merchant",
+    "opportunities_closed",
+    "count_win_rate_pct",
+    "total_amount_won_eur",
+    "total_amount_lost_eur",
+    "dollar_weighted_win_rate_pct",
+    "gap_pct_points (count_win_rate_pct minus dollar_weighted_win_rate_pct)"
+   ],
+   "details": "Same methodology as last night's rep-level dollar-weighted report, but grouped by tenant instead of owner_user_id, with no minimum-deal threshold (all 5 merchants have well over 3 closed deals). Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true. Convert amount to EUR: if currency_code = 'EUR', amount_eur = amount; otherwise amount_eur = amount / rate from exchange_rates (base_code='EUR', quote_code=currency_code, as_of nearest date on or before closed_at). count_win_rate_pct = closed_won / opportunities_closed * 100. dollar_weighted_win_rate_pct = total_amount_won_eur / (total_amount_won_eur + total_amount_lost_eur) * 100. gap_pct_points = count_win_rate_pct minus dollar_weighted_win_rate_pct. Order by gap_pct_points descending.",
+   "builds_on": [
+    "B2B Wholesale: Dollar-Weighted vs Count-Weighted Win Rate by Rep",
+    "B2B Wholesale: Win Rate and Average Deal Size by Merchant (New Business) — Corrected"
+   ]
+  }
+ ],
+ "notes": "Tonight I'm only spending one of three slots — the other two questions Patrick raised (Q2: is zero open pipeline a freeze or coincidence; Q4: seasonality of lost-deal duration) are already answered well enough from last night's data without needing more queries: (1) opportunity creation in Dec 2025 was low (1 new opp) but within the historical range (monthly creation has dipped to 1-2 before, e.g. Jul 2023, Mar 2024), and the month-end open balance has hit zero before (Jul 2025) — so this reads as normal pipeline volatility for a low-volume process, not a data freeze or ingestion gap; (2) lost-deal duration by quarter bounces between ~18 and ~49 days with only 1-8 lost deals per quarter — there's a mild hint that Q4/holiday-period losses run a bit longer in 2 of 3 years, but the samples are too small to call it a real seasonal effect, so I'll report it as inconclusive rather than overclaim a pattern. The one report I am requesting tonight extends the highest-priority finding (Youssef Meijer loses his biggest deals) up to the merchant level, since Patrick will want to know whether this is purely a one-rep coaching conversation or something visible in Polder Packaging's own numbers before he talks to that merchant. I'm holding night 4 in reserve in case this merchant-level check surfaces something unexpected that needs one more follow-up; otherwise I'm ready to write Friday's memo."
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Retention policy landscape: distinct rules by entity table",
+    "--question",
+    "What retention rules actually exist across entity tables, collapsing the one-row-per-tenant duplication, so I can see real coverage and variation?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per distinct combination of (entity_schema, entity_table, retention_days, action_on_expiry)\", \"columns_requested\": [\"entity schema\", \"entity table\", \"retention days\", \"action on expiry\", \"tenant count using this exact combination\", \"active count (is_active = true)\", \"never-run count (last_run_at is null)\"], \"details\": \"Source: retention_policies. Group by (entity_schema, entity_table, retention_days, action_on_expiry) instead of listing one row per tenant, since last night's report showed the same audit_log/730/archive combination repeated across ~120 tenants and got truncated before reaching other entity tables. This should surface every entity table that has a policy (likely a handful: audit_log, access_log, data_exports, consent_records, etc.) and flag any table where retention_days or action_on_expiry varies across tenants. Order by entity_table, then tenant_count descending.\", \"builds_on\": [\"Retention policy inventory: what rules exist and where\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,61 @@
+{
+ "notes": "Night 2 closed out Q3 cleanly: only 5 of 4,936 member orders fall on the same calendar day as any points redemption, and that handful is too thin to read anything into (and still not a true causal link) - combined with burn transactions never carrying an order_id, this tells me redemption is simply decoupled from checkout timing in how the system records it, not that gaming is happening. I'm treating that hypothesis as addressed: no usable signal, data model doesn't support closer scrutiny. Report 2 ruled out discounting as the cause of the Apparel AOV gap - discount rates are small and similar for both segments (4.6% vs 3.6%); the gap is almost entirely in the pre-discount subtotal, so members are just buying cheaper baskets, not getting bigger discounts. The big thread to pull tonight is Report 3: it turns out loyalty members are not one population - only 3.9% of the bottom 75% (by revenue) have EVER redeemed a point, versus 55.9% of the top 25%, and the top 25% look like dramatically better customers (6x the revenue, 3x the orders, 2.5x the tenure). That could mean engagement drives value, or it could just mean long-tenured big spenders naturally rack up and redeem more points - I want to pull that apart before telling Aisha 'engagement is the fix.' Tonight: (1) re-cut the Apparel tenure comparison into three groups - never-redeemed members, ever-redeemed members, non-members - to see if engaged members actually match or beat non-members once tenure is held constant, while disengaged members lag; (2) see whether the programme's real redeemed cost is concentrated entirely in the engaged minority (meaning the disengaged majority is pure low-stakes liability, not realized cost); (3) a before/after-first-redemption test on engaged members only (this one should actually have pre-period data, unlike the failed before/after-enrollment test) to get at causality - does ordering pick up after someone's first redemption, or were they already heavy buyers beforehand?",
+ "requests": [
+  {
+   "title": "Apparel: never-redeemed vs ever-redeemed members vs non-members, by tenure",
+   "question": "Once we separate loyalty members into those who have actually redeemed a point at least once versus those who never have, do the engaged ones match or beat non-members of similar tenure, while the disengaged majority lags behind?",
+   "grain": "one row per combination of account-tenure band and customer group: 'never-redeemed member', 'ever-redeemed member', 'non-member', restricted to the Apparel and Footwear vertical",
+   "columns": [
+    "tenure_band",
+    "group",
+    "customer_count",
+    "avg_lifetime_orders",
+    "avg_lifetime_revenue_eur",
+    "avg_order_value_eur",
+    "refund_rate_pct"
+   ],
+   "details": "Population: users (is_staff = false) in tenants with tenants.industry = 'Apparel & Footwear' who placed at least one order 2023-01-01 to 2025-12-31. Tenure band = time from users.created_at to 2025-12-31, bucketed as 'under 6 months', '6 to 12 months', '12 to 24 months', 'over 24 months' (same boundaries as prior tenure reports). Group: 'non-member' if no loyalty_accounts row; otherwise 'ever-redeemed member' if the user has at least one 'burn'-direction loyalty_transactions row, else 'never-redeemed member'. Revenue/AOV use non-cancelled orders converted to EUR via exchange_rates (as_of placed_at). avg_lifetime_orders and refund_rate_pct use all orders (any status); refund = payments.amount_refunded greater than 0 OR an order_returns row. Order rows by tenure_band (youngest to oldest), then group in the order 'non-member', 'never-redeemed member', 'ever-redeemed member'.",
+   "builds_on": [
+    "What distinguishes higher-revenue loyalty members from the rest",
+    "Apparel and Footwear: loyalty member vs non-member behavior by tenure"
+   ]
+  },
+  {
+   "title": "Loyalty unit economics: ever-redeemed vs never-redeemed members",
+   "question": "Is the programme's realized cost concentrated entirely in the minority of members who actually redeem, while the disengaged majority sits as pure unclaimed liability rather than real cost?",
+   "grain": "one row per member engagement group: 'ever-redeemed member' vs 'never-redeemed member'",
+   "columns": [
+    "group",
+    "member_count",
+    "total_revenue_eur",
+    "revenue_per_customer_eur",
+    "total_points_redeemed_cost_eur",
+    "total_points_earned_liability_eur",
+    "redeemed_cost_pct_of_revenue"
+   ],
+   "details": "Population: all users with a loyalty_accounts row who placed at least one order 2023-01-01 to 2025-12-31. Group: 'ever-redeemed member' if the user has at least one 'burn'-direction loyalty_transactions row, else 'never-redeemed member'. total_revenue_eur = sum of grand_total on non-cancelled orders, converted to EUR via exchange_rates (as_of placed_at); revenue_per_customer_eur = total_revenue_eur divided by member_count. total_points_redeemed_cost_eur = sum of 'burn'-direction loyalty_transactions converted to currency via the program's points_per_currency and currency_code, then to EUR via exchange_rates as_of occurred_at (same method as prior unit-economics reports); this will be 0 for never-redeemed members by construction. total_points_earned_liability_eur = same conversion for 'earn'-direction transactions. redeemed_cost_pct_of_revenue = total_points_redeemed_cost_eur divided by total_revenue_eur, as a percentage. Order rows: 'ever-redeemed member' first.",
+   "builds_on": [
+    "Loyalty programme unit economics: points cost vs revenue per customer",
+    "What distinguishes higher-revenue loyalty members from the rest"
+   ]
+  },
+  {
+   "title": "Member order behavior before vs after their first points redemption",
+   "question": "Among members who have redeemed at least once, does their order frequency and spend actually pick up after that first redemption, or were they already heavy buyers beforehand - i.e. does redeeming look like a cause of engagement or just a marker of customers who were already engaged?",
+   "grain": "one row per relative period: 'before first redemption' vs 'after first redemption', aggregated across all such members' own orders",
+   "columns": [
+    "period",
+    "distinct_customers",
+    "total_orders",
+    "avg_order_value_eur",
+    "orders_per_customer_per_year",
+    "refund_rate_pct"
+   ],
+   "details": "Population: users with a loyalty_accounts row who have at least one 'burn'-direction loyalty_transactions row. For each such user, find their first redemption's occurred_at timestamp. Split their orders (any status, placed_at not null, 2023-01-01 to 2025-12-31) into 'before first redemption' (placed_at before that timestamp) and 'after first redemption' (placed_at on or after that timestamp). total_orders and distinct_customers are counts within each period. avg_order_value_eur uses non-cancelled orders, grand_total converted to EUR via exchange_rates (as_of placed_at). refund_rate_pct = share of orders in the period with payments.amount_refunded greater than 0 OR an order_returns row. orders_per_customer_per_year = total_orders in the period divided by (sum across customers of exposed days in that period divided by 365); exposed days before = first-redemption timestamp minus the customer's first order placed_at (or users.created_at if no earlier order); exposed days after = (customer's last order placed_at, or 2025-12-31 if still active) minus the first-redemption timestamp; floor exposed days at 1. Order rows: 'before first redemption' first, then 'after first redemption'.",
+   "builds_on": [
+    "Loyalty member order behavior before vs after enrollment",
+    "What distinguishes higher-revenue loyalty members from the rest"
+   ]
+  }
+ ]
+}

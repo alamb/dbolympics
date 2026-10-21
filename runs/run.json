@@ -1,0 +1,23 @@
+{
+ "db": "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+ "out": "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6",
+ "backend": "claude",
+ "model": "None",
+ "effort": "",
+ "claude": "claude",
+ "codex": "codex",
+ "codex_user_config": "False",
+ "api_base": "None",
+ "api_key_env": "OPENAI_API_KEY",
+ "managers": "",
+ "nights": "4",
+ "slots": "3",
+ "weeks": "2",
+ "engineer_turns": "25",
+ "query_timeout": "600",
+ "seed": "5",
+ "situations": "0.5",
+ "parallel": "1",
+ "mock": "False",
+ "run_id": "run6"
+}

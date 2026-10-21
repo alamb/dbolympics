@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Data export fulfillment audit: are access/portability exports actually completing?",
+    "--question",
+    "Is 'zero completed data exports' real, or is 'completed' simply the wrong status string for this table — and are shoppers who filed access requests actually receiving their data?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Viktor\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per data_exports.status value\", \"columns_requested\": [\"status\", \"count\", \"earliest requested_at\", \"latest requested_at\", \"count with completed_at not null\", \"count with file_url not null (artifact actually produced)\", \"average row_count (for rows where row_count is not null)\"], \"details\": \"Source: data_exports, platform-wide, full history (all 11 rows from last night's linked set, in case there are more unlinked ones this surfaces as well). Group by status exactly as stored. This resolves whether last night's completed_export_count = 0 was a wrong assumption about the status string, or whether it's genuinely true that no export has ever been marked complete \\u2014 in which case we need to check whether file_url/completed_at tell a different, more reassuring story. Order by count descending.\", \"builds_on\": [\"Portability requests: formal DSAR count vs. unlinked data exports\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

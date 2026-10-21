@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Platform billing risk: merchants past_due, suspended or churned",
+    "--question",
+    "Which merchants are currently behind on paying us or already cut off, and how big/active are they — our clearest churn-risk signal?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Grace\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per merchant (tenant), filtered to status in ('past_due','suspended','churned')\", \"columns_requested\": [\"merchant name\", \"vertical\", \"tenant status\", \"tenure (days since created_at, as of 2026-01-05)\", \"days since last order placed\", \"days since last settled ('paid') payout\", \"fee revenue trailing 12 months (EUR)\"], \"details\": \"Source: tenants filtered to status in ('past_due','suspended','churned') and deleted_at is null, left joined to orders (max placed_at per tenant_id, any status) and payouts (max paid_at per tenant_id where status='paid') for recency, and to payouts again for fee revenue (status='paid', paid_at in [2025-01-01,2026-01-01), converted to EUR via exchange_rates as_of paid_at date, matching the validated methodology). This is meant to be read as the platform-billing-health complement to last night's customer-receivables report (that one was about merchants' own customers owing them money; this one is about whether the merchant itself is behind with Tidewick). Order by tenant status (churned first, then suspended, then past_due), tie-break by fee revenue descending. Note total row count.\", \"builds_on\": [\"Merchant status and payout activity, today\", \"Receivables aging: who owes us and for how long\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

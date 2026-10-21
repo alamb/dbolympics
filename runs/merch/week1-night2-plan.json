@@ -1,0 +1,58 @@
+{
+ "notes": "Night 1 findings to react to: (1) In the merchant profile, image-presence (97-100%) and variant richness are almost entirely explained by vertical (apparel ~12-14 variants/product vs B2B ~1-2), not merchant skill — so 'catalog health' comparisons need to control for vertical. A couple of outliers stood out for later: Bytefield's avg_rating of 1.50 and Circuit Harbor's thin 18 orders against 93 products, both worth a Q3 drill-down later. (2) The image-count-bucket report is NOT monotonic — bucket '1 image' (265 EUR/product) beats '2-3' and '4-6' (183, 192), only catching back up at '7+' (521). That's suspicious and likely confounded by vertical mix (B2B products tend to have 1 plain image but high per-order value; apparel has many images but lower per-unit revenue). I want to re-run the richness-vs-sales comparison inside a single vertical to remove that confound before telling Freya 'more images = more sales'. (3) The monthly review trend shows review counts climbing through the series with sharp December spikes each year, but December 2025 stands out with the lowest avg_rating (3.71) and highest pct_1_2_star (25.8%) in the whole 36-month series — a real anomaly worth root-causing. Also, since order volume is growing over the same period, I can't yet tell if rising review counts reflect genuine engagement growth or just mirror order growth — need review-per-order to normalize that. Tonight's three requests: control for vertical on richness-vs-sales, normalize review volume by order volume, and localize the December 2025 rating dip by vertical.",
+ "requests": [
+  {
+   "title": "Image-Richness vs Sales Within Apparel & Footwear",
+   "question": "Within a single vertical, removing the cross-vertical confound seen in the platform-wide bucket report, do products with more images actually sell better?",
+   "grain": "one row per product image-count bucket (0, 1, 2-3, 4-6, 7+), restricted to products belonging to tenants in the Apparel & Footwear industry",
+   "columns": [
+    "image_count_bucket",
+    "product_count",
+    "pct_with_description",
+    "avg_variants_per_product",
+    "avg_reviews_per_product",
+    "avg_rating",
+    "avg_units_sold_per_product_last_12mo",
+    "avg_revenue_per_product_eur_last_12mo"
+   ],
+   "details": "Same methodology as the night-1 'Catalog Richness vs Sales Performance by Image Count Bucket' report (products, product_media kind=image for the bucket, product_reviews approved for reviews/rating, product_variants for variant count, order_items joined to orders with placed_at between 2025-01-01 and 2025-12-31 and status not cancelled, revenue converted to EUR via exchange_rates base_code=EUR quote_code=order currency_code as_of the order's placed_at date), but filtered to products whose tenant has tenants.industry = 'Apparel & Footwear'. Only active, non-deleted products. avg_rating excludes products with zero reviews from the average (as before) but they still count at 0 in avg_reviews_per_product and sales averages. Round rates/averages to 2 decimals, revenue to whole EUR. Order by image_count_bucket in natural ascending order (0, 1, 2-3, 4-6, 7+).",
+   "builds_on": [
+    "Catalog Richness vs Sales Performance by Image Count Bucket"
+   ]
+  },
+  {
+   "title": "Review Engagement Relative to Order Volume",
+   "question": "Is the month-over-month growth in review counts just tracking order volume growth, or is review-per-order engagement actually increasing?",
+   "grain": "one row per calendar month, 2023-01 through 2025-12",
+   "columns": [
+    "month",
+    "orders_count",
+    "review_count",
+    "reviews_per_100_orders",
+    "avg_rating"
+   ],
+   "details": "orders_count = count of orders across all tenants with placed_at in that calendar month and status not in ('cancelled'). review_count = count of approved product_reviews with created_at in that month (same definition as the night-1 'Monthly Review Volume and Rating Trend' report, so the two reports can be compared side by side). reviews_per_100_orders = review_count / orders_count * 100, rounded to 2 decimals. avg_rating = mean rating of that month's approved reviews, rounded to 2 decimals. Build off the full calendar (calendar_days) so every month appears even if a metric is 0. Order by month ascending.",
+   "builds_on": [
+    "Monthly Review Volume and Rating Trend"
+   ]
+  },
+  {
+   "title": "December Rating Dip by Vertical: 2024 vs 2025",
+   "question": "Which merchant vertical drove the platform-wide rating dip and spike in negative reviews seen in December 2025?",
+   "grain": "one row per tenant industry (vertical)",
+   "columns": [
+    "industry",
+    "dec2024_review_count",
+    "dec2024_avg_rating",
+    "dec2025_review_count",
+    "dec2025_avg_rating",
+    "rating_change_pts",
+    "dec2025_pct_1_2_star"
+   ],
+   "details": "Join product_reviews (is_approved = true) to products to tenants for industry. Compare the full calendar months of December 2024 (2024-12-01 to 2024-12-31) and December 2025 (2025-12-01 to 2025-12-31) based on product_reviews.created_at. dec2024_review_count / dec2024_avg_rating and dec2025_review_count / dec2025_avg_rating are the review count and mean rating for that industry in each month. rating_change_pts = dec2025_avg_rating minus dec2024_avg_rating, rounded to 2 decimals (negative means it got worse). dec2025_pct_1_2_star = share of that industry's Dec 2025 approved reviews rated 1 or 2, rounded to 1 decimal. Order by rating_change_pts ascending so the vertical with the biggest decline is first.",
+   "builds_on": [
+    "Monthly Review Volume and Rating Trend"
+   ]
+  }
+ ]
+}

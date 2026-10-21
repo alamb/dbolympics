@@ -1,0 +1,97 @@
+=== Report 1: DSAR volume and timeliness by month (written by Bea) ===
+Engineer's note: "Completed" is determined directly by completed_at IS NOT NULL (per the request's own definitions for on-time/late), not by the status column, so no separate status-code lookup was needed; this matches data_subject_requests regardless of its status string values. Expect 36 rows, one per month from 2023-01 to 2025-12, all tenants combined.
+REPORT: DSAR volume and timeliness by month
+QUESTION: How many data subject requests do we receive each month, how quickly are they resolved relative to their due date, and how many are currently open — on time or overdue?
+month   | requests_received | completed_on_time | completed_late | still_open_not_due | still_open_overdue | avg_days_to_complete | median_days_to_complete | pct_on_time
+--------+-------------------+-------------------+----------------+--------------------+--------------------+----------------------+-------------------------+------------
+2023-01 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2023-02 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2023-03 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2023-04 |                 1 |                 1 |              0 |                  0 |                  0 |                 29.0 |                    29.0 |       100.0
+2023-05 |                 3 |                 1 |              1 |                  0 |                  1 |                 22.3 |                    22.3 |        50.0
+2023-06 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2023-07 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2023-08 |                 1 |                 1 |              0 |                  0 |                  0 |                  5.9 |                     5.9 |       100.0
+2023-09 |                 2 |                 1 |              1 |                  0 |                  0 |                 27.0 |                    27.0 |        50.0
+2023-10 |                 1 |                 1 |              0 |                  0 |                  0 |                 11.3 |                    11.3 |       100.0
+2023-11 |                 1 |                 1 |              0 |                  0 |                  0 |                  9.7 |                     9.7 |       100.0
+2023-12 |                 1 |                 1 |              0 |                  0 |                  0 |                  7.8 |                     7.8 |       100.0
+2024-01 |                 1 |                 1 |              0 |                  0 |                  0 |                  3.5 |                     3.5 |       100.0
+2024-02 |                 3 |                 2 |              1 |                  0 |                  0 |                 20.3 |                     5.8 |        66.7
+2024-03 |                 2 |                 2 |              0 |                  0 |                  0 |                 12.1 |                    12.1 |       100.0
+2024-04 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2024-05 |                 3 |                 3 |              0 |                  0 |                  0 |                 14.2 |                     9.8 |       100.0
+2024-06 |                 4 |                 4 |              0 |                  0 |                  0 |                  6.7 |                     5.0 |       100.0
+2024-07 |                 1 |                 0 |              0 |                  0 |                  1 |                 NULL |                    NULL |        NULL
+2024-08 |                 2 |                 2 |              0 |                  0 |                  0 |                 15.6 |                    15.6 |       100.0
+2024-09 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2024-10 |                 1 |                 1 |              0 |                  0 |                  0 |                  7.5 |                     7.5 |       100.0
+2024-11 |                 4 |                 4 |              0 |                  0 |                  0 |                  9.0 |                     9.5 |       100.0
+2024-12 |                 2 |                 2 |              0 |                  0 |                  0 |                 10.6 |                    10.6 |       100.0
+2025-01 |                 3 |                 2 |              1 |                  0 |                  0 |                 22.4 |                     5.4 |        66.7
+2025-02 |                 1 |                 1 |              0 |                  0 |                  0 |                  5.1 |                     5.1 |       100.0
+2025-03 |                 2 |                 1 |              0 |                  0 |                  1 |                 15.8 |                    15.8 |       100.0
+2025-04 |                 1 |                 1 |              0 |                  0 |                  0 |                 19.8 |                    19.8 |       100.0
+2025-05 |                 1 |                 1 |              0 |                  0 |                  0 |                 17.2 |                    17.2 |       100.0
+2025-06 |                 1 |                 1 |              0 |                  0 |                  0 |                 14.8 |                    14.8 |       100.0
+2025-07 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2025-08 |                 1 |                 1 |              0 |                  0 |                  0 |                  3.1 |                     3.1 |       100.0
+2025-09 |                 2 |                 2 |              0 |                  0 |                  0 |                  7.9 |                     7.9 |       100.0
+2025-10 |                 1 |                 1 |              0 |                  0 |                  0 |                 23.1 |                    23.1 |       100.0
+2025-11 |                 0 |                 0 |              0 |                  0 |                  0 |                 NULL |                    NULL |        NULL
+2025-12 |                 2 |                 0 |              0 |                  2 |                  0 |                 NULL |                    NULL |        NULL
+(36 rows)
+
+=== Report 2: Staff access currency by account status (written by Viktor) ===
+Engineer's note: This is a current-state snapshot of user_roles as of 2025-12-31 (the schema has no revocation/end-date on role grants), so it shows what access exists today rather than how quickly past revocations happened; please flag any non-trivial users_with_any_role/users_with_system_role in the suspended/deactivated rows as a stale-access signal.
+REPORT: Staff access currency by account status
+QUESTION: Among internal staff users, how much elevated/role-based access exists today, and do deactivated or suspended staff still retain active role grants rather than having access revoked promptly?
+status      | staff_user_count | users_with_any_role | pct_with_any_role | users_with_system_role | avg_roles_per_user | median_days_since_role_granted | pct_never_logged_in | median_days_since_last_login
+------------+------------------+---------------------+-------------------+------------------------+--------------------+--------------------------------+---------------------+-----------------------------
+active      |              548 |                 548 |               1.0 |                    548 |               1.02 |                         1483.5 |                 0.0 |                          2.0
+deactivated |                2 |                   2 |               1.0 |                      2 |                1.0 |                         2313.0 |                 0.0 |                        161.5
+(2 rows)
+
+=== Report 3: Audit log volume and actor identification by month (written by Ines) ===
+Engineer's note: Report is platform-wide (not per-tenant) since the question concerns overall audit-trail integrity across all merchants; months with zero events show 0 counts and null percentages rather than being dropped, so true logging gaps are visible as explicit rows.
+REPORT: Audit log volume and actor identification by month
+QUESTION: Is our audit trail continuous over time with no unexplained gaps, and are logged actions reliably tied to an identifiable actor rather than null/system placeholders?
+month   | audit_log_live_events | audit_log_archived_events | total_audit_events | pct_actor_user_id_null | distinct_actor_type_values | pct_actor_type_system_or_api | access_log_events
+--------+-----------------------+---------------------------+--------------------+------------------------+----------------------------+------------------------------+------------------
+2023-01 |                     0 |                      2869 |               2869 |                 0.0784 |                          2 |                       0.0784 |               143
+2023-02 |                     0 |                      2761 |               2761 |                 0.0699 |                          2 |                       0.0699 |               162
+2023-03 |                     0 |                      3091 |               3091 |                 0.0754 |                          2 |                       0.0754 |               145
+2023-04 |                     0 |                      2991 |               2991 |                 0.0809 |                          3 |                       0.0796 |               156
+2023-05 |                     0 |                      3118 |               3118 |                 0.0834 |                          3 |                       0.0827 |               154
+2023-06 |                     0 |                      3152 |               3152 |                 0.0853 |                          3 |                       0.0841 |               184
+2023-07 |                     0 |                      3113 |               3113 |                 0.0887 |                          2 |                       0.0887 |               141
+2023-08 |                     0 |                      3751 |               3751 |                 0.1682 |                          3 |                       0.1674 |               169
+2023-09 |                     0 |                      3412 |               3412 |                 0.0709 |                          3 |                       0.0703 |               157
+2023-10 |                     0 |                      3138 |               3138 |                 0.0822 |                          3 |                       0.0816 |               189
+2023-11 |                     0 |                      3391 |               3391 |                 0.0767 |                          3 |                       0.0761 |               245
+2023-12 |                  3589 |                       142 |               3731 |                 0.0718 |                          3 |                       0.0713 |               312
+2024-01 |                  3731 |                         0 |               3731 |                 0.0759 |                          3 |                       0.0742 |               200
+2024-02 |                  8448 |                         0 |               8448 |                  0.129 |                          3 |                       0.1287 |               170
+2024-03 |                  4067 |                         0 |               4067 |                 0.1611 |                          2 |                       0.1611 |               181
+2024-04 |                  3474 |                         0 |               3474 |                 0.0832 |                          3 |                       0.0818 |               204
+2024-05 |                  3688 |                         0 |               3688 |                 0.0808 |                          3 |                       0.0803 |               201
+2024-06 |                  3588 |                         0 |               3588 |                   0.08 |                          3 |                       0.0789 |               212
+2024-07 |                  3991 |                         0 |               3991 |                 0.0677 |                          3 |                       0.0666 |               212
+2024-08 |                  4273 |                         0 |               4273 |                 0.1495 |                          3 |                       0.1488 |               196
+2024-09 |                  4000 |                         0 |               4000 |                  0.064 |                          3 |                        0.063 |               206
+2024-10 |                  4299 |                         0 |               4299 |                 0.0642 |                          3 |                        0.064 |               224
+2024-11 |                  3824 |                         0 |               3824 |                 0.0709 |                          3 |                       0.0696 |               265
+2024-12 |                  4547 |                         0 |               4547 |                 0.0622 |                          3 |                       0.0603 |               531
+2025-01 |                  4187 |                         0 |               4187 |                 0.0642 |                          3 |                       0.0633 |               263
+2025-02 |                  8786 |                         0 |               8786 |                 0.1228 |                          4 |                       0.1224 |               189
+2025-03 |                  4543 |                         0 |               4543 |                 0.1343 |                          3 |                       0.1332 |               207
+2025-04 |                  4097 |                         0 |               4097 |                 0.0703 |                          3 |                       0.0696 |               227
+2025-05 |                  4486 |                         0 |               4486 |                  0.058 |                          3 |                       0.0573 |               284
+2025-06 |                  3955 |                         0 |               3955 |                 0.0668 |                          3 |                       0.0665 |               285
+2025-07 |                  4525 |                         0 |               4525 |                 0.0606 |                          3 |                       0.0601 |               257
+2025-08 |                  4777 |                         0 |               4777 |                 0.1505 |                          2 |                       0.1505 |               242
+2025-09 |                  5030 |                         0 |               5030 |                 0.0517 |                          3 |                       0.0509 |               274
+2025-10 |                  4709 |                         0 |               4709 |                  0.066 |                          3 |                       0.0652 |               305
+2025-11 |                  4446 |                         0 |               4446 |                 0.0558 |                          3 |                       0.0549 |               393
+2025-12 |                  4902 |                         0 |               4902 |                 0.0037 |                          3 |                       0.0024 |               617
+(36 rows)

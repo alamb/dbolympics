@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Payout status & date-field reconciliation",
+    "--question",
+    "Why do our two trailing-12-month fee-revenue totals disagree, and what is the correct definition of a 'settled' payout?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per payouts.status value\", \"columns_requested\": [\"status\", \"total payout count (all time)\", \"count with paid_at between 2025-01-01 and 2025-12-31\", \"count with paid_at null\", \"fee revenue EUR (sum fee_amount, converted, for rows with paid_at in that window)\", \"gross volume EUR (sum gross_amount, converted, same rows)\", \"earliest paid_at\", \"latest paid_at\", \"earliest arrival_date\", \"latest arrival_date\"], \"details\": \"Source: payouts table only (no join needed). For every distinct value of status, report the counts and date ranges above. Convert gross_amount and fee_amount to EUR using exchange_rates: amount_eur = amount / rate where rate has base_code='EUR', quote_code=payouts.currency_code, as_of = payouts.paid_at date (if paid_at is null, skip that row from the EUR sums but still count it). This should let me see: (a) the full list of status codes and their relative sizes, (b) whether paid_at is reliably populated only for truly settled payouts, and (c) whether arrival_date spans a meaningfully different window than paid_at (which could explain why a prior vertical-level report's total came out ~1.76x higher than a prior merchant-level report's total for the 'same' window). Order by total payout count descending.\", \"builds_on\": [\"Merchant revenue concentration, trailing 12 months\", \"Revenue by vertical, trailing 12 months\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

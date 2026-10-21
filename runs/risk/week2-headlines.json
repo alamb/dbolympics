@@ -1,0 +1,5 @@
+[
+ "The Feb 2025 login-failure spike wasn't random: 96.5% of it (7,168 of 7,429 failures) hit just 3 merchants on the same 4 days (Feb 8-11) — pattern points to a shared technical glitch, not a break-in, but our alerts stayed silent (0 flagged events) on every one of those 4 days.",
+ "Data privacy requests check out end-to-end: all 60 requests we've ever received (48 since 2023, plus 12 older ones) are completed, and the 3 that looked unresolved for years were actually closed on time — just missing a timestamp.",
+ "Flagged compliance/security incidents are rare and handled well: only 8 in 3 years, 100% resolved, averaging 1-2.5 weeks to close, none sitting open."
+]

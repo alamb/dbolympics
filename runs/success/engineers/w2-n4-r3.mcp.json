@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Support experience for our top 15 merchants, and whether it tracks with CSAT",
+    "--question",
+    "How much support volume do our top merchants generate, how fast is our response, and does that show up in their CSAT?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Grace\", \"situation\": \"churn-task-force\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per merchant (tenant), limited to the top 15 by last-90-day revenue\", \"columns_requested\": [\"merchant name\", \"industry\", \"tickets last 90 days\", \"tickets per 100 orders\", \"avg first response hours\", \"avg resolution hours\", \"csat avg score\", \"csat response count\"], \"details\": \"Top 15 ranked by last-90-day gross revenue EUR from orders (placed_at Oct 3 through Dec 31 2025, excluding cancelled, converted to EUR via exchange_rates), matching the earlier size and trend report's definition. For those tenants, from tickets (created_at in the same window): ticket count, avg first response hours (first_response_at minus created_at), avg resolution hours (resolved_at minus created_at); tickets per 100 orders is ticket count divided by the tenant's order count in the window, times 100; from csat_responses (submitted_at in the same window): avg score and response count. Order by tickets last 90 days descending, tie-break tenant_id ascending. Cap 50 rows (expect 15).\", \"builds_on\": [\"Merchant size and recent growth trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

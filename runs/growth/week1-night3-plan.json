@@ -1,0 +1,55 @@
+{
+ "notes": "The Jan/Jul discount-rate report flagged that two B2B wholesalers (Castell Fasteners, OfficeHub Nordic) run discounts on 65-95% of orders even outside the spike months — that's almost certainly negotiated/contract pricing, not promotional codes. That's a real caveat to last night's 'discounted orders look healthier' finding (higher AOV, more items, fewer returns), since B2B bulk orders would naturally look that way regardless of discounting. Before I tell Chloé 'discounting is healthy,' I need to check it holds in consumer verticals, not just because B2B is mixed in. That's tonight's top priority. With that resolved, I'm moving on to orientation baselines for Q3 (email/campaign engagement) and Q4 (loyalty), since two nights remain and those questions haven't been touched yet. Direct-traffic concentration (Report 1 last night) came back as a straightforward big-merchant-volume story, not an anomaly, so I'm not spending a slot chasing it further.",
+ "requests": [
+  {
+   "title": "Are discounted orders healthier across verticals, or just in B2B?",
+   "question": "Does the 'discounted orders have higher AOV, bigger baskets, and fewer returns' pattern hold in consumer verticals, or is it mainly an artifact of B2B wholesale contract pricing?",
+   "grain": "one row per industry vertical and order group (discounted vs full price)",
+   "columns": [
+    "industry - tenants.industry",
+    "order_group - 'discounted' (orders.discount_total > 0) or 'full price' (= 0)",
+    "orders_count - count of orders placed_at in 2025 for that industry/group",
+    "avg_order_value_eur - average orders.grand_total converted to EUR, rounded to 0 decimals",
+    "avg_items_per_order - average of sum(order_items.quantity) per order, rounded to 1 decimal",
+    "return_rate_pct - share of orders in that cell with at least one linked order_returns row, *100, rounded to 1 decimal",
+    "cancelled_rate_pct - share of orders with status='cancelled', *100, rounded to 1 decimal"
+   ],
+   "details": "Source: orders joined to tenants (for industry) and order_items (summed quantity per order); filter placed_at in 2025-01-01..2026-01-01 exclusive, no status filter otherwise. Same discounted/full-price split and same EUR conversion approach as last night's 'Do discounted orders look healthy' report, but now crossed with tenants.industry. Order by industry ascending, then order_group ascending ('discounted' before 'full price'). Expect roughly 8-9 industries x 2 rows (~16-18 rows total), well under the limit.",
+   "builds_on": [
+    "Do discounted orders look healthy, or just cheaper?",
+    "Which merchants drove the January and July discount-rate spikes"
+   ]
+  },
+  {
+   "title": "Email/campaign engagement baseline by channel",
+   "question": "How much campaign messaging goes out, and is anyone opening or clicking — is this a strength or a weak spot across the platform?",
+   "grain": "one row per campaign channel (campaigns.channel)",
+   "columns": [
+    "channel - campaigns.channel",
+    "messages_sent - count of campaign_messages with sent_at not null, created_at in 2025",
+    "delivered_rate_pct - share of sent messages with delivered_at not null, *100, rounded to 1 decimal",
+    "open_rate_pct - share of delivered messages with opened_at not null, *100, rounded to 1 decimal",
+    "click_rate_pct - share of delivered messages with clicked_at not null, *100, rounded to 1 decimal",
+    "bounce_rate_pct - share of sent messages with bounced_at not null, *100, rounded to 1 decimal",
+    "unsubscribe_rate_pct - share of sent messages with unsubscribed_at not null, *100, rounded to 1 decimal"
+   ],
+   "details": "Source: campaign_messages joined to campaigns on campaign_id for channel. Filter campaign_messages.created_at between 2025-01-01 and 2026-01-01 (platform-wide, no tenant filter). messages_sent = sent_at is not null; all rate denominators as specified (delivered/open/click relative to delivered count where noted, bounce/unsubscribe relative to sent count). Order by messages_sent descending, tie-break channel ascending. Expect a small number of distinct channel values, well under the row limit.",
+   "builds_on": []
+  },
+  {
+   "title": "Do loyalty program members behave differently from other shoppers?",
+   "question": "Among shoppers who actually place orders, do loyalty-program members order more often or spend more per order than non-members?",
+   "grain": "one row per shopper segment: 'loyalty member' vs 'non-member'",
+   "columns": [
+    "segment - 'loyalty member' (user_id appears in loyalty_accounts) or 'non-member'",
+    "users_count - count of distinct users in that segment who placed at least one order with placed_at in 2025",
+    "orders_count_2025 - count of those users' orders placed_at in 2025",
+    "avg_orders_per_user - orders_count_2025 / users_count, rounded to 2 decimals",
+    "avg_order_value_eur - average orders.grand_total converted to EUR across that segment's 2025 orders, rounded to 0 decimals",
+    "total_revenue_eur - sum of orders.grand_total converted to EUR for that segment's 2025 orders, rounded to 0 decimals"
+   ],
+   "details": "Source: orders (placed_at in 2025, all tenants) left joined to loyalty_accounts on user_id (and tenant_id) to classify each ordering user as a member (has any loyalty_accounts row) or non-member. Restrict to users who placed at least one 2025 order so the comparison is among active shoppers, not all signups. Convert grand_total to EUR via exchange_rates as in prior money reports. Exactly 2 output rows, ordered 'loyalty member' then 'non-member'.",
+   "builds_on": []
+  }
+ ]
+}

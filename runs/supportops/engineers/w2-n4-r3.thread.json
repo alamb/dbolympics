@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  tenant_name,\n  excluded_period,\n  ticket_count_after_exclusion,\n  avg_resolution_minutes_after_exclusion,\n  resolution_breach_rate_after_exclusion\nFROM (\n  SELECT\n    ft.tenant_name,\n    ft.excluded_period,\n    count(*) AS ticket_count_after_exclusion,\n    round(avg(extract(epoch from (ft.resolved_at - ft.created_at)) / 60.0)) AS avg_resolution_minutes_after_exclusion,\n    round(\n      100.0 * sum(\n        case when exists (\n          select 1 from sla_breaches sb\n          where sb.ticket_id = ft.ticket_id and sb.breach_kind = 'resolution'\n        ) then 1 else 0 end\n      ) / count(*),\n      1\n    ) AS resolution_breach_rate_after_exclusion\n  FROM (\n    SELECT\n      tk.id as ticket_id,\n      t.name as tenant_name,\n      case\n        when t.name = 'Marrowby & Vane' then 'Excludes Nov-Dec 2025'\n        when t.name = 'Studio Vrij' then 'Excludes May-Jul 2025'\n        else 'None'\n      end as excluded_period,\n      tk.created_at,\n      tk.resolved_at\n    FROM tickets tk\n    JOIN tenants t ON t.id = tk.tenant_id\n    WHERE t.name IN ('Marrowby & Vane', 'Studio Vrij', 'Cragsley Outfitters')\n      AND tk.created_at >= timestamp '2025-01-01'\n      AND tk.created_at < timestamp '2026-01-01'\n      AND NOT (\n        (t.name = 'Marrowby & Vane' AND tk.created_at >= timestamp '2025-11-01' AND tk.created_at < timestamp '2026-01-01')\n        OR\n        (t.name = 'Studio Vrij' AND tk.created_at >= timestamp '2025-05-01' AND tk.created_at < timestamp '2025-08-01')\n      )\n  ) ft\n  GROUP BY ft.tenant_name, ft.excluded_period\n) x\nORDER BY resolution_breach_rate_after_exclusion DESC, tenant_name",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, excluded_period, ticket_count_after_exclusion, avg_resolution_minutes_after_exclusion, resolution_breach_rate_after_exclusion"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  tenant_name,\n  excluded_period,\n  ticket_count_after_exclusion,\n  avg_resolution_minutes_after_exclusion,\n  resolution_breach_rate_after_exclusion\nFROM (\n  SELECT\n    ft.tenant_name,\n    ft.excluded_period,\n    count(*) AS ticket_count_after_exclusion,\n    round(avg(extract(epoch from (ft.resolved_at - ft.created_at)) / 60.0)) AS avg_resolution_minutes_after_exclusion,\n    round(\n      100.0 * sum(\n        case when exists (\n          select 1 from sla_breaches sb\n          where sb.ticket_id = ft.ticket_id and sb.breach_kind = 'resolution'\n        ) then 1 else 0 end\n      ) / count(*),\n      1\n    ) AS resolution_breach_rate_after_exclusion\n  FROM (\n    SELECT\n      tk.id as ticket_id,\n      t.name as tenant_name,\n      case\n        when t.name = 'Marrowby & Vane' then 'Excludes Nov-Dec 2025'\n        when t.name = 'Studio Vrij' then 'Excludes May-Jul 2025'\n        else 'None'\n      end as excluded_period,\n      tk.created_at,\n      tk.resolved_at\n    FROM tickets tk\n    JOIN tenants t ON t.id = tk.tenant_id\n    WHERE t.name IN ('Marrowby & Vane', 'Studio Vrij', 'Cragsley Outfitters')\n      AND tk.created_at >= timestamp '2025-01-01'\n      AND tk.created_at < timestamp '2026-01-01'\n      AND NOT (\n        (t.name = 'Marrowby & Vane' AND tk.created_at >= timestamp '2025-11-01' AND tk.created_at < timestamp '2026-01-01')\n        OR\n        (t.name = 'Studio Vrij' AND tk.created_at >= timestamp '2025-05-01' AND tk.created_at < timestamp '2025-08-01')\n      )\n  ) ft\n  GROUP BY ft.tenant_name, ft.excluded_period\n) x\nORDER BY resolution_breach_rate_after_exclusion DESC, tenant_name",
+  "note": "avg_resolution_minutes_after_exclusion is averaged only over tickets with a non-null resolved_at (unresolved tickets have no resolution time to measure); resolution_breach_rate_after_exclusion is the share of all tickets in the filtered window (resolved or not) that have a sla_breaches row with breach_kind='resolution'.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The query pulls 2025 tickets for the three named tenants, drops Marrowby & Vane's Nov–Dec and Studio Vrij's May–Jul tickets, and reports ticket count, average resolution time, and resolution-breach rate per tenant so Ben can compare directly against last week's unadjusted figures."
+ }
+]

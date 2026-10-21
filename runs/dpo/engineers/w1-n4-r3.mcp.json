@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "audit_log actual archiving vs. the stated 730-day archive policy",
+    "--question",
+    "audit_log's retention policy looks healthy on paper (active, last run 2025-12-31) — but are rows older than 730 days actually leaving the live table as the 'archive' action implies?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per calendar month, based on audit_log.occurred_at\", \"columns_requested\": [\"month (YYYY-MM)\", \"audit_log rows still present in month (count)\", \"days old as of 2026-01-05 (measured from month start)\", \"exceeds 730-day retention (Y/N)\"], \"details\": \"Source: audit_log (the live table, not audit_log_archive), platform-wide, grouped by date_trunc('month', occurred_at) or joined to calendar_days, spanning 2023-01 through 2025-12. Use literal date 2026-01-05 for age math. The policy says rows older than 730 days should be archived (moved out of audit_log into audit_log_archive) and most tenants show the job as active with last_run_at = 2025-12-31, so if months older than 730 days (roughly before 2024-01) still show substantial row counts here, that means the archive step isn't actually clearing the live table in practice despite looking healthy on the policy/run-log level. Order by month ascending.\", \"builds_on\": [\"Retention policy landscape: distinct rules by entity table\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

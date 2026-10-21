@@ -1,0 +1,62 @@
+#!/bin/bash
+set -e -o pipefail
+
+sudo apt-get update -y
+sudo apt-get install -y --no-install-recommends postgresql-client
+
+# A stable release, not the latest master build that https://clickhouse.com/ installs: that one
+# changes with every commit (26.11 builds cannot create their system log tables with
+# data_type_default_nullable and retry without end, on every core).
+CLICKHOUSE=26.9.22.3
+if [ ! -x /usr/bin/clickhouse ]; then
+    cd /tmp
+    curl -fsSL --retry 10 --retry-delay 60 --retry-all-errors -o clickhouse.tgz \
+        "https://github.com/ClickHouse/ClickHouse/releases/download/v$CLICKHOUSE-stable/clickhouse-common-static-$CLICKHOUSE-$(dpkg --print-architecture).tgz"
+    tar xzf clickhouse.tgz --strip-components=3 "clickhouse-common-static-$CLICKHOUSE/usr/bin/clickhouse"
+    sudo ./clickhouse install --noninteractive
+    rm -f ./clickhouse clickhouse.tgz
+fi
+
+# Load everything at startup, not lazily during the first queries (see ClickBench).
+sudo mkdir -p /etc/clickhouse-server/config.d /etc/clickhouse-server/users.d
+sudo tee /etc/clickhouse-server/config.d/eager_load.yaml >/dev/null <<'EOF'
+async_load_databases: false
+merge_tree:
+  primary_key_lazy_load: 0
+  columns_and_secondary_indices_sizes_lazy_calculation: 0
+EOF
+
+# The benchmark reads its data with file() from /data. The name sorts after data-paths.xml of
+# the installer, which sets the same path.
+sudo tee /etc/clickhouse-server/config.d/zz-benchmark.yaml >/dev/null <<'EOF'
+user_files_path: /data/
+listen_host: 127.0.0.1
+EOF
+
+# Standard SQL behaviour where ClickHouse's defaults differ.
+sudo tee /etc/clickhouse-server/users.d/zz-benchmark.yaml >/dev/null <<'EOF'
+profiles:
+  default:
+    data_type_default_nullable: 1
+    join_use_nulls: 1
+    aggregate_functions_null_for_empty: 1
+    union_default_mode: DISTINCT
+    format_csv_null_representation: ''
+    date_time_output_format: simple
+    output_format_decimal_trailing_zeros: 0
+    # as for ClickHouse (systems/clickhouse/install)
+    cast_keep_nullable: 1
+    allow_lossy_numeric_supertype: 1
+    # a load statement is written at once, not through the asynchronous insert queue (which
+    # waits about 50 ms for more inserts to join it)
+    async_insert: 0
+EOF
+
+# the query program (query.rs), built here with a Rust toolchain that is removed again
+cd /system
+sudo apt-get update -y
+sudo apt-get install -y --no-install-recommends build-essential
+curl -fsSL --retry 10 https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.99.0
+"$HOME/.cargo/bin/cargo" build --release --locked
+install -m 0755 target/release/query query
+rm -rf target "$HOME/.cargo" "$HOME/.rustup"

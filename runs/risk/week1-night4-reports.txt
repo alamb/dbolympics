@@ -1,0 +1,59 @@
+=== Report 1: Resolution timing of rejected DSARs via audit trail (retry) (written by Ines) ===
+Engineer's note: For each rejected-without-completed_at DSAR, the rejection event time is the earliest change_history row (entity_table+entity_id matched, status pulled via ->> text accessor) with after_data->>'status'='rejected'; if none, falls back to the latest matching audit_log 'update' row; otherwise rejection_event_timestamp is null and source='neither_found'. No JSON/number casts are used, and entity_table is always checked alongside entity_id to avoid cross-table id collisions.
+REPORT: Resolution timing of rejected DSARs via audit trail (retry)
+QUESTION: For the data subject requests that were rejected without a completed_at timestamp, can the audit/change-history trail tell us when the rejection decision was actually made, and was it within the due date?
+STATUS: FAILED
+  - execution failed: Conversion Error: Failed to cast value to numerical: {"price_amount":"53.99"} when casting from source column after_data
+
+=== Report 2: Failed login attempts and suspicious access patterns by month (written by Ines) ===
+Engineer's note: Platform-wide monthly series, all months 2023-01..2025-12 included via calendar_days even if zero activity. login_attempts and the audit_log/audit_log_archive access_denied signal are aggregated independently per month (not row-joined), as requested, so they can be compared side by side but are not causally linked.
+REPORT: Failed login attempts and suspicious access patterns by month
+QUESTION: How much login activity fails, is there visible evidence of brute-force-style patterns, and are access-denied events actually being captured as suspicious activity over time?
+month   | total_login_attempts | failed_login_attempts | pct_failed | emails_with_5plus_failed_in_month | audit_access_denied_events
+--------+----------------------+-----------------------+------------+-----------------------------------+---------------------------
+2023-01 |                 3491 |                   213 |        6.1 |                                 0 |                         11
+2023-02 |                 2949 |                   176 |       5.97 |                                 0 |                          3
+2023-03 |                 3368 |                   185 |       5.49 |                                 1 |                          6
+2023-04 |                 3307 |                   208 |       6.29 |                                 0 |                          5
+2023-05 |                 3614 |                   223 |       6.17 |                                 1 |                          7
+2023-06 |                 3611 |                   250 |       6.92 |                                 0 |                          3
+2023-07 |                 3637 |                   208 |       5.72 |                                 1 |                          3
+2023-08 |                 3905 |                   260 |       6.66 |                                 0 |                          3
+2023-09 |                 3779 |                   244 |       6.46 |                                 1 |                          6
+2023-10 |                 4071 |                   242 |       5.94 |                                 0 |                          8
+2023-11 |                 5038 |                   302 |       5.99 |                                 2 |                          5
+2023-12 |                 4551 |                   288 |       6.33 |                                 0 |                          4
+2024-01 |                 4590 |                   263 |       5.73 |                                 1 |                          3
+2024-02 |                 4070 |                   233 |       5.72 |                                 0 |                          7
+2024-03 |                 4654 |                   291 |       6.25 |                                 1 |                          5
+2024-04 |                 4676 |                   286 |       6.12 |                                 0 |                          4
+2024-05 |                 4977 |                   317 |       6.37 |                                 1 |                          5
+2024-06 |                 4559 |                   314 |       6.89 |                                 0 |                          5
+2024-07 |                 5051 |                   289 |       5.72 |                                 0 |                          5
+2024-08 |                 4990 |                   289 |       5.79 |                                 0 |                          5
+2024-09 |                 4952 |                   286 |       5.78 |                                 0 |                          3
+2024-10 |                 5453 |                   312 |       5.72 |                                 1 |                          5
+2024-11 |                 6131 |                   360 |       5.87 |                                 0 |                          4
+2024-12 |                 6198 |                   360 |       5.81 |                                 1 |                          5
+2025-01 |                 5933 |                   377 |       6.35 |                                 0 |                          5
+2025-02 |                12211 |                  7429 |      60.84 |                               102 |                          6
+2025-03 |                 5627 |                   373 |       6.63 |                                 0 |                         10
+2025-04 |                 5636 |                   323 |       5.73 |                                 0 |                          2
+2025-05 |                 5886 |                   376 |       6.39 |                                 0 |                          2
+2025-06 |                 5439 |                   306 |       5.63 |                                 1 |                          5
+2025-07 |                 6110 |                   349 |       5.71 |                                 1 |                          5
+2025-08 |                 5877 |                   393 |       6.69 |                                 0 |                          3
+2025-09 |                 6125 |                   377 |       6.16 |                                 0 |                          1
+2025-10 |                 6711 |                   411 |       6.12 |                                 0 |                          7
+2025-11 |                 7532 |                   477 |       6.33 |                                 0 |                          5
+2025-12 |                 7598 |                   443 |       5.83 |                                 1 |                          5
+(36 rows)
+
+=== Report 3: Retention policy coverage for audit and compliance-relevant tables (written by Viktor) ===
+Engineer's note: One row per entity_table as requested, aggregated across all tenants' retention_policies rows; a table only appears here if at least one tenant has defined a policy row for it, so missing rows in the printed report (expect up to 6) mean zero tenants have ever configured a policy for that table.
+REPORT: Retention policy coverage for audit and compliance-relevant tables
+QUESTION: Do we have retention policies actually defined, active, and consistently enforced for the tables that matter most to this questionnaire (audit log, access log, change history, DSARs, compliance events, login attempts), and could any of them be purging data sooner than the history we'd want to cite?
+entity_table | tenants_with_policy | pct_tenants_with_policy | avg_retention_days | min_retention_days | max_retention_days | pct_policies_active | pct_policies_run_in_last_90_days
+-------------+---------------------+-------------------------+--------------------+--------------------+--------------------+---------------------+---------------------------------
+audit_log    |                 120 |                   100.0 |              730.0 |                730 |                730 |               100.0 |                             92.5
+(1 rows)

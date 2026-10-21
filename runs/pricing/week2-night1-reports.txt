@@ -1,0 +1,78 @@
+=== Report 1: Is the 'active' 18% of orphan subscription-delivery orders a categorization artifact or a real gap? (written by Bea) ===
+Engineer's note: For each order in the active-bucket, I located the customer's most-recent subscription (by started_at) separately from any 'other' older subscription (started_at <= placed_at, picking the one with the latest started_at if several exist) and classified by whether that older subscription's started_at/ended_at window covered placed_at. The denominator used for the percentage is the actual count of active-bucket orphan orders found by the query (expected ~291) rather than a hardcoded 291, so it will self-check against last week's figure.
+REPORT: Is the 'active' 18% of orphan subscription-delivery orders a categorization artifact or a real gap?
+QUESTION: For the ~291 orphan free-delivery orders where the customer's most-recent subscription record shows status 'active', did that order actually fall in a gap between an earlier (now-superseded) subscription and the current one, which would mean it belongs with the confirmed 'canceled' leakage group rather than being a separate unexplained case?
+category                                 | order_count | pct_of_291_bucket | distinct_customers | total_discount_eur
+-----------------------------------------+-------------+-------------------+--------------------+-------------------
+unexplained - active subscription dates  |          88 |              30.2 |                 19 |            3363.71
+(1 rows)
+
+=== Report 2: Monthly trend of confirmed lapsed-subscriber free-delivery leakage, 2023-2025 (written by Viktor) ===
+Engineer's note: "No overlapping subscription" is defined as: no subscription row for that user with status in (trialing, active, past_due) whose started_at/ended_at window covers the order's placed_at. "Most-recent subscription" is picked per user by max(started_at). All 36 months 2023-01 through 2025-12 are included via calendar_days, with zero-filled rows where there's no leakage.
+REPORT: Monthly trend of confirmed lapsed-subscriber free-delivery leakage, 2023-2025
+QUESTION: Is the confirmed leakage (free deliveries going to customers whose subscription had already been canceled) a slow-burning historical gap, steady, or accelerating?
+month   | orphan_orders | distinct_customers | total_discount_eur | cumulative_discount_eur
+--------+---------------+--------------------+--------------------+------------------------
+2023-01 |             7 |                  6 |             209.68 |                  209.68
+2023-02 |            10 |                  9 |             341.12 |                   550.8
+2023-03 |            11 |                 10 |              550.0 |                  1100.8
+2023-04 |            12 |                 11 |             364.87 |                 1465.67
+2023-05 |            19 |                 18 |            1124.67 |                 2590.34
+2023-06 |            17 |                 16 |             781.34 |                 3371.68
+2023-07 |            19 |                 16 |             743.21 |                 4114.89
+2023-08 |            14 |                 14 |              629.7 |                 4744.58
+2023-09 |            12 |                 11 |             574.55 |                 5319.14
+2023-10 |            22 |                 19 |             773.46 |                  6092.6
+2023-11 |            25 |                 21 |             932.82 |                 7025.42
+2023-12 |            32 |                 25 |             1381.7 |                 8407.12
+2024-01 |            34 |                 29 |            1775.32 |                10182.44
+2024-02 |            42 |                 36 |            2374.91 |                12557.35
+2024-03 |            47 |                 39 |            2423.11 |                14980.46
+2024-04 |            55 |                 49 |            1921.69 |                16902.15
+2024-05 |            54 |                 48 |            2383.66 |                19285.81
+2024-06 |            62 |                 51 |            2941.98 |                22227.79
+2024-07 |            59 |                 51 |            2730.51 |                 24958.3
+2024-08 |            53 |                 49 |            2749.51 |                27707.81
+2024-09 |            56 |                 50 |            3274.61 |                30982.42
+2024-10 |            59 |                 51 |            3310.78 |                 34293.2
+2024-11 |            47 |                 42 |            2102.55 |                36395.75
+2024-12 |            47 |                 41 |            2308.44 |                38704.19
+2025-01 |            46 |                 43 |            3105.47 |                41809.66
+2025-02 |            53 |                 49 |            2591.84 |                 44401.5
+2025-03 |            48 |                 43 |            2069.43 |                46470.94
+2025-04 |            45 |                 38 |             1950.8 |                48421.74
+2025-05 |            42 |                 35 |            1693.14 |                50114.88
+2025-06 |            35 |                 29 |            1813.07 |                51927.95
+2025-07 |            27 |                 22 |            1407.72 |                53335.67
+2025-08 |            23 |                 20 |            1293.53 |                 54629.2
+2025-09 |            23 |                 21 |            1215.58 |                55844.79
+2025-10 |            17 |                 13 |              994.8 |                56839.59
+2025-11 |            14 |                 13 |             819.07 |                57658.66
+2025-12 |             0 |                  0 |                0.0 |                57658.66
+(36 rows)
+
+=== Report 3: What's driving Welcome10's elevated refund pattern: category concentration and return timing (written by Bea) ===
+Engineer's note: Discount instance re-identified via discounts.name='Welcome 10% off' plus the 2025 non-cancelled order_discounts count = 260, as in last week's report. Refund amounts use return_items.refund_amount (not order_returns.refund_total) converted to EUR via exchange_rates at the return's requested_at date (falling back to refunded_at), and no status filter was applied to returns since the request didn't specify one — all return_items tied to these order_items are included regardless of return status, which may include some not-yet-completed refunds.
+REPORT: What's driving Welcome10's elevated refund pattern: category concentration and return timing
+QUESTION: Is the Welcome10 instance's outsized refund total concentrated in particular product categories, and does the time between order and return look like a fit/expectation-mismatch problem (fast returns) or something else?
+category_name  | order_items_sold | distinct_orders | items_returned | return_rate_pct | total_refund_eur | share_of_instance_refund_pct | avg_days_order_to_return
+---------------+------------------+-----------------+----------------+-----------------+------------------+------------------------------+-------------------------
+Outerwear      |               42 |              32 |             11 |            26.2 |          2534.23 |                         19.4 |                     14.1
+Boots          |               44 |              35 |             13 |            29.5 |           2452.5 |                         18.8 |                     17.2
+Sneakers       |               48 |              32 |             12 |            25.0 |          1745.81 |                         13.4 |                      9.3
+Outerwear      |               30 |              27 |              8 |            26.7 |           874.26 |                          6.7 |                     16.5
+Trousers       |               44 |              37 |             11 |            25.0 |           815.39 |                          6.2 |                     13.4
+Sandals        |               35 |              24 |             10 |            28.6 |           674.14 |                          5.2 |                     13.0
+Dresses        |               32 |              22 |              7 |            21.9 |           630.07 |                          4.8 |                     10.6
+Tops           |               51 |              40 |             12 |            23.5 |           549.49 |                          4.2 |                     12.4
+Knitwear       |               28 |              21 |              8 |            28.6 |           521.81 |                          4.0 |                     14.3
+Trousers       |               42 |              33 |              6 |            14.3 |           461.67 |                          3.5 |                     15.0
+Loungewear     |               20 |              17 |              4 |            20.0 |           413.36 |                          3.2 |                     15.0
+Loungewear     |               21 |              16 |              7 |            33.3 |           387.82 |                          3.0 |                     16.0
+Scarves & Hats |               82 |              53 |              7 |             8.5 |            307.8 |                          2.4 |                     15.4
+Knitwear       |               14 |              14 |              3 |            21.4 |            210.5 |                          1.6 |                     18.7
+Socks          |               45 |              33 |             14 |            31.1 |           201.02 |                          1.5 |                     14.3
+Tops           |               18 |              15 |              6 |            33.3 |           104.07 |                          0.8 |                     13.5
+Shirts         |                9 |               8 |              2 |            22.2 |            97.77 |                          0.7 |                     16.5
+Tops           |               66 |              34 |              7 |            10.6 |            89.84 |                          0.7 |                     10.3
+(18 rows)

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Coupon Reuse Exposure: Redemptions Beyond First Use per Customer, 2025",
+    "--question",
+    "Roughly how much discount euro value comes from the same customer reusing a coupon code multiple times, given no usage or per-customer limit is enforced?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Omar\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one coupon code, for redemptions in 2025\", \"columns_requested\": [\"coupon_code\", \"discount_kind\", \"total_redemptions_2025\", \"distinct_customers_2025\", \"redemptions_beyond_first_use (total_redemptions - distinct_customers)\", \"total_discount_amount_eur\", \"discount_amount_beyond_first_use_eur (excess discount from a customer's 2nd+ redemption of the same code)\", \"pct_of_discount_from_repeat_use\"], \"details\": \"Source: coupon_redemptions joined to coupons (for code, and discount_id -> discounts for discount_kind), filtered to redeemed_at in calendar year 2025. Convert discount_amount to EUR via exchange_rates (base_code='EUR', quote_code=coupon_redemptions.currency_code, as_of=date(redeemed_at)). Group by coupon_id/code. distinct_customers_2025 counts distinct user_id redeeming that code in 2025. redemptions_beyond_first_use = total_redemptions_2025 - distinct_customers_2025 (i.e., repeat uses by the same customer beyond their first). discount_amount_beyond_first_use_eur: for each (coupon, user_id) pair, sum discount_amount_eur from all but the earliest redemption (by redeemed_at) for that user, then sum across users for the coupon. pct_of_discount_from_repeat_use = discount_amount_beyond_first_use_eur / total_discount_amount_eur * 100. Order by discount_amount_beyond_first_use_eur descending; print top 20 coupons and note total number of distinct coupons redeemed in 2025.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

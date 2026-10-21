@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Scale of adjustment-kind stock movements by month, 2025",
+    "--question",
+    "Unlike cycle_count (always exactly 1 unit), kind='adjustment' movements vary widely (avg ~10 units, max 192) — what is the monthly scale, direction (shrinkage vs gain) and estimated value of this stream, and how does it trend across 2025?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Ines\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"calendar month (Jan 2025 - Dec 2025)\", \"columns_requested\": [\"month (YYYY-MM)\", \"adjustment_events (count of stock_movements rows with kind='adjustment')\", \"units_short (sum of abs(quantity) where quantity<0)\", \"units_over (sum of quantity where quantity>0)\", \"net_units_variance (signed sum; negative = net shrinkage)\", \"abs_units_variance (sum of abs(quantity))\", \"estimated_value_eur (sum of abs(quantity) * unit cost, converted to EUR \\u2014 same costing/FX method as prior reports: preferred-then-cheapest supplier_products.unit_cost, converted via exchange_rates on the movement's occurred_at date)\", \"avg_abs_units_per_event (rounded 1dp)\"], \"details\": \"Source: stock_movements where kind='adjustment', occurred_at in 2025-01-01 to 2025-12-31 (use a half-open bound occurred_at >= 2025-01-01 and < 2026-01-01 as done previously). Same costing/FX approach as the 'Scale of stock count discrepancies by month' report from night 1. Order by month ascending.\", \"builds_on\": [\"Scale of stock count discrepancies by month\", \"Stock movement magnitude by kind, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

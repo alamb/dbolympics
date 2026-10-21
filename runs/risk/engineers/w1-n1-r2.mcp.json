@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Staff access currency by account status",
+    "--question",
+    "Among internal staff users, how much elevated/role-based access exists today, and do deactivated or suspended staff still retain active role grants rather than having access revoked promptly?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Viktor\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per users.status value (active, invited, suspended, deactivated), restricted to users.is_staff = true, across all tenants, as a current-state snapshot as of 2025-12-31\", \"columns_requested\": [\"status\", \"staff_user_count (count of is_staff=true users with this status, excluding deleted_at not null)\", \"users_with_any_role (distinct users with >=1 row in user_roles)\", \"pct_with_any_role (users_with_any_role / staff_user_count)\", \"users_with_system_role (distinct users holding a role where roles.is_system = true)\", \"avg_roles_per_user (count of user_roles rows / staff_user_count)\", \"median_days_since_role_granted (median of 2025-12-31 minus user_roles.created_at, in days, over all grants for these users)\", \"pct_never_logged_in (users.last_login_at is null)\", \"median_days_since_last_login (median of 2025-12-31 minus last_login_at, over users with a non-null last_login_at)\"], \"details\": \"Source: users joined to user_roles and roles (for is_system). This is a snapshot of current assignments (user_roles has no revocation/end timestamp in the schema), so please note that limitation on the report \\u2014 it tells us what access exists today, not how quickly past revocations happened. Flag clearly if 'suspended' or 'deactivated' rows show non-trivial users_with_any_role or users_with_system_role counts, since that's the key signal of stale access. Order rows: active, invited, suspended, deactivated.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

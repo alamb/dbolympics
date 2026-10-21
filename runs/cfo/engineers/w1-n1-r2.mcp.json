@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Top Merchants by 2025 Gross Payment Volume and Fee Revenue",
+    "--question",
+    "Which merchants account for the largest share of Tidewick's gross payment volume and processing-fee revenue in 2025?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one tenant (merchant), aggregated over 2025\", \"columns_requested\": [\"rank\", \"merchant name\", \"industry/vertical\", \"tenant status\", \"gross volume (EUR)\", \"gross volume share of total (%)\", \"cumulative gross volume share (%)\", \"fee revenue (EUR)\", \"fee revenue share of total (%)\"], \"details\": \"Source: payouts joined to tenants on tenant_id (for name, industry, status). Filter to payouts with paid_at in 2025 and completed/paid status. Convert gross_amount and fee_amount to EUR via exchange_rates as in the monthly report. Aggregate per tenant_id, compute each tenant's share of the 2025 total gross volume and total fee revenue across all tenants, and a running cumulative gross-volume share down the ranked list. Order by gross volume EUR descending, tie-break by tenant_id ascending. Print the top 25 rows; note in the report how many tenants had any 2025 payout activity in total.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

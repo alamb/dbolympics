@@ -1,0 +1,51 @@
+{
+ "notes": "Priya's top two priorities are (1) end-to-end delivery speed and its consistency/trend, and (2) how the last peak season held up. I'm spending all 3 slots tonight on those, leaving carriers/warehouses, inventory and returns for later nights once I've seen where the baseline numbers point. I'm defining \"delivered\" as order status = fulfilled with all linked shipments having a non-null delivered_at, and delivery time as placed_at -> last shipment delivered_at. Report 1 gives the 24-month trend + variability (median/p90/SLA-hit-rate) so I can see direction of travel and spread in one page. Report 2 cuts the same metrics by merchant for 2025 to see who is reliably fast vs. a coin toss. Report 3 looks at the most recent peak window (Oct-Dec 2025) weekly to see if speed degraded under volume and whether a backlog built up and cleared by year-end. I'll sanity-check all three against each other (e.g. does the peak-season weekly average line up with the Nov-Dec rows in the monthly trend) before going further.",
+ "requests": [
+  {
+   "title": "Delivery time trend, monthly (2024-2025)",
+   "question": "Over the last two years, how long does it take from order placed to delivered, and how much does that vary month to month?",
+   "grain": "one row per calendar month of order placement",
+   "columns": [
+    "month (YYYY-MM)",
+    "orders_delivered (count of orders fully delivered)",
+    "avg_delivery_days (mean, placed_at to final delivered_at)",
+    "median_delivery_days (p50)",
+    "p90_delivery_days",
+    "pct_within_5_days (share of delivered orders where delivery_days <= 5)"
+   ],
+   "details": "Grain: one row per month_label (from calendar_days) of orders.placed_at. Scope: orders with placed_at between 2024-01-01 and 2025-12-31 inclusive, status = 'fulfilled'. For each such order, compute delivery_days = DATEDIFF(day, orders.placed_at, max(shipments.delivered_at) across all shipments reachable via fulfillments.order_id = orders.id and shipments.fulfillment_id = fulfillments.id), only including orders where every shipment linked to that order has a non-null delivered_at (i.e. fully delivered, no partial). Exclude orders with no linked shipments. Round avg/median/p90 to 1 decimal place; pct_within_5_days as a percentage rounded to 1 decimal. Order by month ascending. Expect 24 rows.",
+   "builds_on": []
+  },
+  {
+   "title": "Delivery time by merchant, 2025",
+   "question": "Which merchants deliver reliably fast, and which are a coin toss, over the past year?",
+   "grain": "one row per tenant (merchant)",
+   "columns": [
+    "tenant_name",
+    "industry",
+    "orders_delivered (count fully delivered in 2025)",
+    "avg_delivery_days",
+    "median_delivery_days (p50)",
+    "p90_delivery_days",
+    "pct_within_5_days (share of delivered orders where delivery_days <= 5)"
+   ],
+   "details": "Grain: one row per tenants.id. Scope: orders with placed_at in 2025-01-01 through 2025-12-31, status = 'fulfilled'. Same delivery_days definition as the monthly trend report (placed_at to max linked shipment.delivered_at via fulfillments, only orders where all linked shipments are delivered). Join tenants for tenant_name and industry. Include only tenants with at least 50 delivered orders in the window (to exclude noise from tiny merchants). Order by orders_delivered descending, tie-break by tenant_name ascending. Cap at 50 rows (should be well under given ~120 tenants total).",
+   "builds_on": []
+  },
+  {
+   "title": "Peak season weekly fulfillment performance (Oct-Dec 2025)",
+   "question": "Did delivery speed and reliability hold up during the most recent peak season, and did any backlog build up or clear by year-end?",
+   "grain": "one row per ISO week (week_start), based on order placement week",
+   "columns": [
+    "week_start",
+    "orders_placed (all orders placed that week, any status)",
+    "orders_delivered (of those, count fully delivered by 2025-12-31)",
+    "avg_delivery_days (for the fully-delivered subset)",
+    "pct_within_5_days (share of fully-delivered orders in that week where delivery_days <= 5)",
+    "orders_still_undelivered (placed that week, status not 'fulfilled' or missing a delivered_at as of 2025-12-31 cutoff)"
+   ],
+   "details": "Grain: one row per week_start (Monday, from calendar_days.week_start) for orders.placed_at between 2025-10-01 and 2025-12-31 inclusive. orders_placed = count of all orders placed in that week regardless of status. delivery_days defined exactly as in the monthly trend report (placed_at to max linked shipment.delivered_at via fulfillments, only counted when all shipments for that order are delivered). orders_still_undelivered = orders placed in that week whose status is not 'fulfilled', or status is 'fulfilled' but no delivered_at could be resolved by the 2025-12-31 data cutoff -- this flags backlog/slippage, understanding the most recent weeks will naturally show more undelivered due to right-censoring (transit time), which is expected and should just be noted in the report, not treated as a defect. Order by week_start ascending. Expect about 13 rows.",
+   "builds_on": []
+  }
+ ]
+}

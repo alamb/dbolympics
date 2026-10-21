@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Validity of never-revoked sessions on churned tenants",
+    "--question",
+    "The 9 churned tenants show 46-300 sessions per tenant that were never explicitly revoked — but are those sessions actually still usable today (expiry in the future), or did they just naturally expire without anyone bothering to revoke them?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per churned tenant\", \"columns_requested\": [\"tenant name\", \"sessions never revoked (revoked_at is null)\", \"of those, still within expiry as of 2026-01-05 (expires_at > 2026-01-05, i.e. genuinely usable today)\", \"of those, already naturally expired (expires_at <= 2026-01-05)\", \"latest expires_at among never-revoked sessions\", \"latest last_seen_at among never-revoked sessions (most recent real use)\"], \"details\": \"Source: sessions joined to tenants where tenants.status = 'churned', filtered to revoked_at is null. Split by expires_at compared to the fixed reference date 2026-01-05 (no CURRENT_DATE per house standards). This tells us whether the 'never revoked' finding from last night is a live, exploitable risk (sessions still valid today) or a historical bookkeeping gap (sessions long since expired on their own). Order by 'still within expiry' descending, tenant name as tie-break. Expect 9 rows (one per churned tenant from the prior report).\", \"builds_on\": [\"Access still open on churned tenants, by surface\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Late-refund share as a percentage of each merchant's own refund volume",
+    "--question",
+    "Is Cragsley Outfitters' outsized share of company-wide late refunds just proportional to how big it is, or does it refund late at a higher rate than other large merchants?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Viktor\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"tenant (top merchants by total 2025 refund volume)\", \"columns_requested\": [\"tenant_name\", \"total_refunds_2025_eur\", \"late_refunds_2025_eur\", \"pct_of_own_refunds_late\", \"company_avg_pct_late_2025\"], \"details\": \"Population: payment_refunds with status='succeeded' and processed_at in 2025, grouped by tenant. total_refunds_2025_eur = sum of payment_refunds.amount for the tenant, converted to EUR via exchange_rates (base_code='EUR', quote_code=payment_refunds.currency_code, as_of=processed_at date). late_refunds_2025_eur = the subset of those refunds that are 'late' (processed_at is after the paid_at of the payout that settled the original payment, found via payout_items.payment_id = payment_refunds.payment_id joined to payouts; refunds whose payment has no matching payout_items row do not count as late), converted to EUR the same way. pct_of_own_refunds_late = late_refunds_2025_eur / total_refunds_2025_eur * 100, rounded to 1 decimal. company_avg_pct_late_2025 = the same ratio computed company-wide across ALL tenants (a single repeated value on every row, for easy comparison), rounded to 1 decimal. Tables: payment_refunds, payout_items, payouts, tenants, exchange_rates. Show only the top 15 tenants by total_refunds_2025_eur. Order by total_refunds_2025_eur descending.\", \"builds_on\": [\"Late-refund concentration and trend by merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

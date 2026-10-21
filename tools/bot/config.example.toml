@@ -1,0 +1,18 @@
+# The benchmark bot's configuration (docs/BOT.md): ~/.config/dbo-bot/config.toml. Unset keys keep the defaults
+# (DEFAULTS in tools/bot/bot.py).
+
+repo = "dbolympics/dbolympics"
+# the GitHub App the bot is: it comments, reacts and pushes as the app's account (db-olympics-bot[bot])
+app_id = 5424697
+installation_id = 174087504
+key_file = "~/.ssh/db-olympics-bot.pem"
+
+# the bare clone, the runs' checkout with the generated data (hundreds of GB at sf1000) and its build, the logs and
+# the state
+work = "/raid0/dbolympics/dbo-bot"
+
+poll_seconds = 30
+# the machine is reserved for a run this long at most: then released, and the run killed
+reserve_hours = 24
+# what a plain /benchmark runs
+benchmarks = ["sf1", "sf10", "sf100", "sf1000"]

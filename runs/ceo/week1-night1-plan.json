@@ -1,0 +1,56 @@
+{
+ "notes": "Maren's priority #1 is revenue concentration (which merchants/verticals drive volume and fees, and how that's shifted). I'm starting there with three complementary views at different grains, all built on payouts (gross/fee/net) since that's the cleanest, consistently-defined measure of money actually settled to/kept from merchants (the platform-plan billing of merchants isn't separately modeled in the warehouse as far as I can tell — I'll sanity-check that assumption before committing more slots to it). Report 1 gives merchant-level concentration today; Report 2 shows how that concentration has moved over the last 2 years; Report 3 rolls the same money up by vertical. Together these should let me describe dependency risk and set up next week's growth and fee-mix questions. Saving growth/fee-mix/vertical-health/risk questions for later nights per Maren's note that it's fine not to force everything into week one.",
+ "requests": [
+  {
+   "title": "Merchant revenue concentration, trailing 12 months",
+   "question": "Which merchants account for the bulk of Tidewick's processing volume and fee revenue over the last 12 months, and how concentrated is it?",
+   "grain": "one row per merchant (tenant)",
+   "columns": [
+    "merchant name",
+    "industry/vertical",
+    "gross payment volume (EUR, sum of payouts.gross_amount)",
+    "fee revenue (EUR, sum of payouts.fee_amount — Tidewick's processing take)",
+    "net paid to merchant (EUR, sum of payouts.net_amount)",
+    "share of total fee revenue (%)",
+    "cumulative share of total fee revenue (%)"
+   ],
+   "details": "Source: payouts joined to tenants on tenant_id (for name, industry). Window: paid_at between 2025-01-01 and 2025-12-31 inclusive, restricted to payouts that actually paid out (paid_at is not null; please also check what status values exist and only include ones that represent completed/settled payouts, excluding anything clearly reversed/failed if such a status exists). Convert each payout's currency_code amount to EUR using exchange_rates (base_code='EUR', quote_code=payout currency_code, as_of = the payout's paid_at date, amount_eur = amount / rate). Aggregate per tenant_id across the window. Rank merchants by fee revenue (EUR) descending and compute each merchant's share of the grand total fee revenue and a running cumulative share down the ranked list. Order by fee revenue EUR descending, tie-break by merchant name ascending. Print top 50 rows; note in the report how many merchants (tenants) had at least one payout in the window in total.",
+   "builds_on": []
+  },
+  {
+   "title": "Revenue concentration trend by quarter",
+   "question": "Has Tidewick's revenue become more or less concentrated among its largest merchants over the last two years?",
+   "grain": "one row per calendar quarter",
+   "columns": [
+    "quarter (e.g. 2024-Q1)",
+    "active merchants with a payout that quarter",
+    "total fee revenue (EUR)",
+    "fee revenue from top 5 merchants that quarter (EUR)",
+    "top-5 share of fee revenue (%)",
+    "fee revenue from top 10 merchants that quarter (EUR)",
+    "top-10 share of fee revenue (%)"
+   ],
+   "details": "Source: payouts joined to tenants, same inclusion rule and EUR conversion method as the merchant-concentration report (convert via exchange_rates, base_code='EUR', quote_code=payout currency_code, as_of=payout paid_at date). Window: quarters from 2024-Q1 through 2025-Q4 (8 quarters), using calendar_days or payout paid_at to assign the quarter. For each quarter, rank merchants (tenant_id) by that quarter's fee revenue EUR and sum the top 5 and top 10 merchants' fee revenue to get top5/top10 shares of that quarter's total. 'Active merchants' = distinct tenant_id with qualifying payouts in that quarter. Order by quarter ascending.",
+   "builds_on": [
+    "Merchant revenue concentration, trailing 12 months"
+   ]
+  },
+  {
+   "title": "Revenue by vertical, trailing 12 months",
+   "question": "Which merchant verticals (industries) generate the bulk of Tidewick's processing volume and fee revenue today?",
+   "grain": "one row per merchant vertical (tenants.industry)",
+   "columns": [
+    "vertical (industry)",
+    "merchant count (distinct tenants with a qualifying payout)",
+    "gross payment volume (EUR)",
+    "fee revenue (EUR)",
+    "average fee revenue per merchant (EUR)",
+    "share of total fee revenue (%)"
+   ],
+   "details": "Source: payouts joined to tenants on tenant_id for industry. Same window (paid_at 2025-01-01 to 2025-12-31), same inclusion rule (completed/settled payouts only), and same EUR conversion method via exchange_rates as the other two reports in this batch. Group by tenants.industry. Order by fee revenue EUR descending, tie-break by vertical name ascending. If industry is null/blank for some tenants, group those into a single 'Unspecified' row rather than dropping them.",
+   "builds_on": [
+    "Merchant revenue concentration, trailing 12 months"
+   ]
+  }
+ ]
+}

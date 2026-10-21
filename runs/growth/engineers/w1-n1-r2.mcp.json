@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Which marketing channels drive orders and revenue",
+    "--question",
+    "Among orders marketing can take credit for, which campaign channels generate the most attributed orders and revenue, and what's the resulting average order value?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per campaign channel (campaigns.channel)\", \"columns_requested\": [\"channel - campaigns.channel\", \"attributed_orders - count of distinct attributions.order_id where order_id is not null\", \"attributed_revenue_eur - sum of attributions.attributed_revenue converted to EUR, rounded to 0 decimals\", \"share_of_revenue_pct - attributed_revenue_eur / total attributed_revenue_eur across all channels * 100, rounded to 1 decimal\", \"avg_order_value_eur - attributed_revenue_eur / attributed_orders, rounded to 0 decimals\"], \"details\": \"Source: attributions joined to campaigns on campaign_id to get channel; filter attributions.occurred_at in 2025-01-01..2025-12-31 and order_id is not null (i.e. actual purchase-linked touches, not view-through-only rows). Convert attributed_revenue to EUR using exchange_rates: join on base_code='EUR', quote_code = attributions.currency_code, as_of = the calendar date of occurred_at; amount_eur = attributed_revenue / rate (treat currency_code='EUR' as rate 1). No tenant filter \\u2014 aggregate across all merchants. Order by attributed_revenue_eur descending, tie-break by channel ascending. Expect well under 50 rows since campaigns.channel is a small code list.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

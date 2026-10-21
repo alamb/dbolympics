@@ -1,0 +1,44 @@
+=== Report 1: Pre-2023 data subject requests: status and completion check (written by Grace) ===
+Engineer's note: One row per status among the 12 pre-2023 data_subject_requests rows, with counts, how many have a completed_at set, and the received_at range per status, as requested.
+REPORT: Pre-2023 data subject requests: status and completion check
+QUESTION: Do the 12 data_subject_requests rows with received_at before 2023-01-01 represent any hidden backlog or unresolved risk, outside the window we've otherwise been reporting on?
+status    | count | count_with_completed_at | min_received_at            | max_received_at           
+----------+-------+-------------------------+----------------------------+---------------------------
+completed |    12 |                      12 | 2020-04-24 22:06:57.286184 | 2022-11-20 04:39:40.390136
+(1 rows)
+
+=== Report 2: Daily failed-login and access-denied alignment for the 3 merchants in February 2025 (written by Ines) ===
+Engineer's note: Tenants are matched by name via ILIKE ('%cragsley%', '%marrowby%', '%studio vrij%') since no tenant IDs were supplied; please confirm these resolve to exactly the intended 3 tenants with no unintended matches.
+REPORT: Daily failed-login and access-denied alignment for the 3 merchants in February 2025
+QUESTION: Did the February 2025 failure spike hit the same calendar days across all three affected merchants (pointing to one shared platform cause), and was access-denied logging silent specifically on those spike days?
+date       | cragsley_failed_logins | marrowby_vane_failed_logins | studio_vrij_failed_logins | total_failed_logins_3_merchants | access_denied_events_3_merchants
+-----------+------------------------+-----------------------------+---------------------------+---------------------------------+---------------------------------
+2025-02-01 |                      2 |                           0 |                         0 |                               2 |                                0
+2025-02-02 |                      4 |                           2 |                         0 |                               6 |                                0
+2025-02-03 |                      1 |                           1 |                         0 |                               2 |                                0
+2025-02-04 |                      4 |                           0 |                         0 |                               4 |                                0
+2025-02-05 |                      2 |                           0 |                         0 |                               2 |                                0
+2025-02-06 |                      4 |                           0 |                         0 |                               4 |                                0
+2025-02-07 |                      6 |                           2 |                         0 |                               8 |                                0
+2025-02-08 |                   1091 |                         491 |                       195 |                            1777 |                                0
+2025-02-09 |                   1090 |                         493 |                       195 |                            1778 |                                0
+2025-02-10 |                   1091 |                         491 |                       194 |                            1776 |                                0
+2025-02-11 |                   1085 |                         491 |                       196 |                            1772 |                                0
+2025-02-12 |                      5 |                           0 |                         0 |                               5 |                                0
+2025-02-13 |                      1 |                           0 |                         0 |                               1 |                                0
+2025-02-14 |                      0 |                           0 |                         0 |                               0 |                                0
+2025-02-15 |                      4 |                           0 |                         0 |                               4 |                                0
+2025-02-16 |                      1 |                           0 |                         0 |                               1 |                                0
+2025-02-17 |                      0 |                           0 |                         0 |                               0 |                                0
+2025-02-18 |                      3 |                           0 |                         1 |                               4 |                                1
+2025-02-19 |                      1 |                           3 |                         2 |                               6 |                                0
+2025-02-20 |                      0 |                           0 |                         0 |                               0 |                                0
+2025-02-21 |                      4 |                           0 |                         0 |                               4 |                                0
+2025-02-22 |                      0 |                           1 |                         0 |                               1 |                                0
+2025-02-23 |                      4 |                           0 |                         0 |                               4 |                                0
+2025-02-24 |                      0 |                           0 |                         0 |                               0 |                                0
+2025-02-25 |                      0 |                           1 |                         0 |                               1 |                                0
+2025-02-26 |                      2 |                           0 |                         0 |                               2 |                                0
+2025-02-27 |                      2 |                           2 |                         0 |                               4 |                                0
+2025-02-28 |                      0 |                           0 |                         0 |                               0 |                                0
+(28 rows)

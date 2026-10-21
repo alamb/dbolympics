@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH published AS (\n  SELECT ka.id, ka.title, kc.name AS category_name, ka.view_count, ka.helpful_count, ka.not_helpful_count\n  FROM knowledge_articles ka\n  LEFT JOIN knowledge_categories kc ON kc.id = ka.knowledge_category_id\n  WHERE ka.is_published = true AND ka.deleted_at IS NULL\n),\nagg AS (\n  SELECT COUNT(*) AS total_published_articles,\n         SUM(helpful_count) AS total_helpful,\n         SUM(helpful_count + not_helpful_count) AS total_votes\n  FROM published\n)\nSELECT\n  p.title,\n  p.category_name AS knowledge_category_name,\n  p.view_count,\n  p.helpful_count,\n  p.not_helpful_count,\n  CASE WHEN (p.helpful_count + p.not_helpful_count) = 0 THEN NULL\n       ELSE ROUND(p.helpful_count::numeric / (p.helpful_count + p.not_helpful_count), 4)\n  END AS helpful_rate,\n  a.total_published_articles,\n  ROUND(a.total_helpful::numeric / NULLIF(a.total_votes,0), 4) AS platform_avg_helpful_rate\nFROM published p\nCROSS JOIN agg a\nORDER BY p.view_count DESC, p.id ASC\nLIMIT 20",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: title, knowledge_category_name, view_count, helpful_count, not_helpful_count, helpful_rate, total_published_articles, platform_avg_helpful_rate"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected 8 columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH published AS (\n  SELECT ka.id, ka.title, kc.name AS category_name, ka.view_count, ka.helpful_count, ka.not_helpful_count\n  FROM knowledge_articles ka\n  LEFT JOIN knowledge_categories kc ON kc.id = ka.knowledge_category_id\n  WHERE ka.is_published = true AND ka.deleted_at IS NULL\n),\nagg AS (\n  SELECT COUNT(*) AS total_published_articles,\n         SUM(helpful_count) AS total_helpful,\n         SUM(helpful_count + not_helpful_count) AS total_votes\n  FROM published\n)\nSELECT\n  p.title,\n  p.category_name AS knowledge_category_name,\n  p.view_count,\n  p.helpful_count,\n  p.not_helpful_count,\n  CASE WHEN (p.helpful_count + p.not_helpful_count) = 0 THEN NULL\n       ELSE ROUND(p.helpful_count::numeric / (p.helpful_count + p.not_helpful_count), 4)\n  END AS helpful_rate,\n  a.total_published_articles,\n  ROUND(a.total_helpful::numeric / NULLIF(a.total_votes,0), 4) AS platform_avg_helpful_rate\nFROM published p\nCROSS JOIN agg a\nORDER BY p.view_count DESC, p.id ASC\nLIMIT 20",
+  "note": "Report is platform-wide across all tenants (no tenant filter was specified, since the question is about KB effectiveness in general rather than a particular merchant); article titles are not guaranteed unique across tenants, so if the Support Ops Manager wants this scoped to a single merchant or needs tenant/merchant name shown, let me know and I'll re-run. helpful_rate and platform_avg_helpful_rate are rounded to 4 decimals; rows with zero feedback show helpful_rate as null as requested.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. Summary:\n\n- **Grain:** one row per published knowledge article (top 20 by lifetime `view_count`), platform-wide across all tenants.\n- **Columns:** title, category name, view_count, helpful_count, not_helpful_count, helpful_rate (null when no votes), plus the two constants — total published articles in the library and the platform average helpful rate — repeated on every row so Support Ops can visually flag any top-20 article whose helpful_rate sits well below the platform average.\n- **Note to analyst:** since no merchant/tenant was specified, the ranking and averages are computed across the whole platform; flagged in the submit note in case they actually want it scoped to one tenant or with a tenant label added (titles aren't guaranteed unique across tenants)."
+ }
+]

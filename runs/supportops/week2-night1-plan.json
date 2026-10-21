@@ -1,0 +1,60 @@
+{
+ "notes": "Mia's top priority is turning the Marrowby & Vane / Studio Vrij finding into \"hire\" vs \"something else\" — so tonight's first slot benchmarks their staffing ratio (tickets per agent) against complexity signals (messages per ticket, priority mix) alongside Cragsley and a few other top merchants as controls. I already have a hint this isn't pure under-staffing: last week's data showed Cragsley's Customer Care group runs a similar or higher tickets-per-agent ratio than Studio Vrij's yet breaches far less, which points toward ticket difficulty rather than headcount — tonight's report will test that properly with complexity proxies instead of my eyeballing two reports side by side. Second, since there's no usage-event ledger behind macros.usage_count, the only way to sanity-check it is to see if the audit trail (change_history/audit_log) corroborates the counter for our top macros — if the audit trail barely covers the counter's growth, that's itself the finding (and echoes the audit-gap theme several other teams hit this week), and I'll say so plainly rather than repeat the unreliable number. Third, a cheap but necessary check before any topic/tag training conversation: how much of 2025 ticket volume carries no tag at all, and whether untagged tickets look different enough to change the story. KB-deflection (Mia's Q4) waits for night 2 since these three fill tonight's slots and matter more.",
+ "requests": [
+  {
+   "title": "Staffing load vs. ticket complexity, top merchants benchmark",
+   "question": "For Marrowby & Vane and Studio Vrij, does their high breach rate look like a staffing shortfall (high tickets-per-agent) or inherently harder tickets (more back-and-forth, higher-priority mix), compared to other top merchants like Cragsley Outfitters?",
+   "grain": "one row per merchant, limited to the 6 highest-volume merchants from last week's by-merchant report (Cragsley Outfitters, Marrowby & Vane, Studio Vrij, Brennquell Kaffee, Grind Collective, Petalcourt Beauty)",
+   "columns": [
+    "tenant_name",
+    "ticket_count (2025)",
+    "agent_count (distinct support_agents for that tenant)",
+    "tickets_per_agent",
+    "avg_messages_per_ticket (count of ticket_messages per ticket, both directions, as a back-and-forth / effort proxy)",
+    "pct_high_or_urgent_priority (share of the tenant's tickets with priority in (high, urgent))",
+    "avg_resolution_minutes",
+    "resolution_breach_rate"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets, ticket_messages, support_agents, sla_breaches (breach_kind = 'resolution', confirmed codes from last week's audit), tenants. agent_count via support_agents.tenant_id (as used in last week's by-merchant report, for consistency). avg_messages_per_ticket = total ticket_messages rows for that tenant's 2025 tickets / ticket_count. Order by resolution_breach_rate descending so the two flagged merchants' position relative to the others (especially Cragsley, which has a similar or higher tickets-per-agent ratio per last week's group-level data) is clear. Round tickets_per_agent and avg_messages_per_ticket to 1 decimal, rates to 1 decimal percent.",
+   "builds_on": [
+    "Ticket volume and SLA performance by merchant",
+    "Highest-volume merchant + agent-group units"
+   ]
+  },
+  {
+   "title": "Macro usage_count audit trail reconciliation",
+   "question": "Can we independently verify what macros.usage_count is actually counting, using the audit trail, before we repeat that number anywhere?",
+   "grain": "one row per macro, for the 5 highest-usage macros from last week's report",
+   "columns": [
+    "macro_title",
+    "current_usage_count (from macros table today)",
+    "logged_update_event_count (rows in change_history where entity_table = 'macros', entity_id = this macro, and changed_columns includes 'usage_count')",
+    "sum_of_logged_increments (sum of after_data.usage_count minus before_data.usage_count across those logged events)",
+    "first_logged_update_at",
+    "last_logged_update_at",
+    "macro_created_at"
+   ],
+   "details": "Source tables: macros, change_history (entity_schema/entity_table = 'macros', filter changed_columns array containing 'usage_count'; parse before_data/after_data json for the usage_count field). No date window — we want the full history since macro_created_at. Pick the same 5 macros as the top rows of last week's 'Macro usage overview' report (by tenant + title, since titles repeat across tenants — use the macro id if you have it, otherwise match on title + usage_count from that report). Order by current_usage_count descending. Goal: see whether sum_of_logged_increments and logged_update_event_count come anywhere close to explaining current_usage_count, or whether most of the counter's growth has no audit trail behind it at all — flag either way.",
+   "builds_on": [
+    "Macro usage overview"
+   ]
+  },
+  {
+   "title": "Ticket tag coverage: tagged vs. untagged volume and speed",
+   "question": "What share of 2025 tickets carry no topic tag at all, and do untagged tickets differ from tagged ones enough to change the topic/breach story from last week?",
+   "grain": "one row per tag-coverage status: 'Tagged' (at least one row in ticket_tags_map) vs. 'Untagged' (no rows)",
+   "columns": [
+    "coverage_status",
+    "ticket_count (2025)",
+    "pct_of_total_tickets",
+    "avg_resolution_minutes",
+    "resolution_breach_rate",
+    "first_response_breach_rate"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets, ticket_tags_map, sla_breaches (breach_kind = 'resolution' / 'first_response'). A ticket counts as 'Tagged' if it has at least one row in ticket_tags_map, regardless of how many tags; 'Untagged' otherwise. 2 rows total. Order 'Tagged' first then 'Untagged'. Round pct and rates to 1 decimal percent, minutes to whole numbers.",
+   "builds_on": [
+    "Ticket volume and speed by topic tag"
+   ]
+  }
+ ]
+}

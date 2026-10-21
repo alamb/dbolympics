@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Payment capture lag by payment method",
+    "--question",
+    "Does the 8-14 day dip in order-to-payment match rate trace to a specific payment method with inherently slower capture (e.g. bank transfer or wire), supporting the 'it's timing, not a hole' explanation?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Bea\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"payment method kind (payment_methods.kind)\", \"columns_requested\": [\"kind\", \"payment_count\", \"avg_days_order_to_capture\", \"pct_captured_within_7_days\", \"pct_captured_within_14_days\"], \"details\": \"Population: payments with status in ('captured','refunded','partially_refunded'), joined to payment_methods on payments.payment_method_id = payment_methods.id to get kind (card, bank_transfer, paypal, wallet, wire, credit), and joined to orders on payments.order_id = orders.id to get placed_at (only include payments linked to an order; skip payments with a null order_id). Group by payment_methods.kind. payment_count = count of such payments. avg_days_order_to_capture = average of (payments.captured_at minus orders.placed_at) in days, rounded to 1 decimal. pct_captured_within_7_days = percentage of these payments where (captured_at - placed_at) <= 7 days, rounded to 1 decimal. pct_captured_within_14_days = percentage where (captured_at - placed_at) <= 14 days, rounded to 1 decimal. Tables: payments, payment_methods, orders. Order by avg_days_order_to_capture descending.\", \"builds_on\": [\"Order-to-payment match rate by order age\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

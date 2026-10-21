@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Discount cost vs. order volume/revenue by discount, 2025",
+    "--question",
+    "Which discounts (promotions/coupons) cost us the most in 2025, and how much order volume and revenue do they sit on?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Bea\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per discount (discounts.id, i.e. the underlying discount definition behind a coupon or automatic promotion)\", \"columns_requested\": [\"discount name\", \"discount kind (percentage/fixed_amount/free_shipping/bogo)\", \"linked coupon code(s) (comma-joined, or 'automatic' if none)\", \"total discount amount (EUR)\", \"order count\", \"total order revenue, grand_total (EUR)\", \"discount amount as % of order revenue\", \"distinct customers\", \"first order date\", \"last order date\"], \"details\": \"Source: order_discounts joined to orders (for grand_total, currency_code, placed_at, user_id) and discounts (for name, kind); coupons for code where order_discounts.coupon_id is set. Filter orders.placed_at in 2025-01-01 to 2025-12-31 inclusive, exclude cancelled orders (status != 'cancelled'). Convert amounts to EUR using exchange_rates (base_code='EUR', quote_code=order's currency_code, as_of=placed_at date; weekends carry prior business day rate per handbook) \\u2014 divide local amount by rate to get EUR, or use the appropriate direction so figures are genuinely in EUR. Order by total discount amount (EUR) descending. Report total row count returned; print top 50.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

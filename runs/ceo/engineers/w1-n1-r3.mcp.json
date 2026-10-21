@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Revenue by vertical, trailing 12 months",
+    "--question",
+    "Which merchant verticals (industries) generate the bulk of Tidewick's processing volume and fee revenue today?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per merchant vertical (tenants.industry)\", \"columns_requested\": [\"vertical (industry)\", \"merchant count (distinct tenants with a qualifying payout)\", \"gross payment volume (EUR)\", \"fee revenue (EUR)\", \"average fee revenue per merchant (EUR)\", \"share of total fee revenue (%)\"], \"details\": \"Source: payouts joined to tenants on tenant_id for industry. Same window (paid_at 2025-01-01 to 2025-12-31), same inclusion rule (completed/settled payouts only), and same EUR conversion method via exchange_rates as the other two reports in this batch. Group by tenants.industry. Order by fee revenue EUR descending, tie-break by vertical name ascending. If industry is null/blank for some tenants, group those into a single 'Unspecified' row rather than dropping them.\", \"builds_on\": [\"Merchant revenue concentration, trailing 12 months\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

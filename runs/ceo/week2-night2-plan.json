@@ -1,0 +1,58 @@
+{
+ "notes": "Night 1 results: the currency breakdown report confirms my €53,186 figure to the penny (sums exactly), with no currency-specific anomaly — solid evidence that Finance's €93,583 has a methodology bug on their side, which I'll bring to a joint session with Tobias's team rather than keep guessing blindly at their query. On refunds: my Q4 2025 merchant breakdown shows our two biggest Apparel merchants (Cragsley, Marrowby & Vane) actually improved slightly, and the spike is driven by small long-tail merchants (Fell & Fjell, Bytefield, Brick & Bobbin) with big % jumps but tiny order counts — consistent with Kofi's \"concentrated, not broad\" read. But Kofi specifically named Q3 2025 and OfficeHub Nordic, and my data shows OfficeHub Nordic at 0% refund rate in Q4 — so I need the Q3-specific breakdown to confirm or correct his named examples before this goes to Maren as settled. Separately, the risk snapshot surfaced a much bigger receivables problem than Castell Fasteners: Kontor24 Bürobedarf has €116.7k unpaid (8x Castell's), and the biggest unpaid balances are all B2B wholesalers — directly matching Tobias's receivables question. Tonight: (1) redo the refund check on Kofi's actual Q3 window to nail the root-cause question, (2) a receivables-aging report to answer Tobias's \"who's slow to pay\" question and deepen the watch-list, (3) start the unit-economics groundwork with a cost-driver volume inventory per merchant (shipping, returns, refunds, tickets, webhook failures) — the measurable building blocks Tobias and I will need to assign real costs to.",
+ "requests": [
+  {
+   "title": "Merchant refund-rate spike check, Q3 2025 vs H1 2025 baseline",
+   "question": "Does the refund spike Finance flagged for Q3 2025 (naming OfficeHub Nordic and Sports & Outdoor sellers) hold up at the merchant level, and is it the same story as Q4?",
+   "grain": "one row per merchant (tenant)",
+   "columns": [
+    "merchant name",
+    "vertical",
+    "refund rate Q3 2025 (%)",
+    "refund rate H1 2025 baseline (%)",
+    "change vs own baseline (percentage points)",
+    "refund amount Q3 2025 (EUR)",
+    "order count Q3 2025"
+   ],
+   "details": "Same method as last night's Q4 refund-spike report: refund rate = 100 * (succeeded payment_refunds amount, EUR, processed_at in quarter) / (captured payments amount, EUR, captured_at in quarter, status in 'captured','partially_refunded','refunded'), attributed to merchant via tenant_id on payments/payment_refunds directly. Q3 2025 = 2025-07-01 to 2025-10-01; H1 2025 baseline = 2025-01-01 to 2025-07-01. Include only merchants with at least 10 orders in Q3 2025. Order by change vs own baseline descending, tie-break by refund amount Q3 2025 descending. I specifically want to see where OfficeHub Nordic and any Sports & Outdoor merchants land in this ranking, and whether the same merchants appear here as in the Q4 version of this report.",
+   "builds_on": [
+    "Merchant refund-rate spike check, Q4 2025 vs 2025 baseline"
+   ]
+  },
+  {
+   "title": "Receivables aging: who owes us and for how long",
+   "question": "Which merchants are slowest to pay their invoices, how large and how overdue are the balances, and is this concentrated in B2B wholesale?",
+   "grain": "one row per merchant (tenant) with a nonzero unpaid invoice balance",
+   "columns": [
+    "merchant name",
+    "vertical",
+    "total unpaid balance (EUR, sum of amount_due on open/past_due invoices)",
+    "count of open/past_due invoices",
+    "days overdue on the oldest unpaid invoice (as of 2026-01-05, using due_at)",
+    "largest single unpaid invoice (EUR)",
+    "net payment terms (days, from billing_profiles.net_terms_days)"
+   ],
+   "details": "Source: invoices (status in 'open','past_due', amount_due > 0) joined to tenants for vertical and billing_profiles for net_terms_days, converting amount_due to EUR using the most recent exchange_rates as_of date on or before 2025-12-31 per currency (a single snapshot rate, consistent with last night's risk-snapshot report). Days overdue = 2026-01-05 minus due_at for the invoice with the earliest due_at among that merchant's open/past_due invoices (floor to whole days, 0 if due_at is in the future or null). Include every merchant with a nonzero unpaid balance, not just B2B — I want to see whether B2B wholesalers (Industrial Supplies, Office Supplies) actually dominate the top of the list, or whether that pattern breaks down further out. Order by total unpaid balance EUR descending, tie-break by days overdue descending. Print top 50 and note the total number of merchants with a nonzero balance.",
+   "builds_on": [
+    "Merchant risk signals snapshot: receivables, traffic and revenue trend"
+   ]
+  },
+  {
+   "title": "Cost-driver volume inventory by merchant, 2025",
+   "question": "What operational cost-driver volumes do we actually have per merchant today, to serve as the measurable building blocks for a cost-to-serve model?",
+   "grain": "one row per merchant (tenant)",
+   "columns": [
+    "merchant name",
+    "vertical",
+    "shipment count (2025)",
+    "total shipping cost (EUR, sum of shipments.shipping_cost)",
+    "return count (2025, order_returns)",
+    "refund amount (EUR, 2025, succeeded payment_refunds)",
+    "support ticket count (2025)",
+    "failed webhook delivery count (2025)"
+   ],
+   "details": "Source, all for calendar year 2025 (occurred/created dates in [2025-01-01, 2026-01-01)): shipments (shipped_at in window, count and sum shipping_cost converted to EUR via exchange_rates as_of shipped_at date, joined to fulfillments->orders->tenant_id); order_returns (requested_at in window, count, joined via orders->tenant_id); payment_refunds (status='succeeded', processed_at in window, amount converted to EUR, via tenant_id directly); tickets (created_at in window, count, via tenant_id); webhook_deliveries (status='failed', created_at in window, count, joined via webhook_id->webhooks->tenant_id). This is purely a volume inventory (no dollar cost-per-unit assumptions yet) to see which cost signals exist and how they vary by merchant before Finance and I agree on how to price each driver. Order by merchant name ascending (no ranking implied yet — this is a scoping baseline, not a risk list). Print top 50 rows ordered by total shipping cost EUR descending instead if that's easier for the engine to produce deterministically; note total merchant count.",
+   "builds_on": []
+  }
+ ]
+}

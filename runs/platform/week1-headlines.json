@@ -1,0 +1,5 @@
+[
+ "Background jobs ran reliably almost all of Q4 2025, except one bug in our cart-reminder emails that failed for a single week (Nov 24) and hit 10 merchants — including our #1 merchant by revenue, Cragsley Outfitters.",
+ "About 1 in 7 webhook notifications we send to merchants' inventory/accounting systems (ERP, WMS, and Accounting syncs) never go through — they get stuck retrying instead of succeeding or failing cleanly, all year round.",
+ "Support tickets roughly doubled for everyone over the holidays, but the 10 merchants hit by the cart-reminder bug saw tickets rise even more (+174% vs +148% for everyone else) — a real but modest extra hit on top of the seasonal spike."
+]

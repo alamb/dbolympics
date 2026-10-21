@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  cr.purpose,\n  COUNT(*) AS total_records,\n  COUNT(DISTINCT cr.user_id) AS distinct_users,\n  COUNT(*) FILTER (WHERE cr.status = 'granted') AS granted_count,\n  COUNT(*) FILTER (WHERE cr.status = 'withdrawn') AS withdrawn_count,\n  COUNT(*) FILTER (WHERE cr.status = 'expired') AS expired_count,\n  ROUND(\n    100.0 * (\n      SELECT COUNT(DISTINCT sub.user_id)\n      FROM consent_records sub\n      WHERE sub.purpose = cr.purpose\n        AND sub.status IN ('withdrawn', 'expired')\n    ) / NULLIF(COUNT(DISTINCT cr.user_id), 0)\n  , 2) AS pct_users_ever_withdrawn_or_expired,\n  MIN(cr.occurred_at) AS earliest_occurred_at,\n  MAX(cr.occurred_at) AS latest_occurred_at\nFROM consent_records cr\nGROUP BY cr.purpose\nORDER BY total_records DESC, cr.purpose",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: purpose, total_records, distinct_users, granted_count, withdrawn_count, expired_count, pct_users_ever_withdrawn_or_expired, earliest_occurred_at, latest_occurred_at"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and matches the requested grain and columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  cr.purpose,\n  COUNT(*) AS total_records,\n  COUNT(DISTINCT cr.user_id) AS distinct_users,\n  COUNT(*) FILTER (WHERE cr.status = 'granted') AS granted_count,\n  COUNT(*) FILTER (WHERE cr.status = 'withdrawn') AS withdrawn_count,\n  COUNT(*) FILTER (WHERE cr.status = 'expired') AS expired_count,\n  ROUND(\n    100.0 * (\n      SELECT COUNT(DISTINCT sub.user_id)\n      FROM consent_records sub\n      WHERE sub.purpose = cr.purpose\n        AND sub.status IN ('withdrawn', 'expired')\n    ) / NULLIF(COUNT(DISTINCT cr.user_id), 0)\n  , 2) AS pct_users_ever_withdrawn_or_expired,\n  MIN(cr.occurred_at) AS earliest_occurred_at,\n  MAX(cr.occurred_at) AS latest_occurred_at\nFROM consent_records cr\nGROUP BY cr.purpose\nORDER BY total_records DESC, cr.purpose",
+  "note": "Platform-wide, full history, no date filter, one row per distinct purpose value as requested; this will surface every purpose actually present in consent_records (not just analytics_cookies) and show withdrawn/expired patterns across all of them.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `consent_records` by `purpose` across all time (no 2023–2025 restriction), giving total records, distinct users, granted/withdrawn/expired counts, the share of distinct users who ever had a withdrawn-or-expired record, and the earliest/latest `occurred_at` per purpose — directly answering whether only 2 purposes exist and whether the \"never withdrawn\" pattern is unique to `analytics_cookies`."
+ }
+]

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH base AS (\n  SELECT\n    a.order_id,\n    a.touch_point,\n    a.model,\n    a.attributed_revenue,\n    a.currency_code,\n    a.occurred_at,\n    CASE\n      WHEN a.campaign_id IS NULL THEN 'campaign_id is null'\n      WHEN c.id IS NULL THEN 'campaign_id set but no matching campaigns row'\n      ELSE 'campaign_id set and matches a campaigns row'\n    END AS linkage_category\n  FROM attributions a\n  LEFT JOIN campaigns c ON c.id = a.campaign_id\n  WHERE a.occurred_at >= DATE '2025-01-01'\n    AND a.occurred_at < DATE '2026-01-01'\n    AND a.order_id IS NOT NULL\n)\nSELECT\n  b.linkage_category,\n  COUNT(*) AS attribution_rows_count,\n  COUNT(DISTINCT b.order_id) AS distinct_orders_count,\n  COUNT(DISTINCT b.touch_point) AS distinct_touch_point_values,\n  COUNT(DISTINCT b.model) AS distinct_model_values,\n  ROUND(SUM(\n    CASE\n      WHEN COALESCE(b.currency_code, 'EUR') = 'EUR' THEN b.attributed_revenue\n      ELSE b.attributed_revenue / er.rate\n    END\n  ), 0) AS attributed_revenue_eur\nFROM base b\nLEFT JOIN exchange_rates er\n  ON er.base_code = 'EUR'\n  AND er.quote_code = b.currency_code\n  AND er.as_of = CAST(b.occurred_at AS date)\nGROUP BY b.linkage_category\nORDER BY attribution_rows_count DESC, b.linkage_category ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: linkage_category, attribution_rows_count, distinct_orders_count, distinct_touch_point_values, distinct_model_values, attributed_revenue_eur"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH base AS (\n  SELECT\n    a.order_id,\n    a.touch_point,\n    a.model,\n    a.attributed_revenue,\n    a.currency_code,\n    a.occurred_at,\n    CASE\n      WHEN a.campaign_id IS NULL THEN 'campaign_id is null'\n      WHEN c.id IS NULL THEN 'campaign_id set but no matching campaigns row'\n      ELSE 'campaign_id set and matches a campaigns row'\n    END AS linkage_category\n  FROM attributions a\n  LEFT JOIN campaigns c ON c.id = a.campaign_id\n  WHERE a.occurred_at >= DATE '2025-01-01'\n    AND a.occurred_at < DATE '2026-01-01'\n    AND a.order_id IS NOT NULL\n)\nSELECT\n  b.linkage_category,\n  COUNT(*) AS attribution_rows_count,\n  COUNT(DISTINCT b.order_id) AS distinct_orders_count,\n  COUNT(DISTINCT b.touch_point) AS distinct_touch_point_values,\n  COUNT(DISTINCT b.model) AS distinct_model_values,\n  ROUND(SUM(\n    CASE\n      WHEN COALESCE(b.currency_code, 'EUR') = 'EUR' THEN b.attributed_revenue\n      ELSE b.attributed_revenue / er.rate\n    END\n  ), 0) AS attributed_revenue_eur\nFROM base b\nLEFT JOIN exchange_rates er\n  ON er.base_code = 'EUR'\n  AND er.quote_code = b.currency_code\n  AND er.as_of = CAST(b.occurred_at AS date)\nGROUP BY b.linkage_category\nORDER BY attribution_rows_count DESC, b.linkage_category ASC",
+  "note": "Rows with a null currency_code are treated as already being in EUR (no conversion applied) since exchange_rates can't resolve a rate for a null quote_code; this affects only the attributed_revenue_eur figure, not the row/order counts you need to diagnose the coverage gap.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report breaks the ~14% vs ~75-83% gap into three linkage categories (null campaign_id, orphaned campaign_id, and properly matched campaign_id), each with row counts, distinct order counts, distinct touch_point/model variety, and EUR revenue — so Sofie can see directly whether the shortfall in last week's channel-revenue report is concentrated in attributions with no campaign_id at all, or in campaign_ids that don't resolve to a campaigns row."
+ }
+]

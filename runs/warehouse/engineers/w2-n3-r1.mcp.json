@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Is the December 31 correction one single batch event, or genuinely independent per merchant?",
+    "--question",
+    "Did the 407 stock_movements kind='adjustment' events in 2025 all fire at the exact same timestamp (suggesting one system/data event), or do different merchants' corrections have distinct timestamps (consistent with independent, organic annual stocktakes)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Bea\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"distinct occurred_at timestamp value, among stock_movements where kind='adjustment' and occurred_at in 2025\", \"columns_requested\": [\"occurred_at (the exact timestamp value)\", \"event_count (rows sharing this exact timestamp)\", \"distinct_tenants\", \"distinct_warehouses\", \"total_abs_quantity\"], \"details\": \"Source: stock_movements where kind='adjustment', occurred_at between 2025-01-01 and 2025-12-31 (half-open bound: >= 2025-01-01 and < 2026-01-01). Group by the exact occurred_at value (to the microsecond, as stored). Join stock_locations->warehouses->tenants only to count distinct tenants/warehouses per timestamp group, not to filter. Order by event_count descending, tie-break by occurred_at ascending. Expect very few distinct timestamp values (ideally this fits well under 50 rows); note the total distinct timestamp count.\", \"builds_on\": [\"Scale of adjustment-kind stock movements by month, 2025\", \"Do B2B wholesale merchants get routine stock counts, or only the annual catch-up?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

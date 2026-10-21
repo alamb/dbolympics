@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Does completed erasure actually deactivate the core user record?",
+    "--question",
+    "When an erasure request is marked completed, is the underlying users row actually deactivated or anonymized, or does the account remain fully active?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Felix\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per completed erasure request (request_type='erasure', status='completed', 39 rows)\", \"columns_requested\": [\"dsar public_id\", \"tenant name\", \"subject_user_id\", \"completed_at (date)\", \"user status (users.status)\", \"user deleted_at (date, or blank if null)\", \"user updated_at (most recent modification to the user row)\", \"user last_login_at (date, or blank if null)\"], \"details\": \"Source: data_subject_requests (request_type='erasure', status='completed') joined to users on tenant_id + id = subject_user_id. Do not pull email/full_name (avoid printing PII we don't need for this check) \\u2014 status, deleted_at, updated_at and last_login_at are enough to tell whether the fulfillment process ever touches the primary account record at all, versus just closing the request ticket. Order by completed_at ascending.\", \"builds_on\": [\"Post-erasure data footprint: what remains in sessions, logins, and access log\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

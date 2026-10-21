@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Apparel order value breakdown: subtotal, discount and total, member vs non-member",
+    "--question",
+    "Is the large average-order-value gap seen among Apparel members (28-40% lower than non-members across every tenure band) explained by heavier discounting at checkout, or do members simply buy cheaper products before any discount is applied?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Grace\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per loyalty segment (member vs non-member), restricted to the Apparel and Footwear vertical\", \"columns_requested\": [\"segment\", \"order_count\", \"avg_subtotal_eur\", \"avg_discount_total_eur\", \"avg_grand_total_eur\", \"discount_rate_pct\"], \"details\": \"Population: non-cancelled orders placed 2023-01-01 to 2025-12-31 by users (is_staff = false) belonging to tenants with tenants.industry = 'Apparel & Footwear'. Segment = 'loyalty member' if the user has a loyalty_accounts row, else 'non-member'. avg_subtotal_eur, avg_discount_total_eur and avg_grand_total_eur are averages of orders.subtotal, orders.discount_total and orders.grand_total respectively, each converted to EUR via exchange_rates (order currency_code to EUR, rate as_of placed_at). discount_rate_pct = (sum of discount_total in EUR) divided by (sum of subtotal in EUR) for the segment, as a percentage (an aggregate rate, not an average of per-order ratios). Order rows: 'loyalty member' first, then 'non-member'.\", \"builds_on\": [\"Apparel and Footwear: loyalty member vs non-member behavior by tenure\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

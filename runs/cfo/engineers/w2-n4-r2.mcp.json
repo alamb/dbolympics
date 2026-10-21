@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Bank Transfer Payments With Unexplained Ledger Mismatch: Full List, 2025",
+    "--question",
+    "Which specific bank-transfer payments have an unexplained ledger mismatch, so they can be handed to the auditors as a named, bounded list?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Viktor\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one payment, restricted to the 19 bank_transfer payments in the 'other mismatch' category\", \"columns_requested\": [\"order_number\", \"merchant_name\", \"payment_captured_at\", \"currency_code\", \"payment_amount\", \"amount_refunded\", \"ledger_credit_total_eur\", \"nearest_expected_eur (whichever of net_amount_eur or payment+refund_eur is closer)\", \"diff_eur\"], \"details\": \"Recompute the same 'other mismatch' classification as this week's reconciliation reports (2025 captured/refunded/partially_refunded payments; ledger credit total per payment_id in EUR vs. net_amount_eur and payment+refund_eur, both in EUR, with the 1%-or-\\u20ac1 tolerance; excluding 'no ledger entries' payments), restricted to payments.payment_method_id -> payment_methods.kind = 'bank_transfer'. Join orders for order_number and tenants for merchant_name. List all matching payments individually (expect ~19 rows). Order by diff_eur descending.\", \"builds_on\": [\"Other-Mismatch Payments: Characterization by Payment Method, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

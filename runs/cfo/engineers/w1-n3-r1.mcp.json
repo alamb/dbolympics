@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Corrected Tidewick Revenue by Month, 2025 (validated EUR conversion)",
+    "--question",
+    "What is the correct month-by-month view of Tidewick's 2025 gross payout volume and processing-fee revenue, using the per-payout EUR conversion method validated against the currency reconciliation?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one calendar month in 2025, plus a final TOTAL row for the year\", \"columns_requested\": [\"month (YYYY-MM, or 'TOTAL')\", \"payout_count\", \"gross_volume_eur\", \"fee_revenue_eur\", \"net_paid_out_eur\", \"fee_rate_pct\", \"fee_revenue_prior_year_eur (same month 2024)\"], \"details\": \"Source: payouts, status IN ('paid','completed'), paid_at in 2025. For each payout, convert gross_amount, fee_amount, net_amount from currency_code to EUR by matching exchange_rates on base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at), dividing the local amount by the matched rate (rate=1 when currency_code='EUR', no join needed) \\u2014 this is the exact method used in last night's 'Payout Reconciliation by Currency' report, which cross-footed to known-good annual totals. Group by month (calendar_days.month_label), and add one extra row labeled 'TOTAL' summing all 12 months, so the figures can be checked against the independently-confirmed 2025 annual totals of approximately \\u20ac3,972,988 gross volume and \\u20ac93,583 fee revenue. For the prior-year column, run the same per-payout conversion method for the matching month in 2024. Round money to 2 decimals, fee rate to 1 decimal. Order months chronologically with TOTAL last.\", \"builds_on\": [\"Tidewick Processing Fee Revenue by Month, 2025\", \"2025 Payout Reconciliation by Currency (Local vs EUR-Converted)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

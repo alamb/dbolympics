@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  i.status AS invoice_status,\n  COUNT(*) AS total_invoices,\n  COUNT(i.voided_at) AS voided_at_populated,\n  SUM(CASE WHEN i.voided_at IS NULL THEN 1 ELSE 0 END) AS voided_at_null,\n  SUM(CASE WHEN EXISTS (\n      SELECT 1 FROM audit_log a\n      WHERE a.entity_table = 'invoices'\n        AND a.entity_id = i.id\n        AND a.tenant_id = i.tenant_id\n  ) THEN 1 ELSE 0 END) AS matching_audit_log_rows,\n  ROUND(\n    100.0 * SUM(CASE WHEN EXISTS (\n      SELECT 1 FROM audit_log a\n      WHERE a.entity_table = 'invoices'\n        AND a.entity_id = i.id\n        AND a.tenant_id = i.tenant_id\n    ) THEN 1 ELSE 0 END) / COUNT(*)\n  , 1) AS coverage_rate_pct,\n  COUNT(DISTINCT i.tenant_id) AS distinct_tenants\nFROM invoices i\nWHERE i.status IN ('void', 'uncollectible')\nGROUP BY i.status\nORDER BY total_invoices DESC, invoice_status",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: invoice_status, total_invoices, voided_at_populated, voided_at_null, matching_audit_log_rows, coverage_rate_pct, distinct_tenants"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and matches the requested grain and columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  i.status AS invoice_status,\n  COUNT(*) AS total_invoices,\n  COUNT(i.voided_at) AS voided_at_populated,\n  SUM(CASE WHEN i.voided_at IS NULL THEN 1 ELSE 0 END) AS voided_at_null,\n  SUM(CASE WHEN EXISTS (\n      SELECT 1 FROM audit_log a\n      WHERE a.entity_table = 'invoices'\n        AND a.entity_id = i.id\n        AND a.tenant_id = i.tenant_id\n  ) THEN 1 ELSE 0 END) AS matching_audit_log_rows,\n  ROUND(\n    100.0 * SUM(CASE WHEN EXISTS (\n      SELECT 1 FROM audit_log a\n      WHERE a.entity_table = 'invoices'\n        AND a.entity_id = i.id\n        AND a.tenant_id = i.tenant_id\n    ) THEN 1 ELSE 0 END) / COUNT(*)\n  , 1) AS coverage_rate_pct,\n  COUNT(DISTINCT i.tenant_id) AS distinct_tenants\nFROM invoices i\nWHERE i.status IN ('void', 'uncollectible')\nGROUP BY i.status\nORDER BY total_invoices DESC, invoice_status",
+  "note": "Counts all invoices with status in ('void','uncollectible') regardless of voided_at, splits them into voided_at populated vs null, and separately counts how many of those invoices have at least one matching audit_log row (entity_table='invoices', entity_id=invoices.id, same tenant_id) via EXISTS, which is also the basis for the coverage rate.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives, per terminal status (`void`, `uncollectible`): total invoice count, how many have a populated `voided_at` vs null, how many have at least one matching `audit_log` row, the resulting coverage rate, and distinct tenants — which should directly answer whether voids/uncollectibles have ever happened and whether they're traceable or just undated."
+ }
+]

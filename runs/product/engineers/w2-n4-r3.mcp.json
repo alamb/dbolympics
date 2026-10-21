@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Weekday-matched cart conversion baseline for Cragsley Outfitters, Sep 29 – Nov 25 2025",
+    "--question",
+    "Were Nov 24-25 (the start of the reminder-email outage) unusually low for their day of week, or within normal week-to-week variation?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Omar\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per calendar date (Mondays and Tuesdays only), Cragsley Outfitters\", \"columns_requested\": [\"date\", \"day of week\", \"carts created\", \"overall conversion pct\"], \"details\": \"Tenant: Cragsley Outfitters. Population: carts with created_at on every Monday and Tuesday from 2025-09-29 through 2025-11-25 inclusive (9 Mondays, 9 Tuesdays = 18 rows), using the same overall_conversion_pct definition (share of that day's carts with status='converted', any time) as prior Cragsley reports. This extends the existing Nov 17-Dec 1 daily report backward with same-weekday history so Nov 24 (Monday) and Nov 25 (Tuesday) can be compared against 8 prior weeks of the same weekdays rather than just the single preceding week. Order rows by date ascending.\", \"builds_on\": [\"Daily cart conversion at Cragsley Outfitters, Nov 17 \\u2013 Dec 1 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

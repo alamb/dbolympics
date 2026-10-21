@@ -1,0 +1,24 @@
+# Hyper, from the Tableau Hyper API package: its server (hyperd) runs in the system's own container
+# and speaks the PostgreSQL protocol.
+name = "hyper"
+# the version, kept with the results (by hand)
+version = "0.0.26784"
+# Hyper does not store arrays: the four tables with arrays come as text, in text columns
+arrays = "text"
+# no indexes, so no primary keys
+keys = ["none"]
+
+
+[load]
+statement = "INSERT INTO {table} SELECT * FROM external('{file}')"
+
+[dialect.functions]
+# no DISTINCT in window aggregates: the distinct non-NULL values from two dense ranks
+"count_distinct_over(x, window)" = "(DENSE_RANK() OVER ({window} ORDER BY {x} ASC NULLS FIRST) + DENSE_RANK() OVER ({window} ORDER BY {x} DESC NULLS LAST) - 1 - MAX(CASE WHEN {x} IS NULL THEN 1 ELSE 0 END) OVER ({window}))"
+# the arrays are stored as text in PostgreSQL's notation ({"a","b"}); Hyper's own is ["a","b"]
+"equals_any(x, arr)" = "{x} = ANY(CAST('[' || SUBSTRING({arr} FROM 2 FOR CHAR_LENGTH({arr}) - 2) || ']' AS text[]))"
+# Hyper cannot filter an ordered-set aggregate; PERCENTILE_CONT skips the NULLs of the other rows
+"percentile_cont_filter(p, x, condition)" = "PERCENTILE_CONT({p}) WITHIN GROUP (ORDER BY CASE WHEN {condition} THEN {x} END)"
+
+[dialect.types]
+"array(element)" = "text"

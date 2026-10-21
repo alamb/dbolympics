@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Privileged role landscape by role name, company-wide",
+    "--question",
+    "Beyond the default 'Owner' role (which filled the entire first page of the prior report), what other roles across merchants carry significant permissions, how widely are they assigned, and how dormant are the users holding them?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per distinct role name (roles.name), aggregated across all tenants that have a role with that name\", \"columns_requested\": [\"role name\", \"tenant count (distinct tenants with a role of this name)\", \"share of those instances flagged is_system (%)\", \"average permission count granted (across tenant instances of this role)\", \"max permission count seen for this role name\", \"total users currently assigned (summed across tenants, via user_roles, excluding deleted users)\", \"total users dormant (status = active and last_login_at is null or before 2025-10-05, summed across tenants)\", \"dormant rate among assigned users (%)\"], \"details\": \"Source: roles joined to role_permissions (for permission counts per role instance), user_roles joined to users (excluding users.deleted_at is not null) for assignment and dormancy. Restrict to role instances with >=1 permission and >=1 assigned non-deleted user (same population as the prior 'Privileged roles per merchant' report, i.e. drawn from that same 434-row qualifying set, but now grouped by role_name instead of by tenant+role so the whole landscape fits on one page). 'Dormant' = users.status = 'active' and (last_login_at is null or last_login_at < 2025-10-05). Dormant rate = total dormant / total assigned, rounded to 1 decimal percent. Order by total users assigned descending, then role name as tie-break; cap at 50 rows and note how many distinct role names exist in total.\", \"builds_on\": [\"Privileged roles per merchant: grant size and dormancy\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

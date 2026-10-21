@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Quarterly urgent-ticket performance, hotspot merchants vs comparison peer",
+    "--question",
+    "Does urgent-ticket resolution specifically get worse in the same quarters where each merchant's ticket-per-agent load spiked?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per tenant and calendar quarter in 2025, for Cragsley Outfitters, Marrowby & Vane, Studio Vrij, and Grind Collective, urgent-priority tickets only\", \"columns_requested\": [\"merchant name\", \"quarter (2025-Q1..Q4)\", \"urgent tickets evaluated (sla_policy_id not null)\", \"urgent miss rate (%)\", \"avg actual resolution hours (urgent)\", \"median actual resolution hours (urgent)\"], \"details\": \"Source: tickets (priority='urgent') joined to sla_policies via tickets.sla_policy_id, filtered to the four named tenants. Grain the quarter on tickets.created_at within 2025. Exclude tickets with null sla_policy_id from all columns (same 'evaluable' definition as prior urgent-SLA reports). 'Miss rate' = tickets missing the resolution target (resolved_at null as of 2025-12-31, or resolved_at later than created_at + resolution_target_minutes), as a percentage of evaluable urgent tickets that quarter, rounded to 1 decimal. avg/median actual resolution hours = extract(epoch from resolved_at - created_at)/3600 over evaluable urgent tickets with resolved_at not null that quarter, rounded to 1 decimal (show NULL if zero such tickets). Order by merchant name ascending, then quarter ascending. Expect 16 rows; note if any quarter has zero evaluable urgent tickets for a tenant.\", \"builds_on\": [\"Ticket load per agent over 2025, hotspot merchants vs a comparable peer\", \"Urgent-ticket SLA target vs actual resolution time, by merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

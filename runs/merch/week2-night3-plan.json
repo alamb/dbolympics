@@ -1,0 +1,57 @@
+{
+ "notes": "Night 2 findings: (1) The shipping-delay hypothesis for the Dec dip holds for Fennel & Flint with a plausible lag — their on-time delivery crashed to 53.7% in November (from ~85-88% normally) and their bad reviews peaked the following month, December (14 reviews, 3.14 avg, 35.7% 1-2 star). But it does NOT explain Wiesgrund Wohnen at all: their delivery performance stayed strong all through Nov-Dec (90.9%, 93.8%) and they used 0% Albion Parcel every single month — yet they had an equally bad December (12 reviews, 3.5 avg, 41.7% 1-2 star). So there are two different causes behind what looked like one 'Home & Living dip,' and I need to find Wiesgrund Wohnen's actual driver. (2) The image-bucket report, run without the active-only filter this time, overturned my 'maybe they're just new/unfinished listings' theory: the 85 zero-image products are actually the OLDEST on average (1,136 days vs ~1,040 for others) and have fewer variants (3.4 vs ~5.5) — these are neglected legacy active listings, not pending-content new ones, and notably zero B2B merchants have any zero-image products (B2B is always at least minimally photographed). So the zero-to-one-image effect looks like a real, if small and old, content gap worth cleaning up, not a proxy for recency. (3) The bundle-user list makes the pattern obvious just from eyeballing the 50 rows: every single bundle-using merchant is in Beauty, Food & Coffee, Books & Stationery, Jewelry, Consumer Electronics, or Home & Living — none are Apparel & Footwear, Sports & Outdoor, or B2B wholesale, and they skew toward low-variant, giftable, small-revenue merchants. I want one clean aggregate to confirm this is a true vertical pattern and not an artifact of which merchants happened to print. Tonight: drill into Wiesgrund Wohnen's actual December driver at the product level, check whether both merchants' December dips are a recurring yearly pattern (like Cragsley's) or unique to 2025, and confirm the bundle-vertical clustering with hard numbers.",
+ "requests": [
+  {
+   "title": "Wiesgrund Wohnen December 2025: Product-Level Review Breakdown",
+   "question": "Since delivery performance doesn't explain Wiesgrund Wohnen's December dip, which specific products drove it?",
+   "grain": "one row per product, for Wiesgrund Wohnen only, among products with at least one approved review created in December 2025",
+   "columns": [
+    "product_name",
+    "category_name",
+    "review_count",
+    "avg_rating",
+    "pct_1_2_star",
+    "units_sold_last_12mo"
+   ],
+   "details": "Filter to tenant = Wiesgrund Wohnen. review_count/avg_rating/pct_1_2_star computed over approved product_reviews with created_at between 2025-12-01 and 2025-12-31, per product. category_name from products.primary_category_id -> categories.name. units_sold_last_12mo = sum of order_items.quantity for that product's variants from orders placed 2025-01-01 to 2025-12-31 with status not cancelled, for context on whether it's a popular or niche item. Round avg_rating to 2 decimals, pct to 1 decimal. Order by review_count descending, tie-break by avg_rating ascending.",
+   "builds_on": [
+    "Fennel & Flint and Wiesgrund Wohnen: Review Sentiment vs Delivery Performance, Monthly"
+   ]
+  },
+  {
+   "title": "Fennel & Flint and Wiesgrund Wohnen: Historical December Pattern, 2023-2025",
+   "question": "Is the December rating dip a recurring yearly pattern for these two merchants (like we found at Cragsley), or something new and specific to 2025?",
+   "grain": "one row per merchant per year, December only, for 2023, 2024, 2025",
+   "columns": [
+    "merchant_name",
+    "year",
+    "dec_review_count",
+    "dec_avg_rating",
+    "dec_pct_1_2_star",
+    "dec_orders_count"
+   ],
+   "details": "Filter to tenants named Fennel & Flint and Wiesgrund Wohnen. dec_review_count/dec_avg_rating/dec_pct_1_2_star computed over approved product_reviews with created_at in December of that year (same definitions as prior review-trend reports). dec_orders_count = count of that merchant's orders with placed_at in December of that year and status not cancelled, for volume context. Round avg_rating to 2 decimals, pct to 1 decimal. Order by merchant_name, then year ascending.",
+   "builds_on": [
+    "Fennel & Flint and Wiesgrund Wohnen: Review Sentiment vs Delivery Performance, Monthly",
+    "Cragsley Outfitters: Rating Trend Over Time"
+   ]
+  },
+  {
+   "title": "Bundle Adoption Rate by Vertical",
+   "question": "Is bundle adoption really concentrated in specific verticals, and how strong is that pattern across the whole merchant base, not just the list of bundle-users?",
+   "grain": "one row per tenant industry (vertical)",
+   "columns": [
+    "industry",
+    "merchant_count",
+    "merchants_using_bundles",
+    "pct_merchants_using_bundles",
+    "avg_pct_products_bundled_among_users"
+   ],
+   "details": "merchant_count = count of non-deleted tenants in that industry. merchants_using_bundles = count of those tenants with at least one product_bundles row where is_active = true. pct_merchants_using_bundles = merchants_using_bundles / merchant_count * 100, rounded to 1 decimal. avg_pct_products_bundled_among_users = average of pct_active_products_in_a_bundle (as defined in the Collections and Bundles Adoption and Merchants Using Bundles reports) across only the merchants_using_bundles in that industry; null/blank if zero users. Order by pct_merchants_using_bundles descending, tie-break by industry name.",
+   "builds_on": [
+    "Merchants Using Bundles: Raw Profile",
+    "Collections and Bundles Adoption by Merchant"
+   ]
+  }
+ ]
+}

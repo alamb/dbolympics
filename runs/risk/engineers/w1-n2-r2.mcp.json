@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Elevated access by permission category and staff status",
+    "--question",
+    "Which permission categories represent real elevated/admin-type access, how many staff users hold each, and do any non-active (invited/suspended/deactivated) staff still hold them?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Viktor\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per permissions.category value, computed over users where is_staff = true across all tenants, as a current-state snapshot as of 2025-12-31\", \"columns_requested\": [\"category\", \"staff_users_with_category (distinct is_staff=true users holding >=1 role granting a permission in this category, via user_roles -> role_permissions -> permissions)\", \"pct_of_all_staff (that count divided by total is_staff=true, non-deleted user count)\", \"active_count (of those users, status = 'active')\", \"non_active_count (status in invited/suspended/deactivated)\", \"distinct_permission_codes (count of distinct permissions.code in this category, for context)\"], \"details\": \"Sources: permissions (category, code), role_permissions, user_roles, users (is_staff=true, exclude deleted_at not null). This replaces last night's is_system proxy, which turned out not to distinguish privilege level (100% of staff held an is_system role). The goal is to find which categories look sensitive (e.g. billing, security, admin, user-management) and whether non_active_count is non-trivial for those \\u2014 that would be the stale-access signal Aylin is asking about. Order by staff_users_with_category descending.\", \"builds_on\": [\"Staff access currency by account status\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,31 @@
+=== Report 1: Silent-churn merchants: substantial accounts gone quiet without a churned flag (written by Viktor) ===
+Engineer's note: One row per non-churned tenant meeting the silent-churn criteria (last order before 2025-07-09, >=20 lifetime orders, excluding cancelled orders), ranked by lifetime EUR revenue; report will note the total row count returned beyond the 50-row cap.
+REPORT: Silent-churn merchants: substantial accounts gone quiet without a churned flag
+QUESTION: Beyond the 9 formally churned merchants, which substantial merchants have gone quiet without yet being flagged as churned?
+merchant_name | industry | status | last_order_date | days_since_last_order | lifetime_orders | lifetime_revenue_eur
+--------------+----------+--------+-----------------+-----------------------+-----------------+---------------------
+(0 rows)
+
+=== Report 2: Marketing engagement before shoppers go quiet: lapsed vs active shoppers (written by Ines) ===
+Engineer's note: Shopper groups are defined across all tenants (no single-tenant filter given); shopper counts are distinct (tenant_id, user_id) pairs since user_id is only unique per tenant. Messages are bucketed into the 0-90/91-180 day windows based on each message's sent_at date relative to the user's reference date; messages sent after the reference date or more than 180 days before it are excluded, matching the two requested windows.
+REPORT: Marketing engagement before shoppers go quiet: lapsed vs active shoppers
+QUESTION: Do shoppers who stop engaging with campaigns go quiet sooner, and does disengagement show up before they lapse?
+shopper_group | window_before_reference      | shopper_count | messages_sent | messages_opened | open_rate_pct | messages_clicked | click_rate_pct
+--------------+------------------------------+---------------+---------------+-----------------+---------------+------------------+---------------
+active        | 0-90 days before reference   |           704 |          5896 |            2149 |          36.4 |              274 |            4.6
+active        | 91-180 days before reference |           694 |          5958 |            2225 |          37.3 |              251 |            4.2
+lapsed        | 0-90 days before reference   |           283 |          2592 |             933 |          36.0 |              144 |            5.6
+lapsed        | 91-180 days before reference |           264 |          2233 |             801 |          35.9 |               86 |            3.9
+(4 rows)
+
+=== Report 3: Support experience before shoppers go quiet: lapsed vs active shoppers (written by Bea) ===
+Engineer's note: Shopper group is defined platform-wide by last order date vs. 2025-12-31 (lapsed/active), matched to tickets/csat by (tenant_id, user_id); shopper_count is the total distinct shoppers in that group (same for both windows of a group), not shoppers active specifically in that window. Rows with no tickets/csat in a window show 0 for counts and averages rather than null.
+REPORT: Support experience before shoppers go quiet: lapsed vs active shoppers
+QUESTION: Do shoppers who get slower or worse support go quiet sooner, and does that show up before they lapse?
+shopper_group | window_before_reference      | shopper_count | tickets | avg_first_response_hours | avg_csat_score
+--------------+------------------------------+---------------+---------+--------------------------+---------------
+active        | 0-90 days before reference   |          3654 |     937 |                    29.62 |            3.1
+active        | 91-180 days before reference |          3654 |     268 |                     13.0 |           3.66
+lapsed        | 0-90 days before reference   |          1548 |     150 |                    30.78 |           3.25
+lapsed        | 91-180 days before reference |          1548 |     124 |                     26.2 |           3.29
+(4 rows)

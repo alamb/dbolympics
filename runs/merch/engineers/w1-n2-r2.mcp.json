@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Review Engagement Relative to Order Volume",
+    "--question",
+    "Is the month-over-month growth in review counts just tracking order volume growth, or is review-per-order engagement actually increasing?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per calendar month, 2023-01 through 2025-12\", \"columns_requested\": [\"month\", \"orders_count\", \"review_count\", \"reviews_per_100_orders\", \"avg_rating\"], \"details\": \"orders_count = count of orders across all tenants with placed_at in that calendar month and status not in ('cancelled'). review_count = count of approved product_reviews with created_at in that month (same definition as the night-1 'Monthly Review Volume and Rating Trend' report, so the two reports can be compared side by side). reviews_per_100_orders = review_count / orders_count * 100, rounded to 2 decimals. avg_rating = mean rating of that month's approved reviews, rounded to 2 decimals. Build off the full calendar (calendar_days) so every month appears even if a metric is 0. Order by month ascending.\", \"builds_on\": [\"Monthly Review Volume and Rating Trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

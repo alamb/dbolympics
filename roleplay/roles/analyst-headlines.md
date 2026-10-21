@@ -1,0 +1,1 @@
+Post this week's findings to the company's analytics channel, which every team reads: your 2 or 3 most important findings, one line each, with the key number. Write them so that people outside your team understand them.

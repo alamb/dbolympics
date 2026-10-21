@@ -1,0 +1,1077 @@
+{
+ "q001": [
+  {
+   "from": "OVER (ORDER BY r.fee_revenue_eur DESC, t.name ASC ROWS UNBOUNDED PRECEDING)",
+   "to": "OVER (ORDER BY r.fee_revenue_eur DESC, t.name ASC, t.id ASC ROWS UNBOUNDED PRECEDING)",
+   "note": "tie-breaker in the cumulative window: tenant names are not unique"
+  },
+  {
+   "from": "ORDER BY r.fee_revenue_eur DESC, t.name ASC\nFETCH",
+   "to": "ORDER BY r.fee_revenue_eur DESC, t.name ASC, t.id ASC\nFETCH",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q005": [
+  {
+   "from": "ORDER BY q.quarter_start ASC",
+   "to": "ORDER BY q.quarter_start ASC, q.year_num, q.quarter_num",
+   "note": "tie-breaker: completes the quarters group key"
+  }
+ ],
+ "q006": [
+  {
+   "from": "ORDER BY year_num, quarter_num, (CASE WHEN cohort = 'new' THEN 0 ELSE 1 END)",
+   "to": "ORDER BY year_num, quarter_num, (CASE WHEN cohort = 'new' THEN 0 ELSE 1 END), quarter_start",
+   "note": "tie-breaker: calendar_days only keys calendar_date, so (year_num, quarter_num) does not determine quarter_start"
+  }
+ ],
+ "q013": [
+  {
+   "from": "ORDER BY t0.month_num",
+   "to": "ORDER BY t0.month_num, t0.month_label",
+   "note": "tie-breaker: month_label is not a function of month_num by schema"
+  }
+ ],
+ "q015": [
+  {
+   "from": "ROW_NUMBER() OVER (PARTITION BY yr ORDER BY gross_eur DESC) AS rnk",
+   "to": "ROW_NUMBER() OVER (PARTITION BY yr ORDER BY gross_eur DESC, tenant_id) AS rnk",
+   "note": "tie-breaker: tenant_year is keyed by (tenant_id, yr)"
+  }
+ ],
+ "q018": [
+  {
+   "from": "ORDER BY refund_rate_pct DESC, m.merchant_name ASC\nFETCH",
+   "to": "ORDER BY refund_rate_pct DESC, m.merchant_name ASC, m.tenant_id ASC\nFETCH",
+   "note": "tie-breaker: tenant names are not unique; m.tenant_id is the grouping key"
+  }
+ ],
+ "q019": [
+  {
+   "from": "ORDER BY month_num",
+   "to": "ORDER BY month_num, month_label",
+   "note": "tie-breaker: calendar_days only keys calendar_date, so month_num does not determine month_label (the TOTAL row has month_num 13, which the CHECK on month_num excludes for real months)"
+  }
+ ],
+ "q023": [
+  {
+   "from": "ORDER BY refund_rate_q3_pct DESC NULLS LAST, merchant_name ASC",
+   "to": "ORDER BY refund_rate_q3_pct DESC NULLS LAST, merchant_name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q024": [
+  {
+   "from": "order by year_num, quarter_num",
+   "to": "order by year_num, quarter_num, quarter_start",
+   "note": "tie-breaker: quarter_start is the key of combined"
+  }
+ ],
+ "q026": [
+  {
+   "from": "ORDER BY d.orders_delivered DESC, t.name ASC",
+   "to": "ORDER BY d.orders_delivered DESC, t.name ASC, t.id ASC",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q028": [
+  {
+   "from": "ORDER BY g.carrier ASC, g.quarter_start ASC",
+   "to": "ORDER BY g.carrier ASC, g.quarter_start ASC, g.year_num, g.quarter_num",
+   "note": "tie-breaker: rest of the grain key"
+  }
+ ],
+ "q029": [
+  {
+   "from": "ORDER BY wa.orders_shipped DESC, w.name ASC\nFETCH",
+   "to": "ORDER BY wa.orders_shipped DESC, w.name ASC, w.id ASC\nFETCH",
+   "note": "tie-breaker: warehouse names are not unique"
+  }
+ ],
+ "q033": [
+  {
+   "from": "  tcc.carrier ASC",
+   "to": "  tcc.carrier ASC,\n  tcc.tenant_id ASC",
+   "note": "tie-breaker: tenant names are not unique; (tenant_id, carrier) is the row key"
+  }
+ ],
+ "q034": [
+  {
+   "from": "ORDER BY agg.pos_ordered DESC, s.name ASC",
+   "to": "ORDER BY agg.pos_ordered DESC, s.name ASC, s.id",
+   "note": "tie-breaker: supplier names are not unique"
+  }
+ ],
+ "q036": [
+  {
+   "from": "ORDER BY pct_out_of_stock DESC, warehouse_name ASC\nFETCH",
+   "to": "ORDER BY pct_out_of_stock DESC, warehouse_name ASC, w0.id ASC\nFETCH",
+   "note": "tie-breaker: warehouses primary key"
+  }
+ ],
+ "q037": [
+  {
+   "from": "ORDER BY md.month_start ASC",
+   "to": "ORDER BY md.month_start ASC, md.month_label ASC",
+   "note": "tie-breaker: month_label is not a function of month_start by schema"
+  }
+ ],
+ "q038": [
+  {
+   "from": "ORDER BY t_counts.tickets_created DESC, t_tenant.name ASC",
+   "to": "ORDER BY t_counts.tickets_created DESC, t_tenant.name ASC, t_tenant.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q041": [
+  {
+   "from": "ORDER BY a.mayjun_count DESC, tn.name ASC\nFETCH",
+   "to": "ORDER BY a.mayjun_count DESC, tn.name ASC, tn.id ASC\nFETCH",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q044": [
+  {
+   "from": "ORDER BY ret.returns_requested DESC, t.name ASC",
+   "to": "ORDER BY ret.returns_requested DESC, t.name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q046": [
+  {
+   "from": "ORDER BY t2.avg_score ASC, t0.name ASC",
+   "to": "ORDER BY t2.avg_score ASC, t0.name ASC, t0.id ASC",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q052": [
+  {
+   "from": "ORDER BY direct_sessions_2025 DESC, tenant_name ASC\nFETCH",
+   "to": "ORDER BY direct_sessions_2025 DESC, tenant_name ASC, t0.id ASC\nFETCH",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q054": [
+  {
+   "from": "ORDER BY delta_pct_points DESC, orders_jan_jul_2025 DESC",
+   "to": "ORDER BY delta_pct_points DESC, orders_jan_jul_2025 DESC, t0.id",
+   "note": "tie-breaker: one row per tenant"
+  }
+ ],
+ "q066": [
+  {
+   "from": "ORDER BY m.month_start",
+   "to": "ORDER BY m.month_start, m.month_label",
+   "note": "tie-breaker: month_label is not a function of month_start by schema"
+  }
+ ],
+ "q068": [
+  {
+   "from": "ORDER BY m.month_start",
+   "to": "ORDER BY m.month_start, m.month_label",
+   "note": "tie-breaker: month_start does not determine month_label by the schema"
+  }
+ ],
+ "q074": [
+  {
+   "from": "ORDER BY m.month_start",
+   "to": "ORDER BY m.month_start, m.month_label",
+   "note": "tie-breaker: month_start does not determine month_label in the schema"
+  }
+ ],
+ "q076": [
+  {
+   "from": "ORDER BY overall_visit_to_paid_pct DESC NULLS LAST, tenant_name ASC",
+   "to": "ORDER BY overall_visit_to_paid_pct DESC NULLS LAST, tenant_name ASC, tenant_id",
+   "note": "tie-breaker: tenant names are not unique; assembled has one row per tenant_id"
+  }
+ ],
+ "q077": [
+  {
+   "from": "ORDER BY ws2.started_at DESC FETCH FIRST 1 ROWS ONLY)",
+   "to": "ORDER BY ws2.started_at DESC, ws2.id DESC FETCH FIRST 1 ROWS ONLY)",
+   "note": "tie-breaker: web_sessions primary key"
+  },
+  {
+   "from": "ORDER BY COUNT(*) DESC\n        FETCH FIRST 6 ROWS ONLY",
+   "to": "ORDER BY COUNT(*) DESC, all_channels.raw_channel\n        FETCH FIRST 6 ROWS ONLY",
+   "note": "tie-breaker: the group key"
+  },
+  {
+   "from": "ORDER BY o.created_at DESC FETCH FIRST 1 ROWS ONLY) AS order_id",
+   "to": "ORDER BY o.created_at DESC, o.id DESC FETCH FIRST 1 ROWS ONLY) AS order_id",
+   "note": "tie-breaker: orders primary key"
+  },
+  {
+   "from": "ORDER BY o.created_at DESC FETCH FIRST 1 ROWS ONLY) AS order_status",
+   "to": "ORDER BY o.created_at DESC, o.id DESC FETCH FIRST 1 ROWS ONLY) AS order_status",
+   "note": "tie-breaker: orders primary key (same order as order_id)"
+  },
+  {
+   "from": "ORDER BY ws.started_at DESC FETCH FIRST 1 ROWS ONLY),\n        'unknown'\n      ) AS device_type",
+   "to": "ORDER BY ws.started_at DESC, ws.id DESC FETCH FIRST 1 ROWS ONLY),\n        'unknown'\n      ) AS device_type",
+   "note": "tie-breaker: web_sessions primary key"
+  },
+  {
+   "from": "ORDER BY ws.started_at DESC FETCH FIRST 1 ROWS ONLY),\n        'unknown'\n      ) AS raw_channel",
+   "to": "ORDER BY ws.started_at DESC, ws.id DESC FETCH FIRST 1 ROWS ONLY),\n        'unknown'\n      ) AS raw_channel",
+   "note": "tie-breaker: web_sessions primary key"
+  }
+ ],
+ "q079": [
+  {
+   "from": "ORDER BY visits_per_order ASC, tenant_name ASC",
+   "to": "ORDER BY visits_per_order ASC, tenant_name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q080": [
+  {
+   "from": "    ORDER BY order_count DESC\n    FETCH FIRST 10 ROWS ONLY",
+   "to": "    ORDER BY order_count DESC, o2.tenant_id\n    FETCH FIRST 10 ROWS ONLY",
+   "note": "tie-breaker: tenant_id is the grouping key"
+  }
+ ],
+ "q084": [
+  {
+   "from": "ORDER BY pct_over_7_days DESC NULLS LAST, t.name ASC",
+   "to": "ORDER BY pct_over_7_days DESC NULLS LAST, t.name ASC, t.id ASC",
+   "note": "tie-breaker: tenants primary key"
+  }
+ ],
+ "q088": [
+  {
+   "from": "ORDER BY m.month_start",
+   "to": "ORDER BY m.month_start, m.month_label",
+   "note": "tie-breaker: month_start does not determine month_label by the schema"
+  }
+ ],
+ "q093": [
+  {
+   "from": "ORDER BY m.month_start",
+   "to": "ORDER BY m.month_start, m.month_label, pg.month_label, rf.month_label",
+   "note": "tie-breaker: (m.month_start, m.month_label, pg.month_label, rf.month_label) is a key of the join result; month_start does not determine month_label in the schema"
+  }
+ ],
+ "q095": [
+  {
+   "from": "ORDER BY refund_amount_eur DESC",
+   "to": "ORDER BY refund_amount_eur DESC, timing_bucket",
+   "note": "tie-breaker: the grouping key"
+  }
+ ],
+ "q101": [
+  {
+   "from": "ORDER BY staff_mfa_rate_pct ASC NULLS LAST, tenant_name ASC",
+   "to": "ORDER BY staff_mfa_rate_pct ASC NULLS LAST, tenant_name ASC, t.id ASC",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q102": [
+  {
+   "from": "ORDER BY rpc.permission_count DESC, rua.users_assigned DESC, t.name, r.name",
+   "to": "ORDER BY rpc.permission_count DESC, rua.users_assigned DESC, t.name, r.name, r.id",
+   "note": "tie-breaker: one row per role"
+  }
+ ],
+ "q104": [
+  {
+   "from": "ORDER BY total_login_attempts DESC, tenant_name ASC",
+   "to": "ORDER BY total_login_attempts DESC, tenant_name ASC, t.id ASC",
+   "note": "tie-breaker: tenant names are not unique; t.id is a grouping key"
+  }
+ ],
+ "q106": [
+  {
+   "from": "ORDER BY u.last_login_at ASC NULLS FIRST, t.name ASC, u.email ASC, r.name ASC",
+   "to": "ORDER BY u.last_login_at ASC NULLS FIRST, t.name ASC, u.email ASC, r.name ASC, ur.id ASC",
+   "note": "tie-breaker: ur.id is the row key"
+  }
+ ],
+ "q107": [
+  {
+   "from": "ORDER BY active_never_used DESC, active_unused_90d DESC, t.name ASC",
+   "to": "ORDER BY active_never_used DESC, active_unused_90d DESC, t.name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q112": [
+  {
+   "from": "ORDER BY t0.month_start ASC",
+   "to": "ORDER BY t0.month_start ASC, t0.month_label ASC",
+   "note": "tie-breaker: month_label completes the DISTINCT key of t0"
+  }
+ ],
+ "q113": [
+  {
+   "from": "ORDER BY cr.occurred_at DESC) AS rn",
+   "to": "ORDER BY cr.occurred_at DESC, cr.id DESC) AS rn",
+   "note": "tie-breaker: occurred_at is not unique per user and purpose"
+  },
+  {
+   "from": "ORDER BY metrics.purpose, metrics.month_start",
+   "to": "ORDER BY metrics.purpose, metrics.month_start, metrics.month_label",
+   "note": "tie-breaker: month_label is not a function of month_start by schema"
+  }
+ ],
+ "q121": [
+  {
+   "from": "ORDER BY ABS(COALESCE(CAST(lh.placed_at AS DATE) - CAST(dsr.received_at AS DATE), 999999))\n",
+   "to": "ORDER BY ABS(COALESCE(CAST(lh.placed_at AS DATE) - CAST(dsr.received_at AS DATE), 999999)), lh.id\n",
+   "note": "tie-breaker: legal hold id"
+  }
+ ],
+ "q125": [
+  {
+   "from": "ORDER BY jr.failed_runs_2025 DESC, t.name ASC",
+   "to": "ORDER BY jr.failed_runs_2025 DESC, t.name ASC, t.id ASC",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q130": [
+  {
+   "from": "ORDER BY was_affected_by_nov_carts_remind_failure DESC, revenue_rank ASC, tenant_name ASC",
+   "to": "ORDER BY was_affected_by_nov_carts_remind_failure DESC, revenue_rank ASC, tenant_name ASC, tenant_id",
+   "note": "tie-breaker: tenant names are not unique; ranked has one row per tenant_id"
+  }
+ ],
+ "q134": [
+  {
+   "from": "order by pending_or_retrying_rate_pct desc, failed_rate_pct desc, webhook_name asc",
+   "to": "order by pending_or_retrying_rate_pct desc, failed_rate_pct desc, webhook_name asc, w.id asc",
+   "note": "tie-breaker: webhook names are not unique"
+  }
+ ],
+ "q136": [
+  {
+   "from": "ORDER BY revenue_eur_last_12mo DESC, merchant_name ASC",
+   "to": "ORDER BY revenue_eur_last_12mo DESC, merchant_name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q138": [
+  {
+   "from": "ORDER BY t0.month_start",
+   "to": "ORDER BY t0.month_start, t0.month",
+   "note": "tie-breaker: month_start does not determine month_label in the schema"
+  }
+ ],
+ "q140": [
+  {
+   "from": "ORDER BY t0.month_start ASC",
+   "to": "ORDER BY t0.month_start ASC, t0.month_label ASC",
+   "note": "tie-breaker: month_label completes the DISTINCT key of t0"
+  }
+ ],
+ "q142": [
+  {
+   "from": "ORDER BY rating_change_pts ASC, d.review_count DESC",
+   "to": "ORDER BY rating_change_pts ASC, d.review_count DESC, t.id ASC",
+   "note": "tie-breaker: one row per tenant"
+  }
+ ],
+ "q144": [
+  {
+   "from": "ORDER BY revenue_eur_last_12mo DESC, merchant_name ASC",
+   "to": "ORDER BY revenue_eur_last_12mo DESC, merchant_name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q145": [
+  {
+   "from": "ROW_NUMBER() OVER (ORDER BY revenue_eur DESC) AS rn",
+   "to": "ROW_NUMBER() OVER (ORDER BY revenue_eur DESC, tenant_id) AS rn",
+   "note": "tie-breaker: tenant_id is the grouping key of revenue"
+  },
+  {
+   "from": "  merchant_name\n",
+   "to": "  merchant_name,\n  t.id\n",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q146": [
+  {
+   "from": "ORDER BY se.units_sold DESC, se.revenue_eur DESC, pi.product_name",
+   "to": "ORDER BY se.units_sold DESC, se.revenue_eur DESC, pi.product_name, se.product_id",
+   "note": "tie-breaker: product names are not unique; product_id is the row key"
+  }
+ ],
+ "q148": [
+  {
+   "from": "ORDER BY discount_amount_eur DESC, d.name ASC",
+   "to": "ORDER BY discount_amount_eur DESC, d.name ASC, d.id ASC",
+   "note": "tie-breaker: discounts primary key"
+  }
+ ],
+ "q149": [
+  {
+   "from": "ORDER BY discount_amount_eur DESC, tenant_name\nFETCH",
+   "to": "ORDER BY discount_amount_eur DESC, tenant_name, vertical, order_revenue_eur, discount_pct_of_revenue, order_count, distinct_discount_codes, share_of_company_discount_pct\nFETCH",
+   "note": "tie-breaker: no unique key in scope; rows that tie on all output columns are identical"
+  }
+ ],
+ "q150": [
+  {
+   "from": "ORDER BY redemptions_after_expiry DESC, max_redemptions_by_customer DESC, coupon_code ASC",
+   "to": "ORDER BY redemptions_after_expiry DESC, max_redemptions_by_customer DESC, coupon_code ASC, r.coupon_id",
+   "note": "tie-breaker: grouping key"
+  }
+ ],
+ "q152": [
+  {
+   "from": "coupon_code ASC\nFETCH",
+   "to": "coupon_code ASC, c.id ASC\nFETCH",
+   "note": "tie-breaker: coupon codes are unique only per tenant"
+  }
+ ],
+ "q153": [
+  {
+   "from": "    ORDER BY total_discount_spend_eur DESC\n    FETCH FIRST 15 ROWS ONLY",
+   "to": "    ORDER BY total_discount_spend_eur DESC, discount_id\n    FETCH FIRST 15 ROWS ONLY",
+   "note": "tie-breaker at the FETCH 15 cut: discount_id is the group key"
+  },
+  {
+   "from": "ORDER BY lift_pct ASC NULLS LAST, discount_name ASC",
+   "to": "ORDER BY lift_pct ASC NULLS LAST, discount_name ASC, t0.discount_id ASC",
+   "note": "tie-breaker: discount names are not unique"
+  }
+ ],
+ "q154": [
+  {
+   "from": "order by tor.orphan_order_count desc, t.name asc",
+   "to": "order by tor.orphan_order_count desc, t.name asc, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q155": [
+  {
+   "from": "STRING_AGG(DISTINCT code, ', ') AS coupon_code",
+   "to": "STRING_AGG(DISTINCT code, ', ' ORDER BY code) AS coupon_code",
+   "note": "order the aggregated codes"
+  }
+ ],
+ "q156": [
+  {
+   "from": "ORDER BY return_rate_lift_pp DESC NULLS LAST, discount_name ASC",
+   "to": "ORDER BY return_rate_lift_pp DESC NULLS LAST, discount_name ASC, t.discount_id ASC",
+   "note": "tie-breaker: discount names are not unique"
+  }
+ ],
+ "q159": [
+  {
+   "from": "ORDER BY td.discount_name ASC",
+   "to": "ORDER BY td.discount_name ASC, td.discount_id",
+   "note": "tie-breaker: target_discounts is keyed by discount_id"
+  }
+ ],
+ "q160": [
+  {
+   "from": "OVER (ORDER BY month_start ROWS BETWEEN",
+   "to": "OVER (ORDER BY month_start, month_label ROWS BETWEEN",
+   "note": "tie-breaker for the running sum: month_start does not determine month_label by the schema"
+  },
+  {
+   "from": "ORDER BY month_start\n",
+   "to": "ORDER BY month_start, month_label\n",
+   "note": "tie-breaker: month_start does not determine month_label by the schema"
+  }
+ ],
+ "q165": [
+  {
+   "from": "ORDER BY ra.redemption_count DESC, ra.referrer_user_id ASC",
+   "to": "ORDER BY ra.redemption_count DESC, ra.referrer_user_id ASC, ra.tenant_id",
+   "note": "tie-breaker: completes the ra group key"
+  }
+ ],
+ "q172": [
+  {
+   "from": "ORDER BY wt.merchant, s.sort_position, s.stage_name",
+   "to": "ORDER BY wt.merchant, s.sort_position, s.stage_name, s.stage_id",
+   "note": "tie-breaker: one row per stage"
+  }
+ ],
+ "q178": [
+  {
+   "from": "ORDER BY win_rate_pct ASC, opportunities_closed DESC, t.name ASC",
+   "to": "ORDER BY win_rate_pct ASC, opportunities_closed DESC, t.name ASC, t.id ASC",
+   "note": "tie-breaker: tenant names are not unique; t.id is the grouping key"
+  }
+ ],
+ "q181": [
+  {
+   "from": "ORDER BY win_rate_pct ASC, opportunities_closed DESC, rep_name ASC",
+   "to": "ORDER BY win_rate_pct ASC, opportunities_closed DESC, rep_name ASC, owner_user_id ASC",
+   "note": "tie-breaker: rep names are not unique; owner_user_id is the group key"
+  }
+ ],
+ "q182": [
+  {
+   "from": "ORDER BY win_rate_pct ASC, opportunities_closed DESC, merchant ASC",
+   "to": "ORDER BY win_rate_pct ASC, opportunities_closed DESC, merchant ASC, t0.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q184": [
+  {
+   "from": "order by case when sp.is_preferred then 0 else 1 end asc, sp.unit_cost asc\n",
+   "to": "order by case when sp.is_preferred then 0 else 1 end asc, sp.unit_cost asc, sp.id asc\n",
+   "note": "tie-breaker: supplier_products primary key"
+  }
+ ],
+ "q185": [
+  {
+   "from": "ORDER BY CASE WHEN is_preferred THEN 0 ELSE 1 END, unit_cost ASC\n",
+   "to": "ORDER BY CASE WHEN is_preferred THEN 0 ELSE 1 END, unit_cost ASC, supplier_id\n",
+   "note": "tie-breaker: supplier_products is unique on (supplier_id, variant_id)"
+  },
+  {
+   "from": "ORDER BY estimated_value_eur DESC, abs_units_variance DESC, tenant_name, warehouse_name, location_kind",
+   "to": "ORDER BY estimated_value_eur DESC, abs_units_variance DESC, tenant_name, warehouse_name, location_kind, warehouse_id",
+   "note": "tie-breaker: agg is keyed by (warehouse_id, location_kind)"
+  }
+ ],
+ "q188": [
+  {
+   "from": "ORDER BY is_preferred DESC, unit_cost ASC) AS rn",
+   "to": "ORDER BY is_preferred DESC, unit_cost ASC, supplier_id) AS rn",
+   "note": "tie-breaker: (supplier_id, variant_id) is unique, so supplier_id is unique within the variant partition"
+  }
+ ],
+ "q190": [
+  {
+   "from": "ORDER BY sp.is_preferred DESC, sp.unit_cost ASC) AS rn",
+   "to": "ORDER BY sp.is_preferred DESC, sp.unit_cost ASC, sp.supplier_id) AS rn",
+   "note": "tie-breaker: (supplier_id, variant_id) is unique in supplier_products"
+  }
+ ],
+ "q194": [
+  {
+   "from": "ORDER BY sub.estimated_value_eur DESC, sub.tenant_name ASC",
+   "to": "ORDER BY sub.estimated_value_eur DESC, sub.tenant_name ASC, sub.industry, sub.adjustment_events, sub.abs_units_variance, sub.net_units_variance",
+   "note": "tie-breaker: no unique key in scope; the share column is determined by estimated_value_eur"
+  }
+ ],
+ "q197": [
+  {
+   "from": "  resolution_breach_rate DESC NULLS LAST,\n  ts.agent_group_name ASC",
+   "to": "  resolution_breach_rate DESC NULLS LAST,\n  ts.agent_group_name ASC,\n  ts.agent_group_id",
+   "note": "tie-breaker: ticket_stats is keyed by agent_group_id"
+  }
+ ],
+ "q199": [
+  {
+   "from": "ORDER BY ticket_count DESC, tenant_name\nFETCH",
+   "to": "ORDER BY ticket_count DESC, tenant_name, tenant_id\nFETCH",
+   "note": "tie-breaker: tenant names are not unique; tenant_id is the row key"
+  }
+ ],
+ "q200": [
+  {
+   "from": "ORDER BY ta.ticket_count DESC, ten.name, ag.name",
+   "to": "ORDER BY ta.ticket_count DESC, ten.name, ag.name, ta.tenant_id, ta.agent_group_id",
+   "note": "tie-breaker: the ticket_agg group key"
+  }
+ ],
+ "q201": [
+  {
+   "from": "ORDER BY iso_day_of_week, bucket_order",
+   "to": "ORDER BY iso_day_of_week, bucket_order, day_name",
+   "note": "tie-breaker: calendar_days only keys calendar_date, so iso_day_of_week does not determine day_name"
+  }
+ ],
+ "q204": [
+  {
+   "from": "ORDER BY m.usage_count DESC, m.title ASC",
+   "to": "ORDER BY m.usage_count DESC, m.title ASC, m.id ASC",
+   "note": "tie-breaker: macro titles are unique only per tenant"
+  }
+ ],
+ "q210": [
+  {
+   "from": "traffic_change_pct_q4_vs_q3 asc nulls last, merchant_name\nFETCH",
+   "to": "traffic_change_pct_q4_vs_q3 asc nulls last, merchant_name, t.id\nFETCH",
+   "note": "tie-breaker: tenant names are not unique"
+  },
+  {
+   "from": "row_number() over (partition by quote_code order by as_of desc)",
+   "to": "row_number() over (partition by quote_code order by as_of desc, id desc)",
+   "note": "tie-breaker: the first row per key of the DISTINCT ON rewrite does not depend on the order of rows with the same timestamp"
+  }
+ ],
+ "q211": [
+  {
+   "from": "ORDER BY change_vs_baseline_pp DESC NULLS LAST, refund_amount_q3_eur DESC, merchant_name ASC",
+   "to": "ORDER BY change_vs_baseline_pp DESC NULLS LAST, refund_amount_q3_eur DESC, merchant_name ASC, t.id ASC",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q213": [
+  {
+   "from": "ORDER BY total_shipping_cost_eur_2025 DESC, merchant_name ASC",
+   "to": "ORDER BY total_shipping_cost_eur_2025 DESC, merchant_name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q214": [
+  {
+   "from": "  tb.merchant_name ASC",
+   "to": "  tb.merchant_name ASC,\n  tb.tenant_id ASC",
+   "note": "tie-breaker: tenants primary key"
+  }
+ ],
+ "q218": [
+  {
+   "from": "ORDER BY pe.gross_eur DESC, t.name",
+   "to": "ORDER BY pe.gross_eur DESC, t.name, pe.tenant_id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q220": [
+  {
+   "from": "ROW_NUMBER() OVER (PARTITION BY e.tenant_id ORDER BY e.payment_amount_eur DESC) AS tenant_rn",
+   "to": "ROW_NUMBER() OVER (PARTITION BY e.tenant_id ORDER BY e.payment_amount_eur DESC, e.payment_id) AS tenant_rn",
+   "note": "tie-breaker: payment_id is unique in enriched (payout_items.payment_id is unique, ledger_agg is grouped by payment_id)"
+  },
+  {
+   "from": "  ORDER BY payment_amount_eur DESC\n  FETCH FIRST 8 ROWS ONLY",
+   "to": "  ORDER BY payment_amount_eur DESC, payment_id\n  FETCH FIRST 8 ROWS ONLY",
+   "note": "tie-breaker: payment_id is unique"
+  },
+  {
+   "from": "ROW_NUMBER() OVER (PARTITION BY rc.tenant_id, rc.refund_kind ORDER BY rc.amount_refunded DESC) AS tenant_refund_rn",
+   "to": "ROW_NUMBER() OVER (PARTITION BY rc.tenant_id, rc.refund_kind ORDER BY rc.amount_refunded DESC, rc.payment_id) AS tenant_refund_rn",
+   "note": "tie-breaker: payment_id is unique"
+  },
+  {
+   "from": "refund_kind = 'FULL' AND tenant_refund_rn = 1\n   ORDER BY amount_refunded DESC FETCH FIRST 4 ROWS ONLY)",
+   "to": "refund_kind = 'FULL' AND tenant_refund_rn = 1\n   ORDER BY amount_refunded DESC, payment_id FETCH FIRST 4 ROWS ONLY)",
+   "note": "tie-breaker: payment_id is unique"
+  },
+  {
+   "from": "refund_kind = 'PARTIAL' AND tenant_refund_rn = 1\n   ORDER BY amount_refunded DESC FETCH FIRST 4 ROWS ONLY)",
+   "to": "refund_kind = 'PARTIAL' AND tenant_refund_rn = 1\n   ORDER BY amount_refunded DESC, payment_id FETCH FIRST 4 ROWS ONLY)",
+   "note": "tie-breaker: payment_id is unique"
+  }
+ ],
+ "q222": [
+  {
+   "from": "order by discount_amount_beyond_first_use_eur desc nulls last, coupon_code asc",
+   "to": "order by discount_amount_beyond_first_use_eur desc nulls last, coupon_code asc, coupon_id asc",
+   "note": "tie-breaker: coupon codes are unique only per tenant; coupon_id is the group key"
+  }
+ ],
+ "q223": [
+  {
+   "from": "order by merchant_name, order_number, occurred_at, entry_group",
+   "to": "order by merchant_name, order_number, occurred_at, entry_group, ledger_account_name, account_type, direction, amount, currency_code, description",
+   "note": "tie-breaker: the remaining output columns (rows equal on all of them are identical)"
+  }
+ ],
+ "q224": [
+  {
+   "from": "ORDER BY payment_count DESC",
+   "to": "ORDER BY payment_count DESC, reconciliation_category",
+   "note": "tie-breaker: the group key"
+  }
+ ],
+ "q228": [
+  {
+   "from": "ORDER BY month_start",
+   "to": "ORDER BY month_start, month_label",
+   "note": "tie-breaker: month_label is not a function of month_start by schema"
+  }
+ ],
+ "q233": [
+  {
+   "from": "ORDER BY a.warehouse_name ASC, CASE a.period WHEN 'baseline' THEN 0 ELSE 1 END",
+   "to": "ORDER BY a.warehouse_name ASC, CASE a.period WHEN 'baseline' THEN 0 ELSE 1 END, a.warehouse_id",
+   "note": "tie-breaker: warehouse names are not unique"
+  }
+ ],
+ "q242": [
+  {
+   "from": "    ELSE 4\n  END ASC",
+   "to": "    ELSE 4\n  END ASC,\n  ga.year_num",
+   "note": "tie-breaker: completes the group key (the CASE is injective over the four carrier_group values)"
+  }
+ ],
+ "q244": [
+  {
+   "from": "order by tickets_per_active_agent desc nulls last, merchant_name asc",
+   "to": "order by tickets_per_active_agent desc nulls last, merchant_name asc, t.tenant_id asc",
+   "note": "tie-breaker: the group key of t2025 (tenants primary key)"
+  }
+ ],
+ "q245": [
+  {
+   "from": "ORDER BY tickets_2025 DESC, merchant_name ASC",
+   "to": "ORDER BY tickets_2025 DESC, merchant_name ASC, t.id ASC",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q246": [
+  {
+   "from": "ORDER BY urgent_miss_rate_pct DESC, merchant_name ASC",
+   "to": "ORDER BY urgent_miss_rate_pct DESC, merchant_name ASC, u.tenant_id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q247": [
+  {
+   "from": "ORDER BY avg_messages_per_ticket DESC, merchant_name ASC\nFETCH",
+   "to": "ORDER BY avg_messages_per_ticket DESC, merchant_name ASC, t.id ASC\nFETCH",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q248": [
+  {
+   "from": "ORDER BY urgent_miss_rate_pct DESC, merchant_name ASC",
+   "to": "ORDER BY urgent_miss_rate_pct DESC, merchant_name ASC, t9.id ASC",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q251": [
+  {
+   "from": "ORDER BY tickets_per_agent_q4 DESC, merchant_name ASC",
+   "to": "ORDER BY tickets_per_agent_q4 DESC, merchant_name ASC, tn.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q254": [
+  {
+   "from": "ORDER BY orders_placed_2025 DESC, merchant_name ASC",
+   "to": "ORDER BY orders_placed_2025 DESC, merchant_name ASC, t.industry ASC, t.employee_count ASC",
+   "note": "tie-breaker: the rest of the group key"
+  }
+ ],
+ "q255": [
+  {
+   "from": "t3.agent_display_name ASC\n",
+   "to": "t3.agent_display_name ASC, t0.tenant_id ASC, t0.assignee_agent_id ASC\n",
+   "note": "tie-breaker: the row key (tenant_id, assignee_agent_id)"
+  }
+ ],
+ "q275": [
+  {
+   "from": "  ORDER BY revenue_eur_total DESC\n  FETCH FIRST 15 ROWS ONLY",
+   "to": "  ORDER BY revenue_eur_total DESC, tenant_id\n  FETCH FIRST 15 ROWS ONLY",
+   "note": "tie-breaker at the FETCH 15 cut: tenant_id is the group key"
+  }
+ ],
+ "q276": [
+  {
+   "from": "ORDER BY failed_attempts_feb DESC, tenant_name ASC",
+   "to": "ORDER BY failed_attempts_feb DESC, tenant_name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q278": [
+  {
+   "from": "ORDER BY received_at ASC",
+   "to": "ORDER BY received_at ASC, id ASC",
+   "note": "tie-breaker: primary key"
+  }
+ ],
+ "q283": [
+  {
+   "from": "order by tt.tenant_name",
+   "to": "order by tt.tenant_name, tt.tenant_id",
+   "note": "tie-breaker: tenant_totals is keyed by tenant_id"
+  }
+ ],
+ "q284": [
+  {
+   "from": "ORDER BY b.tenant_name, b.year_num, b.quarter_num",
+   "to": "ORDER BY b.tenant_name, b.year_num, b.quarter_num, b.tenant_id",
+   "note": "tie-breaker: tenant names are not unique; (tenant_id, year_num, quarter_num) is unique in base"
+  }
+ ],
+ "q295": [
+  {
+   "from": "ORDER BY gap_in_points DESC, tenant_name ASC",
+   "to": "ORDER BY gap_in_points DESC, tenant_name ASC, t0.id ASC",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q297": [
+  {
+   "from": "ORDER BY t2.email_count DESC, template_code",
+   "to": "ORDER BY t2.email_count DESC, template_code, t2.template_id",
+   "note": "tie-breaker: template_id is the grouping key of t2"
+  }
+ ],
+ "q300": [
+  {
+   "from": "ORDER BY tot.total_2025_late_refund_eur DESC, t.name ASC",
+   "to": "ORDER BY tot.total_2025_late_refund_eur DESC, t.name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q302": [
+  {
+   "from": "ORDER BY tenant_agg.total_2025_revenue_eur DESC, tenant_agg.tenant_name",
+   "to": "ORDER BY tenant_agg.total_2025_revenue_eur DESC, tenant_agg.tenant_name, tenant_agg.id",
+   "note": "tie-breaker: tenants primary key"
+  }
+ ],
+ "q303": [
+  {
+   "from": "ORDER BY member_count DESC, tenant_name ASC, name ASC",
+   "to": "ORDER BY member_count DESC, tenant_name ASC, name ASC, source, is_dynamic, rules_definition, last_updated",
+   "note": "tie-breaker: no unique key in scope; rows that tie on all output columns are identical"
+  }
+ ],
+ "q305": [
+  {
+   "from": "string_agg(DISTINCT currency_code, ',') AS deal_currency_codes",
+   "to": "string_agg(DISTINCT currency_code, ',' ORDER BY currency_code) AS deal_currency_codes",
+   "note": "aggregate order"
+  },
+  {
+   "from": "ORDER BY ds.deal_count DESC, t.name",
+   "to": "ORDER BY ds.deal_count DESC, t.name, ds.tenant_id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q307": [
+  {
+   "from": "ORDER BY ta.total_refunds_2025_eur DESC, t.name ASC\nFETCH",
+   "to": "ORDER BY ta.total_refunds_2025_eur DESC, t.name ASC, t.id ASC\nFETCH",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q308": [
+  {
+   "from": "ORDER BY total_2025_revenue_eur DESC, tt0.tenant_name",
+   "to": "ORDER BY total_2025_revenue_eur DESC, tt0.tenant_name, tt0.tenant_id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q313": [
+  {
+   "from": "ORDER BY active_users DESC, tenant_name ASC",
+   "to": "ORDER BY active_users DESC, tenant_name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q314": [
+  {
+   "from": "    tenant_name ASC\nFETCH",
+   "to": "    tenant_name ASC,\n    pt.tenant_id ASC\nFETCH",
+   "note": "tie-breaker: the group key of per_tenant (tenants primary key)"
+  }
+ ],
+ "q319": [
+  {
+   "from": "ORDER BY age_days DESC, tenant_name ASC, key_name ASC, rl.id ASC",
+   "to": "ORDER BY age_days DESC, tenant_name ASC, key_name ASC, rl.id ASC, ak.id ASC",
+   "note": "tie-breaker: (rl.id, ak.id) identifies the row"
+  }
+ ],
+ "q322": [
+  {
+   "from": "order by tenant_name, key_name, ak.id, rl.limit_scope",
+   "to": "order by tenant_name, key_name, ak.id, rl.limit_scope, rl.id",
+   "note": "tie-breaker: rate_limits.id is the primary key"
+  }
+ ],
+ "q328": [
+  {
+   "from": "ORDER BY p.updated_at DESC) AS rn",
+   "to": "ORDER BY p.updated_at DESC, p.id DESC) AS rn",
+   "note": "tie-breaker in row_number: payments.id"
+  },
+  {
+   "from": "ORDER BY days_since_placed DESC, h.tenant_name",
+   "to": "ORDER BY days_since_placed DESC, h.tenant_name, h.legal_hold_id",
+   "note": "tie-breaker: legal_hold_id is the row key"
+  }
+ ],
+ "q335": [
+  {
+   "from": "ORDER BY ds.pending_or_retrying_rate_pct DESC NULLS LAST, t.name ASC",
+   "to": "ORDER BY ds.pending_or_retrying_rate_pct DESC NULLS LAST, t.name ASC, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q337": [
+  {
+   "from": "order by jr.queued_at asc, t.name asc",
+   "to": "order by jr.queued_at asc, t.name asc, jr.id asc",
+   "note": "tie-breaker: job_runs primary key"
+  }
+ ],
+ "q347": [
+  {
+   "from": "pct_poor_rated_products DESC NULLS LAST, category_name",
+   "to": "pct_poor_rated_products DESC NULLS LAST, category_name, c.id",
+   "note": "tie-breaker: category names are not unique"
+  }
+ ],
+ "q350": [
+  {
+   "from": "ORDER BY b.merchant_name, b.month_start",
+   "to": "ORDER BY b.merchant_name, b.month_start, b.tenant_id, b.month_label",
+   "note": "tie-breakers: tenant id and month_label"
+  }
+ ],
+ "q353": [
+  {
+   "from": "ORDER BY r.review_count DESC, r.avg_rating ASC, p.name ASC",
+   "to": "ORDER BY r.review_count DESC, r.avg_rating ASC, p.name ASC, p.id ASC",
+   "note": "tie-breaker: product names are not unique"
+  }
+ ],
+ "q354": [
+  {
+   "from": "ORDER BY t.name, y.year",
+   "to": "ORDER BY t.name, y.year, t.id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q358": [
+  {
+   "from": "ORDER BY review_count DESC, avg_rating ASC",
+   "to": "ORDER BY review_count DESC, avg_rating ASC, p.id ASC",
+   "note": "tie-breaker: products primary key"
+  }
+ ],
+ "q360": [
+  {
+   "from": "OVER (ORDER BY month_start ROWS",
+   "to": "OVER (ORDER BY month_start, month_label ROWS",
+   "note": "tie-breaker in the running sum's window order"
+  },
+  {
+   "from": "ORDER BY month_start\n",
+   "to": "ORDER BY month_start, month_label\n",
+   "note": "tie-breaker in the top-level order"
+  }
+ ],
+ "q361": [
+  {
+   "from": "ORDER BY total_refund_eur DESC, category_name ASC",
+   "to": "ORDER BY total_refund_eur DESC, category_name ASC, t5.category_id",
+   "note": "tie-breaker: category id"
+  }
+ ],
+ "q364": [
+  {
+   "from": "ORDER BY g.tenant_name, g.period",
+   "to": "ORDER BY g.tenant_name, g.period, g.tenant_id",
+   "note": "tie-breaker: tenant names are not unique; (tenant_id, period) is unique in base_grid"
+  }
+ ],
+ "q365": [
+  {
+   "from": "    ORDER BY sub.started_at DESC\n    FETCH FIRST 1 ROWS ONLY",
+   "to": "    ORDER BY sub.started_at DESC, sub.id DESC\n    FETCH FIRST 1 ROWS ONLY",
+   "note": "tie-breaker in the LATERAL FETCH 1: subscriptions.id"
+  }
+ ],
+ "q371": [
+  {
+   "from": "order by cm.quarter_start asc",
+   "to": "order by cm.quarter_start asc, cm.year_num asc, cm.quarter_num asc",
+   "note": "tie-breaker: the rest of the group key of cohort_members"
+  }
+ ],
+ "q375": [
+  {
+   "from": "NTILE(4) OVER (ORDER BY lifetime_revenue_eur DESC)",
+   "to": "NTILE(4) OVER (ORDER BY lifetime_revenue_eur DESC, tenant_id, user_id)",
+   "note": "tie-breaker: member key (tenant_id, user_id)"
+  }
+ ],
+ "q383": [
+  {
+   "from": "ORDER BY closed_at ASC, account_name ASC",
+   "to": "ORDER BY closed_at ASC, account_name ASC, id ASC",
+   "note": "tie-breaker: opportunity id"
+  }
+ ],
+ "q385": [
+  {
+   "from": "ORDER BY m.month_start",
+   "to": "ORDER BY m.month_start, m.month_label",
+   "note": "tie-breaker: month_label is not a function of month_start by schema"
+  }
+ ],
+ "q386": [
+  {
+   "from": "ORDER BY gap_pct_points DESC, rep_name ASC",
+   "to": "ORDER BY gap_pct_points DESC, rep_name ASC, sub.owner_user_id, t.name",
+   "note": "tie-breaker: (owner_user_id, t.name) is the grouping key"
+  }
+ ],
+ "q390": [
+  {
+   "from": "ORDER BY theft_tagged_count DESC, total_adjustments_logged DESC, staff_name ASC",
+   "to": "ORDER BY theft_tagged_count DESC, total_adjustments_logged DESC, staff_name ASC, sa.adjusted_by_user_id ASC",
+   "note": "tie-breaker: staff names are not unique; adjusted_by_user_id is the group key"
+  }
+ ],
+ "q391": [
+  {
+   "from": "ORDER BY theft_tagged_count DESC, pct_theft_of_site_adjustments DESC, warehouse_name ASC",
+   "to": "ORDER BY theft_tagged_count DESC, pct_theft_of_site_adjustments DESC, warehouse_name ASC, warehouse_id",
+   "note": "tie-breaker: agg has one row per warehouse_id"
+  }
+ ],
+ "q392": [
+  {
+   "from": "ORDER BY dec31_correction_abs_units DESC, tenant_name",
+   "to": "ORDER BY dec31_correction_abs_units DESC, tenant_name, t.id",
+   "note": "tie-breaker: tenants primary key"
+  }
+ ],
+ "q394": [
+  {
+   "from": "ORDER BY adjustment_count DESC, warehouse_name ASC, sku ASC",
+   "to": "ORDER BY adjustment_count DESC, warehouse_name ASC, sku ASC, product_name ASC, variant_name ASC",
+   "note": "tie-breaker: complete the group key"
+  }
+ ],
+ "q396": [
+  {
+   "from": "ORDER BY total_stock_on_hand DESC, warehouse_name",
+   "to": "ORDER BY total_stock_on_hand DESC, warehouse_name, w.id",
+   "note": "tie-breaker: one row per warehouse"
+  }
+ ],
+ "q398": [
+  {
+   "from": "ORDER BY resolution_breach_rate DESC, tt.tenant_name",
+   "to": "ORDER BY resolution_breach_rate DESC, tt.tenant_name, tt.tenant_id",
+   "note": "tie-breaker: tenant names are not unique"
+  }
+ ],
+ "q401": [
+  {
+   "from": "ORDER BY tf.name, ticket_count DESC, tt.tag_name",
+   "to": "ORDER BY tf.name, ticket_count DESC, tt.tag_name, tot.total_tickets",
+   "note": "tie-breaker: completes the group key (tenant names are not unique)"
+  }
+ ],
+ "q403": [
+  {
+   "from": "ORDER BY m.month_label ASC",
+   "to": "ORDER BY m.month_label ASC, m.month_start",
+   "note": "tie-breaker: month_start determines month_end, so (month_label, month_start) is the DISTINCT key"
+  }
+ ],
+ "q404": [
+  {
+   "from": "ORDER BY t.name, shipment_count DESC",
+   "to": "ORDER BY t.name, shipment_count DESC, s.carrier",
+   "note": "tie-breaker: the rest of the group key"
+  }
+ ],
+ "q175": [
+  {
+   "from": "ROW_NUMBER() OVER (PARTITION BY ch.entity_id ORDER BY ch.occurred_at DESC)",
+   "to": "ROW_NUMBER() OVER (PARTITION BY ch.entity_id ORDER BY ch.occurred_at DESC, ch.id DESC)",
+   "note": "tie-breaker: the first row per key of the DISTINCT ON rewrite does not depend on the order of rows with the same timestamp"
+  }
+ ]
+}

@@ -1,0 +1,50 @@
+{
+ "notes": "Night 3 lands priority 2 solidly and complicates priority 3 in an interesting way.\n\nReport 1 (corrected status funnel, retail-only): confirms the clean read — pending→paid loses only 2.4% of orders, essentially instantly (median 0 hours), and paid→fulfilled is 94.9% at a sane ~23-hour median. So payment capture itself is not where retail checkout leaks; it leaks earlier, at cart→order (which Report 1 night 1 already showed at 27-61% conversion for these tenants). Refunds trickle in ~3 weeks out (517h), cancellations are near-instant (0.1h). Priority 2 is now fully answered: it's a slow bleed concentrated in the cart stage, not a cliff at payment.\n\nReport 2 (cart timing by tenant): the slow-bleed shape is remarkably consistent across all 6 retail tenants — <1hr bucket is ~23-32% of carts and ~100% converted (fast successful checkouts, not failures), while the 1-24hr and 1-7day buckets (roughly two-thirds of all carts, combined) convert at only 1-19%. This is a universal pattern, not one tenant's expiry setting — strong, generalizable finding for the roadmap.\n\nReport 3 (delivery speed vs. returns) is the interesting twist: at the merchant level, the correlation runs backwards from the \"late delivery → more returns\" hypothesis. The three apparel merchants (Marrowby & Vane, Studio Vrij, Cragsley Outfitters) have the highest return rates (31-34%) but some of the lowest late-delivery rates (0.3-12%), while food/beauty/pet merchants have high late-delivery rates (20-23%) but near-zero returns (0.5-4.3%). This looks like vertical (apparel fit/size returns are structurally high regardless of delivery speed) is swamping any delivery-speed effect in a merchant-level comparison. Before I tell Jonas \"no connection,\" I want to re-test within a single vertical to remove that confound, and also test the \"people not coming back\" half of his question directly (repeat purchase after late delivery), which I haven't touched yet.\n\nThis is the last night before the Friday memo. Priorities 1, 2, 5 are in good shape. I'm spending all 3 slots to get a defensible first read on the two things Jonas said could slip to next week if time ran short (delivery trust, and whether a return kills the relationship) — we have the nights, so I'll use them rather than leave those blank in the memo.",
+ "requests": [
+  {
+   "title": "Late delivery and returns within apparel merchants, Q4 2025",
+   "question": "Within a single high-return vertical (apparel), do late-delivered orders actually have a higher return rate than on-time ones — controlling for the vertical effect that swamped the merchant-level comparison?",
+   "grain": "one row per tenant and delivery-speed bucket (on-time vs late)",
+   "columns": [
+    "tenant name",
+    "delivery bucket (on-time / late)",
+    "shipments count",
+    "pct of orders with at least one return"
+   ],
+   "details": "Tenants: Marrowby & Vane, Studio Vrij, Cragsley Outfitters (the three apparel merchants that showed high aggregate return rates). Base: shipments joined via fulfillments to orders for tenant_id, where shipments.shipped_at is in 2025-10-01 to 2025-12-31 and delivered_at is not null. delivery_bucket = 'on-time' if (delivered_at - shipped_at) <= 7 days, else 'late' (same 7-day proxy as the earlier delivery-speed report). For each tenant/bucket: shipments_count = count of shipments; pct_orders_with_return = among the distinct orders behind those shipments, the % with at least one order_returns row (order_returns.order_id = orders.id), rounded to 1 decimal. Order rows by tenant_name, then bucket with 'on-time' before 'late'.",
+   "builds_on": [
+    "Delivery speed and return rate by merchant, Q4 2025"
+   ]
+  },
+  {
+   "title": "Late delivery and repeat purchase, September 2025 shipments",
+   "question": "Does a late delivery visibly reduce the chance a customer buys again, compared to an on-time delivery?",
+   "grain": "one row per delivery-speed bucket (on-time vs late)",
+   "columns": [
+    "delivery bucket (on-time / late)",
+    "shipments count",
+    "distinct customers",
+    "pct of customers with another order within 90 days of delivery",
+    "median days to that next order"
+   ],
+   "details": "Restrict to the 6 retail tenants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik) to avoid subscription-renewal noise. Base: shipments joined via fulfillments to orders (for tenant_id and the order's user_id), where shipments.delivered_at is in 2025-09-01 to 2025-09-30 (chosen so a full 90-day forward window fits before the data ends on 2025-12-31). delivery_bucket = 'on-time' if (delivered_at - shipped_at) <= 7 days, else 'late'. distinct_customers = distinct (tenant_id, user_id) behind those shipments. For each customer, check whether they placed any other order (orders.placed_at) strictly after this shipment's delivered_at and within 90 days after it; pct_of_customers = % of distinct_customers with such a subsequent order, rounded 1 decimal; median_days_to_next_order = median of (that next order's placed_at minus delivered_at) in days, among customers who did place one, rounded to a whole number. Order rows with 'on-time' first, then 'late'.",
+   "builds_on": [
+    "Delivery speed and return rate by merchant, Q4 2025"
+   ]
+  },
+  {
+   "title": "Repeat purchase after a return vs. no return, 2025",
+   "question": "Does experiencing a return change whether, and how soon, a customer places their next order, compared to orders that had no return?",
+   "grain": "one row per group: orders that had a return vs orders that had no return",
+   "columns": [
+    "group (has_return / no_return)",
+    "orders count",
+    "distinct customers",
+    "pct with a subsequent order within 90 days",
+    "median days to that subsequent order"
+   ],
+   "details": "Restrict to the 6 retail tenants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik) since returns are only meaningful volume there (the food/coffee merchants showed near-zero return rates in the earlier delivery report and would just dilute this). Base population: orders with placed_at in 2025-01-01 to 2025-09-30 (leaves a full 90-day forward window against data through 2025-12-31). group = 'has_return' if the order has at least one row in order_returns, else 'no_return'. For each group: orders_count = count of orders; distinct_customers = distinct (tenant_id, user_id) among those orders. For each order, check whether the same user placed another order with placed_at strictly after this order's placed_at and within 90 days after it; pct_with_subsequent_order_within_90_days = % of orders in the group meeting that condition, rounded 1 decimal; median_days_to_subsequent_order = median of (that next order's placed_at minus this order's placed_at) in days, among orders that had one, rounded to a whole number. Order rows with 'has_return' first, then 'no_return'.",
+   "builds_on": []
+  }
+ ]
+}

@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  to_char(date_trunc('month', c.created_at), 'YYYY-MM') AS month,\n  COUNT(*) AS carts_created,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE c.status = 'converted') / COUNT(*), 1) AS overall_conversion_pct,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at <= INTERVAL '1 hour') / COUNT(*), 1) AS pct_resolved_within_1_hour,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at > INTERVAL '1 hour' AND COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at <= INTERVAL '7 days') / COUNT(*), 1) AS pct_resolved_1_7_days,\n  ROUND(CAST(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY EXTRACT(EPOCH FROM (c.converted_at - c.created_at))/86400.0) FILTER (WHERE c.status = 'converted') AS numeric), 1) AS median_days_to_convert\nFROM carts c\nJOIN tenants t ON t.id = c.tenant_id\nWHERE t.name IN ('Kibblewick','Studio Vrij','Petalcourt Beauty','Marrowby & Vane','Cragsley Outfitters','Ampfeld Elektronik')\n  AND c.created_at >= DATE '2025-01-01' AND c.created_at < DATE '2026-01-01'\nGROUP BY date_trunc('month', c.created_at)\nORDER BY date_trunc('month', c.created_at)",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Catalog Error: Scalar Function with name to_char does not exist!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  cd.month_label AS month,\n  COUNT(*) AS carts_created,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE c.status = 'converted') / COUNT(*), 1) AS overall_conversion_pct,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at <= INTERVAL '1 hour') / COUNT(*), 1) AS pct_resolved_within_1_hour,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at > INTERVAL '1 hour' AND COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at <= INTERVAL '7 days') / COUNT(*), 1) AS pct_resolved_1_7_days,\n  ROUND(CAST(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY EXTRACT(EPOCH FROM (c.converted_at - c.created_at))/86400.0) FILTER (WHERE c.status = 'converted') AS numeric), 1) AS median_days_to_convert\nFROM carts c\nJOIN tenants t ON t.id = c.tenant_id\nJOIN calendar_days cd ON cd.calendar_date = CAST(c.created_at AS date)\nWHERE t.name IN ('Kibblewick','Studio Vrij','Petalcourt Beauty','Marrowby & Vane','Cragsley Outfitters','Ampfeld Elektronik')\n  AND c.created_at >= DATE '2025-01-01' AND c.created_at < DATE '2026-01-01'\nGROUP BY cd.month_label\nORDER BY cd.month_label",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, carts_created, overall_conversion_pct, pct_resolved_within_1_hour, pct_resolved_1_7_days, median_days_to_convert"
+ },
+ {
+  "kind": "text",
+  "text": "This compiles correctly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  cd.month_label AS month,\n  COUNT(*) AS carts_created,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE c.status = 'converted') / COUNT(*), 1) AS overall_conversion_pct,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at <= INTERVAL '1 hour') / COUNT(*), 1) AS pct_resolved_within_1_hour,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at > INTERVAL '1 hour' AND COALESCE(c.converted_at, c.abandoned_at, c.expires_at) - c.created_at <= INTERVAL '7 days') / COUNT(*), 1) AS pct_resolved_1_7_days,\n  ROUND(CAST(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY EXTRACT(EPOCH FROM (c.converted_at - c.created_at))/86400.0) FILTER (WHERE c.status = 'converted') AS numeric), 1) AS median_days_to_convert\nFROM carts c\nJOIN tenants t ON t.id = c.tenant_id\nJOIN calendar_days cd ON cd.calendar_date = CAST(c.created_at AS date)\nWHERE t.name IN ('Kibblewick','Studio Vrij','Petalcourt Beauty','Marrowby & Vane','Cragsley Outfitters','Ampfeld Elektronik')\n  AND c.created_at >= DATE '2025-01-01' AND c.created_at < DATE '2026-01-01'\nGROUP BY cd.month_label\nORDER BY cd.month_label",
+  "note": "pct_resolved_within_1_hour and pct_resolved_1_7_days are both computed as a share of all carts created in the month (same denominator as overall conversion), using resolution_time = coalesce(converted_at, abandoned_at, expires_at) - created_at; carts with none of those timestamps set (still open/no expiry recorded) fall outside both buckets. 12 rows expected, one per month of 2025.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups 2025 carts for the six named retail tenants by calendar month (via `calendar_days.month_label`), with carts created, overall cart→order conversion %, share resolved within 1 hour, share resolved in 1–7 days, and the median days-to-convert for converted carts — ordered January through December 2025."
+ }
+]

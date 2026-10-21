@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Privileged roles per merchant: grant size and dormancy",
+    "--question",
+    "Which roles across our merchants carry the most permissions, how many users currently hold each role, and how many of those users look dormant (no recent login) — a first read on access-governance hygiene?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per tenant and role\", \"columns_requested\": [\"tenant name\", \"role name\", \"is_system role (built-in vs custom)\", \"permission count granted to role\", \"users currently assigned this role (via user_roles)\", \"of those, users with status = active\", \"of those, users dormant (status = active but last_login_at is null or before 2025-10-05, i.e. no login in the trailing ~90 days)\", \"most recent last_login_at among assigned users\"], \"details\": \"Source: roles joined to tenants; role_permissions grouped by role_id for permission count; user_roles joined to users for assignment counts and last_login_at. Exclude soft-deleted users (users.deleted_at is null). 'Dormant' = users.status = 'active' and (last_login_at is null or last_login_at < 2025-10-05, i.e. no login in the 90 days before the data cutoff 2025-12-31). Only include roles that have at least 1 permission and at least 1 assigned user (skip empty/unused roles for this first pass). Order by permission count descending, then users assigned descending, then tenant name, then role name as the final tie-break, capped at 50 rows \\u2014 note how many qualifying role rows exist in total.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

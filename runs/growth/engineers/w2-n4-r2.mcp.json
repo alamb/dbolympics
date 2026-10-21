@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "What do the no-campaign attribution touches actually represent?",
+    "--question",
+    "For the attribution rows with no linked campaign, what do their touch_point values look like — is this organic/referral/direct traffic we can legitimately call 'known source', or something else?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per touch_point value\", \"columns_requested\": [\"touch_point - attributions.touch_point, coalesced to '(none)' if null\", \"distinct_orders_count - count of distinct order_id with occurred_at in 2025, order_id not null, campaign_id is null, for that touch_point value\", \"share_of_no_campaign_orders_pct - distinct_orders_count / total distinct orders in the no-campaign-id population * 100, rounded to 1 decimal\", \"attributed_revenue_eur - sum of attributed_revenue converted to EUR for that touch_point, rounded to 0 decimals\", \"avg_weight - average of the weight column for these rows, rounded to 2 decimals\"], \"details\": \"Source: attributions where campaign_id is null, occurred_at in 2025, order_id is not null, all tenants. Convert attributed_revenue to EUR using exchange_rates as of occurred_at date (EUR=rate 1). Order by distinct_orders_count descending, tie-break touch_point ascending. This directly follows up on tonight's linkage-category report to explain the largest bucket in plain terms.\", \"builds_on\": [\"Why do last week's and this week's 'attributed orders' counts disagree so much?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

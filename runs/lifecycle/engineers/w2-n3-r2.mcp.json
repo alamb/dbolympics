@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty unit economics: ever-redeemed vs never-redeemed members",
+    "--question",
+    "Is the programme's realized cost concentrated entirely in the minority of members who actually redeem, while the disengaged majority sits as pure unclaimed liability rather than real cost?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Felix\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per member engagement group: 'ever-redeemed member' vs 'never-redeemed member'\", \"columns_requested\": [\"group\", \"member_count\", \"total_revenue_eur\", \"revenue_per_customer_eur\", \"total_points_redeemed_cost_eur\", \"total_points_earned_liability_eur\", \"redeemed_cost_pct_of_revenue\"], \"details\": \"Population: all users with a loyalty_accounts row who placed at least one order 2023-01-01 to 2025-12-31. Group: 'ever-redeemed member' if the user has at least one 'burn'-direction loyalty_transactions row, else 'never-redeemed member'. total_revenue_eur = sum of grand_total on non-cancelled orders, converted to EUR via exchange_rates (as_of placed_at); revenue_per_customer_eur = total_revenue_eur divided by member_count. total_points_redeemed_cost_eur = sum of 'burn'-direction loyalty_transactions converted to currency via the program's points_per_currency and currency_code, then to EUR via exchange_rates as_of occurred_at (same method as prior unit-economics reports); this will be 0 for never-redeemed members by construction. total_points_earned_liability_eur = same conversion for 'earn'-direction transactions. redeemed_cost_pct_of_revenue = total_points_redeemed_cost_eur divided by total_revenue_eur, as a percentage. Order rows: 'ever-redeemed member' first.\", \"builds_on\": [\"Loyalty programme unit economics: points cost vs revenue per customer\", \"What distinguishes higher-revenue loyalty members from the rest\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

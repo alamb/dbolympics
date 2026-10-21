@@ -1,0 +1,75 @@
+=== Report 1: Ticket complexity proxy (messages and tags per ticket), by merchant (written by Felix) ===
+Engineer's note: One row per tenant with >=20 tickets created in 2025 (same threshold as prior staffing/channel reports); tags are counted as raw ticket_tags_map rows per ticket (duplicate tag assignments, if any, would inflate the average slightly). qualifying_tenant_count column shows the total peer-set size (same value every row) since the report is capped at 50 rows.
+REPORT: Ticket complexity proxy (messages and tags per ticket), by merchant
+QUESTION: Do Cragsley, Marrowby, and Studio Vrij get harder/more complex tickets than the rest of the book, or just more of them?
+merchant_name                 | tickets_2025 | avg_messages_per_ticket | avg_public_messages_per_ticket | avg_distinct_tags_per_ticket | qualifying_tenant_count
+------------------------------+--------------+-------------------------+--------------------------------+------------------------------+------------------------
+Thistlecombe                  |           21 |                    4.29 |                           4.29 |                         1.67 |                      22
+Kibblewick                    |           72 |                    4.22 |                           4.22 |                         1.85 |                      22
+Ballycorran Industrial Supply |           44 |                    4.14 |                           4.14 |                         1.66 |                      22
+Honeycomb Larder              |           58 |                    3.93 |                           3.93 |                         1.71 |                      22
+Ampfeld Elektronik            |           56 |                    3.82 |                           3.82 |                         1.54 |                      22
+Grind Collective              |          122 |                    3.82 |                           3.82 |                         1.93 |                      22
+Petalcourt Beauty             |          119 |                    3.76 |                           3.76 |                         1.77 |                      22
+Spice Route Box               |           71 |                    3.75 |                           3.75 |                         1.79 |                      22
+Studio Vrij                   |          166 |                    3.71 |                           3.71 |                         1.64 |                      22
+Brennquell Kaffee             |          137 |                     3.7 |                            3.7 |                         1.43 |                      22
+Rue Lafayette Studio          |           27 |                     3.7 |                            3.7 |                         1.74 |                      22
+Cinder Peak Sports Co.        |           43 |                    3.58 |                           3.58 |                         1.56 |                      22
+Fennel & Flint                |           67 |                    3.58 |                           3.58 |                         1.75 |                      22
+Gratlinie Outdoor             |           27 |                    3.56 |                           3.56 |                         1.48 |                      22
+Kayak Corner                  |           20 |                     3.5 |                            3.5 |                         1.85 |                      22
+Cragsley Outfitters           |          400 |                    3.46 |                           3.46 |                         1.36 |                      22
+Linden & Loom                 |           29 |                    3.45 |                           3.45 |                         1.79 |                      22
+Wiesgrund Wohnen              |           32 |                    3.44 |                           3.44 |                         1.53 |                      22
+Sourdough Club                |           47 |                     3.4 |                            3.4 |                         1.81 |                      22
+Marrowby & Vane               |          231 |                    3.29 |                           3.29 |                         1.43 |                      22
+Coastline Interiors           |           21 |                    3.14 |                           3.14 |                         1.62 |                      22
+Oakhurst Tailoring            |           27 |                    3.07 |                           3.07 |                         1.59 |                      22
+(22 rows)
+
+=== Report 2: Urgent-ticket SLA target vs actual resolution time, by merchant (written by Bea) ===
+Engineer's note: Added a 7th column (multiple_urgent_sla_policies, Y/N) to flag tenants whose evaluated urgent tickets reference more than one distinct resolution_target_minutes, as requested, since that can't be folded into the single 'target hours' number; everything else matches the spec exactly. Total qualifying-tenant count and exact row count will show on the printed report since the query itself isn't run here.
+REPORT: Urgent-ticket SLA target vs actual resolution time, by merchant
+QUESTION: Is the broad urgent-ticket resolution failure driven by unrealistically tight SLA targets, or are merchants genuinely resolving urgent tickets slower than a reasonable target?
+merchant_name       | urgent_resolution_target_hours | urgent_tickets_evaluated_2025 | median_actual_resolution_hours | avg_actual_resolution_hours | urgent_miss_rate_pct | multiple_urgent_sla_policies
+--------------------+--------------------------------+-------------------------------+--------------------------------+-----------------------------+----------------------+-----------------------------
+Honeycomb Larder    |                            8.0 |                             9 |                           59.5 |                        56.1 |                100.0 | N                           
+Sourdough Club      |                            8.0 |                             7 |                           23.9 |                        32.0 |                 85.7 | N                           
+Ampfeld Elektronik  |                            8.0 |                             6 |                           12.0 |                        30.2 |                 83.3 | N                           
+Marrowby & Vane     |                            8.0 |                            33 |                           18.2 |                        79.6 |                 66.7 | N                           
+Cragsley Outfitters |                            8.0 |                            50 |                           13.4 |                        27.6 |                 66.0 | N                           
+Studio Vrij         |                            8.0 |                            11 |                           19.9 |                        67.1 |                 63.6 | N                           
+Linden & Loom       |                            8.0 |                             6 |                            5.8 |                         6.1 |                 50.0 | N                           
+Petalcourt Beauty   |                            8.0 |                            10 |                           14.6 |                        30.3 |                 50.0 | N                           
+Fennel & Flint      |                            8.0 |                             5 |                            1.2 |                        15.3 |                 40.0 | N                           
+Wohnglück           |                            8.0 |                             5 |                            3.1 |                        16.6 |                 40.0 | N                           
+Spice Route Box     |                            8.0 |                             9 |                            5.1 |                         9.0 |                 33.3 | N                           
+Brennquell Kaffee   |                            8.0 |                            16 |                            4.1 |                         9.3 |                 31.3 | N                           
+Grind Collective    |                            8.0 |                             6 |                            1.1 |                         4.0 |                 16.7 | N                           
+Wiesgrund Wohnen    |                            8.0 |                             7 |                            0.8 |                         2.4 |                 14.3 | N                           
+(14 rows)
+
+=== Report 3: Ticket load per agent over 2025, hotspot merchants vs a comparable peer (written by Omar) ===
+Engineer's note: Grain is tenant x calendar quarter for 2025, limited to the four named tenants; tickets_per_agent is tickets_created / distinct assignee_agent_id (NULL when a tenant/quarter has zero assigned agents).
+REPORT: Ticket load per agent over 2025, hotspot merchants vs a comparable peer
+QUESTION: Has the staffing gap at Cragsley, Marrowby, and Studio Vrij been widening over the course of 2025 (ticket volume outpacing agent headcount), or has it been consistently stretched all year?
+merchant_name       | quarter | tickets_created | distinct_agents | tickets_per_agent
+--------------------+---------+-----------------+-----------------+------------------
+Cragsley Outfitters | 2025-Q1 |              76 |               8 |               9.5
+Cragsley Outfitters | 2025-Q2 |              81 |               8 |              10.1
+Cragsley Outfitters | 2025-Q3 |              92 |               8 |              11.5
+Cragsley Outfitters | 2025-Q4 |             151 |               8 |              18.9
+Grind Collective    | 2025-Q1 |              12 |               3 |               4.0
+Grind Collective    | 2025-Q2 |              25 |               3 |               8.3
+Grind Collective    | 2025-Q3 |              15 |               3 |               5.0
+Grind Collective    | 2025-Q4 |              70 |               3 |              23.3
+Marrowby & Vane     | 2025-Q1 |              46 |               5 |               9.2
+Marrowby & Vane     | 2025-Q2 |              37 |               5 |               7.4
+Marrowby & Vane     | 2025-Q3 |              43 |               5 |               8.6
+Marrowby & Vane     | 2025-Q4 |             105 |               5 |              21.0
+Studio Vrij         | 2025-Q1 |              13 |               4 |               3.3
+Studio Vrij         | 2025-Q2 |              96 |               4 |              24.0
+Studio Vrij         | 2025-Q3 |              18 |               4 |               4.5
+Studio Vrij         | 2025-Q4 |              39 |               4 |               9.8
+(16 rows)

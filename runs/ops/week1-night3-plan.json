@@ -1,0 +1,63 @@
+{
+ "notes": "Night 2 findings, read critically: (1) Report 1 only printed 50 of 56 carrier-quarter rows -- it's missing the last few carriers' Q3/Q4 figures, so I can't yet see the full carrier picture for peak; I'm fixing that tonight by re-running Q4 only (one quarter -> all ~14 carriers fit on one page) and adding a volume-share column so I can judge materiality, not just rates. (2) Within what I could see, two carriers (Landfall Freight, Lowlands Express) are chronically mediocre all year -- not a peak story, a structural one. But Albion Parcel is the standout: rock-solid in Q1-Q3 (88-97% within 3 days) then collapses in Q4 (avg transit 6.54 days, only 50.7% within 3 days) -- a sharp, carrier-specific peak failure that deserves its own drill-down by month to see exactly when it broke and whether it recovered by year-end. (3) Report 3 (stage breakdown) is a clean, important result: warehouse processing time stayed flat (~1.1-1.2 days) straight through peak even as volume nearly doubled, while carrier transit time is what stretched (2.5-2.9 days baseline -> 3.46 in Nov) -- so the peak slowdown from Night 1 is a carrier/transit problem, not a warehouse-capacity problem. That reframes priority #3: warehouses look fine; carriers are the lever. (4) The warehouse report's worst performers (Thistlecombe, Purrfect Pantry, Chocolaterie Mireille, Kayak Corner, etc.) all have unremarkable processing times, so their poor delivery reliability must come from somewhere in the transit leg -- I want to test whether they're simply the merchants who happen to ship with the weak carriers. Tonight: complete the Q4 carrier picture, isolate Albion Parcel's break, and test the carrier-mix hypothesis for the best/worst merchants.",
+ "requests": [
+  {
+   "title": "Carrier transit performance, Q4 2025 (complete)",
+   "question": "Across every carrier, how did transit time and reliability hold up in the peak quarter, and how much volume does each carrier actually carry?",
+   "grain": "one row per carrier, for shipments shipped in Q4 2025",
+   "columns": [
+    "carrier",
+    "shipments_shipped (shipped_at between 2025-10-01 and 2025-12-31)",
+    "shipments_delivered (of those, delivered_at not null as of the 2025-12-31 cutoff)",
+    "avg_transit_days",
+    "median_transit_days",
+    "p90_transit_days",
+    "pct_within_3_days",
+    "pct_delivered",
+    "share_of_q4_shipments_pct (this carrier's shipments_shipped / total Q4 shipments across all carriers, x100)"
+   ],
+   "details": "Table: shipments (carrier, shipped_at, delivered_at). Scope: shipped_at >= 2025-10-01 and <= 2025-12-31, all carriers (no row cap needed -- expect ~14 distinct carriers based on last night's report, so please return every carrier, do not silently truncate). transit_days = DATEDIFF(day, shipped_at, delivered_at), computed only where delivered_at is not null. Round day metrics to 2 decimals, pct columns to 1 decimal (as %). As before, flag that pct_delivered/pct_within_3_days for shipments shipped very late in December may be understated due to the 2025-12-31 cutoff (right-censoring), not necessarily a carrier failure. Order by shipments_shipped descending, tie-break by carrier ascending.",
+   "builds_on": [
+    "Carrier transit performance by quarter, 2025"
+   ]
+  },
+  {
+   "title": "Albion Parcel transit performance by month, 2025",
+   "question": "Exactly when did Albion Parcel's transit time break down, how bad did it get, and had it recovered by year-end?",
+   "grain": "one row per calendar month of shipped_at, for Albion Parcel shipments only",
+   "columns": [
+    "month (YYYY-MM)",
+    "shipments_shipped",
+    "shipments_delivered",
+    "avg_transit_days",
+    "median_transit_days",
+    "p90_transit_days",
+    "pct_within_3_days",
+    "pct_delivered"
+   ],
+   "details": "Table: shipments, filtered to carrier = 'Albion Parcel', shipped_at between 2025-01-01 and 2025-12-31. Same transit_days definition as the Q4 carrier report (shipped_at to delivered_at, delivered subset only). Round day metrics to 2 decimals, pct to 1 decimal. Note in the report that the last 1-2 weeks of December will show artificially low pct_delivered due to the 2025-12-31 data cutoff. Order by month ascending. Expect 12 rows.",
+   "builds_on": [
+    "Carrier transit performance by quarter, 2025"
+   ]
+  },
+  {
+   "title": "Carrier mix for best vs worst performing merchants, 2025",
+   "question": "Do the merchants with the worst delivery reliability simply ship disproportionately with the weaker carriers?",
+   "grain": "one row per tenant and carrier combination, for a fixed list of 20 named tenants",
+   "columns": [
+    "tenant_name",
+    "performance_group ('best' or 'worst', per the fixed list below)",
+    "carrier",
+    "shipments_count (2025)",
+    "share_of_tenant_shipments_pct (this carrier's shipments / tenant's total shipments in 2025, x100)",
+    "avg_transit_days (this tenant+carrier combination, 2025)",
+    "pct_within_3_days"
+   ],
+   "details": "Scope: shipments joined via fulfillments -> orders -> tenants, shipped_at in 2025-01-01 through 2025-12-31, restricted to these 20 tenants only (matched by tenants.name): WORST group = 'Thistlecombe', 'Purrfect Pantry', 'Chocolaterie Mireille', 'Kayak Corner', 'Studio Vrij', 'Sourdough Club', 'Grind Collective', 'Spice Route Box', 'Kettle & Key', 'Polder Packaging'. BEST group = 'Pfotenglück', 'Cragsley Outfitters', 'Brennquell Kaffee', 'Feather & Fin', 'Ridgeback Gear', 'Wohnglück', 'Mirelle', 'Honeycomb Larder', 'Kontor24 Bürobedarf', 'Tail Wag Supply'. transit_days = DATEDIFF(day, shipped_at, delivered_at), delivered subset only. Round avg_transit_days to 2 decimals, pct columns to 1 decimal. Order by performance_group ('worst' first, then 'best'), then tenant_name ascending, then shipments_count descending within each tenant.",
+   "builds_on": [
+    "Fulfillment performance by warehouse, 2025",
+    "Delivery time by merchant, 2025"
+   ]
+  }
+ ]
+}

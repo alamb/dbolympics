@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Wiesgrund Wohnen December 2025: Product-Level Review Breakdown",
+    "--question",
+    "Since delivery performance doesn't explain Wiesgrund Wohnen's December dip, which specific products drove it?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per product, for Wiesgrund Wohnen only, among products with at least one approved review created in December 2025\", \"columns_requested\": [\"product_name\", \"category_name\", \"review_count\", \"avg_rating\", \"pct_1_2_star\", \"units_sold_last_12mo\"], \"details\": \"Filter to tenant = Wiesgrund Wohnen. review_count/avg_rating/pct_1_2_star computed over approved product_reviews with created_at between 2025-12-01 and 2025-12-31, per product. category_name from products.primary_category_id -> categories.name. units_sold_last_12mo = sum of order_items.quantity for that product's variants from orders placed 2025-01-01 to 2025-12-31 with status not cancelled, for context on whether it's a popular or niche item. Round avg_rating to 2 decimals, pct to 1 decimal. Order by review_count descending, tie-break by avg_rating ascending.\", \"builds_on\": [\"Fennel & Flint and Wiesgrund Wohnen: Review Sentiment vs Delivery Performance, Monthly\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

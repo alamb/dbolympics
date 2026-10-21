@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Where 'Missing - suspected theft' tags concentrate: by warehouse",
+    "--question",
+    "Does the 'Missing - suspected theft' reason concentrate in a handful of specific warehouses/sites, or is it spread evenly across all sites that log stock adjustments?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Ines\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"warehouse (one row per warehouse with at least one stock_adjustments row in 2025)\", \"columns_requested\": [\"warehouse_name\", \"tenant_name\", \"total_adjustments_at_site (count of stock_adjustments rows at this warehouse)\", \"theft_tagged_count (reason = 'Missing - suspected theft')\", \"pct_theft_of_site_adjustments (theft_tagged_count / total_adjustments_at_site * 100, rounded 1dp)\", \"distinct_staff_logging_theft_here (count of distinct adjusted_by_user_id among this warehouse's theft-tagged rows)\"], \"details\": \"Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound). Join stock_locations on stock_location_id to get warehouse_id, then warehouses (name) and tenants (name) via warehouses.tenant_id. Group by warehouse. Order by theft_tagged_count descending, tie-break by pct_theft_of_site_adjustments descending, then warehouse_name ascending. Cap at 50 rows and note the total distinct warehouse count even if it exceeds 50.\", \"builds_on\": [\"Where 'Missing - suspected theft' tags concentrate: by warehouse\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

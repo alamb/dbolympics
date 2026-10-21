@@ -1,0 +1,412 @@
+run,loaded,query,median_s,status,message
+1,2024-and-earlier,load,468.746990,ok,
+1,2024-and-earlier,q001,0.052263,ok,
+1,2024-and-earlier,q002,0.072744,ok,
+1,2024-and-earlier,q003,0.047174,ok,
+1,2024-and-earlier,q004,0.062072,ok,
+1,2024-and-earlier,q005,0.403542,ok,
+1,2024-and-earlier,q006,0.391166,ok,
+1,2024-and-earlier,q007,0.070522,ok,
+1,2024-and-earlier,q008,0.115213,ok,
+1,2024-and-earlier,q009,0.098460,ok,
+1,2024-and-earlier,q010,0.035904,ok,
+1,2024-and-earlier,q011,0.159898,ok,
+1,2024-and-earlier,q012,2.127911,ok,
+1,2024-and-earlier,q013,0.125104,ok,
+1,2024-and-earlier,q014,0.134289,ok,
+1,2024-and-earlier,q015,0.089926,ok,
+1,2024-and-earlier,q016,0.065553,ok,
+1,2024-and-earlier,q017,0.673370,ok,
+1,2024-and-earlier,q018,0.693766,ok,
+1,2024-and-earlier,q019,0.112986,ok,
+1,2024-and-earlier,q020,1.137421,ok,
+1,2024-and-earlier,q021,1.224389,ok,
+1,2024-and-earlier,q022,0.719147,ok,
+1,2024-and-earlier,q023,0.668087,ok,
+1,2024-and-earlier,q024,0.682763,ok,
+1,2024-and-earlier,q025,1.314765,ok,
+1,2024-and-earlier,q026,0.641654,ok,
+1,2024-and-earlier,q027,0.794526,ok,
+1,2024-and-earlier,q028,0.923045,ok,
+1,2024-and-earlier,q029,0.802594,ok,
+1,2024-and-earlier,q030,0.572131,ok,
+1,2024-and-earlier,q031,0.260839,ok,
+1,2024-and-earlier,q032,0.309562,ok,
+1,2024-and-earlier,q033,0.738341,ok,
+1,2024-and-earlier,q034,0.029495,ok,
+1,2024-and-earlier,q035,0.044311,ok,
+1,2024-and-earlier,q036,0.165206,ok,
+1,2024-and-earlier,q037,0.229395,ok,
+1,2024-and-earlier,q038,0.110008,ok,
+1,2024-and-earlier,q039,0.208023,ok,
+1,2024-and-earlier,q040,1.404296,ok,
+1,2024-and-earlier,q041,0.179667,ok,
+1,2024-and-earlier,q042,1.411285,ok,
+1,2024-and-earlier,q043,0.107085,ok,
+1,2024-and-earlier,q044,0.330188,ok,
+1,2024-and-earlier,q045,0.024939,ok,
+1,2024-and-earlier,q046,0.039067,ok,
+1,2024-and-earlier,q047,0.151263,ok,
+1,2024-and-earlier,q048,0.283695,ok,
+1,2024-and-earlier,q049,2.273287,ok,
+1,2024-and-earlier,q050,0.526063,ok,
+1,2024-and-earlier,q051,0.101272,ok,
+1,2024-and-earlier,q052,0.679925,ok,
+1,2024-and-earlier,q053,0.636339,ok,
+1,2024-and-earlier,q054,0.430901,ok,
+1,2024-and-earlier,q055,0.653061,ok,
+1,2024-and-earlier,q056,1.958046,ok,
+1,2024-and-earlier,q057,0.375357,ok,
+1,2024-and-earlier,q058,0.448683,ok,
+1,2024-and-earlier,q059,0.377836,ok,
+1,2024-and-earlier,q060,0.026606,ok,
+1,2024-and-earlier,q061,0.178300,ok,
+1,2024-and-earlier,q062,0.440559,ok,
+1,2024-and-earlier,q063,0.914866,ok,
+1,2024-and-earlier,q064,1.209163,ok,
+1,2024-and-earlier,q065,0.685075,ok,
+1,2024-and-earlier,q066,0.073133,ok,
+1,2024-and-earlier,q067,0.152637,ok,
+1,2024-and-earlier,q068,0.234602,ok,
+1,2024-and-earlier,q069,0.025972,ok,
+1,2024-and-earlier,q070,0.260194,ok,
+1,2024-and-earlier,q071,0.096576,ok,
+1,2024-and-earlier,q072,0.155758,ok,
+1,2024-and-earlier,q073,0.104715,ok,
+1,2024-and-earlier,q074,0.747609,ok,
+1,2024-and-earlier,q075,0.024319,ok,
+1,2024-and-earlier,q076,0.975800,ok,
+1,2024-and-earlier,q077,3.408186,ok,
+1,2024-and-earlier,q078,2.266061,ok,
+1,2024-and-earlier,q079,0.639105,ok,
+1,2024-and-earlier,q080,0.745429,ok,
+1,2024-and-earlier,q081,0.583952,ok,
+1,2024-and-earlier,q082,0.428763,ok,
+1,2024-and-earlier,q083,0.588922,ok,
+1,2024-and-earlier,q084,0.703556,ok,
+1,2024-and-earlier,q085,0.357444,ok,
+1,2024-and-earlier,q086,0.358880,ok,
+1,2024-and-earlier,q087,0.211819,ok,
+1,2024-and-earlier,q088,0.715843,ok,
+1,2024-and-earlier,q089,4.667410,ok,
+1,2024-and-earlier,q090,0.219779,ok,
+1,2024-and-earlier,q091,0.827302,ok,
+1,2024-and-earlier,q092,0.226691,ok,
+1,2024-and-earlier,q093,0.373802,ok,
+1,2024-and-earlier,q094,0.775154,ok,
+1,2024-and-earlier,q095,0.308816,ok,
+1,2024-and-earlier,q096,1.146314,ok,
+1,2024-and-earlier,q097,0.150323,ok,
+1,2024-and-earlier,q098,0.607993,ok,
+1,2024-and-earlier,q099,0.045305,ok,
+1,2024-and-earlier,q100,0.632177,ok,
+1,2024-and-earlier,q101,0.104956,ok,
+1,2024-and-earlier,q102,0.125816,ok,
+1,2024-and-earlier,q103,0.371069,ok,
+1,2024-and-earlier,q104,1.864289,ok,
+1,2024-and-earlier,q105,0.133738,ok,
+1,2024-and-earlier,q106,0.180902,ok,
+1,2024-and-earlier,q107,0.043423,ok,
+1,2024-and-earlier,q108,0.230318,ok,
+1,2024-and-earlier,q109,0.526731,ok,
+1,2024-and-earlier,q110,0.025748,ok,
+1,2024-and-earlier,q111,0.021399,ok,
+1,2024-and-earlier,q112,0.099304,ok,
+1,2024-and-earlier,q113,2.301280,ok,
+1,2024-and-earlier,q114,0.002308,ok,
+1,2024-and-earlier,q115,0.107221,ok,
+1,2024-and-earlier,q116,1.709853,ok,
+1,2024-and-earlier,q117,0.039374,ok,
+1,2024-and-earlier,q118,0.024231,ok,
+1,2024-and-earlier,q119,0.020440,ok,
+1,2024-and-earlier,q120,0.036668,ok,
+1,2024-and-earlier,q121,0.057862,ok,
+1,2024-and-earlier,q122,2.831570,ok,
+1,2024-and-earlier,q123,0.155831,ok,
+1,2024-and-earlier,q124,0.023771,ok,
+1,2024-and-earlier,q125,0.364297,ok,
+1,2024-and-earlier,q126,0.001467,ok,
+1,2024-and-earlier,q127,0.050459,ok,
+1,2024-and-earlier,q128,0.042212,ok,
+1,2024-and-earlier,q129,0.066819,ok,
+1,2024-and-earlier,q130,0.451688,ok,
+1,2024-and-earlier,q131,0.107536,ok,
+1,2024-and-earlier,q132,3.194792,ok,
+1,2024-and-earlier,q133,0.121837,ok,
+1,2024-and-earlier,q134,1.094402,ok,
+1,2024-and-earlier,q135,1.105337,ok,
+1,2024-and-earlier,q136,0.653019,ok,
+1,2024-and-earlier,q137,0.553054,ok,
+1,2024-and-earlier,q138,0.087808,ok,
+1,2024-and-earlier,q139,0.724493,ok,
+1,2024-and-earlier,q140,0.231081,ok,
+1,2024-and-earlier,q141,0.108217,ok,
+1,2024-and-earlier,q142,0.169437,ok,
+1,2024-and-earlier,q143,0.538590,ok,
+1,2024-and-earlier,q144,0.668432,ok,
+1,2024-and-earlier,q145,0.477486,ok,
+1,2024-and-earlier,q146,0.511702,ok,
+1,2024-and-earlier,q147,0.730514,ok,
+1,2024-and-earlier,q148,0.578998,ok,
+1,2024-and-earlier,q149,0.120285,ok,
+1,2024-and-earlier,q150,0.761677,ok,
+1,2024-and-earlier,q151,0.471072,ok,
+1,2024-and-earlier,q152,0.305976,ok,
+1,2024-and-earlier,q153,0.830095,ok,
+1,2024-and-earlier,q154,0.540828,ok,
+1,2024-and-earlier,q155,1.287688,ok,
+1,2024-and-earlier,q156,7.444807,ok,
+1,2024-and-earlier,q157,0.508299,ok,
+1,2024-and-earlier,q158,1.012934,ok,
+1,2024-and-earlier,q159,0.524428,ok,
+1,2024-and-earlier,q160,0.254975,ok,
+1,2024-and-earlier,q161,0.825225,ok,
+1,2024-and-earlier,q162,1.552000,ok,
+1,2024-and-earlier,q163,1.817088,ok,
+1,2024-and-earlier,q164,0.634475,ok,
+1,2024-and-earlier,q165,0.589227,ok,
+1,2024-and-earlier,q166,0.518507,ok,
+1,2024-and-earlier,q167,4.663158,ok,
+1,2024-and-earlier,q168,0.116469,ok,
+1,2024-and-earlier,q169,1.153585,ok,
+1,2024-and-earlier,q170,1.258949,ok,
+1,2024-and-earlier,q171,0.926396,ok,
+1,2024-and-earlier,q172,0.076119,ok,
+1,2024-and-earlier,q173,0.086035,ok,
+1,2024-and-earlier,q174,0.218841,ok,
+1,2024-and-earlier,q175,0.136592,ok,
+1,2024-and-earlier,q176,0.161959,ok,
+1,2024-and-earlier,q177,0.080235,ok,
+1,2024-and-earlier,q178,0.132558,ok,
+1,2024-and-earlier,q179,0.102313,ok,
+1,2024-and-earlier,q180,0.078419,ok,
+1,2024-and-earlier,q181,0.141142,ok,
+1,2024-and-earlier,q182,0.177343,ok,
+1,2024-and-earlier,q183,0.125406,ok,
+1,2024-and-earlier,q184,0.257221,ok,
+1,2024-and-earlier,q185,0.905604,ok,
+1,2024-and-earlier,q186,1.378488,ok,
+1,2024-and-earlier,q187,0.465960,ok,
+1,2024-and-earlier,q188,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) INTERNAL Error: Attempted to access index 0 within vector of size 0
+1,2024-and-earlier,q189,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q190,0.132148,ok,
+1,2024-and-earlier,q191,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q192,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q193,0.008174,ok,
+1,2024-and-earlier,q194,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q195,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q196,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q197,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q198,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q199,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q200,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q201,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q202,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q203,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q204,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q205,0.002475,ok,
+1,2024-and-earlier,q206,0.027236,ok,
+1,2024-and-earlier,q207,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q208,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q209,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q210,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q211,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q212,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q213,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q214,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q215,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q216,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q217,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q218,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q219,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q220,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q221,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q222,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q223,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q224,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q225,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q226,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q227,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q228,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q229,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q230,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q231,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q232,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q233,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q234,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q235,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q236,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q237,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q238,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q239,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q240,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q241,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q242,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q243,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q244,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q245,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q246,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q247,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q248,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q249,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q250,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q251,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q252,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q253,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q254,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q255,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q256,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q257,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q258,0.238871,ok,
+1,2024-and-earlier,q259,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q260,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q261,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q262,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q263,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q264,0.110064,ok,
+1,2024-and-earlier,q265,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q266,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q267,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q268,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q269,2.006041,ok,
+1,2024-and-earlier,q270,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q271,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q272,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q273,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q274,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q275,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q276,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q277,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q278,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q279,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q280,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q281,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q282,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q283,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q284,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q285,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q286,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q287,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q288,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q289,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q290,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q291,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q292,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q293,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q294,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q295,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q296,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q297,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q298,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q299,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q300,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q301,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q302,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q303,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q304,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q305,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q306,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q307,0.113335,ok,
+1,2024-and-earlier,q308,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q309,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q310,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q311,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q312,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q313,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q314,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q315,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q316,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q317,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q318,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q319,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q320,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q321,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q322,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q323,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q324,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q325,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q326,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q327,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q328,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q329,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q330,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q331,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q332,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q333,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q334,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q335,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q336,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q337,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q338,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q339,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q340,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q341,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q342,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q343,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q344,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q345,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q346,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q347,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q348,0.597879,ok,
+1,2024-and-earlier,q349,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q350,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q351,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q352,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q353,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q354,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q355,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q356,0.001452,ok,
+1,2024-and-earlier,q357,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q358,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q359,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q360,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q361,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q362,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q363,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q364,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q365,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q366,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q367,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q368,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q369,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q370,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q371,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q372,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q373,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q374,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q375,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q376,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q377,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q378,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q379,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q380,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q381,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q382,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q383,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q384,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q385,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q386,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q387,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q388,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q389,0.009955,ok,
+1,2024-and-earlier,q390,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q391,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q392,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q393,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q394,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q395,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q396,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q397,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q398,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q399,0.049626,ok,
+1,2024-and-earlier,q400,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q401,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q402,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q403,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q404,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q405,0.026240,ok,
+1,2024-and-earlier,q406,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q407,0.083675,ok,
+1,2024-and-earlier,q408,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+1,2024-and-earlier,q409,,error,(PGDuckDB/Duckdb_ExecCustomScan_Cpp) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.
+2,2025-Q1,load,,failed_load,load 2025-Q1 tenants: (PGDuckDB/DuckdbUtilityHook_Cpp) Executor Error: (PGDuckDB/MakeDuckdbCopyQuery) (PGDuckDB/CreatePlan) FATAL Error: Failed: database has been invalidated because of a previous fatal error. The database must be restarted prior to being used again.

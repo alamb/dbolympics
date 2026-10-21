@@ -1,0 +1,60 @@
+{
+ "requests": [
+  {
+   "title": "B2B Wholesale: Win Rate and Cycle Time by Merchant (New Business)",
+   "question": "Is the acquisition struggle spread evenly across our B2B wholesale merchants, or concentrated in a few accounts?",
+   "grain": "one row per wholesale merchant (tenant)",
+   "columns": [
+    "merchant",
+    "opportunities_closed",
+    "closed_won",
+    "closed_lost",
+    "win_rate_pct",
+    "avg_days_open",
+    "avg_amount_eur"
+   ],
+   "details": "Scope: same wholesale tenant filter as prior nights (tenants.industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'), opportunities where pipeline_id = the tenant's 'New business' pipeline (join pipelines on name = 'New business'), is_closed = true. avg_days_open = avg(closed_at - created_at) in days. Convert amount to EUR via exchange_rates (base_code='EUR', quote_code = opportunity currency_code, rate as_of closed_at date or nearest prior day). Order by win_rate_pct ascending (worst performers first), tie-break by opportunities_closed descending, then merchant name ascending.",
+   "builds_on": [
+    "B2B Wholesale Pipeline: Opportunities by Merchant and Stage",
+    "New Business Only: Won vs Lost Opportunity Characteristics"
+   ]
+  },
+  {
+   "title": "B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business)",
+   "question": "Among reps who own B2B wholesale new-business opportunities, are a few reps clearly underperforming on win rate or cycle time, or is performance broadly similar?",
+   "grain": "one row per sales rep (opportunities.owner_user_id)",
+   "columns": [
+    "rep_name",
+    "merchant",
+    "opportunities_closed",
+    "closed_won",
+    "closed_lost",
+    "win_rate_pct",
+    "avg_days_open",
+    "avg_amount_eur"
+   ],
+   "details": "Scope: same wholesale tenant filter, pipeline_id = the tenant's 'New business' pipeline, is_closed = true, grouped by owner_user_id (join users for full_name as rep_name, and tenants for merchant name). Exclude reps with fewer than 3 closed opportunities in scope to avoid single-deal noise (note the excluded rep count in the report notes). avg_days_open and avg_amount_eur defined as in the merchant-level report (EUR via exchange_rates as of closed_at). Order by win_rate_pct ascending (worst first), tie-break by opportunities_closed descending, then rep_name ascending.",
+   "builds_on": [
+    "New Business Only: Won vs Lost Opportunity Characteristics"
+   ]
+  },
+  {
+   "title": "B2B Wholesale: Age Profile of Currently Open New-Business Pipeline",
+   "question": "How much of our current B2B wholesale new-business pipeline is already older than the typical window in which deals actually win, i.e. how much open pipeline is quietly turning stale and at risk?",
+   "grain": "one row per age bucket of currently-open opportunities",
+   "columns": [
+    "age_bucket",
+    "opportunities_count",
+    "pct_of_open_pipeline",
+    "avg_amount_eur",
+    "total_amount_eur"
+   ],
+   "details": "Scope: same wholesale tenant filter, opportunities where pipeline_id = the tenant's 'New business' pipeline and is_closed = false (currently open), as of the last complete data date 2025-12-31 (use the fixed literal date '2025-12-31' as the reference point for age, not CURRENT_DATE/now(), per house SQL standards). age_days = 2025-12-31 minus created_at. Bucket into: '0-9 days', '10-19 days', '20-29 days', '30-44 days', '45-89 days', '90+ days' (chosen because last night's New-business-only comparison showed won deals close in ~9 days on average and lost deals take ~35 days on average before dying, so these buckets straddle both reference points). Convert amount to EUR using exchange_rates as of 2025-12-31. pct_of_open_pipeline = that bucket's opportunity count / total open opportunities in scope, as a percentage. total_amount_eur = sum of amount_eur in that bucket (euro value of pipeline sitting at that age). Order by age_bucket ascending (by lower day bound).",
+   "builds_on": [
+    "New Business Only: Won vs Lost Opportunity Characteristics",
+    "New Business Only: Deal Cycle Time Trend by Month"
+   ]
+  }
+ ],
+ "notes": "Night 2's key finding: the stage-history reconstruction came back 30/30 'no transition recorded' — change_history has zero coverage of stage_id changes for these lost opportunities. That's decisive on its own (not a sample-size fluke): the warehouse simply cannot tell us which CRM stage a deal died in, either from current state (always shows the terminal Closed Won/Lost stage) or from history (not logged). I'm treating that as answered-and-closed rather than spending another slot probing it further — it's itself the headline data-quality flag for the memo (reps/system aren't capturing stage progression, which is as much a coaching/hygiene story as a product one). The New-business-only refinement did give a very clean, usable signal instead: lost deals average ~35 days open and ~3.4 activities before dying, vs won deals closing in ~9 days with ~2.3 activities — a ~4x gap in cycle time is a much stronger 'where/why deals die' signal than a stage label would have been, and it directly answers Samuel's staleness question. Tonight's three reports build on that: merchant-level and rep-level win-rate/cycle-time breakdowns (Patrick Q4 / Samuel Q1 — is this widespread or concentrated), and an age-bucket view of the currently open pipeline benchmarked against the won (~9d) vs lost (~35d) cycle-time reference points, to quantify how much live pipeline is already past the point where deals historically still win (Samuel Q3). Holding deal-size/payment-terms correlation (Patrick's optional #5) for night 4 if the memo still has room after seeing tonight's results."
+}

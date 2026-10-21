@@ -1,0 +1,46 @@
+=== Report 1: Loyalty and referral programme reach by merchant vertical (written by Bea) ===
+Engineer's note: tenants.industry is nullable; any tenant without an industry value is grouped under 'Unknown' rather than dropped, so the vertical breakdown stays complete.
+REPORT: Loyalty and referral programme reach by merchant vertical
+QUESTION: In which merchant verticals does the loyalty/referral programme even exist and get adopted - is B2B wholesale genuinely excluded, and is participation concentrated in a few verticals?
+industry                  | tenant_count | tenants_with_any_loyalty_program | active_customers | loyalty_members | pct_customers_enrolled | referred_customers | pct_customers_referred
+--------------------------+--------------+----------------------------------+------------------+-----------------+------------------------+--------------------+-----------------------
+Apparel & Footwear        |           25 |                               10 |             4364 |             953 |                  21.84 |                 24 |                   0.55
+Home & Living             |           16 |                                4 |             1270 |              42 |                   3.31 |                  9 |                   0.71
+Food & Coffee             |           11 |                                1 |             1226 |               7 |                   0.57 |                 15 |                   1.22
+Sports & Outdoor          |           13 |                                6 |              747 |             206 |                  27.58 |                  3 |                    0.4
+Beauty                    |           15 |                                4 |              713 |              57 |                   7.99 |                  6 |                   0.84
+Consumer Electronics      |            9 |                                3 |              476 |              42 |                   8.82 |                  2 |                   0.42
+Pet Supplies              |           10 |                                1 |              316 |              14 |                   4.43 |                  3 |                   0.95
+Industrial Supplies (B2B) |            5 |                                0 |              239 |               0 |                    0.0 |                  3 |                   1.26
+Office Supplies (B2B)     |            4 |                                0 |              151 |               0 |                    0.0 |                  2 |                   1.32
+Books & Stationery        |            6 |                                1 |               77 |               9 |                  11.69 |                  0 |                    0.0
+Jewelry & Accessories     |            6 |                                1 |               61 |               0 |                    0.0 |                  0 |                    0.0
+(11 rows)
+
+=== Report 2: Loyalty member refund rate by merchant vertical (written by Grace) ===
+Engineer's note: Population, segment definition, and metric definitions mirror the earlier tenure report (orders 2023-01-01..2025-12-31, is_staff=false, loyalty membership = any loyalty_accounts row, EUR conversion via exchange_rates as-of placed_at, refund = amount_refunded>0 or any order_returns row). Industries where either segment has fewer than 20 customers are dropped entirely from the output rather than flagged with a count column, since adding a count would break the single industry×segment grain — any industry missing from the table was excluded for low volume.
+REPORT: Loyalty member refund rate by merchant vertical
+QUESTION: Is the elevated refund rate among loyalty members a broad pattern across verticals, or is it concentrated in one or two verticals that happen to have naturally high returns, such as apparel?
+industry             | segment        | customer_count | avg_lifetime_orders | avg_order_value_eur | refund_rate_pct
+---------------------+----------------+----------------+---------------------+---------------------+----------------
+Apparel & Footwear   | loyalty member |            953 |                3.77 |              167.82 |           38.37
+Apparel & Footwear   | non-member     |           3411 |                3.93 |              199.87 |           38.83
+Beauty               | loyalty member |             57 |                3.79 |                96.5 |            5.09
+Beauty               | non-member     |            656 |                4.68 |               99.81 |            6.52
+Consumer Electronics | loyalty member |             42 |                2.48 |              691.94 |           15.38
+Consumer Electronics | non-member     |            434 |                2.78 |              834.72 |           12.95
+Home & Living        | loyalty member |             42 |                2.93 |              134.78 |           13.01
+Home & Living        | non-member     |           1228 |                 3.2 |              158.78 |           14.95
+Sports & Outdoor     | loyalty member |            206 |                3.59 |              352.23 |            22.7
+Sports & Outdoor     | non-member     |            541 |                3.02 |              355.82 |           24.05
+(10 rows)
+
+=== Report 3: Loyalty programme unit economics: points cost vs revenue per customer (written by Viktor) ===
+Engineer's note: Population = non-staff users with ≥1 order in 2023-2025, segmented by any loyalty_accounts row; revenue is all non-cancelled orders for these users converted to EUR at placed_at date; points cost/liability computed from loyalty_transactions (direction<>'earn' vs ='earn') via each program's points_per_currency and EUR rate as_of occurred_at, 0 for non-members by construction.
+REPORT: Loyalty programme unit economics: points cost vs revenue per customer
+QUESTION: Putting cost and revenue side by side: how does the points value we issue and redeem per loyalty member compare to the revenue those members actually generate, versus non-members?
+segment        | customer_count | total_revenue_eur | revenue_per_customer_eur | total_points_redeemed_cost_eur | redeemed_cost_per_customer_eur | total_points_earned_liability_eur | earned_liability_per_customer_eur | redeemed_cost_pct_of_revenue
+---------------+----------------+-------------------+--------------------------+--------------------------------+--------------------------------+-----------------------------------+-----------------------------------+-----------------------------
+loyalty member |           1330 |         915030.99 |                   687.99 |                      177782.98 |                         133.67 |                          669001.4 |                            503.01 |                        19.43
+non-member     |           8310 |        12563425.3 |                  1511.84 |                            0.0 |                            0.0 |                               0.0 |                               0.0 |                          0.0
+(2 rows)

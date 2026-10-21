@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Marketing-email consent opt-in trend, full history",
+    "--question",
+    "Has the marketing-email opt-in rate meaningfully changed over the full 3-year history, and did the early decline continue or stabilize?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per calendar month, purpose fixed to 'marketing_email'\", \"columns_requested\": [\"month (YYYY-MM)\", \"grants recorded in month\", \"withdrawals recorded in month\", \"expirations recorded in month\", \"users with any consent record as of month end\", \"net active opt-ins at month end\", \"active opt-in rate at month end (%, 1 decimal)\"], \"details\": \"Same logic as last night's consent report (consent_records, effective status via most-recent-row-per-user-per-purpose-as-of-month-end using a window function), but filtered to purpose = 'marketing_email' only, and spanning the full 2023-01 through 2025-12 range so none of the 36 months are cut off by the row limit. Platform-wide, all tenants. Order by month ascending.\", \"builds_on\": [\"Consent trend by purpose and month: grants, withdrawals, and net opt-in rate\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Is the ~1.08 adjustments-per-variant ratio apparel-specific or company-wide?",
+    "--question",
+    "Is the near-constant rate of about 1.08 routine stock-adjustments per distinct affected variant per year a quirk of the apparel/footwear vertical, or does it hold across all merchant verticals — i.e., is the whole routine discrepancy stream essentially a flat background rate of roughly one single-unit miss per SKU per year, regardless of product type?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Felix\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"tenant industry (tenants.industry)\", \"columns_requested\": [\"industry\", \"total_routine_adjustments_2025 (count of stock_adjustments rows at tenants of this industry, created_at in 2025)\", \"distinct_variants_with_adjustment\", \"adjustments_per_variant (total_routine_adjustments_2025 / distinct_variants_with_adjustment, rounded 3dp)\", \"distinct_tenants_in_industry\"], \"details\": \"Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound), joined via stock_location_id -> stock_locations -> warehouses -> tenants, grouped by tenants.industry. Order by adjustments_per_variant descending, tie-break by industry alphabetically. Expect well under 50 rows (one per distinct industry string).\", \"builds_on\": [\"Apparel/footwear discrepancies by warehouse: scale effect or genuine elevated rate?\", \"Reasons behind routine stock_adjustments entries, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

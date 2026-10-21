@@ -1,0 +1,59 @@
+{
+ "notes": "Night 2 takeaways: (1) Even within Apparel & Footwear alone, the richness story is not a clean monotonic 'more images = more sales' curve — the big jump is between 0 images (109 EUR/product, and these products also have far fewer variants, ~4 vs ~13, suggesting they're incomplete/new listings) and 1+ images (355-399 EUR/product); beyond that, 2-3/4-6/7+ bounce around without a clear ladder. So the honest message for Freya is 'baseline completeness matters a lot, marginal richness less so' rather than 'more is always better'. (2) Reviews-per-100-orders is noisy but flat (~10-20%) across the whole 3-year window with no trend — so the rising raw review counts are explained by rising order volume, not growing review engagement; December 2025's high avg_rating=3.71 dip is a ratings-quality story, not a volume-of-reviews story (its reviews-per-100-orders, 15.16, is unremarkable). (3) The vertical breakdown shows Home & Living had the sharpest, most volume-credible decline (3.86→3.36, n=42→59, 35.6% 1-2 star), while Apparel & Footwear's decline is milder (-0.11) but carries about half of all December reviews (219 of ~454), so it matters in absolute terms too. Tonight I want to localize the Home & Living dip to specific merchants (one bad actor vs widespread), get a concrete worst-rated-products list platform-wide to ground Q3's 'trouble spots' ask, and open up Q4 (collections/bundles adoption vs performance), which I haven't touched yet. I'm holding the few-reviews-despite-good-sales angle and the dedicated top-vs-long-tail structural comparison (Q5) for night 4, since night 3's findings may reshape what's worth asking there.",
+ "requests": [
+  {
+   "title": "Home & Living December 2025 Rating Dip: Merchant Breakdown",
+   "question": "Within Home & Living, is the December 2025 rating decline concentrated in a few merchants or spread across the vertical?",
+   "grain": "one row per merchant (tenant) in the Home & Living industry",
+   "columns": [
+    "merchant_name",
+    "dec2025_review_count",
+    "dec2025_avg_rating",
+    "dec2025_pct_1_2_star",
+    "jan_to_nov_2025_avg_rating",
+    "rating_change_pts"
+   ],
+   "details": "Join product_reviews (is_approved = true) to products to tenants, filtered to tenants.industry = 'Home & Living'. dec2025_review_count / dec2025_avg_rating / dec2025_pct_1_2_star are computed over approved reviews with created_at in December 2025 (2025-12-01 to 2025-12-31) for that merchant. jan_to_nov_2025_avg_rating is the same merchant's mean approved-review rating for created_at in January-November 2025 (2025-01-01 to 2025-11-30), used as a pre-dip baseline. rating_change_pts = dec2025_avg_rating minus jan_to_nov_2025_avg_rating, rounded to 2 decimals (more negative = bigger relative decline). Only include merchants with at least 1 review in December 2025. Round avg ratings to 2 decimals, pct to 1 decimal. Order by rating_change_pts ascending (biggest decline first), tie-break by dec2025_review_count descending.",
+   "builds_on": [
+    "December Rating Dip by Vertical: 2024 vs 2025"
+   ]
+  },
+  {
+   "title": "Lowest-Rated Products Platform-Wide With Sufficient Review Volume",
+   "question": "Which specific products are getting the worst customer feedback, among those with enough reviews for the rating to be meaningful?",
+   "grain": "one row per product",
+   "columns": [
+    "product_name",
+    "merchant_name",
+    "industry",
+    "review_count",
+    "avg_rating",
+    "pct_1_2_star",
+    "units_sold_last_12mo"
+   ],
+   "details": "Tables: products, tenants, product_reviews (is_approved = true), order_items joined to orders (placed_at 2025-01-01 to 2025-12-31, status not cancelled) for units_sold_last_12mo. review_count = count of approved reviews for the product (all-time). Filter to review_count >= 5. avg_rating and pct_1_2_star (share of that product's approved reviews rated 1 or 2) computed over all-time approved reviews. units_sold_last_12mo = sum of order_items.quantity across that product's variants in the 2025 window (0 if none). Round avg_rating to 2 decimals, pct to 1 decimal. Order by avg_rating ascending, tie-break by review_count descending; cap at 50 rows and note the total qualifying product count.",
+   "builds_on": [
+    "Lowest-Rated Products Platform-Wide"
+   ]
+  },
+  {
+   "title": "Collections and Bundles Adoption by Merchant",
+   "question": "How much are merchants leaning on curated collections and bundles rather than flat product listings, and does that line up with stronger sales?",
+   "grain": "one row per merchant (tenant), same top-50-by-revenue set as the Merchant Catalog Profile report",
+   "columns": [
+    "merchant_name",
+    "industry",
+    "active_collection_count",
+    "pct_active_products_in_a_collection",
+    "active_bundle_count",
+    "pct_active_products_in_a_bundle",
+    "revenue_eur_last_12mo",
+    "avg_order_value_eur_last_12mo"
+   ],
+   "details": "active_collection_count = count of non-deleted collections (deleted_at is null) for the tenant. pct_active_products_in_a_collection = share of the tenant's active, non-deleted products that appear in at least one collection_products row pointing to a non-deleted collection. active_bundle_count = count of product_bundles with is_active = true for the tenant. pct_active_products_in_a_bundle = share of the tenant's active, non-deleted products that have at least one of their variants referenced in bundle_items belonging to an active bundle. revenue_eur_last_12mo and avg_order_value_eur_last_12mo use the same order window and EUR conversion as the Merchant Catalog Profile report (orders placed 2025-01-01 to 2025-12-31, status not cancelled, exchange_rates base_code=EUR quote_code=order currency_code as_of placed_at date); avg_order_value_eur_last_12mo = revenue_eur_last_12mo / orders_last_12mo. Round percentages to 1 decimal, money to whole EUR. Order by revenue_eur_last_12mo descending, tie-break by merchant_name; print the top 50 (same ~120-tenant universe) and note total rows returned.",
+   "builds_on": [
+    "Merchant Catalog Profile"
+   ]
+  }
+ ]
+}

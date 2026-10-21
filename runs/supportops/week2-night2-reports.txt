@@ -1,0 +1,63 @@
+=== Report 1: Topic mix and resolution time by tag, flagged merchants vs. Cragsley (written by Ines) ===
+Engineer's note: avg_resolution_minutes is computed only over tickets with a non-null resolved_at (unresolved tickets in the 2025 window are excluded from that average but still counted in ticket_count and the breach-rate denominator); resolution_breach_rate = share of each (tenant, tag) ticket group with at least one sla_breaches row of breach_kind='resolution'. pct_of_tenant_tickets can sum to over 100% per tenant since a ticket may carry multiple tags.
+REPORT: Topic mix and resolution time by tag, flagged merchants vs. Cragsley
+QUESTION: Is Marrowby & Vane's and Studio Vrij's slowness concentrated in specific topics (especially delivery-related ones), or uniformly slow across all topics, compared to Cragsley Outfitters?
+tenant_name         | tag_name          | ticket_count | pct_of_tenant_tickets | avg_resolution_minutes | resolution_breach_rate
+--------------------+-------------------+--------------+-----------------------+------------------------+-----------------------
+Cragsley Outfitters | return            |          161 |                  40.3 |                 2996.0 |                   30.4
+Cragsley Outfitters | delivery          |           97 |                  24.3 |                 1697.0 |                   18.6
+Cragsley Outfitters | complaint         |           86 |                  21.5 |                 1703.0 |                   55.8
+Cragsley Outfitters | where-is-my-order |           75 |                  18.8 |                 1819.0 |                   18.7
+Cragsley Outfitters | product-question  |           56 |                  14.0 |                 2628.0 |                    7.1
+Cragsley Outfitters | damaged           |           39 |                   9.8 |                 1681.0 |                   61.5
+Cragsley Outfitters | refund            |           24 |                   6.0 |                 1634.0 |                   50.0
+Cragsley Outfitters | account           |            5 |                   1.3 |                  844.0 |                   80.0
+Marrowby & Vane     | return            |           78 |                  33.8 |                 5141.0 |                   34.6
+Marrowby & Vane     | delivery          |           65 |                  28.1 |                 7157.0 |                   43.1
+Marrowby & Vane     | complaint         |           60 |                  26.0 |                 3825.0 |                   53.3
+Marrowby & Vane     | where-is-my-order |           58 |                  25.1 |                 7331.0 |                   44.8
+Marrowby & Vane     | damaged           |           30 |                  13.0 |                 5168.0 |                   66.7
+Marrowby & Vane     | product-question  |           24 |                  10.4 |                 2938.0 |                   12.5
+Marrowby & Vane     | refund            |           10 |                   4.3 |                 1522.0 |                   30.0
+Marrowby & Vane     | payment           |            4 |                   1.7 |                 1884.0 |                   25.0
+Marrowby & Vane     | account           |            2 |                   0.9 |                 1343.0 |                   50.0
+Studio Vrij         | delivery          |           98 |                  59.0 |                10482.0 |                   49.0
+Studio Vrij         | where-is-my-order |           95 |                  57.2 |                10801.0 |                   50.5
+Studio Vrij         | return            |           38 |                  22.9 |                 3170.0 |                   15.8
+Studio Vrij         | complaint         |           19 |                  11.4 |                 3219.0 |                   47.4
+Studio Vrij         | product-question  |           11 |                   6.6 |                 2944.0 |                    9.1
+Studio Vrij         | damaged           |            8 |                   4.8 |                 5165.0 |                   75.0
+Studio Vrij         | account           |            2 |                   1.2 |                 1440.0 |                   50.0
+Studio Vrij         | refund            |            2 |                   1.2 |                   85.0 |                    0.0
+(25 rows)
+
+=== Report 2: Where the delay accumulates: first-response lag vs. post-response handling time (written by Omar) ===
+Engineer's note: Used tenant_id filtering via tenants.name match to the three named merchants; created_at upper bound is exclusive of 2026-01-01 to cover all of 2025-12-31 per the stated window.
+REPORT: Where the delay accumulates: first-response lag vs. post-response handling time
+QUESTION: For Marrowby & Vane, Studio Vrij, and Cragsley Outfitters, does the slowness happen before an agent first replies (pickup delay) or after the first reply, while the ticket is still being worked (handling/back-and-forth delay)?
+tenant_name         | ticket_count | avg_first_response_minutes | avg_post_response_minutes | avg_resolution_minutes
+--------------------+--------------+----------------------------+---------------------------+-----------------------
+Studio Vrij         |          165 |                       3638 |                      3866 |                   7504
+Marrowby & Vane     |          216 |                       2515 |                      2581 |                   5096
+Cragsley Outfitters |          394 |                       1216 |                      1133 |                   2348
+(3 rows)
+
+=== Report 3: Monthly ticket volume vs. knowledge-base engagement trend (written by Felix) ===
+Engineer's note: My tooling only lets me validate SQL against an empty schema (dry_run never returns real rows/values), so I could not actually inspect which event_name or path values exist in this warehouse before writing the query. I picked page_views.path with a broad set of help/kb/faq/support/knowledge substring patterns as the most plausible, commonly-used signal, aggregated per calendar month via calendar_days; if these patterns don't match real data, kb_engagement_count will read as 0 rather than NULL, so please sanity-check the first few months before circulating and let me know if the events table turns out to have a better-named view event instead.
+REPORT: Monthly ticket volume vs. knowledge-base engagement trend
+QUESTION: Is there any visible relationship between how much customers engage with the knowledge base and how many tickets we get — even a rough, non-causal signal?
+month_label | ticket_count | kb_engagement_count | kb_engagement_signal_used               
+------------+--------------+---------------------+-----------------------------------------
+2025-01     |          150 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-02     |           94 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-03     |          116 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-04     |          133 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-05     |          206 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-06     |          169 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-07     |          153 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-08     |          138 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-09     |          168 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-10     |          192 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-11     |          316 |                   0 | page_views.path ILIKE any of %/help%, %/
+2025-12     |          485 |                   0 | page_views.path ILIKE any of %/help%, %/
+(12 rows)

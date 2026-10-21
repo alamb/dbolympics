@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Albion Parcel transit performance by month, 2025",
+    "--question",
+    "Exactly when did Albion Parcel's transit time break down, how bad did it get, and had it recovered by year-end?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per calendar month of shipped_at, for Albion Parcel shipments only\", \"columns_requested\": [\"month (YYYY-MM)\", \"shipments_shipped\", \"shipments_delivered\", \"avg_transit_days\", \"median_transit_days\", \"p90_transit_days\", \"pct_within_3_days\", \"pct_delivered\"], \"details\": \"Table: shipments, filtered to carrier = 'Albion Parcel', shipped_at between 2025-01-01 and 2025-12-31. Same transit_days definition as the Q4 carrier report (shipped_at to delivered_at, delivered subset only). Round day metrics to 2 decimals, pct to 1 decimal. Note in the report that the last 1-2 weeks of December will show artificially low pct_delivered due to the 2025-12-31 data cutoff. Order by month ascending. Expect 12 rows.\", \"builds_on\": [\"Carrier transit performance by quarter, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

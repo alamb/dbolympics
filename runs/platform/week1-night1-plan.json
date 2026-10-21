@@ -1,0 +1,53 @@
+{
+ "notes": "Night 1: focusing on Diego's top two priorities (job failure/lateness trend over the year, and which merchants got hit hardest), plus a first look at health-check reliability trend.",
+ "requests": [
+  {
+   "title": "2025 Background Job Reliability by Month",
+   "question": "How did background job failure rates and run durations trend across 2025?",
+   "grain": "one row per calendar month of 2025",
+   "columns": [
+    "month",
+    "total_job_runs",
+    "failed_runs",
+    "failure_rate_pct",
+    "cancelled_runs",
+    "cancelled_rate_pct",
+    "avg_duration_seconds",
+    "p95_duration_seconds"
+   ],
+   "details": "Table job_runs. Filter queued_at in 2025. Group by month of queued_at. failure_rate_pct = failed_runs/total_job_runs*100 rounded 2dp. Duration = finished_at-started_at in seconds where both set, avg rounded 1dp, p95 via percentile_cont(0.95) rounded to whole seconds. Platform-wide, all tenants combined. Order by month ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "Merchants Hit Hardest by Job Failures, 2025",
+   "question": "Which merchants had the most background job failures in 2025, and does it track with order volume?",
+   "grain": "one row per tenant",
+   "columns": [
+    "tenant_name",
+    "total_job_runs_2025",
+    "failed_runs_2025",
+    "failure_rate_pct",
+    "avg_duration_seconds_failed",
+    "total_orders_2025",
+    "failed_runs_per_1000_orders"
+   ],
+   "details": "job_runs joined to tenants on tenant_id. Filter queued_at in 2025. total_orders_2025 = count of orders with placed_at in 2025 per tenant, left joined so zero-order tenants show 0. failed_runs_per_1000_orders = failed_runs_2025/total_orders_2025*1000 rounded 1dp, blank if zero orders. Order by failed_runs_2025 descending, tie-break tenant_name ascending. Limit to top 20 tenants.",
+   "builds_on": []
+  },
+  {
+   "title": "2025 Internal Health Check Reliability by Month",
+   "question": "How did the rate of failed internal health checks trend across 2025?",
+   "grain": "one row per calendar month of 2025",
+   "columns": [
+    "month",
+    "total_checks",
+    "unhealthy_checks",
+    "unhealthy_rate_pct",
+    "avg_latency_ms",
+    "distinct_components_checked"
+   ],
+   "details": "Table system_health_checks. Filter checked_at in 2025. Group by month of checked_at. unhealthy_checks = count where is_healthy=false. unhealthy_rate_pct rounded 2dp. avg_latency_ms rounded whole number over non-null latency_ms. Platform-wide across all tenants/components. Order by month ascending.",
+   "builds_on": []
+  }
+ ]
+}

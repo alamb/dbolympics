@@ -1,0 +1,57 @@
+{
+ "notes": "Priority 1 is now fully resolved and consistent (corrected vertical report sums to ~€53,186, matching the merchant-level total exactly). Priority 3 is answered as far as the data allows: take rate is stable (~2.5-2.8%, no clear trend), and I've flagged that the platform-plan billing side genuinely isn't modeled in this warehouse. Priority 2 is covered from night 2. For this final night I'm using all 3 slots to close out priority 4 (vertical health) and priority 5 (warning signs), which haven't been touched yet, since they're explicitly what the Friday memo still needs. One thing jumped out while reviewing: the vertical revenue report only found 57 merchants with a settled payout in the trailing 12 months, versus 111 total tenants reported as 'cumulative active merchants' in night 2 (which only used signup date, not actual activity) — that's a big gap worth quantifying directly, since it could mean either a lot of merchants are still ramping up or a lot have gone quiet/churned. I'm building the status/activity report, a vertical-level health report (status mix + support load), and a company-wide operational trend report (payment failures, refunds, tickets, CSAT) to surface any board-level concerns.",
+ "requests": [
+  {
+   "title": "Merchant status and payout activity, today",
+   "question": "What share of our merchant base is actually transacting, and how does that break down by account status?",
+   "grain": "one row per tenants.status value",
+   "columns": [
+    "tenant status",
+    "tenant count",
+    "count with a settled payout in the trailing 12 months",
+    "count with no settled payout in the trailing 12 months",
+    "share with no recent payout (%)",
+    "average tenure in days for those with no recent payout (now - created_at, as of 2026-01-05)"
+   ],
+   "details": "Source: tenants left joined to payouts (status='paid', paid_at >= 2025-01-01 and < 2026-01-01) aggregated per tenant_id to a yes/no flag. Group by tenants.status (trial, active, past_due, suspended, churned) and exclude tenants with deleted_at not null. For the tenure column, compute age in days as 2026-01-05 minus tenants.created_at, averaged only over the 'no recent payout' group within each status. Order by tenant count descending, tie-break by status name ascending.",
+   "builds_on": [
+    "Merchant and order growth by quarter",
+    "Revenue by vertical, trailing 12 months (corrected)"
+   ]
+  },
+  {
+   "title": "Vertical health: merchant status mix and support load",
+   "question": "Which verticals have the most at-risk merchants or the heaviest support burden, independent of revenue growth?",
+   "grain": "one row per merchant vertical (tenants.industry)",
+   "columns": [
+    "vertical (industry)",
+    "total merchant count",
+    "active merchant count (status='active')",
+    "at-risk merchant count (status in ('past_due','suspended','churned'))",
+    "tickets per merchant (trailing 12 months)",
+    "average CSAT score (trailing 12 months, 1-5)"
+   ],
+   "details": "Source: tenants (for industry and status, excluding deleted_at not null) left joined to: (a) tickets where tickets.requester_user_id's user belongs to that tenant and tickets.created_at is in [2025-01-01, 2026-01-01), counted per tenant then averaged per vertical as total tickets / total merchant count in that vertical; (b) csat_responses joined via ticket_id to tickets in the same window, averaging csat_responses.score per vertical across all responses from merchants in that vertical. Group null/blank industry into 'Unspecified'. Order by at-risk merchant count descending, tie-break by vertical name ascending.",
+   "builds_on": [
+    "Vertical revenue growth, 2024 vs 2025",
+    "Merchant status and payout activity, today"
+   ]
+  },
+  {
+   "title": "Operational warning signs trend: refunds, payment failures, support volume",
+   "question": "Are payment, refund, or support problems trending up over the last two years in a way that could become a board-level concern?",
+   "grain": "one row per calendar quarter",
+   "columns": [
+    "quarter",
+    "payment failure rate (%, failed payment_attempts / all payment_attempts)",
+    "refund rate (%, succeeded payment_refunds amount EUR / captured payments amount EUR)",
+    "tickets per 100 orders",
+    "average CSAT score (1-5)"
+   ],
+   "details": "Source: payment_attempts (attempted_at in quarter; failure rate = count where status='failed' / count of all attempts), payment_refunds (processed_at in quarter, status='succeeded', amount converted to EUR via exchange_rates as_of processed_at date) divided by payments (captured_at in quarter, status='captured' or 'partially_refunded' or 'refunded', amount converted to EUR via exchange_rates as_of captured_at date), tickets (created_at in quarter, count), orders (placed_at in quarter, status in ('paid','partially_fulfilled','fulfilled','refunded'), count) for the tickets-per-100-orders ratio, and csat_responses (submitted_at in quarter, average score). Window: 2024-Q1 through 2025-Q4 (8 quarters), assigned via calendar_days. Order by quarter ascending.",
+   "builds_on": [
+    "Merchant and order growth by quarter"
+   ]
+  }
+ ]
+}

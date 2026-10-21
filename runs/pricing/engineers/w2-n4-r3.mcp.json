@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Fan-out-safe date classification of the 2025 active-bucket orphan orders",
+    "--question",
+    "Rebuilt carefully so the category counts and the discount total come from the same population: of the 2025 orphan orders whose customer's most-recent subscription is 'active', how many had that subscription start after the order, how many show active status despite an already-past end date, and how many have dates that should have overlapped (a bug)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Ines\", \"situation\": \"promotion-effectiveness\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per explanation category\", \"columns_requested\": [\"category: 'subscription started after this order' / 'active status but already past its end date' / 'dates indicate overlap - likely a bug in the original orphan flag'\", \"order count\", \"% of the active-bucket total\", \"distinct customers\", \"total discount amount (EUR)\"], \"details\": \"Source: build a single row per order_id first (via a subquery/CTE joining each 2025 orphan order, restricted to those whose most-recent subscription status = 'active', to that same single most-recent subscription row S), computing its category and its own discount_amount_eur in that same row \\u2014 only then GROUP BY category and SUM, so the category counts and the summed euro total are guaranteed to come from an identical set of orders. Categories: 'started after this order' if S.started_at > order.placed_at; 'active status but already past its end date' if S.started_at <= placed_at AND S.ended_at is not null AND S.ended_at < placed_at; 'dates indicate overlap - likely a bug' if S.started_at <= placed_at AND (S.ended_at is null OR S.ended_at >= placed_at). Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). State the total order count and EUR sum across all three categories in the engineer's note so it can be checked against the 2025 'active' status-category total from the tenant-level reconciliation report above. Order by order count descending. Print all categories.\", \"builds_on\": [\"Root cause of the 291 'unexplained' active-bucket orphan orders\", \"Reconciled 2025 orphan population by tenant and subscription status (single pass)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

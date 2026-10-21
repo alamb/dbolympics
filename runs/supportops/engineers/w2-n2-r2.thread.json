@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  t.name as tenant_name,\n  count(*) as ticket_count,\n  round(avg(extract(epoch from (tk.first_response_at - tk.created_at))/60)::numeric) as avg_first_response_minutes,\n  round(avg(extract(epoch from (tk.resolved_at - tk.first_response_at))/60)::numeric) as avg_post_response_minutes,\n  round(avg(extract(epoch from (tk.resolved_at - tk.created_at))/60)::numeric) as avg_resolution_minutes\nfrom tickets tk\njoin tenants t on t.id = tk.tenant_id\nwhere t.name in ('Marrowby & Vane', 'Studio Vrij', 'Cragsley Outfitters')\n  and tk.created_at >= timestamp '2025-01-01'\n  and tk.created_at < timestamp '2026-01-01'\n  and tk.first_response_at is not null\n  and tk.resolved_at is not null\ngroup by t.name\norder by avg_post_response_minutes desc, tenant_name",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, ticket_count, avg_first_response_minutes, avg_post_response_minutes, avg_resolution_minutes"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and matches the requested grain/columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "select\n  t.name as tenant_name,\n  count(*) as ticket_count,\n  round(avg(extract(epoch from (tk.first_response_at - tk.created_at))/60)::numeric) as avg_first_response_minutes,\n  round(avg(extract(epoch from (tk.resolved_at - tk.first_response_at))/60)::numeric) as avg_post_response_minutes,\n  round(avg(extract(epoch from (tk.resolved_at - tk.created_at))/60)::numeric) as avg_resolution_minutes\nfrom tickets tk\njoin tenants t on t.id = tk.tenant_id\nwhere t.name in ('Marrowby & Vane', 'Studio Vrij', 'Cragsley Outfitters')\n  and tk.created_at >= timestamp '2025-01-01'\n  and tk.created_at < timestamp '2026-01-01'\n  and tk.first_response_at is not null\n  and tk.resolved_at is not null\ngroup by t.name\norder by avg_post_response_minutes desc, tenant_name",
+  "note": "Used tenant_id filtering via tenants.name match to the three named merchants; created_at upper bound is exclusive of 2026-01-01 to cover all of 2025-12-31 per the stated window.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per tenant (Marrowby & Vane, Studio Vrij, Cragsley Outfitters) with ticket count and the three average minute metrics, ordered by avg_post_response_minutes descending as requested."
+ }
+]

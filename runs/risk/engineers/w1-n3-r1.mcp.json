@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Audit log coverage for identity and access-control tables",
+    "--question",
+    "Which identity/access-control tables and actions actually appear in the audit trail, and under what naming — specifically, are role/permission grant and revocation events logged at all?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Omar\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per combination of entity_table and action, counted across audit_log UNION audit_log_archive, restricted to entity_table in (users, roles, user_roles, role_permissions, permissions, teams, team_members, api_keys, invitations, mfa_devices, sessions, service_accounts, personal_access_tokens), all dates 2023-01-01 through 2025-12-31\", \"columns_requested\": [\"entity_table\", \"action\", \"row_count\", \"distinct_entity_id_count\", \"min_occurred_at\", \"max_occurred_at\"], \"details\": \"Sources: audit_log and audit_log_archive (same shape, union them). Purpose: last night's 'role grant and revocation activity' report came back as all zeros for entity_table='user_roles' with action in (create, delete) across all 36 months, which is either a real and significant audit-trail gap or a mismatch in how these events are actually tagged (e.g. logged under a different entity_table spelling, or only as action='update' with changed_columns rather than create/delete rows). This report settles which it is. If any entity_table values close to this list but not exact matches exist (e.g. singular/plural variants), please include them too and note it. Order by entity_table, action.\", \"builds_on\": [\"Role grant and revocation activity over time\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

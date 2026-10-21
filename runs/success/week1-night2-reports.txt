@@ -1,0 +1,57 @@
+=== Report 1: Test (written by Grace) ===
+Engineer's note: This request ("Test"/"Test question", columns "a" and "b") had no concrete business meaning to report on, so I produced a minimal one-row-per-tenant placeholder (tenant name as "a", lifetime order count as "b"). Please resubmit with the actual question and named metrics you want.
+REPORT: Test
+QUESTION: Test question
+tenant_id | a                             |    b
+----------+-------------------------------+-----
+        1 | Grind Collective              | 2269
+        2 | Marrowby & Vane               | 4064
+        3 | Juniper Apothecary            |  405
+        4 | Hus & Hem                     |  167
+        5 | Fennel & Flint                |  824
+        6 | Willow & Wren                 |  317
+        7 | Cragsley Outfitters           | 8965
+        8 | Castell Fasteners             |  394
+        9 | Honeycomb Larder              | 1450
+       10 | Wohnglück                     |  330
+       11 | Ballycorran Industrial Supply |  853
+       12 | Spice Route Box               | 1872
+       13 | Rue Lafayette Studio          |  410
+       14 | OfficeHub Nordic              |  443
+       15 | Velo Noord                    |   98
+       16 | Ostwind Mode                  |  284
+       17 | Ampfeld Elektronik            | 1058
+       18 | Brennquell Kaffee             | 9996
+       19 | Kontor24 Bürobedarf           |  637
+       20 | Sourdough Club                |  843
+       21 | Kettle & Key                  |  128
+       22 | Midland Safety Wear           |  367
+       23 | Mirelle                       |  102
+       24 | Fern & Fable                  |  116
+       25 | Studio Vrij                   | 1451
+       26 | Velvet Ash                    |  355
+       27 | Ampere & Co.                  |  159
+       28 | Atelier Nouveau               |  196
+       29 | Cinder Peak Sports Co.        |  759
+       30 | Linden & Loom                 |  686
+       31 | Hound Hamper                  |  120
+       32 | Oakhurst Tailoring            |  317
+       33 | Fell & Fjell                  |  201
+       34 | Paperplane Press              |  135
+       35 | Wiesgrund Wohnen              |  763
+       36 | Fjordline Wear                |  141
+       37 | Pfotenglück                   |  341
+       38 | Coastline Interiors           |  350
+       39 | Kayak Corner                  |  333
+       40 | Petalcourt Beauty             | 1540
+       41 | The Balm Room                 |  219
+       42 | Gratlinie Outdoor             |  577
+       43 | Roast Republic                |  109
+       44 | Whisker Works                 |  401
+       45 | Maison Clair                  |  100
+       46 | Feather & Fin                 |  411
+       47 | Tail Wag Supply               |  221
+       48 | Ridgeback Gear                |  247
+       49 | Stoneware Studio              |   54
+       50 | Buchstabe                     |   64
+(120 rows, first 50 printed)

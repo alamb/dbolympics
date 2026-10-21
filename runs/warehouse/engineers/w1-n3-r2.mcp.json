@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Largest individual stock adjustments in 2025",
+    "--question",
+    "With only 407 adjustment-kind events in the year but some as large as 192 units, which specific events are driving the value — do they cluster by warehouse, merchant, location kind, category or product, or are they scattered?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Grace\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per stock_movements event (kind='adjustment')\", \"columns_requested\": [\"occurred_at (date)\", \"tenant_name\", \"warehouse_name\", \"location_kind\", \"category_name (product's primary category, via variant->product->category; 'Uncategorized' if none)\", \"sku (product_variants.sku)\", \"quantity_signed (the movement's signed quantity; negative = shrinkage)\", \"estimated_value_eur (abs(quantity) * unit cost, converted to EUR, same method as prior reports)\", \"reference_type (stock_movements.reference_type, to see what source document generated the entry)\"], \"details\": \"Source: stock_movements where kind='adjustment', occurred_at in 2025-01-01 to 2025-12-31 (half-open bound as above). Join stock_locations (location_kind, warehouse_id), warehouses (name, tenant_id), tenants (name), product_variants (sku, product_id), products (name, primary_category_id), categories (name). Order by estimated_value_eur descending, tie-break by abs(quantity_signed) descending, then occurred_at, then id, for a deterministic top 30. Note the true total row count (407) in the report even though only 30 are printed.\", \"builds_on\": [\"Scale of stock count discrepancies by month\", \"Stock discrepancies by warehouse and location type\", \"Stock discrepancies by product category: handling vs tracking-method issue\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

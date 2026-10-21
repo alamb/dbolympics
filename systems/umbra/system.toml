@@ -1,0 +1,32 @@
+# Umbra, the experimental build of Umbra's public image, in a
+# container next to the system's own.
+name = "umbra"
+# the version, kept with the results (by hand)
+version = "experimental"
+# Umbra does not read list columns from Parquet: the four tables with arrays come as text
+arrays = "text"
+
+
+[load]
+statement = "COPY {table} FROM '{file}' WITH (FORMAT parquet)"
+
+[ddl]
+# column data compressed with zstd
+suffix = "WITH (compression = zstd)"
+
+[dialect]
+# date - date is the number of days, as in the standard (otherwise an interval in Umbra)
+settings = ["SET debug.semana.pgdatesub = true"]
+
+[dialect.functions]
+# no DISTINCT in window aggregates: the distinct non-NULL values from two dense ranks
+"count_distinct_over(x, window)" = "(DENSE_RANK() OVER ({window} ORDER BY {x} ASC NULLS FIRST) + DENSE_RANK() OVER ({window} ORDER BY {x} DESC NULLS LAST) - 1 - MAX(CASE WHEN {x} IS NULL THEN 1 ELSE 0 END) OVER ({window}))"
+
+[[container]]
+name = "db"
+image = "docker.io/umbradb/umbra:experimental"
+# Umbra takes its settings from the environment: worker threads, and the memory it sizes
+# itself for (it would otherwise see the host's)
+# PGHOST: its socket in /run/dbo, where the query program connects
+env = { PARALLEL = "{threads}", MEMORY = "{memory_mb}M", PGHOST = "/run/dbo" }
+ulimits = ["nofile=524288:524288"]

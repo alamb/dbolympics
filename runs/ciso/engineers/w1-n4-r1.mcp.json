@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Audit-trail coverage of actual soft-deletions, by entity table",
+    "--question",
+    "For tables where the app actually soft-deletes rows (deleted_at), does audit_log's 'delete' action consistently capture those deletions, or is there a real gap between what was deleted and what the audit trail shows?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per entity table, for a fixed set of 6 tables known to support soft-deletion: products, users, discounts, coupons, campaigns, promotions\", \"columns_requested\": [\"entity table\", \"total soft-deleted rows (deleted_at is not null, all-time, 2023-01-01 through 2025-12-31)\", \"matching audit_log rows (action = 'delete' and entity_table = this table, all-time)\", \"coverage rate (matching audit_log rows / soft-deleted rows, %)\", \"distinct tenants with at least one soft-deleted row here\", \"earliest deleted_at\", \"most recent deleted_at\"], \"details\": \"Source: for each of the 6 named tables, count rows with deleted_at is not null (that table itself, e.g. products.deleted_at, users.deleted_at, discounts.deleted_at, coupons.deleted_at, campaigns.deleted_at, promotions.deleted_at). Separately count audit_log rows with action = 'delete' and entity_table equal to that table's name (match on the literal table name string, ignore entity_schema). Coverage rate = matching audit_log rows / total soft-deleted rows, rounded to 1 decimal percent (cap at 100% if audit_log somehow has more rows than soft-deletes, and note if that happens). This is a UNION/stack of 6 independent per-table counts into one 6-row report, not a join across tables. Order by coverage rate ascending (worst gaps first), entity table name as tie-break.\", \"builds_on\": [\"Audit log coverage by action type\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

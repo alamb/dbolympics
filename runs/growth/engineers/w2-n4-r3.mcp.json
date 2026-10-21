@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Why does loyalty member revenue read as €0 for three small verticals?",
+    "--question",
+    "Books & Stationery, Food & Coffee, and Pet Supplies show real loyalty members and orders in one report but €0 member revenue in another — is this a currency-conversion gap, and does it change the loyalty cost conclusion?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per tenant, restricted to tenants in Books & Stationery, Food & Coffee, or Pet Supplies with at least one loyalty member\", \"columns_requested\": [\"tenant_name - tenants.name\", \"industry - tenants.industry\", \"default_currency_code - tenants.default_currency_code\", \"members_count - distinct users with a loyalty_accounts row who placed >=1 order with placed_at in 2025 at this tenant\", \"member_orders_count_2025 - count of those members' orders placed_at in 2025\", \"member_revenue_local_sum - sum of grand_total in each order's own currency_code, NOT converted, labeled alongside default_currency_code for reference (if a tenant mixes currencies, sum only those matching default_currency_code and flag separately if easier)\", \"member_revenue_eur_converted - sum of grand_total converted to EUR via exchange_rates (as of placed_at date), rounded to 0 decimals\", \"orders_missing_exchange_rate_count - count of those members' orders whose currency_code/placed_at date has no matching row in exchange_rates (i.e. would convert to null)\"], \"details\": \"Source: orders joined to tenants (filter industry in ('Books & Stationery','Food & Coffee','Pet Supplies')) and loyalty_accounts (member match on user_id+tenant_id), placed_at in 2025. This is a diagnostic report to find where the EUR conversion is silently dropping revenue to null/zero in the 'Loyalty point economics by vertical' report from two nights ago. Order by tenant_name ascending.\", \"builds_on\": [\"Loyalty point economics by vertical: cost and liability\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

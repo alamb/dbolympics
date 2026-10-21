@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH classified AS (\n  SELECT o.tenant_id, o.id as order_id, o.grand_total, o.currency_code, o.placed_at,\n         cd.quarter_start, cd.year_num, cd.quarter_num,\n         CASE WHEN t.created_at >= cd.quarter_start AND t.created_at < cd.quarter_start + interval '3 months'\n              THEN 'new' ELSE 'existing' END AS cohort,\n         o.grand_total / er.rate AS amount_eur\n  FROM orders o\n  JOIN tenants t ON t.id = o.tenant_id\n  JOIN calendar_days cd ON cd.calendar_date = CAST(o.placed_at AS date)\n  JOIN exchange_rates er ON er.base_code = 'EUR' AND er.quote_code = o.currency_code AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.status IN ('paid','partially_fulfilled','fulfilled','refunded')\n    AND cd.quarter_start BETWEEN DATE '2024-01-01' AND DATE '2025-10-01'\n),\nagg AS (\n  SELECT year_num, quarter_num, quarter_start, cohort,\n         COUNT(DISTINCT tenant_id) AS merchant_count,\n         COUNT(*) AS order_count,\n         SUM(amount_eur) AS gmv_eur\n  FROM classified\n  GROUP BY year_num, quarter_num, quarter_start, cohort\n)\nSELECT\n  year_num || '-Q' || quarter_num AS quarter,\n  cohort,\n  merchant_count,\n  order_count,\n  ROUND(gmv_eur, 2) AS gmv_eur,\n  ROUND(100.0 * gmv_eur / SUM(gmv_eur) OVER (PARTITION BY year_num, quarter_num), 2) AS share_of_quarter_gmv_pct\nFROM agg\nORDER BY year_num, quarter_num, (CASE WHEN cohort = 'new' THEN 0 ELSE 1 END)",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: quarter, cohort, merchant_count, order_count, gmv_eur, share_of_quarter_gmv_pct"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns exactly the requested columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH classified AS (\n  SELECT o.tenant_id, o.id as order_id, o.grand_total, o.currency_code, o.placed_at,\n         cd.quarter_start, cd.year_num, cd.quarter_num,\n         CASE WHEN t.created_at >= cd.quarter_start AND t.created_at < cd.quarter_start + interval '3 months'\n              THEN 'new' ELSE 'existing' END AS cohort,\n         o.grand_total / er.rate AS amount_eur\n  FROM orders o\n  JOIN tenants t ON t.id = o.tenant_id\n  JOIN calendar_days cd ON cd.calendar_date = CAST(o.placed_at AS date)\n  JOIN exchange_rates er ON er.base_code = 'EUR' AND er.quote_code = o.currency_code AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.status IN ('paid','partially_fulfilled','fulfilled','refunded')\n    AND cd.quarter_start BETWEEN DATE '2024-01-01' AND DATE '2025-10-01'\n),\nagg AS (\n  SELECT year_num, quarter_num, quarter_start, cohort,\n         COUNT(DISTINCT tenant_id) AS merchant_count,\n         COUNT(*) AS order_count,\n         SUM(amount_eur) AS gmv_eur\n  FROM classified\n  GROUP BY year_num, quarter_num, quarter_start, cohort\n)\nSELECT\n  year_num || '-Q' || quarter_num AS quarter,\n  cohort,\n  merchant_count,\n  order_count,\n  ROUND(gmv_eur, 2) AS gmv_eur,\n  ROUND(100.0 * gmv_eur / SUM(gmv_eur) OVER (PARTITION BY year_num, quarter_num), 2) AS share_of_quarter_gmv_pct\nFROM agg\nORDER BY year_num, quarter_num, (CASE WHEN cohort = 'new' THEN 0 ELSE 1 END)",
+  "note": "Quarter derived via the calendar_days dimension (year_num/quarter_num/quarter_start) joined on placed_at's date; cohort and EUR conversion follow the rules given exactly as specified.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report builds one row per quarter (2024‑Q1–2025‑Q4) × cohort (new/existing), classifying each tenant by whether `tenants.created_at` falls inside that quarter, converts `orders.grand_total` to EUR via the daily `exchange_rates` as specified, and computes each cohort's share of that quarter's combined GMV."
+ }
+]

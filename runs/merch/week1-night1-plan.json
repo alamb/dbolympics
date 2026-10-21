@@ -1,0 +1,56 @@
+{
+ "notes": "Freya has 5 broad asks; I am splitting them into clean one-grain reports rather than covering everything at once. Tonight I want foundational views that tell me where to dig deeper on nights 2 to 4: (1) a per-merchant catalog profile that speaks to Q1 catalog health and size, and seeds Q5 top vs long tail since it is ordered by revenue; (2) a richness vs sales bucket report that gives a first, non survivorship biased read on Q2 using image count as the richness proxy; (3) a monthly review and rating trend to start on Q3. I am deliberately leaving collections and bundles (Q4) and the detailed top vs tail structural comparison (Q5) for later nights once I see what these three reports reveal. Each report is a single grain and stays under 12 columns.",
+ "requests": [
+  {
+   "title": "Merchant Catalog Profile",
+   "question": "How large and content-rich is each merchant's catalog, and how does that relate to their recent sales volume?",
+   "grain": "one row per merchant (tenant)",
+   "columns": [
+    "merchant_name",
+    "industry (vertical)",
+    "active_product_count",
+    "active_variant_count",
+    "avg_variants_per_product",
+    "pct_products_with_primary_image",
+    "pct_products_with_description",
+    "avg_reviews_per_product",
+    "avg_rating",
+    "orders_last_12mo",
+    "revenue_eur_last_12mo"
+   ],
+   "details": "Tables: tenants, products, product_variants, product_media, product_reviews, orders, exchange_rates. Scope to non-deleted tenants. Only count active, non-deleted products and variants for the catalog columns (products.status = active, product_variants.is_active = true). pct_products_with_primary_image = share of active products with a product_media row where is_primary = true. pct_products_with_description = share of active products with non-null, non-empty description. avg_reviews_per_product and avg_rating use approved product_reviews only. Time window for sales columns: orders.placed_at between 2025-01-01 and 2025-12-31 inclusive, status not cancelled. revenue_eur_last_12mo = sum of grand_total converted to EUR via exchange_rates (base_code EUR, quote_code = order currency_code, rate as_of the order's placed_at date, amount_eur = grand_total divided by rate). Round avg_rating and avg_variants_per_product to 2 decimals, percentages to 1 decimal, revenue to whole EUR. Order by revenue_eur_last_12mo descending, tie-break by merchant_name. Expect around 120 tenants total; print the top 50 by revenue and note the full row count returned.",
+   "builds_on": []
+  },
+  {
+   "title": "Catalog Richness vs Sales Performance by Image Count Bucket",
+   "question": "Do products with more images, a proxy for richer catalog content, see higher engagement and sales than sparser listings?",
+   "grain": "one row per product image-count bucket: 0, 1, 2 to 3, 4 to 6, 7 plus",
+   "columns": [
+    "image_count_bucket",
+    "product_count",
+    "pct_with_description",
+    "avg_reviews_per_product",
+    "avg_rating",
+    "avg_units_sold_per_product_last_12mo",
+    "avg_revenue_per_product_eur_last_12mo"
+   ],
+   "details": "Tables: products, product_media (kind = image, counted per product_id to form the bucket), product_reviews, order_items, product_variants, orders, exchange_rates. Scope to products with status = active and deleted_at is null across all tenants. Sales measures from order_items joined to orders where placed_at is between 2025-01-01 and 2025-12-31 and orders.status is not cancelled; units_sold = sum of order_items.quantity; revenue converted to EUR per order line using exchange_rates (base_code EUR, quote_code = currency_code, as_of = order placed_at date), summed then averaged per product within the bucket. Round rates and averages to 2 decimals, revenue to whole EUR. Order by image_count_bucket in the natural ascending order listed (not alphabetical).",
+   "builds_on": []
+  },
+  {
+   "title": "Monthly Review Volume and Rating Trend",
+   "question": "How is customer review volume and average rating trending over time across the platform?",
+   "grain": "one row per calendar month from 2023-01 through 2025-12",
+   "columns": [
+    "month",
+    "review_count",
+    "avg_rating",
+    "pct_1_2_star",
+    "pct_5_star",
+    "pct_verified_purchase"
+   ],
+   "details": "Table: product_reviews filtered to is_approved = true, grouped by calendar month of created_at (use calendar_days.month_label or an equivalent month truncation, applied consistently). Include all tenants combined. review_count = count of approved reviews that month. pct_1_2_star = share of that month's reviews with rating in (1,2). pct_5_star = share with rating = 5. pct_verified_purchase = share with is_verified_purchase = true. Round avg_rating to 2 decimals, percentages to 1 decimal. Order by month ascending.",
+   "builds_on": []
+  }
+ ]
+}

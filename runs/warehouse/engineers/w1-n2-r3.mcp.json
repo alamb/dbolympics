@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Stock reservation outcomes: are soft holds reliable?",
+    "--question",
+    "When stock is reserved for an order, does the reservation get released normally (order fulfilled/cancelled in time), or do we see reservations left stuck past their expiry — quietly overstating what's actually available to sell?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Felix\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"reservation outcome category\", \"columns_requested\": [\"outcome_category\", \"reservation_count\", \"pct_of_total (rounded 1dp)\", \"total_quantity_units (sum of quantity across reservations in this category)\", \"avg_quantity_per_reservation (rounded 1dp)\", \"avg_hold_duration_days (for released rows: released_at minus created_at; for still-open rows: 2025-12-31 minus created_at; rounded 1dp)\"], \"details\": \"Source: stock_reservations where created_at is between 2025-01-01 and 2025-12-31. Define four mutually exclusive outcome categories, evaluated with 2025-12-31 as the fixed 'as of' reference date (the last date the warehouse has complete data for \\u2014 do not use CURRENT_DATE): (1) 'released_on_time' = released_at is not null and (expires_at is null or released_at <= expires_at); (2) 'released_late' = released_at is not null and expires_at is not null and released_at > expires_at; (3) 'stuck_past_expiry' = released_at is null and expires_at is not null and expires_at < 2025-12-31 (an expired hold that was never released \\u2014 the 'zombie' case that overstates unavailable stock); (4) 'still_open_active' = released_at is null and (expires_at is null or expires_at >= 2025-12-31). Order rows in that fixed category order (released_on_time, released_late, stuck_past_expiry, still_open_active) rather than alphabetically, so the report reads as a funnel.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

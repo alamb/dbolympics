@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Is admin_api scope concentrated in old keys, or standard across all ages?",
+    "--question",
+    "Are broadly-scoped (admin_api) keys specifically a feature of our oldest, longest-unrotated keys, or is that scope just how every integration key is set up regardless of age — i.e. is 'old + broad' a rotation failure or simply the norm?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per active-key age bucket (the same 5 buckets used previously: under 90 days, 90 days-1 year, 1-2 years, 2-4 years, 4+ years)\", \"columns_requested\": [\"age bucket\", \"total active keys in bucket\", \"of those, keys with rate_limits.limit_scope = 'admin_api'\", \"share admin_api-scoped (%)\", \"of those, keys with no matching rate_limits row ('no scope recorded')\", \"distinct tenants represented\"], \"details\": \"Source: api_keys where status = 'active', bucketed by age (2026-01-05 minus created_at) into the same 5 fixed ranges as the earlier age-distribution report, left-joined to rate_limits on api_key_id (count distinct api_keys.id per bucket to avoid double-counting if a key has multiple rate_limits rows). Order rows by bucket from youngest to oldest in the fixed sequence (not alphabetical), so the trend is readable top to bottom.\", \"builds_on\": [\"Active API key age distribution (rotation hygiene)\", \"Scope tally across all 76 long-lived (4+ year) active API keys\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

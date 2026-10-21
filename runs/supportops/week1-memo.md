@@ -1,0 +1,19 @@
+**Memo: Helpdesk Operating Review — Baseline Findings**
+**To:** Mia Schultz | **From:** Ben Carter | **Date:** Friday, 2026-01-09
+
+**1. SLA performance — the headline number (high confidence).**
+Of 2,320 tickets on an SLA policy in 2025, we missed first-response 37.7% of the time and resolution 20.3% of the time (Night 1, Report 3). I verified this isn't a labeling artifact: `sla_breaches.breach_kind` only ever takes two values, first_response (878 rows) and resolution (474 rows), matching the assumption almost exactly (Night 3, Report 1). Urgent tickets breach resolution worst — 50.6% vs. 3.6% for low priority — even though their time target is the tightest (480 min). Resolution breaches overshoot their target by an average of 6,497 minutes; at 474 breaches that's roughly 51,300 hours of elapsed overdue time sitting in the queue across the year (≈140 hrs/day) — not a labor cost, but a real measure of how far behind we fall once we miss.
+
+**2. Pain is concentrated in three merchants, not in channel or time of day.**
+Cragsley Outfitters, Marrowby & Vane, and Studio Vrij are 34.4% of all 2025 tickets, and all three post first-response breach rates of 55–60% vs. under 20% for most of the smaller tail (Night 2, Report 1). Cragsley has 8 agents and manages reasonably (29.8% resolution breach); Marrowby & Vane (5 agents, 39.4% breach, 5,096-min avg resolution) and especially Studio Vrij (4 agents, 38.6% breach, 7,504-min avg resolution) look genuinely under-resourced or handling harder cases. By contrast, channel explains almost nothing — resolution time spans only 2,626–2,940 minutes across channels (Night 3, Report 2) — and day-of-week/time-of-day breach rates bounce in a tight 30–49% band with no clear pattern (Night 2, Report 3). Unassigned tickets are rare (12 of 2,320) but breach almost universally when it happens — a tail risk, not a volume driver.
+
+**3. Speed drives satisfaction, cleanly.**
+CSAT falls in lockstep with resolution time: 4.38 under 4 hours, 3.81 at 4–24h, 2.74 at 1–3 days, 1.77 at 3–7 days, 1.71 beyond 7 days — and SLA breach share rises from 0% to 100% across the same buckets (Night 4, Report 3). This is the strongest, cleanest pattern in the whole review: speed (and our SLA target) is the dominant lever on satisfaction.
+
+**4. Topic matters, but tagging coverage needs checking.** "Damaged" (50.0%) and "account" (66.7%) tags carry far higher resolution-breach rates than "product-question" (4.5%) (Night 4, Report 2) — a plausible content/training target. I did not get a clean read on what share of tickets carry no tag at all, so I can't yet say how representative this is.
+
+**5. Macros and KB — partial read.** Macro use is concentrated (top 20 of 600 macros ≈ 27% of lifetime usage) but I don't trust the reliance ratio: lifetime macro usage (37,230) dwarfs even several years of 2025 agent-reply volume (4,279/year) (Night 3, Report 3) — something is off in what usage_count actually counts, so I'm not reporting a "% of replies that use a macro" figure. KB top articles show real quality spread (helpful rate 0.69–0.89 vs. platform avg 0.76, Night 4, Report 1), but I never got view-vs-ticket-volume data to test deflection, and this only covers the top 20 of 1,709 articles.
+
+**Caveats:** macro reliance ratio (above); tag coverage/double-counting; both platform-wide reports mix merchants of very different sizes under one topic/article label.
+
+**Next steps:** (1) dig into Marrowby & Vane and Studio Vrij specifically — staffing vs. ticket complexity; (2) get a real macro-usage-count definition from engineering before using it in a content ROI case; (3) measure KB view volume against ticket volume over time to test deflection; (4) check tag coverage % before leaning on the topic breakdown for routing decisions.

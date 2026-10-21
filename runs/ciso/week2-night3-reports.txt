@@ -1,0 +1,80 @@
+=== Report 1: Actor attribution in order_status_history, across all transition types (written by Omar) ===
+Engineer's note: Grain is one row per to_status, covering all transitions from 2023-01-01 through 2025-12-31 (created_at < 2026-01-01). Expect 7 rows, one per order status.
+REPORT: Actor attribution in order_status_history, across all transition types
+QUESTION: Is the missing 'who changed this' actor specific to order cancellations, or does order_status_history never record an actor for any status transition?
+to_status | total_transitions | transitions_with_actor | share_with_actor_pct | distinct_tenants
+----------+-------------------+------------------------+----------------------+-----------------
+pending   |             51039 |                      0 |                  0.0 |              118
+paid      |             49906 |                      0 |                  0.0 |              118
+fulfilled |             49257 |                      0 |                  0.0 |              118
+cancelled |              1712 |                      0 |                  0.0 |               90
+refunded  |              1586 |                      0 |                  0.0 |               74
+(5 rows)
+
+=== Report 2: Shopper authentication method mix: OAuth-linked vs password-only (written by Grace) ===
+Engineer's note: Recently-active match joins login_attempts to shoppers on tenant_id plus (user_id match OR email match), since login_attempts.email is not itself scoped by a global key; this follows the request's "matched by email or user_id" instruction as closely as the schema allows.
+REPORT: Shopper authentication method mix: OAuth-linked vs password-only
+QUESTION: Since shopper accounts have 0% MFA, what actually stands in for a second factor today — are most shoppers authenticating through an OAuth provider (Google/Apple/etc., which carries its own security), or are they overwhelmingly raw password-only accounts with no backup at all?
+method_category | shopper_user_count | share_of_shoppers_pct | confirmed_mfa_count | recently_active_count
+----------------+--------------------+-----------------------+---------------------+----------------------
+password-only   |               9910 |                  88.3 |                   0 |                  4743
+OAuth-linked    |               1309 |                  11.7 |                   0 |                   614
+(2 rows)
+
+=== Report 3: Detail list of the oldest active API keys (4+ years), by tenant (written by Viktor) ===
+Engineer's note: Grain is one row per api_key, except keys with multiple rate_limits rows produce one extra row per scope (left join), as requested. The "total_matching_keys" column gives the full count of qualifying active 4+-year-old keys (pre-cap) distinct by key id, since the 50-row cap only limits printed rows; rate_limits rows with a null api_key_id (tenant-wide defaults) are excluded as they aren't tied to a specific key.
+REPORT: Detail list of the oldest active API keys (4+ years), by tenant
+QUESTION: Henrik wants to know if the oldest, longest-unrotated API keys are concentrated among a few tenants/integrations and whether any show signs of broad/elevated access rather than narrow, routine use — here's the actual list.
+tenant_name                   | tenant_status | key_name                      | age_days | last_used_at               | days_since_last_use | limit_scope | max_requests | total_matching_keys
+------------------------------+---------------+-------------------------------+----------+----------------------------+---------------------+-------------+--------------+--------------------
+Grind Collective              | past_due      | Storefront app                |     2743 | 2025-12-31 22:35:59.999999 |                   5 | NULL        |         NULL |                  76
+Grind Collective              | past_due      | ERP sync                      |     2737 | 2025-12-31 22:58:22.999999 |                   5 | admin_api   |          120 |                  76
+Grind Collective              | past_due      | Marketplace product feed sync |     2706 | 2025-12-31 22:08:33.999999 |                   5 | admin_api   |          120 |                  76
+Marrowby & Vane               | active        | Storefront app                |     2666 | 2025-12-31 23:14:49.999999 |                   5 | NULL        |         NULL |                  76
+Marrowby & Vane               | active        | Marketplace product feed sync |     2663 | 2025-12-31 23:23:30.999999 |                   5 | admin_api   |          120 |                  76
+Marrowby & Vane               | active        | Accounting sync               |     2653 | 2025-12-31 22:45:37.999999 |                   5 | admin_api   |          120 |                  76
+Marrowby & Vane               | active        | ERP sync                      |     2651 | 2025-12-31 23:48:45.999999 |                   5 | admin_api   |          120 |                  76
+Marrowby & Vane               | active        | Warehouse management sync     |     2648 | 2025-12-31 22:42:37.999999 |                   5 | admin_api   |          120 |                  76
+Juniper Apothecary            | active        | Storefront app                |     2630 | 2025-12-31 23:09:28.999999 |                   5 | NULL        |         NULL |                  76
+Fennel & Flint                | active        | Storefront app                |     2516 | 2025-12-31 22:46:28.999999 |                   5 | NULL        |         NULL |                  76
+Fennel & Flint                | active        | ERP sync                      |     2515 | 2025-12-31 22:19:05.999999 |                   5 | admin_api   |          120 |                  76
+Fennel & Flint                | active        | Warehouse management sync     |     2515 | 2025-12-31 22:47:16.999999 |                   5 | admin_api   |          120 |                  76
+Fennel & Flint                | active        | Marketplace product feed sync |     2504 | 2025-12-31 22:03:22.999999 |                   5 | admin_api   |          120 |                  76
+Willow & Wren                 | active        | Storefront app                |     2489 | 2025-12-31 23:12:29.999999 |                   5 | NULL        |         NULL |                  76
+Cragsley Outfitters           | active        | Storefront app                |     2469 | 2025-12-31 23:04:46.999999 |                   5 | NULL        |         NULL |                  76
+Cragsley Outfitters           | active        | Marketplace product feed sync |     2460 | 2025-12-31 22:59:59.999999 |                   5 | admin_api   |          120 |                  76
+Cragsley Outfitters           | active        | ERP sync                      |     2442 | 2025-12-31 22:36:41.999999 |                   5 | admin_api   |          120 |                  76
+Cragsley Outfitters           | active        | Accounting sync               |     2438 | 2025-12-31 22:15:35.999999 |                   5 | admin_api   |          120 |                  76
+Cragsley Outfitters           | active        | Warehouse management sync     |     2433 | 2025-12-31 22:24:12.999999 |                   5 | admin_api   |          120 |                  76
+Honeycomb Larder              | active        | Storefront app                |     2388 | 2025-12-31 23:36:03.999999 |                   5 | NULL        |         NULL |                  76
+Wohnglück                     | active        | ERP sync                      |     2377 | 2025-12-31 23:21:04.999999 |                   5 | admin_api   |          120 |                  76
+Ballycorran Industrial Supply | active        | Storefront app                |     2372 | 2025-12-31 23:32:14.999999 |                   5 | NULL        |         NULL |                  76
+Spice Route Box               | active        | Storefront app                |     2371 | 2025-12-31 22:34:03.999999 |                   5 | NULL        |         NULL |                  76
+Wohnglück                     | active        | Warehouse management sync     |     2357 | 2025-12-31 22:19:26.999999 |                   5 | admin_api   |          120 |                  76
+Ballycorran Industrial Supply | active        | Marketplace product feed sync |     2349 | 2025-12-31 22:08:50.999999 |                   5 | admin_api   |          120 |                  76
+Spice Route Box               | active        | ERP sync                      |     2346 | 2025-12-31 23:24:45.999999 |                   5 | admin_api   |          120 |                  76
+Ballycorran Industrial Supply | active        | ERP sync                      |     2341 | 2025-12-31 22:34:42.999999 |                   5 | admin_api   |          120 |                  76
+Rue Lafayette Studio          | active        | Storefront app                |     2325 | 2025-12-31 23:14:44.999999 |                   5 | NULL        |         NULL |                  76
+Rue Lafayette Studio          | active        | ERP sync                      |     2289 | 2025-12-31 22:23:51.999999 |                   5 | admin_api   |          120 |                  76
+OfficeHub Nordic              | active        | ERP sync                      |     2275 | 2025-12-31 23:35:33.999999 |                   5 | admin_api   |          120 |                  76
+Velo Noord                    | active        | ERP sync                      |     2271 | 2025-12-31 23:51:26.999999 |                   5 | admin_api   |          120 |                  76
+Ostwind Mode                  | active        | ERP sync                      |     2259 | 2025-12-31 23:27:02.999999 |                   5 | admin_api   |          120 |                  76
+Ampfeld Elektronik            | active        | Storefront app                |     2252 | 2025-12-31 22:56:54.999999 |                   5 | NULL        |         NULL |                  76
+Ampfeld Elektronik            | active        | Warehouse management sync     |     2252 | 2025-12-31 22:48:30.999999 |                   5 | admin_api   |          120 |                  76
+Ampfeld Elektronik            | active        | Accounting sync               |     2236 | 2025-12-31 22:16:21.999999 |                   5 | admin_api   |          120 |                  76
+Ampfeld Elektronik            | active        | ERP sync                      |     2216 | 2025-12-31 23:09:07.999999 |                   5 | admin_api   |          120 |                  76
+Ampfeld Elektronik            | active        | Marketplace product feed sync |     2214 | 2025-12-31 22:04:43.999999 |                   5 | admin_api   |          120 |                  76
+Brennquell Kaffee             | active        | Storefront app                |     2155 | 2025-12-31 23:53:03.999999 |                   5 | NULL        |         NULL |                  76
+Brennquell Kaffee             | active        | Marketplace product feed sync |     2147 | 2025-12-31 22:04:12.999999 |                   5 | admin_api   |          120 |                  76
+Brennquell Kaffee             | active        | Warehouse management sync     |     2145 | 2025-12-31 23:46:20.999999 |                   5 | admin_api   |          120 |                  76
+Brennquell Kaffee             | active        | Accounting sync               |     2139 | 2025-12-31 22:49:48.999999 |                   5 | admin_api   |          120 |                  76
+Kontor24 Bürobedarf           | active        | Storefront app                |     2106 | 2025-12-31 23:20:17.999999 |                   5 | NULL        |         NULL |                  76
+Kontor24 Bürobedarf           | active        | Warehouse management sync     |     2103 | 2025-12-31 22:04:31.999999 |                   5 | admin_api   |          120 |                  76
+Kontor24 Bürobedarf           | active        | ERP sync                      |     2099 | 2025-12-31 22:00:32.999999 |                   5 | admin_api   |          120 |                  76
+Sourdough Club                | active        | Storefront app                |     2096 | 2025-12-31 23:00:34.999999 |                   5 | NULL        |         NULL |                  76
+Kettle & Key                  | active        | ERP sync                      |     2057 | 2025-12-31 22:49:44.999999 |                   5 | admin_api   |          120 |                  76
+Mirelle                       | active        | ERP sync                      |     2026 | 2025-12-31 23:56:22.999999 |                   5 | admin_api   |          120 |                  76
+Studio Vrij                   | active        | Storefront app                |     2022 | 2025-12-31 22:35:57.999999 |                   5 | NULL        |         NULL |                  76
+Studio Vrij                   | active        | Accounting sync               |     2015 | 2025-12-31 22:44:41.999999 |                   5 | admin_api   |          120 |                  76
+Studio Vrij                   | active        | ERP sync                      |     2012 | 2025-12-31 23:12:49.999999 |                   5 | admin_api   |          120 |                  76
+(50 rows)

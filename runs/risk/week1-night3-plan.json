@@ -1,0 +1,55 @@
+{
+ "notes": "Night 2 take-aways:\n\nReport 1 (DSAR reconciliation) resolved the mystery well: the \"overdue\" cases from report 1 night-1 are exactly 3 rejected erasure requests (oldest from 2023-05-26) that were decided but never got a completed_at timestamp written — a record-keeping gap on rejections, not evidence of 2.5-year-old unresolved requests. The 2 remaining open ones (in_progress/received) are from Dec 2025 and not yet due. Good news, but I can't yet tell Aylin *when* those 3 rejections were actually decided, which is exactly the kind of timestamp gap Rosa warned about — I want to check whether the audit/change-history trail can supply a real decision timestamp before we write anything definitive.\n\nReport 2 (elevated access by category): reassuring nuance — the 2 deactivated staff retain only the broad baseline categories (catalog/orders/customers/support, ~87-99% of all staff), not the more sensitive ones (billing, compliance, settings, crm — all 0 non-active holders). Combined with last night's avg_roles_per_user ≈ 1.02, this points to a roughly two-tier model: a broad base role nearly everyone has, and a second, more powerful role held by ~45-52% of staff. That's useful signal on \"how tightly is access controlled\" for the memo.\n\nReport 3 (role grant/revocation activity) came back as all zeros for all 36 months — either a genuine, serious audit-trail gap on user_roles changes (bad news for both Aylin's \"is access reviewed\" question and Rosa's audit-completeness concern), or my filter (entity_table = 'user_roles') simply doesn't match how these events are actually logged. I need to find out which before concluding anything, since this is too important a finding to assert on a guess.\n\nTonight (3 slots): (1) a diagnostic sweep of audit_log/audit_log_archive entity_table × action for the identity/access-control tables, to find out how (or whether) role and permission changes are actually logged — this resolves last night's zero-result mystery and is foundational before I can answer Aylin's \"is access reviewed\" question honestly; (2) cross-reference the 3 rejected DSARs against change_history/audit_log to recover a real decision timestamp, closing Rosa's timestamp-trust gap on the one finding most likely to be pressed on; (3) open priority #2 (login security) with real MFA adoption evidence by user segment, since #2 hasn't been touched yet and only one night remains after tonight before the Thursday sync.",
+ "requests": [
+  {
+   "title": "Audit log coverage for identity and access-control tables",
+   "question": "Which identity/access-control tables and actions actually appear in the audit trail, and under what naming — specifically, are role/permission grant and revocation events logged at all?",
+   "grain": "one row per combination of entity_table and action, counted across audit_log UNION audit_log_archive, restricted to entity_table in (users, roles, user_roles, role_permissions, permissions, teams, team_members, api_keys, invitations, mfa_devices, sessions, service_accounts, personal_access_tokens), all dates 2023-01-01 through 2025-12-31",
+   "columns": [
+    "entity_table",
+    "action",
+    "row_count",
+    "distinct_entity_id_count",
+    "min_occurred_at",
+    "max_occurred_at"
+   ],
+   "details": "Sources: audit_log and audit_log_archive (same shape, union them). Purpose: last night's 'role grant and revocation activity' report came back as all zeros for entity_table='user_roles' with action in (create, delete) across all 36 months, which is either a real and significant audit-trail gap or a mismatch in how these events are actually tagged (e.g. logged under a different entity_table spelling, or only as action='update' with changed_columns rather than create/delete rows). This report settles which it is. If any entity_table values close to this list but not exact matches exist (e.g. singular/plural variants), please include them too and note it. Order by entity_table, action.",
+   "builds_on": [
+    "Role grant and revocation activity over time"
+   ]
+  },
+  {
+   "title": "Resolution timing of rejected DSARs via audit trail",
+   "question": "For the data subject requests that were rejected without a completed_at timestamp, can the audit/change-history trail tell us when the rejection decision was actually made, and was it within the due date?",
+   "grain": "one row per rejected data_subject_requests record (expect 3 rows), no subject-identifying columns included",
+   "columns": [
+    "request_type",
+    "received_at",
+    "due_at",
+    "rejection_event_timestamp (occurred_at of the audit_log or change_history row recording the status change to 'rejected' for this request)",
+    "days_received_to_rejection_event",
+    "within_due_at (rejection_event_timestamp <= due_at)"
+   ],
+   "details": "Sources: data_subject_requests (status='rejected', completed_at is null; filter to the 3 rows identified last night), joined to change_history where entity_table='data_subject_requests' and entity_id = data_subject_requests.id and after_data contains status='rejected' (take the relevant occurred_at); if change_history has no matching row, fall back to audit_log where entity_table='data_subject_requests', entity_id matches, action='update', and summary/metadata indicates a status change, taking the latest such occurred_at before any later change. Please note in the report which source (change_history vs audit_log vs neither found) was used per row. Do not include subject_email or subject_user_id. Order by received_at ascending.",
+   "builds_on": [
+    "DSAR backlog reconciliation by status and request type"
+   ]
+  },
+  {
+   "title": "MFA device adoption by user segment and status",
+   "question": "What share of staff and customer accounts are protected by a confirmed MFA device, and does that differ by account status?",
+   "grain": "one row per combination of users.is_staff (true/false) and users.status, across all tenants, current-state snapshot as of 2025-12-31",
+   "columns": [
+    "is_staff",
+    "status",
+    "total_users (non-deleted)",
+    "users_with_confirmed_mfa (distinct user_id in mfa_devices where confirmed_at is not null)",
+    "pct_with_confirmed_mfa",
+    "users_with_any_mfa_device (confirmed or not)",
+    "pct_with_any_mfa_device"
+   ],
+   "details": "Sources: users (exclude deleted_at not null), mfa_devices. This is the first evidence report on login/authentication security (priority #2): I want a real, current number for 'what fraction of staff vs. customer accounts have MFA' broken out by account status, to see whether MFA coverage is meaningfully different for active staff (who hold tenant access) versus end customers, and whether any non-active accounts still show confirmed MFA (expected to be irrelevant but worth seeing). Order by is_staff descending, then status.",
+   "builds_on": []
+  }
+ ]
+}

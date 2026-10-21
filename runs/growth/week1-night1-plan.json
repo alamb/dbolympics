@@ -1,0 +1,53 @@
+{
+ "notes": "Chloé's #1 ask (channels) is pure orientation, so I'm spending two of tonight's three slots there to get both a traffic-side view (where sessions come from) and a conversion-side view (which channels actually get credit for orders/revenue) — these are different grains/sources (web_sessions vs attributions+campaigns) so they need separate reports. I collapsed each to a single 'channel' grain with a built-in YoY or share comparison instead of a month-by-channel matrix, to stay under the 50-row cap and still show 'what's normal' plus 'has it shifted'. Third slot starts Q2 (discounting) since it's next in priority and a simple monthly baseline will tell me quickly whether discounting is a big or small share of revenue before I dig into promo-order health specifics on a later night.",
+ "requests": [
+  {
+   "title": "Website traffic channel mix, 2025 vs 2024",
+   "question": "Which acquisition channels bring the most site traffic across all merchants, and how has that mix shifted versus a year ago?",
+   "grain": "one row per traffic channel (utm_source, bucketed)",
+   "columns": [
+    "channel - web_sessions.utm_source, with null/blank coalesced to 'direct/none'",
+    "sessions_2025 - count of web_sessions with started_at in 2025-01-01..2025-12-31",
+    "share_of_2025_sessions_pct - sessions_2025 / total 2025 sessions across all channels * 100, rounded to 1 decimal",
+    "sessions_2024 - count of web_sessions with started_at in 2024-01-01..2024-12-31, same channel bucketing",
+    "yoy_change_pct - (sessions_2025 - sessions_2024) / nullif(sessions_2024,0) * 100, rounded to 1 decimal",
+    "bounce_rate_2025_pct - share of 2025 sessions for that channel where is_bounce is true, *100, rounded to 1 decimal",
+    "avg_page_views_2025 - average page_view_count for 2025 sessions in that channel, rounded to 1 decimal"
+   ],
+   "details": "Source: web_sessions only, no tenant filter (aggregate across all merchants). Bucket channel as coalesce(nullif(trim(utm_source),''), 'direct/none'). Compute 2025 and 2024 metrics in the same row per channel. Rank by sessions_2025 descending and limit to the top 12 channels by that metric; break remaining ties by channel name ascending for a deterministic order. This is a single-grain (channel) summary, not a time series, to stay well under the row limit while still showing both current mix and year-over-year direction.",
+   "builds_on": []
+  },
+  {
+   "title": "Which marketing channels drive orders and revenue",
+   "question": "Among orders marketing can take credit for, which campaign channels generate the most attributed orders and revenue, and what's the resulting average order value?",
+   "grain": "one row per campaign channel (campaigns.channel)",
+   "columns": [
+    "channel - campaigns.channel",
+    "attributed_orders - count of distinct attributions.order_id where order_id is not null",
+    "attributed_revenue_eur - sum of attributions.attributed_revenue converted to EUR, rounded to 0 decimals",
+    "share_of_revenue_pct - attributed_revenue_eur / total attributed_revenue_eur across all channels * 100, rounded to 1 decimal",
+    "avg_order_value_eur - attributed_revenue_eur / attributed_orders, rounded to 0 decimals"
+   ],
+   "details": "Source: attributions joined to campaigns on campaign_id to get channel; filter attributions.occurred_at in 2025-01-01..2025-12-31 and order_id is not null (i.e. actual purchase-linked touches, not view-through-only rows). Convert attributed_revenue to EUR using exchange_rates: join on base_code='EUR', quote_code = attributions.currency_code, as_of = the calendar date of occurred_at; amount_eur = attributed_revenue / rate (treat currency_code='EUR' as rate 1). No tenant filter — aggregate across all merchants. Order by attributed_revenue_eur descending, tie-break by channel ascending. Expect well under 50 rows since campaigns.channel is a small code list.",
+   "builds_on": []
+  },
+  {
+   "title": "Discounting baseline: monthly coupon usage and discount rate",
+   "question": "How much discounting is happening platform-wide each month, and how often are coupon codes actually used?",
+   "grain": "one row per calendar month (2025)",
+   "columns": [
+    "month - YYYY-MM label for the order's placed_at month",
+    "orders_count - count of orders with placed_at in that month and status not in ('cancelled')",
+    "orders_with_discount_count - count of those orders where discount_total > 0",
+    "discount_rate_pct - orders_with_discount_count / orders_count * 100, rounded to 1 decimal",
+    "total_order_revenue_eur - sum of orders.grand_total (net of discount) converted to EUR for that month's orders, rounded to 0 decimals",
+    "total_discount_amount_eur - sum of orders.discount_total converted to EUR for that month's orders, rounded to 0 decimals",
+    "discount_share_of_gmv_pct - total_discount_amount_eur / (total_order_revenue_eur + total_discount_amount_eur) * 100, rounded to 1 decimal (discount as a share of pre-discount gross merchandise value)",
+    "distinct_coupons_used - count of distinct coupon_id in coupon_redemptions where redeemed_at falls in that month",
+    "avg_discount_per_discounted_order_eur - total_discount_amount_eur / nullif(orders_with_discount_count,0), rounded to 0 decimals"
+   ],
+   "details": "Primary source: orders (placed_at for month bucketing, status != 'cancelled', discount_total/grand_total for discount figures). Convert each order's currency_code amounts to EUR using exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of = date of placed_at; EUR itself = rate 1). Secondary source: coupon_redemptions.redeemed_at for distinct_coupons_used, same month bucketing, no currency conversion needed for that count. No tenant filter — platform-wide. Cover months 2025-01 through 2025-12 only (use calendar_days or date_trunc on placed_at). Order by month ascending.",
+   "builds_on": []
+  }
+ ]
+}

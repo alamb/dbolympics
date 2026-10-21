@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Castell Fasteners traffic drop: seasonal pattern or anomaly across B2B wholesale merchants",
+    "--question",
+    "Is Castell Fasteners Q4 web traffic decline normal seasonal behavior shared by other B2B wholesale merchants, or a Castell-specific anomaly?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Ines\", \"situation\": \"churn-task-force\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per B2B wholesale merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"industry\", \"web sessions Oct-Dec 2023\", \"web sessions Oct-Dec 2024\", \"web sessions Oct-Dec 2025\", \"YoY growth pct 2024 to 2025\", \"YoY growth pct 2023 to 2024\"], \"details\": \"Tables web_sessions (started_at, tenant_id) and tenants (name, industry). Restrict to the B2B wholesale peer group: Castell Fasteners, OfficeHub Nordic, Deskline Supplies, Ballycorran Industrial Supply, Midland Safety Wear, Polder Packaging, Kontor24 Burobedarf. For each merchant count web_sessions with started_at from Oct 1 through Dec 31 in 2023, 2024 and 2025 separately. YoY growth pct 2024 to 2025 equals the 2025 count minus the 2024 count, divided by the 2024 count, blank if the 2024 count is zero; YoY growth pct 2023 to 2024 defined the same way. Order by web sessions Oct-Dec 2025 descending, tie-break tenant_id ascending. Cap 50 rows.\", \"builds_on\": [\"Merchant risk signals: refunds, cancellations, unpaid invoices, shopper drop-off\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

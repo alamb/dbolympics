@@ -1,0 +1,86 @@
+=== Report 1: B2B wholesale tenants identified by CRM deal activity, with revenue and receivables (written by Felix) ===
+Engineer's note: Population is every tenant with at least one deals row (deals holds only closed-won B2B contracts per the catalog, so all rows qualify). pct_amount_due_overdue is left NULL for tenants with zero open_amount_due_eur, since the ratio is undefined; all monetary sums are EUR-converted using the exchange rate for the specified date as instructed.
+REPORT: B2B wholesale tenants identified by CRM deal activity, with revenue and receivables
+QUESTION: Which tenants are actually operating as B2B wholesalers (by using the deals/CRM module, not just by industry label), how much 2025 revenue do they represent, and what does their receivables picture look like on the corrected tenant list?
+tenant_name                   | industry                  | deal_count | total_contract_value_eur | total_2025_revenue_eur | pct_of_total_2025_revenue | open_amount_due_eur | pct_amount_due_overdue
+------------------------------+---------------------------+------------+--------------------------+------------------------+---------------------------+---------------------+-----------------------
+OfficeHub Nordic              | Office Supplies (B2B)     |         78 |                582407.88 |              426010.27 |                      15.2 |            14348.57 |                    2.5
+Castell Fasteners             | Industrial Supplies (B2B) |         68 |                 519795.7 |              386487.62 |                      13.7 |            14481.02 |                   23.8
+Deskline Supplies             | Office Supplies (B2B)     |         11 |                 92786.27 |              281736.43 |                      10.0 |            12749.42 |                    0.0
+Ballycorran Industrial Supply | Industrial Supplies (B2B) |        136 |                      0.0 |                    0.0 |                       0.0 |                 0.0 |                   NULL
+Hanse Industriebedarf         | Industrial Supplies (B2B) |         32 |                      0.0 |                    0.0 |                       0.0 |                 0.0 |                   NULL
+Kontor24 Bürobedarf           | Office Supplies (B2B)     |        114 |                      0.0 |                    0.0 |                       0.0 |                 0.0 |                   NULL
+Midland Safety Wear           | Industrial Supplies (B2B) |         77 |                      0.0 |                    0.0 |                       0.0 |                 0.0 |                   NULL
+Papeterie Grossiste           | Office Supplies (B2B)     |          6 |                      0.0 |                    0.0 |                       0.0 |                 0.0 |                   NULL
+Polder Packaging              | Industrial Supplies (B2B) |         21 |                      0.0 |                    0.0 |                       0.0 |                 0.0 |                   NULL
+(9 rows)
+
+=== Report 2: Existing customer/audience definitions already in use (written by Viktor) ===
+Engineer's note: Top 50 named audience definitions (segments + cohorts) across all tenants by member_count, with rules/definition JSON truncated to 500 chars for display. Note: deleted_at is not filtered on either table, so soft-deleted segments/cohorts are included if present.
+REPORT: Existing customer/audience definitions already in use
+QUESTION: Do any marketing segments or analytics cohorts already encode a definition like 'customers who purchased recently' or 'all customers', so we can certify a customer count the business already uses rather than inventing a new one?
+source  | tenant_name            | name                                | is_dynamic | member_count | rules_definition                         | last_updated       
+--------+------------------------+-------------------------------------+------------+--------------+------------------------------------------+--------------------
+segment | Cragsley Outfitters    | All subscribers                     | true       |          849 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+segment | Cragsley Outfitters    | Lapsed 90 days                      | true       |          400 | {"all":[{"field":"last_order_days_ago"," | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Customers before the 2023 migration | false      |          348 | {"signed_up_before":"2023-01-01"}        | 2023-01-01 04:00:00
+segment | Cragsley Outfitters    | VIP customers                       | true       |          343 | {"all":[{"field":"orders_count","op":"gt | 2025-12-31 02:17:00
+segment | Marrowby & Vane        | All subscribers                     | true       |          316 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+segment | Brennquell Kaffee      | All subscribers                     | true       |          179 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+cohort  | Brennquell Kaffee      | Customers before the 2023 migration | false      |          175 | {"signed_up_before":"2023-01-01"}        | 2023-01-01 04:00:00
+segment | Marrowby & Vane        | Lapsed 90 days                      | true       |          155 | {"all":[{"field":"last_order_days_ago"," | 2025-12-31 02:17:00
+cohort  | Marrowby & Vane        | Customers before the 2023 migration | false      |          154 | {"signed_up_before":"2023-01-01"}        | 2023-01-01 04:00:00
+segment | Ampfeld Elektronik     | All subscribers                     | true       |          136 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+segment | Cragsley Outfitters    | New customers (30 days)             | true       |          132 | {"all":[{"field":"first_order_days_ago", | 2025-12-31 02:17:00
+segment | Studio Vrij            | All subscribers                     | true       |          129 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+segment | Marrowby & Vane        | VIP customers                       | true       |          126 | {"all":[{"field":"orders_count","op":"gt | 2025-12-31 02:17:00
+segment | Brennquell Kaffee      | VIP customers                       | true       |          111 | {"all":[{"field":"orders_count","op":"gt | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Signed up 2024-12                   | false      |          109 | {"signed_up_from":"2024-12-01","signed_u | 2025-01-01 04:00:00
+segment | Petalcourt Beauty      | All subscribers                     | true       |          101 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+segment | Cinder Peak Sports Co. | All subscribers                     | true       |           98 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Signed up 2023-11                   | false      |           97 | {"signed_up_from":"2023-11-01","signed_u | 2023-12-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2025-11                   | false      |           95 | {"signed_up_from":"2025-11-01","signed_u | 2025-12-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2024-11                   | false      |           93 | {"signed_up_from":"2024-11-01","signed_u | 2024-12-01 04:00:00
+segment | Fennel & Flint         | All subscribers                     | true       |           93 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Signed up 2025-10                   | false      |           83 | {"signed_up_from":"2025-10-01","signed_u | 2025-11-01 04:00:00
+segment | Brennquell Kaffee      | Lapsed 90 days                      | true       |           80 | {"all":[{"field":"last_order_days_ago"," | 2025-12-31 02:17:00
+cohort  | Studio Vrij            | Customers before the 2023 migration | false      |           77 | {"signed_up_before":"2023-01-01"}        | 2023-01-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2023-12                   | false      |           74 | {"signed_up_from":"2023-12-01","signed_u | 2024-01-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2024-05                   | false      |           72 | {"signed_up_from":"2024-05-01","signed_u | 2024-06-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2025-05                   | false      |           71 | {"signed_up_from":"2025-05-01","signed_u | 2025-06-01 04:00:00
+cohort  | Ampfeld Elektronik     | Customers before the 2023 migration | false      |           70 | {"signed_up_before":"2023-01-01"}        | 2023-01-01 04:00:00
+segment | Ampfeld Elektronik     | Lapsed 90 days                      | true       |           70 | {"all":[{"field":"last_order_days_ago"," | 2025-12-31 02:17:00
+segment | Studio Vrij            | Lapsed 90 days                      | true       |           69 | {"all":[{"field":"last_order_days_ago"," | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Signed up 2024-10                   | false      |           68 | {"signed_up_from":"2024-10-01","signed_u | 2024-11-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2025-07                   | false      |           68 | {"signed_up_from":"2025-07-01","signed_u | 2025-08-01 04:00:00
+segment | Linden & Loom          | All subscribers                     | true       |           67 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Signed up 2024-04                   | false      |           63 | {"signed_up_from":"2024-04-01","signed_u | 2024-05-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2025-04                   | false      |           63 | {"signed_up_from":"2025-04-01","signed_u | 2025-05-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2025-09                   | false      |           61 | {"signed_up_from":"2025-09-01","signed_u | 2025-10-01 04:00:00
+segment | Gratlinie Outdoor      | All subscribers                     | true       |           60 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Signed up 2024-07                   | false      |           59 | {"signed_up_from":"2024-07-01","signed_u | 2024-08-01 04:00:00
+segment | Wiesgrund Wohnen       | All subscribers                     | true       |           59 | {"all":[{"field":"marketing_opt_in","op" | 2025-12-31 02:17:00
+segment | Marrowby & Vane        | New customers (30 days)             | true       |           58 | {"all":[{"field":"first_order_days_ago", | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Signed up 2024-03                   | false      |           57 | {"signed_up_from":"2024-03-01","signed_u | 2024-04-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2025-03                   | false      |           57 | {"signed_up_from":"2025-03-01","signed_u | 2025-04-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2025-06                   | false      |           56 | {"signed_up_from":"2025-06-01","signed_u | 2025-07-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2025-08                   | false      |           56 | {"signed_up_from":"2025-08-01","signed_u | 2025-09-01 04:00:00
+cohort  | Studio Vrij            | Signed up 2025-05                   | false      |           56 | {"signed_up_from":"2025-05-01","signed_u | 2025-06-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2023-04                   | false      |           55 | {"signed_up_from":"2023-04-01","signed_u | 2023-05-01 04:00:00
+segment | Cinder Peak Sports Co. | Lapsed 90 days                      | true       |           54 | {"all":[{"field":"last_order_days_ago"," | 2025-12-31 02:17:00
+cohort  | Cragsley Outfitters    | Signed up 2023-03                   | false      |           54 | {"signed_up_from":"2023-03-01","signed_u | 2023-04-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2024-06                   | false      |           54 | {"signed_up_from":"2024-06-01","signed_u | 2024-07-01 04:00:00
+cohort  | Cragsley Outfitters    | Signed up 2023-10                   | false      |           53 | {"signed_up_from":"2023-10-01","signed_u | 2023-11-01 04:00:00
+(50 rows)
+
+=== Report 3: Payment capture lag by payment method (written by Bea) ===
+Engineer's note: Payment_count reflects the exact population described (status + order join); the three timing measures additionally require non-null captured_at/placed_at since the day-gap can't be computed otherwise, which in practice is the same rows (captured/refunded statuses always have captured_at set).
+REPORT: Payment capture lag by payment method
+QUESTION: Does the 8-14 day dip in order-to-payment match rate trace to a specific payment method with inherently slower capture (e.g. bank transfer or wire), supporting the 'it's timing, not a hole' explanation?
+kind          | payment_count | avg_days_order_to_capture | pct_captured_within_7_days | pct_captured_within_14_days
+--------------+---------------+---------------------------+----------------------------+----------------------------
+bank_transfer |          5169 |                      15.7 |                       60.2 |                        61.1
+card          |         25644 |                       0.0 |                      100.0 |                       100.0
+credit        |          1669 |                       0.0 |                      100.0 |                       100.0
+wallet        |          7458 |                       0.0 |                      100.0 |                       100.0
+(4 rows)

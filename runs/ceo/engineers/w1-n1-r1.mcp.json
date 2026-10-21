@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant revenue concentration, trailing 12 months",
+    "--question",
+    "Which merchants account for the bulk of Tidewick's processing volume and fee revenue over the last 12 months, and how concentrated is it?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"industry/vertical\", \"gross payment volume (EUR, sum of payouts.gross_amount)\", \"fee revenue (EUR, sum of payouts.fee_amount \\u2014 Tidewick's processing take)\", \"net paid to merchant (EUR, sum of payouts.net_amount)\", \"share of total fee revenue (%)\", \"cumulative share of total fee revenue (%)\"], \"details\": \"Source: payouts joined to tenants on tenant_id (for name, industry). Window: paid_at between 2025-01-01 and 2025-12-31 inclusive, restricted to payouts that actually paid out (paid_at is not null; please also check what status values exist and only include ones that represent completed/settled payouts, excluding anything clearly reversed/failed if such a status exists). Convert each payout's currency_code amount to EUR using exchange_rates (base_code='EUR', quote_code=payout currency_code, as_of = the payout's paid_at date, amount_eur = amount / rate). Aggregate per tenant_id across the window. Rank merchants by fee revenue (EUR) descending and compute each merchant's share of the grand total fee revenue and a running cumulative share down the ranked list. Order by fee revenue EUR descending, tie-break by merchant name ascending. Print top 50 rows; note in the report how many merchants (tenants) had at least one payout in the window in total.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

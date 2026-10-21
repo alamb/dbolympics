@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale New-Business Opportunities: Created vs Closed by Month",
+    "--question",
+    "Did new-deal creation actually stop or slow down recently, or did deals just happen to all get closed out right as the data ends — i.e., is the 'zero open pipeline' at Dec 2025 a real freeze or a coincidence of timing?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Ines\", \"situation\": \"b2b-pipeline-review\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per calendar month, 2023-01 through 2025-12\", \"columns_requested\": [\"month\", \"opportunities_created\", \"opportunities_closed\"], \"details\": \"Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), opportunities where pipeline_id = each tenant's 'New business' pipeline. opportunities_created = count where created_at falls in that month, regardless of status. opportunities_closed = count where closed_at falls in that month (is_closed = true). Full history 2023-01-01 through 2025-12-31. This follows up on last night's finding that every month from 2023 through Nov 2025 had a handful of opportunities genuinely open at month-end (sometimes 40-70+ days old), but Dec 2025 (and two earlier isolated months) showed zero \\u2014 I want to see whether opportunity creation volume for Oct-Dec 2025 looks normal compared to the rest of 2025, or whether it tailed off, which would point to a data-freshness/ingestion gap for very recent records rather than a real pipeline freeze. Order by month ascending.\", \"builds_on\": [\"Did B2B Wholesale New-Business Pipeline Ever Carry an Open Balance at Month-End?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

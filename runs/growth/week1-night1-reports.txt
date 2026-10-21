@@ -1,0 +1,45 @@
+=== Report 1: Website traffic channel mix, 2025 vs 2024 (written by Viktor) ===
+Engineer's note: Channel mix and YoY shift across all merchants, top 12 channels by 2025 sessions; bounce rate and avg page views cover 2025 only as requested.
+REPORT: Website traffic channel mix, 2025 vs 2024
+QUESTION: Which acquisition channels bring the most site traffic across all merchants, and how has that mix shifted versus a year ago?
+channel     | sessions_2025 | share_of_2025_sessions_pct | sessions_2024 | yoy_change_pct | bounce_rate_2025_pct | avg_page_views_2025
+------------+---------------+----------------------------+---------------+----------------+----------------------+--------------------
+direct/none |         20644 |                       57.4 |         16367 |           26.1 |                 44.1 |                 4.5
+google      |          6895 |                       19.2 |          6433 |            7.2 |                 43.1 |                 4.4
+instagram   |          5024 |                       14.0 |          4149 |           21.1 |                 59.9 |                 3.4
+referral    |          2774 |                        7.7 |          2204 |           25.9 |                 45.9 |                 4.5
+facebook    |           381 |                        1.1 |           876 |          -56.5 |                 57.5 |                 3.4
+newsletter  |           253 |                        0.7 |           227 |           11.5 |                 35.6 |                 5.8
+(6 rows)
+
+=== Report 2: Which marketing channels drive orders and revenue (written by Omar) ===
+Engineer's note: EUR conversion uses exchange_rates with base_code='EUR', quote_code=currency_code, as_of=date of occurred_at (rate=1 for EUR); if a rate is missing for a given currency/day the row's revenue will be null in the sum rather than silently dropped, worth a data-quality check if totals look off.
+REPORT: Which marketing channels drive orders and revenue
+QUESTION: Among orders marketing can take credit for, which campaign channels generate the most attributed orders and revenue, and what's the resulting average order value?
+channel     | attributed_orders | attributed_revenue_eur | share_of_revenue_pct | avg_order_value_eur
+------------+-------------------+------------------------+----------------------+--------------------
+paid_search |              2503 |               640581.0 |                 78.6 |               256.0
+email       |               519 |               152494.0 |                 18.7 |               294.0
+paid_social |                70 |                17313.0 |                  2.1 |               247.0
+influencer  |                26 |                 4535.0 |                  0.6 |               174.0
+(4 rows)
+
+=== Report 3: Discounting baseline: monthly coupon usage and discount rate (written by Ines) ===
+Engineer's note: EUR conversion uses exchange_rates (base=EUR, quote=order currency, as_of=placed_at date); EUR-denominated orders use rate 1 directly since EUR/EUR is not guaranteed to be stored. All 12 months of 2025 are included via calendar_days even if an month had zero qualifying orders/redemptions (shown as 0/NULL rate).
+REPORT: Discounting baseline: monthly coupon usage and discount rate
+QUESTION: How much discounting is happening platform-wide each month, and how often are coupon codes actually used?
+month   | orders_count | orders_with_discount_count | discount_rate_pct | total_order_revenue_eur | total_discount_amount_eur | discount_share_of_gmv_pct | distinct_coupons_used | avg_discount_per_discounted_order_eur
+--------+--------------+----------------------------+-------------------+-------------------------+---------------------------+---------------------------+-----------------------+--------------------------------------
+2025-01 |         1768 |                        940 |              53.2 |                  578716 |                     48507 |                       7.7 |                    28 |                                  52.0
+2025-02 |         1370 |                        497 |              36.3 |                  430561 |                     25731 |                       5.6 |                    30 |                                  52.0
+2025-03 |         1586 |                        559 |              35.2 |                  403598 |                     28344 |                       6.6 |                    27 |                                  51.0
+2025-04 |         1520 |                        528 |              34.7 |                  471989 |                     32179 |                       6.4 |                    28 |                                  61.0
+2025-05 |         1633 |                        595 |              36.4 |                  463804 |                     32917 |                       6.6 |                    35 |                                  55.0
+2025-06 |         1461 |                        495 |              33.9 |                  346256 |                     24022 |                       6.5 |                    26 |                                  49.0
+2025-07 |         1596 |                        940 |              58.9 |                  365113 |                     49877 |                      12.0 |                    22 |                                  53.0
+2025-08 |         1502 |                        549 |              36.6 |                  331782 |                     24889 |                       7.0 |                    35 |                                  45.0
+2025-09 |         1659 |                        601 |              36.2 |                  465898 |                     36138 |                       7.2 |                    35 |                                  60.0
+2025-10 |         1828 |                        610 |              33.4 |                  489962 |                     33807 |                       6.5 |                    40 |                                  55.0
+2025-11 |         2550 |                        949 |              37.2 |                  817689 |                     82706 |                       9.2 |                    96 |                                  87.0
+2025-12 |         2994 |                        818 |              27.3 |                  671070 |                     48827 |                       6.8 |                    89 |                                  60.0
+(12 rows)

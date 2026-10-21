@@ -1,0 +1,69 @@
+=== Report 1: Loyalty point economics by vertical: cost and liability (written by Grace) ===
+Engineer's note: loyalty_transactions.direction isn't an enumerated column in the catalog, so I assumed 'burn' is the code for points spent/redeemed (matching the table's 'earn/burn ledger' description) — please confirm this matches the actual data, as a different code would change points_redeemed_value_eur and redemption_cost_pct.
+REPORT: Loyalty point economics by vertical: cost and liability
+QUESTION: Within each vertical that runs a loyalty program, how much of members' revenue is given back as redeemed points, and how large is the unredeemed points liability sitting on the books?
+industry              | members_count | member_revenue_eur | points_redeemed_value_eur | redemption_cost_pct | outstanding_points_value_eur
+----------------------+---------------+--------------------+---------------------------+---------------------+-----------------------------
+Apparel & Footwear    |           619 |           169382.0 |                   40169.0 |                23.7 |                     191607.0
+Beauty                |            45 |             7535.0 |                    2331.0 |                30.9 |                       8845.0
+Books & Stationery    |             8 |                0.0 |                       0.0 |                NULL |                          0.0
+Consumer Electronics  |            25 |            18693.0 |                    1751.0 |                 9.4 |                      10685.0
+Food & Coffee         |             7 |                0.0 |                       0.0 |                NULL |                          0.0
+Home & Living         |            26 |             4511.0 |                       0.0 |                NULL |                       5510.0
+Jewelry & Accessories |             0 |                0.0 |                       0.0 |                NULL |                          0.0
+Pet Supplies          |             4 |                0.0 |                       0.0 |                NULL |                          0.0
+Sports & Outdoor      |           128 |           108399.0 |                   17871.0 |                16.5 |                     137813.0
+(9 rows)
+
+=== Report 2: Loyalty worth by vertical: repeat-purchase rate (written by Omar) ===
+Engineer's note: Loyalty membership is defined as having any loyalty_accounts row for that user+tenant (regardless of which program); "repeat" counts distinct placed_at calendar days (>=2) per user, while avg_orders_per_user counts all 2025 orders. Industries are included if any tenant in that industry has an active loyalty program, but all orders/users in that industry (across all its tenants) are counted, not just the tenant(s) with the active program.
+REPORT: Loyalty worth by vertical: repeat-purchase rate
+QUESTION: Controlling for category, do loyalty members actually come back and buy again more than non-members, or does that pattern not hold either once you look within a vertical?
+industry              | segment        | users_count | repeat_rate_pct | avg_orders_per_user | avg_order_value_eur
+----------------------+----------------+-------------+-----------------+---------------------+--------------------
+Apparel & Footwear    | loyalty member |         619 |            58.5 |                2.53 |                 165
+Apparel & Footwear    | non-member     |        2140 |            59.6 |                2.62 |                 189
+Beauty                | loyalty member |          45 |            62.2 |                2.84 |                 102
+Beauty                | non-member     |         447 |            65.1 |                3.22 |                  96
+Books & Stationery    | loyalty member |           8 |            62.5 |                3.13 |                  69
+Books & Stationery    | non-member     |          47 |            63.8 |                2.85 |                  48
+Consumer Electronics  | loyalty member |          25 |            72.0 |                2.28 |                 446
+Consumer Electronics  | non-member     |         250 |            45.2 |                2.08 |                1114
+Food & Coffee         | loyalty member |           7 |           100.0 |                7.71 |                  61
+Food & Coffee         | non-member     |         831 |            85.1 |                8.64 |                  30
+Home & Living         | loyalty member |          26 |            65.4 |                2.23 |                 144
+Home & Living         | non-member     |         710 |            52.0 |                2.26 |                 149
+Jewelry & Accessories | non-member     |          29 |            41.4 |                1.72 |                 217
+Pet Supplies          | loyalty member |           4 |            75.0 |                4.00 |                  49
+Pet Supplies          | non-member     |         229 |            80.3 |                6.28 |                  37
+Sports & Outdoor      | loyalty member |         128 |            53.9 |                2.56 |                 355
+Sports & Outdoor      | non-member     |         330 |            49.7 |                2.09 |                 372
+(17 rows)
+
+=== Report 3: Referral reach and value by vertical (written by Ines) ===
+Engineer's note: Segment order is 'referrer' then 'non-referrer' within each industry, as the request allowed either consistent order. A user is tagged 'referrer' if they appear as referrals.referrer_user_id for the same tenant_id, regardless of whether that referral was ever redeemed. Tenants with a null industry are excluded since they can't be assigned a row.
+REPORT: Referral reach and value by vertical
+QUESTION: Which verticals already have the most referral-driven customers relative to their size, and does the referrer revenue advantage seen platform-wide hold within each vertical too?
+industry                  | segment      | users_count | share_of_industry_users_pct | avg_orders_per_user | avg_order_value_eur
+--------------------------+--------------+-------------+-----------------------------+---------------------+--------------------
+Apparel & Footwear        | referrer     |         104 |                        4.58 |                4.02 |               179.0
+Apparel & Footwear        | non-referrer |        2168 |                       95.42 |                2.55 |               187.0
+Beauty                    | referrer     |          25 |                        6.04 |                4.68 |                84.0
+Beauty                    | non-referrer |         389 |                       93.96 |                2.99 |               100.0
+Books & Stationery        | referrer     |           4 |                        9.76 |                4.25 |                55.0
+Books & Stationery        | non-referrer |          37 |                       90.24 |                2.76 |                47.0
+Consumer Electronics      | non-referrer |          20 |                       100.0 |                2.35 |               796.0
+Food & Coffee             | referrer     |          24 |                       12.12 |               13.67 |                19.0
+Food & Coffee             | non-referrer |         174 |                       87.88 |                8.37 |                29.0
+Home & Living             | referrer     |          16 |                        4.13 |                4.94 |               187.0
+Home & Living             | non-referrer |         371 |                       95.87 |                2.06 |               156.0
+Industrial Supplies (B2B) | referrer     |           5 |                       14.29 |                 7.4 |              2136.0
+Industrial Supplies (B2B) | non-referrer |          30 |                       85.71 |                4.07 |              2530.0
+Jewelry & Accessories     | non-referrer |           9 |                       100.0 |                1.56 |               235.0
+Office Supplies (B2B)     | referrer     |           8 |                       16.67 |                7.13 |              1705.0
+Office Supplies (B2B)     | non-referrer |          40 |                       83.33 |                 4.7 |              3279.0
+Pet Supplies              | referrer     |          20 |                       10.87 |                 9.3 |                36.0
+Pet Supplies              | non-referrer |         164 |                       89.13 |                 5.7 |                41.0
+Sports & Outdoor          | referrer     |          13 |                        5.33 |                3.69 |               422.0
+Sports & Outdoor          | non-referrer |         231 |                       94.67 |                2.19 |               381.0
+(20 rows)

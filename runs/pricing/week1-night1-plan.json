@@ -1,0 +1,60 @@
+{
+ "notes": "Marco and Tobias both want: (1) cost vs. lift per discount, (2) incrementality read, (3) abuse/concentration signals, (4) margin erosion via returns/refunds, (5) merchant/vertical concentration. That's 5 questions but only 3 slots tonight, so I'm front-loading the foundational, non-overlapping pieces that everything else will build on, and saving the harder incrementality/refund-overlap asks for later nights once I've seen where the money actually sits:\n1. A discount-level cost-vs-lift report (answers Marco Q1) — this is the spine of the whole review.\n2. A tenant/vertical concentration report (answers Marco Q5 / Tobias Q3 concentration) — I want this early because it tells me whether the Q1 rankings are really \"a few big promotions\" or \"a few big merchants,\" which changes how I read everything else.\n3. A coupon-level abuse/misuse report (answers Marco Q3 / Tobias Q3 abuse) — distinct customers, repeat redemption, limit violations, post-expiry usage, since this is a pure redemption-pattern question independent of revenue lift.\nI'm holding off on incrementality (Q2) and returns/refund leakage (Q4) until I see which discounts and tenants actually matter — no point building a careful before/after spend comparison for a promotion that turns out to be trivial. All three reports use 2025 full-year data (most relevant to the 2026 budget conversation) with amounts converted to EUR via exchange_rates so merchants in different currencies are comparable.",
+ "requests": [
+  {
+   "title": "Discount cost vs. order volume/revenue by discount, 2025",
+   "question": "Which discounts (promotions/coupons) cost us the most in 2025, and how much order volume and revenue do they sit on?",
+   "grain": "one row per discount (discounts.id, i.e. the underlying discount definition behind a coupon or automatic promotion)",
+   "columns": [
+    "discount name",
+    "discount kind (percentage/fixed_amount/free_shipping/bogo)",
+    "linked coupon code(s) (comma-joined, or 'automatic' if none)",
+    "total discount amount (EUR)",
+    "order count",
+    "total order revenue, grand_total (EUR)",
+    "discount amount as % of order revenue",
+    "distinct customers",
+    "first order date",
+    "last order date"
+   ],
+   "details": "Source: order_discounts joined to orders (for grand_total, currency_code, placed_at, user_id) and discounts (for name, kind); coupons for code where order_discounts.coupon_id is set. Filter orders.placed_at in 2025-01-01 to 2025-12-31 inclusive, exclude cancelled orders (status != 'cancelled'). Convert amounts to EUR using exchange_rates (base_code='EUR', quote_code=order's currency_code, as_of=placed_at date; weekends carry prior business day rate per handbook) — divide local amount by rate to get EUR, or use the appropriate direction so figures are genuinely in EUR. Order by total discount amount (EUR) descending. Report total row count returned; print top 50.",
+   "builds_on": []
+  },
+  {
+   "title": "Discount spend concentration by tenant and vertical, 2025",
+   "question": "Are one or two merchants (or one vertical) responsible for most of our discount spend, relative to their share of revenue?",
+   "grain": "one row per tenant",
+   "columns": [
+    "tenant name",
+    "vertical (tenants.industry)",
+    "total discount amount (EUR)",
+    "total order revenue, grand_total (EUR)",
+    "discount amount as % of order revenue",
+    "order count",
+    "distinct discount codes/coupons used",
+    "share of company-wide discount spend (%)"
+   ],
+   "details": "Source: order_discounts joined to orders (grand_total, currency_code, placed_at, status) and tenants (name, industry, default_currency_code). Filter orders.placed_at in 2025-01-01 to 2025-12-31, exclude cancelled orders. Convert all amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at date). 'Share of company-wide discount spend' = this tenant's EUR discount total / sum across all tenants. Order by total discount amount (EUR) descending. Note total tenant count returned; print top 50.",
+   "builds_on": []
+  },
+  {
+   "title": "Coupon redemption patterns: repeat use, limit breaches and post-expiry usage, 2025",
+   "question": "Which coupon codes show signs of overuse or abuse — repeated redemption by the same customer, redemptions beyond stated limits, or use after the coupon's campaign window ended?",
+   "grain": "one row per coupon (coupons.id / code)",
+   "columns": [
+    "coupon code",
+    "status",
+    "usage_limit",
+    "per_customer_limit",
+    "times_redeemed (actual count from coupon_redemptions)",
+    "distinct customers redeeming",
+    "max redemptions by a single customer",
+    "redemptions occurring after coupon's expires_at",
+    "redemptions occurring before coupon's starts_at",
+    "total discount amount redeemed (EUR)"
+   ],
+   "details": "Source: coupon_redemptions joined to coupons (code, status, usage_limit, per_customer_limit, starts_at, expires_at) and orders (currency_code, placed_at) for EUR conversion via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=redeemed_at date). Include all redemptions with redeemed_at in 2023-01-01 through 2025-12-31 (need full history here, not just 2025, to correctly detect post-expiry use and true per-customer repeat counts since a coupon may have been created earlier). Flag rows where max redemptions by a single customer > per_customer_limit, or times_redeemed > usage_limit, or any redemption after expires_at. Order by (redemptions after expiry) descending, then by max redemptions by a single customer descending, then coupon code ascending for determinism. Note total coupon count returned; print top 50 most suspicious first.",
+   "builds_on": []
+  }
+ ]
+}

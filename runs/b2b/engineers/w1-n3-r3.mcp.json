@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale: Age Profile of Currently Open New-Business Pipeline",
+    "--question",
+    "How much of our current B2B wholesale new-business pipeline is already older than the typical window in which deals actually win, i.e. how much open pipeline is quietly turning stale and at risk?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Ines\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per age bucket of currently-open opportunities\", \"columns_requested\": [\"age_bucket\", \"opportunities_count\", \"pct_of_open_pipeline\", \"avg_amount_eur\", \"total_amount_eur\"], \"details\": \"Scope: same wholesale tenant filter, opportunities where pipeline_id = the tenant's 'New business' pipeline and is_closed = false (currently open), as of the last complete data date 2025-12-31 (use the fixed literal date '2025-12-31' as the reference point for age, not CURRENT_DATE/now(), per house SQL standards). age_days = 2025-12-31 minus created_at. Bucket into: '0-9 days', '10-19 days', '20-29 days', '30-44 days', '45-89 days', '90+ days' (chosen because last night's New-business-only comparison showed won deals close in ~9 days on average and lost deals take ~35 days on average before dying, so these buckets straddle both reference points). Convert amount to EUR using exchange_rates as of 2025-12-31. pct_of_open_pipeline = that bucket's opportunity count / total open opportunities in scope, as a percentage. total_amount_eur = sum of amount_eur in that bucket (euro value of pipeline sitting at that age). Order by age_bucket ascending (by lower day bound).\", \"builds_on\": [\"New Business Only: Won vs Lost Opportunity Characteristics\", \"New Business Only: Deal Cycle Time Trend by Month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

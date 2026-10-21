@@ -1,0 +1,56 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH active_tenants AS (\n  SELECT id AS tenant_id, industry\n  FROM tenants\n  WHERE deleted_at IS NULL\n),\nbundle_using_tenants AS (\n  SELECT DISTINCT tenant_id\n  FROM product_bundles\n  WHERE is_active = true\n),\nactive_products AS (\n  SELECT tenant_id, id AS product_id\n  FROM products\n  WHERE status = 'active' AND deleted_at IS NULL\n),\nbundled_product_ids AS (\n  SELECT DISTINCT pv.tenant_id, pv.product_id\n  FROM bundle_items bi\n  JOIN product_bundles pb\n    ON pb.id = bi.bundle_id AND pb.tenant_id = bi.tenant_id\n  JOIN product_variants pv\n    ON pv.id = bi.variant_id AND pv.tenant_id = bi.tenant_id\n  WHERE pb.is_active = true\n),\ntenant_bundle_pct AS (\n  SELECT\n    ap.tenant_id,\n    COUNT(DISTINCT ap.product_id) AS active_product_count,\n    COUNT(DISTINCT bp.product_id) AS bundled_active_product_count\n  FROM active_products ap\n  LEFT JOIN bundled_product_ids bp\n    ON bp.tenant_id = ap.tenant_id AND bp.product_id = ap.product_id\n  GROUP BY ap.tenant_id\n),\ntenant_pct AS (\n  SELECT\n    tenant_id,\n    CASE WHEN active_product_count > 0\n      THEN bundled_active_product_count::decimal / active_product_count * 100\n      ELSE NULL END AS pct_active_products_in_a_bundle\n  FROM tenant_bundle_pct\n),\ntenant_summary AS (\n  SELECT\n    at.tenant_id,\n    COALESCE(at.industry, 'Unknown') AS industry,\n    CASE WHEN but.tenant_id IS NOT NULL THEN 1 ELSE 0 END AS uses_bundles,\n    tp.pct_active_products_in_a_bundle\n  FROM active_tenants at\n  LEFT JOIN bundle_using_tenants but ON but.tenant_id = at.tenant_id\n  LEFT JOIN tenant_pct tp ON tp.tenant_id = at.tenant_id\n)\nSELECT\n  industry,\n  COUNT(*) AS merchant_count,\n  SUM(uses_bundles) AS merchants_using_bundles,\n  ROUND(SUM(uses_bundles)::decimal / COUNT(*) * 100, 1) AS pct_merchants_using_bundles,\n  ROUND(AVG(CASE WHEN uses_bundles = 1 THEN pct_active_products_in_a_bundle END), 1) AS avg_pct_products_bundled_among_users\nFROM tenant_summary\nGROUP BY industry\nORDER BY pct_merchants_using_bundles DESC, industry ASC",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - not a single SELECT statement: syntax error at or near \".\""
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT bundled_active_product_count::decimal / active_product_count * 100 AS pct\nFROM (SELECT 1 AS bundled_active_product_count, 2 AS active_product_count) t",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: pct"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH active_tenants AS (\n  SELECT id AS tenant_id, industry\n  FROM tenants\n  WHERE deleted_at IS NULL\n),\nbundle_using_tenants AS (\n  SELECT DISTINCT tenant_id\n  FROM product_bundles\n  WHERE is_active = true\n)\nSELECT\n  at.tenant_id,\n  CASE WHEN but.tenant_id IS NOT NULL THEN 1 ELSE 0 END AS uses_bundles\nFROM active_tenants at\nLEFT JOIN bundle_using_tenants but ON but.tenant_id = at.tenant_id",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - not a single SELECT statement: syntax error at or near \".\""
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH active_tenants AS (\n  SELECT id AS tenant_id, industry\n  FROM tenants\n  WHERE deleted_at IS NULL\n),\nbundle_using_tenants AS (\n  SELECT DISTINCT tenant_id\n  FROM product_bundles\n  WHERE is_active = true\n)\nSELECT\n  at.tenant_id,\n  CASE WHEN bt.tenant_id IS NOT NULL THEN 1 ELSE 0 END AS uses_bundles\nFROM active_tenants at\nLEFT JOIN bundle_using_tenants bt ON bt.tenant_id = at.tenant_id",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - not a single SELECT statement: syntax error at or near \".\""
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH active_tenants AS (\n  SELECT id AS tenant_id, industry\n  FROM tenants\n  WHERE deleted_at IS NULL\n),\nbundle_using_tenants AS (\n  SELECT DISTINCT tenant_id\n  FROM product_bundles\n  WHERE is_active = true\n)\nSELECT\n  a.tenant_id,\n  CASE WHEN b.tenant_id IS NOT NULL THEN 1 ELSE 0 END AS uses_bundles\nFROM active_tenants a\nLEFT JOIN bundle_using_tenants b ON b.tenant_id = a.tenant_id",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_id, uses_bundles"
+ },
+ {
+  "kind": "text",
+  "text": "Good — `at` was being parsed as a reserved keyword. Let me rebuild the full query with safe aliases."
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH active_tenants AS (\n  SELECT id AS tenant_id, industry\n  FROM tenants\n  WHERE deleted_at IS NULL\n),\nbundle_using_tenants AS (\n  SELECT DISTINCT tenant_id\n  FROM product_bundles\n  WHERE is_active = true\n),\nactive_products AS (\n  SELECT tenant_id, id AS product_id\n  FROM products\n  WHERE status = 'active' AND deleted_at IS NULL\n),\nbundled_product_ids AS (\n  SELECT DISTINCT pv.tenant_id, pv.product_id\n  FROM bundle_items bi\n  JOIN product_bundles pb\n    ON pb.id = bi.bundle_id AND pb.tenant_id = bi.tenant_id\n  JOIN product_variants pv\n    ON pv.id = bi.variant_id AND pv.tenant_id = bi.tenant_id\n  WHERE pb.is_active = true\n),\ntenant_bundle_counts AS (\n  SELECT\n    ap.tenant_id,\n    COUNT(DISTINCT ap.product_id) AS active_product_count,\n    COUNT(DISTINCT bp.product_id) AS bundled_active_product_count\n  FROM active_products ap\n  LEFT JOIN bundled_product_ids bp\n    ON bp.tenant_id = ap.tenant_id AND bp.product_id = ap.product_id\n  GROUP BY ap.tenant_id\n),\ntenant_pct AS (\n  SELECT\n    tenant_id,\n    CASE WHEN active_product_count > 0\n      THEN bundled_active_product_count::decimal / active_product_count * 100\n      ELSE NULL END AS pct_active_products_in_a_bundle\n  FROM tenant_bundle_counts\n),\ntenant_summary AS (\n  SELECT\n    ten.tenant_id,\n    COALESCE(ten.industry, 'Unknown') AS industry,\n    CASE WHEN bu.tenant_id IS NOT NULL THEN 1 ELSE 0 END AS uses_bundles,\n    tp.pct_active_products_in_a_bundle\n  FROM active_tenants ten\n  LEFT JOIN bundle_using_tenants bu ON bu.tenant_id = ten.tenant_id\n  LEFT JOIN tenant_pct tp ON tp.tenant_id = ten.tenant_id\n)\nSELECT\n  industry,\n  COUNT(*) AS merchant_count,\n  SUM(uses_bundles) AS merchants_using_bundles,\n  ROUND(SUM(uses_bundles)::decimal / COUNT(*) * 100, 1) AS pct_merchants_using_bundles,\n  ROUND(AVG(CASE WHEN uses_bundles = 1 THEN pct_active_products_in_a_bundle END), 1) AS avg_pct_products_bundled_among_users\nFROM tenant_summary\nGROUP BY industry\nORDER BY pct_merchants_using_bundles DESC, industry ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: industry, merchant_count, merchants_using_bundles, pct_merchants_using_bundles, avg_pct_products_bundled_among_users"
+ },
+ {
+  "kind": "text",
+  "text": "The query compiles with exactly the requested columns and grain. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH active_tenants AS (\n  SELECT id AS tenant_id, industry\n  FROM tenants\n  WHERE deleted_at IS NULL\n),\nbundle_using_tenants AS (\n  SELECT DISTINCT tenant_id\n  FROM product_bundles\n  WHERE is_active = true\n),\nactive_products AS (\n  SELECT tenant_id, id AS product_id\n  FROM products\n  WHERE status = 'active' AND deleted_at IS NULL\n),\nbundled_product_ids AS (\n  SELECT DISTINCT pv.tenant_id, pv.product_id\n  FROM bundle_items bi\n  JOIN product_bundles pb\n    ON pb.id = bi.bundle_id AND pb.tenant_id = bi.tenant_id\n  JOIN product_variants pv\n    ON pv.id = bi.variant_id AND pv.tenant_id = bi.tenant_id\n  WHERE pb.is_active = true\n),\ntenant_bundle_counts AS (\n  SELECT\n    ap.tenant_id,\n    COUNT(DISTINCT ap.product_id) AS active_product_count,\n    COUNT(DISTINCT bp.product_id) AS bundled_active_product_count\n  FROM active_products ap\n  LEFT JOIN bundled_product_ids bp\n    ON bp.tenant_id = ap.tenant_id AND bp.product_id = ap.product_id\n  GROUP BY ap.tenant_id\n),\ntenant_pct AS (\n  SELECT\n    tenant_id,\n    CASE WHEN active_product_count > 0\n      THEN bundled_active_product_count::decimal / active_product_count * 100\n      ELSE NULL END AS pct_active_products_in_a_bundle\n  FROM tenant_bundle_counts\n),\ntenant_summary AS (\n  SELECT\n    ten.tenant_id,\n    COALESCE(ten.industry, 'Unknown') AS industry,\n    CASE WHEN bu.tenant_id IS NOT NULL THEN 1 ELSE 0 END AS uses_bundles,\n    tp.pct_active_products_in_a_bundle\n  FROM active_tenants ten\n  LEFT JOIN bundle_using_tenants bu ON bu.tenant_id = ten.tenant_id\n  LEFT JOIN tenant_pct tp ON tp.tenant_id = ten.tenant_id\n)\nSELECT\n  industry,\n  COUNT(*) AS merchant_count,\n  SUM(uses_bundles) AS merchants_using_bundles,\n  ROUND(SUM(uses_bundles)::decimal / COUNT(*) * 100, 1) AS pct_merchants_using_bundles,\n  ROUND(AVG(CASE WHEN uses_bundles = 1 THEN pct_active_products_in_a_bundle END), 1) AS avg_pct_products_bundled_among_users\nFROM tenant_summary\nGROUP BY industry\nORDER BY pct_merchants_using_bundles DESC, industry ASC",
+  "note": "I didn't have the exact prior report text defining \"pct_active_products_in_a_bundle,\" so I defined it per tenant as: (distinct active products whose variants appear as a component in at least one active bundle) / (distinct active, non-deleted products) * 100 — i.e. how much of the live catalog participates in bundling as a component. Tenants with no active products get a null pct, excluded from the average. Industry is blank-coalesced to 'Unknown' so every non-deleted tenant is represented.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. Summary of what the query does:\n\n- **Grain:** one row per tenant industry (vertical), with industries missing a value grouped as `Unknown`.\n- **merchant_count:** non-deleted tenants in that industry.\n- **merchants_using_bundles:** tenants with ≥1 `product_bundles` row where `is_active = true`.\n- **pct_merchants_using_bundles:** the ratio of the two above, ×100, rounded to 1 decimal.\n- **avg_pct_products_bundled_among_users:** for each bundle-using tenant, the share of their active, non-deleted products that appear as a component variant in an active bundle, averaged only across that industry's bundle-using tenants (null when there are none).\n\nOne assumption flagged in the note: since I didn't have the text of the earlier \"Collections and Bundles Adoption\" / \"Merchants Using Bundles\" reports, I defined `pct_active_products_in_a_bundle` as the share of a tenant's active catalog that shows up as a bundle component — the most natural reading for a merchandising \"adoption depth\" metric. If the prior reports used a different definition (e.g., counting the bundle's own header product), the analyst should flag it and we can re-run."
+ }
+]

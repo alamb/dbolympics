@@ -1,0 +1,28 @@
+Ampfeld Elektronik,#1727,Payment gateway clearing,asset,debit,248.71,EUR,Order payment captured,ea17510e-eb3d-410d-8393-55597687f7b3,2023-01-14 23:24:57.643476
+Ampfeld Elektronik,#1727,Sales revenue,revenue,credit,198.97,EUR,Order payment captured,ea17510e-eb3d-410d-8393-55597687f7b3,2023-01-14 23:24:57.643476
+Ampfeld Elektronik,#1727,Shipping income,revenue,credit,9.95,EUR,Order payment captured,ea17510e-eb3d-410d-8393-55597687f7b3,2023-01-14 23:24:57.643476
+Ampfeld Elektronik,#1727,VAT / sales tax payable,liability,credit,39.79,EUR,Order payment captured,ea17510e-eb3d-410d-8393-55597687f7b3,2023-01-14 23:24:57.643476
+Ballycorran Industrial Supply,SO-100608,Payment gateway clearing,asset,debit,446.54,EUR,Order payment captured,40ab7d1b-4fe4-48d5-91c6-fe1a11451b2b,2023-01-17 12:12:36.402540
+Ballycorran Industrial Supply,SO-100608,Sales revenue,revenue,credit,363.04,EUR,Order payment captured,40ab7d1b-4fe4-48d5-91c6-fe1a11451b2b,2023-01-17 12:12:36.402540
+Ballycorran Industrial Supply,SO-100608,VAT / sales tax payable,liability,credit,83.5,EUR,Order payment captured,40ab7d1b-4fe4-48d5-91c6-fe1a11451b2b,2023-01-17 12:12:36.402540
+Ballycorran Industrial Supply,SO-100608,Payment gateway clearing,asset,credit,400.5,EUR,Return refund,4dfe30d6-0ce3-4cc1-972e-0f6af837ef41,2023-02-05 16:25:42.637780
+Ballycorran Industrial Supply,SO-100608,Refunds and returns,contra_revenue,debit,331.23,EUR,Return refund,4dfe30d6-0ce3-4cc1-972e-0f6af837ef41,2023-02-05 16:25:42.637780
+Ballycorran Industrial Supply,SO-100608,VAT / sales tax payable,liability,debit,69.27,EUR,Return refund,4dfe30d6-0ce3-4cc1-972e-0f6af837ef41,2023-02-05 16:25:42.637780
+Ballycorran Industrial Supply,SO-100835,Bank,asset,debit,2274.23,EUR,Invoice paid by bank transfer,3eded364-26ca-494f-a975-c2935bd5b2af,2023-02-26 05:16:29.384269
+Ballycorran Industrial Supply,SO-100835,Sales revenue,revenue,credit,1848.97,EUR,Invoice paid by bank transfer,3eded364-26ca-494f-a975-c2935bd5b2af,2023-02-26 05:16:29.384269
+Ballycorran Industrial Supply,SO-100835,VAT / sales tax payable,liability,credit,425.26,EUR,Invoice paid by bank transfer,3eded364-26ca-494f-a975-c2935bd5b2af,2023-02-26 05:16:29.384269
+Castell Fasteners,SO-100233,Bank,asset,debit,2499.15,USD,Invoice paid by bank transfer,09285fd0-ddf6-42e1-b1c7-8c1fb6733121,2023-01-31 21:52:58.195096
+Castell Fasteners,SO-100233,Sales revenue,revenue,credit,2294.91,USD,Invoice paid by bank transfer,09285fd0-ddf6-42e1-b1c7-8c1fb6733121,2023-01-31 21:52:58.195096
+Castell Fasteners,SO-100233,VAT / sales tax payable,liability,credit,204.24,USD,Invoice paid by bank transfer,09285fd0-ddf6-42e1-b1c7-8c1fb6733121,2023-01-31 21:52:58.195096
+Courtside Collective,CC-100015,Payment gateway clearing,asset,debit,2885,NOK,Order payment captured,30aac2b1-1483-4301-9f58-76509e34c23d,2024-08-21 19:33:51.292564
+Courtside Collective,CC-100015,Sales revenue,revenue,credit,2308,NOK,Order payment captured,30aac2b1-1483-4301-9f58-76509e34c23d,2024-08-21 19:33:51.292564
+Courtside Collective,CC-100015,VAT / sales tax payable,liability,credit,577,NOK,Order payment captured,30aac2b1-1483-4301-9f58-76509e34c23d,2024-08-21 19:33:51.292564
+Fell & Fjell,#1179,Payment gateway clearing,asset,debit,774.95,DKK,Order payment captured,04eba30b-fd71-4938-bf70-813231014e37,2023-01-17 16:46:11.185544
+Fell & Fjell,#1179,Sales revenue,revenue,credit,619.96,DKK,Order payment captured,04eba30b-fd71-4938-bf70-813231014e37,2023-01-17 16:46:11.185544
+Fell & Fjell,#1179,VAT / sales tax payable,liability,credit,154.99,DKK,Order payment captured,04eba30b-fd71-4938-bf70-813231014e37,2023-01-17 16:46:11.185544
+Halden Boots,#1004,Payment gateway clearing,asset,debit,1415,SEK,Order payment captured,650f117c-3b9d-42e5-8751-a2d7c72e69cf,2024-12-08 13:20:30.742885
+Halden Boots,#1004,Sales revenue,revenue,credit,1132,SEK,Order payment captured,650f117c-3b9d-42e5-8751-a2d7c72e69cf,2024-12-08 13:20:30.742885
+Halden Boots,#1004,VAT / sales tax payable,liability,credit,283,SEK,Order payment captured,650f117c-3b9d-42e5-8751-a2d7c72e69cf,2024-12-08 13:20:30.742885
+Midland Safety Wear,SO-100307,Payment gateway clearing,asset,debit,4089.9,EUR,Order payment captured,7af4a5a5-46c3-4a27-9b80-fc142527cdd1,2023-01-16 09:53:08.083446
+Midland Safety Wear,SO-100307,Sales revenue,revenue,credit,3380.08,EUR,Order payment captured,7af4a5a5-46c3-4a27-9b80-fc142527cdd1,2023-01-16 09:53:08.083446
+Midland Safety Wear,SO-100307,VAT / sales tax payable,liability,credit,709.82,EUR,Order payment captured,7af4a5a5-46c3-4a27-9b80-fc142527cdd1,2023-01-16 09:53:08.083446

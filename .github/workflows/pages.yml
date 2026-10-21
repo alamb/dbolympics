@@ -1,0 +1,58 @@
+# The website on GitHub Pages: the runner (for the systems' customization points and the queries as each
+# system gets them), then site/extract.py, site/build.py and site/queries.py --raw, as in README.md, and
+# site/out deployed. In a Debian container: the site's PNG icon needs ImageMagick 7 (magick).
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container: rust:1.90-trixie
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools
+        run: |
+          apt-get update -qq
+          DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends python3 imagemagick > /dev/null
+          # build.py reads the commit log; the checkout belongs to another user than the container's
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/cargo/registry
+            target
+          key: cargo-${{ hashFiles('Cargo.lock') }}
+          restore-keys: cargo-
+      - name: Runner
+        run: cargo build --release --locked -p dbo-bench
+      - name: Site
+        run: |
+          python3 site/extract.py
+          python3 site/build.py
+          python3 site/queries.py --raw
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

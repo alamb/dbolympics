@@ -1,0 +1,31 @@
+=== Report 1: Subscription status distribution behind orphan comped-delivery orders (written by Bea) ===
+Engineer's note: Rebuilt the orphan-order population per the stated definition (2025 'Subscription delivery (prepaid)' order_discounts, status != 'cancelled', no date-overlapping subscription in trialing/active/past_due for that tenant+user). For each orphan customer's most recent subscription (any status, latest by started_at), categorized orders/customers by that status or 'no_subscription_record'. Avg-days-to-ended_at uses the fixed reporting date 2026-01-05 for still-open subscriptions and is left null for the no_subscription_record category where it doesn't apply; discount amounts converted to EUR via same-day exchange_rates (base=EUR) divided into the discount currency.
+REPORT: Subscription status distribution behind orphan comped-delivery orders
+QUESTION: What subscription status do the 'orphan' Subscription-delivery-discount customers (no active subscription overlap found) actually have on record, since neither 'lapsed within 30 days' nor 'no subscription at all' explained them?
+status_category | orphan_customer_count | orphan_order_count | pct_of_all_orphan_orders | avg_days_sub_end_to_order | total_discount_amount_eur
+----------------+-----------------------+--------------------+--------------------------+---------------------------+--------------------------
+canceled        |                   238 |               1322 |                    81.96 |                     116.9 |                  57167.69
+active          |                    60 |                291 |                    18.04 |                     248.8 |                  11746.39
+(2 rows)
+
+=== Report 2: Aggregate within-customer basket-size lift by promotion family, 2025 (written by Viktor) ===
+Engineer's note: "Distinct customers" is summed per discount instance (a customer appearing under two same-named discount rows in one tenant counts twice), while the comparison-order share uses a tenant-deduplicated customer set, per the request's distinct definitions for those two columns. Comparison orders exclude any order with any order_discounts row (not just this promotion), matching "no row in order_discounts".
+REPORT: Aggregate within-customer basket-size lift by promotion family, 2025
+QUESTION: Across all tenants running each major marketing promotion, do customers buy bigger baskets (pre-discount subtotal) when using the code, stated as one clean weighted number per promotion family?
+promotion_name    | discount_instances | discounted_order_count | distinct_customers | avg_discounted_order_subtotal_eur | avg_comparison_order_subtotal_eur | subtotal_lift_eur | subtotal_lift_pct | pct_customers_with_comparison_order
+------------------+--------------------+------------------------+--------------------+-----------------------------------+-----------------------------------+-------------------+-------------------+------------------------------------
+Summer Sale 2025  |                 17 |                    306 |                273 |                            202.92 |                            155.47 |             47.45 |              30.5 |                                84.2
+Black Friday 2025 |                 29 |                    249 |                226 |                            149.79 |                            111.99 |              37.8 |              33.8 |                                73.5
+January Sale 2025 |                 14 |                    209 |                180 |                            184.78 |                            109.65 |             75.13 |              68.5 |                                78.3
+Welcome 10% off   |                 50 |                    714 |                714 |                            343.99 |                            166.09 |             177.9 |             107.1 |                                49.2
+(4 rows)
+
+=== Report 3: Concentration of refund cost on the two highest refund-to-discount-ratio instances (written by Omar) ===
+Engineer's note: Discount instances are re-identified by matching the exact 2025 non-cancelled order count (260 / 104) as specified. "Refunded in full" is evaluated by summing all refunded order_returns per order (in native currency) against the order's grand_total, since a single order can have multiple partial refunds; amounts are converted to EUR via exchange_rates as_of the refund date.
+REPORT: Concentration of refund cost on the two highest refund-to-discount-ratio instances
+QUESTION: For the two discount instances whose total refunds exceeded their own discount cost (Welcome 10% off with 260 orders, Volume tier 10+ with 104 orders, both from the prior return-rate report), is that refund cost driven by a handful of large refunds or spread broadly across many orders?
+discount_name   | order_count | total_refunded_eur | refund_count | top3_pct_of_total | median_refund_eur | max_refund_eur | pct_orders_fully_refunded
+----------------+-------------+--------------------+--------------+-------------------+-------------------+----------------+--------------------------
+Volume tier 10+ |         104 |           18050.36 |            8 |              93.9 |            415.17 |        9230.66 |                       1.9
+Welcome 10% off |         260 |           12243.62 |           92 |              17.7 |             77.47 |         988.21 |                       4.6
+(2 rows)

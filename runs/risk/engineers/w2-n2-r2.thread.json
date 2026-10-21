@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  severity,\n  count(*) AS total_events,\n  count(*) FILTER (WHERE resolved) AS resolved_count,\n  count(*) FILTER (WHERE NOT resolved) AS unresolved_count,\n  round(100.0 * count(*) FILTER (WHERE resolved) / NULLIF(count(*), 0), 1) AS pct_resolved,\n  round(avg(extract(epoch FROM (resolved_at - occurred_at)) / 86400.0) FILTER (WHERE resolved), 1) AS avg_days_to_resolve,\n  round(\n    (percentile_cont(0.5) WITHIN GROUP (ORDER BY extract(epoch FROM (resolved_at - occurred_at)) / 86400.0) FILTER (WHERE resolved))::numeric,\n    1\n  ) AS median_days_to_resolve,\n  round(\n    max(CASE WHEN NOT resolved THEN extract(epoch FROM (timestamp '2025-12-31' - occurred_at)) / 86400.0 END)::numeric,\n    0\n  ) AS oldest_unresolved_age_days,\n  count(DISTINCT event_type) AS distinct_event_types\nFROM compliance_events\nWHERE occurred_at >= timestamp '2023-01-01'\n  AND occurred_at < timestamp '2026-01-01'\nGROUP BY severity\nORDER BY total_events DESC, severity",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: severity, total_events, resolved_count, unresolved_count, pct_resolved, avg_days_to_resolve, median_days_to_resolve, oldest_unresolved_age_days, distinct_event_types"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  severity,\n  count(*) AS total_events,\n  count(*) FILTER (WHERE resolved) AS resolved_count,\n  count(*) FILTER (WHERE NOT resolved) AS unresolved_count,\n  round(100.0 * count(*) FILTER (WHERE resolved) / NULLIF(count(*), 0), 1) AS pct_resolved,\n  round(avg(extract(epoch FROM (resolved_at - occurred_at)) / 86400.0) FILTER (WHERE resolved), 1) AS avg_days_to_resolve,\n  round(\n    (percentile_cont(0.5) WITHIN GROUP (ORDER BY extract(epoch FROM (resolved_at - occurred_at)) / 86400.0) FILTER (WHERE resolved))::numeric,\n    1\n  ) AS median_days_to_resolve,\n  round(\n    max(CASE WHEN NOT resolved THEN extract(epoch FROM (timestamp '2025-12-31' - occurred_at)) / 86400.0 END)::numeric,\n    0\n  ) AS oldest_unresolved_age_days,\n  count(DISTINCT event_type) AS distinct_event_types\nFROM compliance_events\nWHERE occurred_at >= timestamp '2023-01-01'\n  AND occurred_at < timestamp '2026-01-01'\nGROUP BY severity\nORDER BY total_events DESC, severity",
+  "note": "One row per severity across all tenants/types, 2023-01-01 through 2025-12-31 (occurred_at). Age and resolve-time figures are in days; median uses percentile_cont. Severities with zero resolved events will show NULL for avg/median days to resolve.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per `compliance_events.severity` with total/resolved/unresolved counts, resolution-rate and resolution-time stats (mean and median days), the oldest unresolved incident's age as of 2025-12-31, and the count of distinct event types — ordered by total volume descending."
+ }
+]

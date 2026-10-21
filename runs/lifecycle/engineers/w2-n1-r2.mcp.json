@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty points redemption rate by enrollment cohort age",
+    "--question",
+    "Is the growing points liability just a 'young programme, redemptions lag issuance' phase that will level out, or do even our oldest member cohorts still show a structurally low redemption rate?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Grace\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per loyalty_accounts enrollment cohort, grouped by the calendar quarter the member enrolled\", \"columns_requested\": [\"enrollment_quarter\", \"member_count\", \"months_since_cohort_quarter_start\", \"total_points_earned_value_eur\", \"total_points_redeemed_value_eur\", \"lifetime_redemption_rate_pct\"], \"details\": \"Group loyalty_accounts by the calendar quarter of enrolled_at (2023-Q1 through 2025-Q4). member_count = distinct accounts in that cohort. months_since_cohort_quarter_start = number of months between that quarter's start date and 2025-12-31 (fixed reference, so older cohorts show a higher number, e.g. 2023-Q1 to 2025-12-31 is about 36 months). For each cohort's members, total_points_earned_value_eur = lifetime sum of 'earn'-direction loyalty_transactions converted to currency via the account's program points_per_currency and currency_code, then to EUR via exchange_rates as_of occurred_at (same method as the earlier cost-by-month and unit-economics reports). total_points_redeemed_value_eur = same conversion for non-'earn'-direction transactions. lifetime_redemption_rate_pct = total_points_redeemed_value_eur divided by total_points_earned_value_eur as a percentage. Order by enrollment_quarter ascending (oldest cohort first) so the trend across cohort age is easy to read.\", \"builds_on\": [\"Loyalty points and referral reward cost by month\", \"Loyalty programme unit economics: points cost vs revenue per customer\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

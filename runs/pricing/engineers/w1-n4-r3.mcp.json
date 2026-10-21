@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Concentration of refund cost on the two highest refund-to-discount-ratio instances",
+    "--question",
+    "For the two discount instances whose total refunds exceeded their own discount cost (Welcome 10% off with 260 orders, Volume tier 10+ with 104 orders, both from the prior return-rate report), is that refund cost driven by a handful of large refunds or spread broadly across many orders?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Omar\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per discount instance (2 rows)\", \"columns_requested\": [\"discount name\", \"order count (used to confirm identity: 260 for Welcome 10% off, 104 for Volume tier 10+)\", \"total refunded amount, status='refunded' (EUR)\", \"refund count (number of refunded order_returns)\", \"top 3 single refunds as % of total refunded amount\", \"median single refund amount (EUR)\", \"max single refund amount (EUR)\", \"% of this discount's orders that were refunded in full (refund_total >= order grand_total)\"], \"details\": \"Source: identify the two discount_id instances exactly as in the prior return-rate report \\u2014 discounts.name='Welcome 10% off' whose set of 2025 non-cancelled orders (via order_discounts) numbers exactly 260, and discounts.name='Volume tier 10+' whose matching order set numbers exactly 104. For those two discount_ids, pull order_returns (status='refunded') joined to orders (grand_total, currency_code) for the orders carrying that discount, convert refund_total to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=refunded_at date). Compute total, count, median, max, top-3-as-%-of-total, and % of orders fully refunded. Order by discount name ascending. Print both rows.\", \"builds_on\": [\"Return and refund rates on discounted orders vs. baseline, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,33 @@
+=== Report 1: Late delivery and returns within apparel merchants, Q4 2025 (written by Felix) ===
+Engineer's note: Grain is tenant x delivery bucket as requested (max 6 rows: 3 tenants x 2 buckets). shipments_count counts shipment rows in the Q4 2025 window with non-null delivered_at; pct_orders_with_return is computed over the distinct orders behind those shipments in each bucket, so an order with shipments in both buckets can contribute to both rows.
+REPORT: Late delivery and returns within apparel merchants, Q4 2025
+QUESTION: Within a single high-return vertical (apparel), do late-delivered orders actually have a higher return rate than on-time ones — controlling for the vertical effect that swamped the merchant-level comparison?
+tenant_name         | delivery_bucket | shipments_count | pct_orders_with_return
+--------------------+-----------------+-----------------+-----------------------
+Cragsley Outfitters | on-time         |            1345 |                   37.2
+Cragsley Outfitters | late            |               4 |                    0.0
+Marrowby & Vane     | on-time         |             536 |                   32.8
+Marrowby & Vane     | late            |              73 |                   43.8
+Studio Vrij         | on-time         |             214 |                   36.0
+Studio Vrij         | late            |               3 |                   66.7
+(6 rows)
+
+=== Report 2: Late delivery and repeat purchase, September 2025 shipments (written by Felix) ===
+Engineer's note: Customer-level "has next order" and "days to next order" are computed per shipment's delivered_at and then collapsed to one value per customer within the bucket (earliest qualifying next order across their September shipments), since a customer can have multiple shipments in the same bucket; shipments_count still counts all shipments in the bucket.
+REPORT: Late delivery and repeat purchase, September 2025 shipments
+QUESTION: Does a late delivery visibly reduce the chance a customer buys again, compared to an on-time delivery?
+delivery_bucket | shipments_count | distinct_customers | pct_customers_with_next_order | median_days_to_next_order
+----------------+-----------------+--------------------+-------------------------------+--------------------------
+on-time         |             528 |                453 |                          58.9 |                      32.0
+late            |              12 |                 11 |                          54.5 |                      35.0
+(2 rows)
+
+=== Report 3: Repeat purchase after a return vs. no return, 2025 (written by Grace) ===
+Engineer's note: "Subsequent order" is defined as each order's nearest next order placed by the same (tenant_id, user_id), regardless of that next order's own date range (it can fall after 2025-09-30, since data runs through 2025-12-31); the 90-day and median calculations use that nearest next order's date, not just any order in the window. Return status/outcome of the order_returns row is not filtered (any row counts as "has a return").
+REPORT: Repeat purchase after a return vs. no return, 2025
+QUESTION: Does experiencing a return change whether, and how soon, a customer places their next order, compared to orders that had no return?
+group      | orders_count | distinct_customers | pct_with_subsequent_order_within_90_days | median_days_to_subsequent_order
+-----------+--------------+--------------------+------------------------------------------+--------------------------------
+has_return |         1441 |               1034 |                                     49.7 |                              33
+no_return  |         3413 |               1686 |                                     57.7 |                              28
+(2 rows)

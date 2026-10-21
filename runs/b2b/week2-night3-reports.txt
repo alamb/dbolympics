@@ -1,0 +1,12 @@
+=== Report 1: B2B Wholesale: Dollar-Weighted vs Count-Weighted Win Rate by Merchant (written by Ines) ===
+Engineer's note: One row per merchant among the 5 named wholesale tenants, scoped to each tenant's own 'New business' pipeline and closed opportunities, with amounts converted to EUR via the exchange rate on or before closed_at (EUR rows pass through unconverted). No minimum-deal filter applied per instructions.
+REPORT: B2B Wholesale: Dollar-Weighted vs Count-Weighted Win Rate by Merchant
+QUESTION: Does Youssef Meijer's 'wins small deals, loses the big one' pattern show up at the Polder Packaging merchant level too, or is it fully offset by his co-rep (Thijs Dijkstra) once you zoom out?
+merchant                      | opportunities_closed | count_win_rate_pct | total_amount_won_eur | total_amount_lost_eur | dollar_weighted_win_rate_pct | gap_pct_points
+------------------------------+----------------------+--------------------+----------------------+-----------------------+------------------------------+---------------
+Polder Packaging              |                   16 |               75.0 |              58900.0 |               43500.0 |                        57.52 |          17.48
+Castell Fasteners             |                   36 |              86.11 |            163251.62 |              28142.97 |                         85.3 |           0.82
+Ballycorran Industrial Supply |                   76 |              82.89 |             257600.0 |               51200.0 |                        83.42 |          -0.52
+Hanse Industriebedarf         |                   17 |              88.24 |              83300.0 |               10400.0 |                         88.9 |          -0.67
+Midland Safety Wear           |                   40 |               85.0 |             187900.0 |               25800.0 |                        87.93 |          -2.93
+(5 rows)

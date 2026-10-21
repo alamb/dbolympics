@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH role_perm_counts AS (\n  SELECT role_id, COUNT(*) AS permission_count\n  FROM role_permissions\n  GROUP BY role_id\n),\nrole_users AS (\n  SELECT ur.role_id,\n         u.id AS user_id,\n         u.status,\n         u.last_login_at\n  FROM user_roles ur\n  JOIN users u ON u.id = ur.user_id AND u.tenant_id = ur.tenant_id\n  WHERE u.deleted_at IS NULL\n),\nrole_user_agg AS (\n  SELECT role_id,\n         COUNT(*) AS users_assigned,\n         COUNT(*) FILTER (WHERE status = 'active') AS users_active,\n         COUNT(*) FILTER (WHERE status = 'active' AND (last_login_at IS NULL OR last_login_at < DATE '2025-10-05')) AS users_dormant,\n         MAX(last_login_at) AS most_recent_login\n  FROM role_users\n  GROUP BY role_id\n)\nSELECT\n  t.name AS tenant_name,\n  r.name AS role_name,\n  r.is_system,\n  rpc.permission_count,\n  rua.users_assigned,\n  rua.users_active,\n  rua.users_dormant,\n  rua.most_recent_login,\n  COUNT(*) OVER () AS total_qualifying_roles\nFROM roles r\nJOIN tenants t ON t.id = r.tenant_id\nJOIN role_perm_counts rpc ON rpc.role_id = r.id\nJOIN role_user_agg rua ON rua.role_id = r.id\nORDER BY rpc.permission_count DESC, rua.users_assigned DESC, t.name, r.name\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, role_name, is_system, permission_count, users_assigned, users_active, users_dormant, most_recent_login, total_qualifying_roles"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH role_perm_counts AS (\n  SELECT role_id, COUNT(*) AS permission_count\n  FROM role_permissions\n  GROUP BY role_id\n),\nrole_users AS (\n  SELECT ur.role_id,\n         u.id AS user_id,\n         u.status,\n         u.last_login_at\n  FROM user_roles ur\n  JOIN users u ON u.id = ur.user_id AND u.tenant_id = ur.tenant_id\n  WHERE u.deleted_at IS NULL\n),\nrole_user_agg AS (\n  SELECT role_id,\n         COUNT(*) AS users_assigned,\n         COUNT(*) FILTER (WHERE status = 'active') AS users_active,\n         COUNT(*) FILTER (WHERE status = 'active' AND (last_login_at IS NULL OR last_login_at < DATE '2025-10-05')) AS users_dormant,\n         MAX(last_login_at) AS most_recent_login\n  FROM role_users\n  GROUP BY role_id\n)\nSELECT\n  t.name AS tenant_name,\n  r.name AS role_name,\n  r.is_system,\n  rpc.permission_count,\n  rua.users_assigned,\n  rua.users_active,\n  rua.users_dormant,\n  rua.most_recent_login,\n  COUNT(*) OVER () AS total_qualifying_roles\nFROM roles r\nJOIN tenants t ON t.id = r.tenant_id\nJOIN role_perm_counts rpc ON rpc.role_id = r.id\nJOIN role_user_agg rua ON rua.role_id = r.id\nORDER BY rpc.permission_count DESC, rua.users_assigned DESC, t.name, r.name\nLIMIT 50",
+  "note": "Grain is one row per tenant+role, restricted to roles with ≥1 permission and ≥1 non-deleted assigned user, as requested. Added a window-function column `total_qualifying_roles` (count before the 50-row cap) so the full population size is visible on the printed page without a second query.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per tenant/role (roles with at least one permission and one currently-assigned, non-deleted user), ordered by permission count then assignment count, with tenant/role as final tie-breaks, capped at 50 rows. I included a `total_qualifying_roles` window-function column so Noah can see the full population size without needing a separate count query."
+ }
+]

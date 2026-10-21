@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Full census of audit-trail deletion coverage, all soft-deletable tables",
+    "--question",
+    "Is the missing deletion audit trail we found for products a narrow, one-table problem, or does it extend across most of the tables that support soft-deletion?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per entity table, covering every production table with a deleted_at column\", \"columns_requested\": [\"entity table\", \"total soft-deleted rows (deleted_at is not null, all history 2023-01-01 to 2025-12-31)\", \"matching audit_log rows (action = 'delete' and entity_table = this table name, all history)\", \"coverage rate (%)\", \"distinct tenants with at least one soft-deleted row\"], \"details\": \"Source: UNION ALL of per-table counts of rows with deleted_at is not null, for every table in the catalog that has a deleted_at column: brands, categories, products, product_variants, collections, users, billing_profiles, plans, price_lists, discounts, coupons, promotions, campaigns, email_templates, segments, landing_pages, referrals, loyalty_programs, ab_tests, experiments, cohorts, funnels, contacts, accounts, knowledge_articles, macros, files, utm_links, suppliers, warehouses (29 tables). For each, separately count audit_log rows with action = 'delete' and entity_table equal to that table's literal name (ignore entity_schema). coverage_rate = matching / total_soft_deleted, rounded to 1 decimal percent, NULL if total_soft_deleted = 0. Order by total_soft_deleted descending (so tables with real volume are visible first), entity table name as tie-break. Expect ~29 rows, under the 50-row cap.\", \"builds_on\": [\"Audit-trail coverage of actual soft-deletions, by entity table\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,65 @@
+=== Report 1: Vertical unit economics, rate-based view, 2025 (written by Grace) ===
+Engineer's note: Merchant count reflects all tenants in each industry (not just those with 2025 payout activity), since the request asked for a vertical-level merchant count rather than an "active in 2025" count; tenants with no matching payouts/returns/shipments/orders/tickets in 2025 contribute zeros to the sums. Industry is grouped as 'Unspecified' when null or blank.
+REPORT: Vertical unit economics, rate-based view, 2025
+QUESTION: Which verticals look efficient versus costly to serve, measured as comparable rates against gross payment volume rather than misleading absolute euros against our thin fee take?
+vertical                  | merchant_count | gross_payment_volume_eur | fee_revenue_eur | take_rate_pct | refund_rate_pct | shipping_cost_rate_pct | order_count_2025 | tickets_per_100_orders
+--------------------------+----------------+--------------------------+-----------------+---------------+-----------------+------------------------+------------------+-----------------------
+Apparel & Footwear        |             25 |               1070404.44 |         29028.1 |          2.71 |           21.93 |                   2.66 |             6850 |                  14.12
+Sports & Outdoor          |             13 |                209893.74 |         5796.45 |          2.76 |           12.25 |                   1.29 |              974 |                  12.53
+Office Supplies (B2B)     |              4 |                176549.46 |         4592.96 |           2.6 |           14.37 |                  46.91 |              517 |                   7.93
+Home & Living             |             16 |                128877.56 |         3085.55 |          2.39 |            7.21 |                   3.79 |             1597 |                   13.9
+Beauty                    |             15 |                125191.99 |         2346.81 |          1.87 |             3.9 |                   4.66 |             1493 |                  14.07
+Industrial Supplies (B2B) |              5 |                107753.57 |         3499.84 |          3.25 |            3.73 |                   5.52 |              762 |                  10.63
+Food & Coffee             |             11 |                 77170.34 |         2597.96 |          3.37 |             0.4 |                  13.15 |             7108 |                   6.33
+Pet Supplies              |             10 |                 55346.78 |         1468.94 |          2.65 |            1.21 |                  13.53 |             1409 |                   8.66
+Consumer Electronics      |              9 |                 31713.49 |          529.66 |          1.67 |           14.33 |                   1.13 |              555 |                  13.51
+Books & Stationery        |              6 |                   5565.7 |          145.03 |          2.61 |            2.29 |                   6.02 |              154 |                  14.94
+Jewelry & Accessories     |              6 |                  2982.02 |           94.56 |          3.17 |             0.0 |                   1.59 |               48 |                  14.58
+(11 rows)
+
+=== Report 2: Merchant unit economics, rate-based view: top 20 by volume, 2025 (written by Omar) ===
+Engineer's note: Methodology: gross volume/fee revenue from payouts.gross_amount/fee_amount (paid_at in 2025); refund rate from order_returns.refund_total (requested_at in 2025); shipping cost rate from shipments.shipping_cost (shipped_at in 2025); tickets per 100 orders uses tickets.created_at and orders.placed_at in 2025. All amounts converted to EUR via the daily EUR exchange rate on the respective transaction date. I did not have the exact prior vertical-level report to copy definitions from verbatim, so these are my best-match, like-for-like rate definitions against gross volume - flag if they differ from tonight's vertical report.
+REPORT: Merchant unit economics, rate-based view: top 20 by volume, 2025
+QUESTION: Among our largest merchants, which look efficient versus costly to serve on a like-for-like rate basis?
+merchant_name          | vertical                  | gross_payment_volume_eur | fee_revenue_eur | take_rate_pct | refund_rate_pct | shipping_cost_rate_pct | tickets_per_100_orders
+-----------------------+---------------------------+--------------------------+-----------------+---------------+-----------------+------------------------+-----------------------
+Cragsley Outfitters    | Apparel & Footwear        |                702797.52 |        22263.37 |          3.17 |           22.42 |                   2.16 |                   11.0
+Marrowby & Vane        | Apparel & Footwear        |                276394.66 |         4858.84 |          1.76 |           21.15 |                   4.31 |                  13.14
+Cinder Peak Sports Co. | Sports & Outdoor          |                126336.27 |         3877.43 |          3.07 |           12.87 |                   1.33 |                  12.72
+OfficeHub Nordic       | Office Supplies (B2B)     |                111821.72 |         3618.19 |          3.24 |            19.8 |                   4.43 |                   8.82
+Castell Fasteners      | Industrial Supplies (B2B) |                107753.57 |         3499.84 |          3.25 |            3.77 |                   5.52 |                   8.18
+Deskline Supplies      | Office Supplies (B2B)     |                 64727.75 |          974.76 |          1.51 |            4.88 |                 120.31 |                  14.67
+Fennel & Flint         | Home & Living             |                 62508.63 |         1739.27 |          2.78 |            6.07 |                   4.97 |                  17.22
+Petalcourt Beauty      | Beauty                    |                 61865.09 |         1225.61 |          1.98 |            5.81 |                   7.64 |                  16.86
+Grind Collective       | Food & Coffee             |                 39682.45 |         1265.15 |          3.19 |             0.1 |                   18.1 |                  10.98
+Kayak Corner           | Sports & Outdoor          |                  39521.7 |         1174.45 |          2.97 |            6.82 |                   2.36 |                  18.35
+Fell & Fjell           | Sports & Outdoor          |                 33288.47 |          468.76 |          1.41 |           17.21 |                   0.21 |                   9.41
+Honeycomb Larder       | Food & Coffee             |                 31808.64 |         1145.98 |           3.6 |            0.86 |                   8.63 |                   9.35
+Kibblewick             | Pet Supplies              |                 31741.18 |           732.3 |          2.31 |             0.1 |                  17.66 |                  10.71
+Oakhurst Tailoring     | Apparel & Footwear        |                  24619.8 |          628.93 |          2.55 |           12.83 |                   0.46 |                  16.36
+Velvet Ash             | Apparel & Footwear        |                  23605.9 |          333.41 |          1.41 |           23.14 |                   0.35 |                  14.18
+Coastline Interiors    | Home & Living             |                 20388.42 |          288.84 |          1.42 |            6.86 |                   0.48 |                  13.55
+Willow & Wren          | Home & Living             |                  18982.3 |          342.49 |           1.8 |           12.98 |                   4.39 |                  19.59
+Circuit Harbor         | Consumer Electronics      |                 18807.88 |          334.27 |          1.78 |             0.3 |                   0.69 |                   5.26
+Nordic Bloom Cosmetics | Beauty                    |                 17854.38 |          254.63 |          1.43 |            1.43 |                   0.68 |                   9.27
+Juniper Apothecary     | Beauty                    |                 17593.14 |          263.63 |           1.5 |            2.44 |                   0.42 |                  10.83
+(20 rows)
+
+=== Report 3: Shipping cost recovery: customer-paid shipping vs. carrier cost, by vertical, 2025 (written by Viktor) ===
+Engineer's note: Revenue side (orders) and cost side (shipments) are aggregated independently by vertical before joining, since they sit at different grains and a direct join would fan out; order_count reflects the orders-side filter only (shipments with no matching orders rows, if any, would show as a cost-only row with order_count 0). Orders/shipments missing a currency match in exchange_rates for their date would be silently excluded from that side's sum.
+REPORT: Shipping cost recovery: customer-paid shipping vs. carrier cost, by vertical, 2025
+QUESTION: Is shipping actually a net cost exposure, or does what we collect from customers for shipping roughly cover what we pay carriers?
+vertical                  | order_count | shipping_revenue_eur | shipping_cost_eur | shipping_margin_eur | shipping_margin_pct
+--------------------------+-------------+----------------------+-------------------+---------------------+--------------------
+Office Supplies (B2B)     |         242 |               567.09 |          82825.01 |           -82257.92 |            -14505.4
+Apparel & Footwear        |        5688 |             11426.33 |          28460.58 |           -17034.24 |              -149.1
+Food & Coffee             |        1757 |              3141.15 |           10148.9 |            -7007.75 |              -223.1
+Industrial Supplies (B2B) |         156 |                85.53 |           5946.97 |            -5861.45 |             -6853.2
+Pet Supplies              |        1087 |              2756.37 |           7488.79 |            -4732.42 |              -171.7
+Home & Living             |         811 |              2541.68 |           4882.02 |            -2340.34 |               -92.1
+Beauty                    |        1215 |              3604.29 |           5840.19 |             -2235.9 |               -62.0
+Sports & Outdoor          |         529 |               901.75 |           2703.33 |            -1801.58 |              -199.8
+Consumer Electronics      |          45 |               151.41 |            359.06 |             -207.65 |              -137.1
+Jewelry & Accessories     |          13 |                14.13 |             47.27 |              -33.14 |              -234.5
+Books & Stationery        |         114 |                374.1 |            335.04 |               39.06 |                10.4
+(11 rows)

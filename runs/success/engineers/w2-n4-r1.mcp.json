@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchants slowing down: order-gap distribution among established merchants",
+    "--question",
+    "Among established merchants (not formally churned), how long since their last order, and were they already slowing down before going quiet?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Felix\", \"situation\": \"churn-task-force\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per merchant (tenant) with lifetime orders at least 20 and status not churned\", \"columns_requested\": [\"merchant name\", \"industry\", \"status\", \"last order date\", \"days since last order\", \"lifetime orders\", \"orders in 90 days before last order\", \"orders in 90 days before that\"], \"details\": \"From orders (excluding cancelled): last order date is max placed_at per tenant; lifetime orders is total count. Restrict to tenants with lifetime orders at least 20 and status not equal to churned. days since last order is 2026-01-05 minus last order date. Also compute orders in the 90 days ending at the last order date, and orders in the 90 days before that, to show the trend into their most recent activity. Order by days since last order descending, tie-break tenant_id ascending. Cap 50 rows, note total count.\", \"builds_on\": [\"Silent-churn merchants: substantial accounts gone quiet without a churned flag\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

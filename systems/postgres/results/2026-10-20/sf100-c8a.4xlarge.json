@@ -1,0 +1,34 @@
+{
+  "benchmark": "bench/benchmark_sf100.toml",
+  "commit": "ea6c16dceb0bd4a0868ac97716bde7c751cf4c7a",
+  "complete": true,
+  "config": "sf100-c8a.4xlarge",
+  "cpuset": "0-15",
+  "date": "2026-10-20",
+  "dirty": false,
+  "grace_period": 10,
+  "host": {
+    "cpu": "AMD EPYC 9745 128-Core Processor",
+    "cpus": 256,
+    "kernel": "7.0.0-38-generic",
+    "memory_bytes": 1080968810496
+  },
+  "images": {
+    "db": "docker.io/pgduckdb/pgduckdb@sha256:44c88eb9207971af1d7f9804a37429b1bb36f413cd8d7118c81e1288ddde85d1",
+    "system": "localhost/dbo-postgres@sha256:3a1584cdd0775ef7fa244be05c6371664f4391181b73b9b0eacb88a5d4a82a31"
+  },
+  "keys": "none",
+  "load_timeout": 1800,
+  "memory": "32GB",
+  "memory_peak_bytes": 34372845568,
+  "queries": null,
+  "query_timeout": 10,
+  "repetitions": 1,
+  "schema_seconds": 0.14359520800000003,
+  "sf": 100.0,
+  "storage_bytes": 117518583015,
+  "system": "postgres",
+  "threads": 16,
+  "timeout_check": "cancelled",
+  "version": "18.1"
+}

@@ -1,0 +1,19 @@
+**To:** Daniel Achterberg, VP Customer Experience
+**From:** Mateo Ruiz
+**Re:** Why Cragsley, Marrowby, and Studio Vrij are the hotspots — and whether urgent-ticket failure is broad or narrow
+
+**Finding 1 — It's staffing/load, not complexity or channel.** Cragsley (50.0), Marrowby (46.2), and Studio Vrij (41.5) are the three highest tickets-per-agent ratios of all 22 merchants we compared, with no close competitor until Grind Collective at 40.7. Meanwhile their ticket *complexity* is average-to-below (Cragsley has the lowest tags/ticket of the 22, 1.36) and their channel mix (email/chat/phone split) is unremarkable versus faster peers *(staffing, complexity, channel reports)*.
+
+**Finding 2 — Within-merchant timing confirms it's causal, not coincidence.** Each merchant's worst quarter for resolution speed is the exact quarter their own load spiked. Marrowby's ticket-per-agent ratio hit 21.0 in Q4 and resolution breach rate jumped to 72.4% (avg 131.3h), vs. ~40% breach in Q2-Q3 when load was normal. Studio Vrij's catastrophic Q2 (avg 198h, 66.7% breach, ratio 24.0 — the known fulfillment incident) **recovered** by Q4 to 16.0h avg / 41% breach as load normalized — good news: Studio Vrij has genuinely recovered *(quarterly performance reports)*.
+
+**Finding 3 — It's whole-team, not one bad agent.** At Cragsley, all 8 agents run 48-70% breach rates; at Marrowby, all 5 run 51-76%; at Studio Vrij, all 4 average 93-146 hours. No single outlier agent explains it anywhere — this rules out a "coach one rep" fix and points to real capacity shortage *(agent-level report)*.
+
+**Finding 4 — Scale, not a different shopper base, explains the pattern.** All three are Apparel & Footwear merchants and are literally the largest by employee count/order volume in our comparison set (Cragsley: 2,819 employees, 3,635 orders; Marrowby: 1,179 employees, 1,758 orders; Studio Vrij: 486 employees, 631 orders). Smaller apparel merchants (Oakhurst, Thistlecombe, Rue Lafayette) are actually among the *fastest* performers in the book. So this looks like volume outrunning flat staffing at scale, not something wrong with their customers or product *(profile report)*.
+
+**Finding 5 — Urgent-ticket failure is broad, not concentrated in the three.** All 14 merchants evaluated use the identical 8-hour urgent target (ruling out "unrealistic target" theory), yet miss rates range 14%-100%. Several *smaller* merchants (Honeycomb Larder 100%, Sourdough Club 85.7%, Ampfeld Elektronik 83.3%) are worse than the big three (63-67%). And the "flat headcount through a volume surge" pattern itself is common: roughly half of the 22-merchant book shows a real Q4 crunch — Grind Collective's Q4 ratio (23.3) exceeds Cragsley's (18.9) *(SLA-target and Q4-vs-rest reports)*.
+
+**Confidence:** High on the core mechanism — three independent cuts (cross-sectional ratio, within-merchant quarter timing, agent-level spread) all point the same way. High on urgent failure being broad. Lower on the apparel-vertical link — only 3 data points, could be coincidence, worth watching as more merchants scale.
+
+**Caveats:** Q4 2025 figures are still slightly right-censored (some tickets unresolved as of 12/31 understate true backlog). "Agents" = distinct agents who touched a ticket, a volume proxy, not actual staffed hours/capacity. Cragsley's Q1 was also elevated, likely holiday-backlog carryover from Dec 2024 rather than a second load spike — worth treating as a caveat, not a clean confirmation.
+
+**Next steps:** (1) Size the headcount needed at the big three to bring their ratio into the book's healthy range (~10-15); (2) build an early-warning ratio threshold so we catch the *next* large merchant before it becomes a hotspot; (3) now that Studio Vrij's recovery is confirmed, turn to Daniel's Q3 — a pre-Nov/Dec staffing checklist for scale merchants.

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Legal holds: active scope, coverage, and staleness",
+    "--question",
+    "How many legal holds are currently active, what do they cover, and are any stale (placed long ago with no recent review or release)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per legal_holds record\", \"columns_requested\": [\"tenant name\", \"hold name\", \"reason (truncated)\", \"entity table scope (if set)\", \"subject user id (if set, scope is a specific data subject)\", \"is active\", \"placed at (date)\", \"released at (date, blank if still active)\", \"days since placed (2026-01-05 minus placed_at, for active holds only)\"], \"details\": \"Source: legal_holds joined to tenants for the name. Include all rows (active and released) so released ones give context on typical hold duration, but order so active holds print first, oldest placed_at first, to surface any that look stale (placed many months/years ago and never released). Use literal date 2026-01-05 for age math, not CURRENT_DATE. If the table has close to or more than 50 rows, note the total count so we know whether this needs a narrower follow-up.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

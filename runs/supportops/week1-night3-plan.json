@@ -1,0 +1,61 @@
+{
+ "notes": "Before trusting any more SLA numbers, I need to close the risk two separate engineers flagged independently: breach_kind is a free-text column with no enumerated codes, and both guessed 'first_response'/'resolution'. If that guess is wrong (or there's a third kind, or duplicate breach rows per ticket), every breach rate I've reported so far — including the 37.7%/20.3% headline — could be off. That's slot 1 tonight, cheap but non-negotiable before Friday's memo. Report 1 from tonight's merchant cut also showed something worth flagging: our three biggest merchants (Cragsley, Marrowby & Vane, Studio Vrij, 34% of volume) all post first-response breach rates near 55-60%, well above the smaller tail — and Studio Vrij/Marrowby & Vane also have the worst resolution times/breach rates among the top 10, despite having fewer agents than Cragsley. That's a concrete 'specific merchant driving disproportionate pain' candidate for Daniel, but I want the breach-code validation done before I state it as fact. With the other two slots I'm moving to priority #3 (what makes a ticket slow — channel and unassigned status, which both leaders asked about explicitly) and starting priority #4 (macro reliance), since night 4 is the last chance to cover KB effectiveness and CSAT.",
+ "requests": [
+  {
+   "title": "SLA breach_kind code audit and validation",
+   "question": "What values does sla_breaches.breach_kind actually take, and do our assumed codes ('first_response', 'resolution') account for all breach rows so last night's breach-rate numbers can be trusted?",
+   "grain": "one row per distinct breach_kind value",
+   "columns": [
+    "breach_kind",
+    "row_count (2025)",
+    "distinct_tickets_affected",
+    "avg_minutes_over",
+    "min_minutes_over",
+    "max_minutes_over",
+    "earliest_breached_at",
+    "latest_breached_at"
+   ],
+   "details": "Source table: sla_breaches, filtered to breached_at in 2025-01-01 through 2025-12-31 (or occurred ticket creation in 2025, whichever is simpler to join via tickets.id). No assumption on the set of breach_kind values — group by whatever distinct strings exist, do not filter to only 'first_response'/'resolution'. Also include a row for any tickets.id referenced in sla_breaches that doesn't match a 2025-created ticket if that's easy, otherwise skip. Order by row_count descending. This is a data-quality check, not a business metric: if a kind other than first_response/resolution shows up, or counts look inconsistent with ticket_count_with_sla totals from earlier reports (~2320 tickets, ~875 first-response breaches, ~471 resolution breaches), flag it in the engineer's note.",
+   "builds_on": [
+    "SLA breach rates by agent group",
+    "SLA breach rates by priority, with overall headline rate",
+    "SLA breach rates by day of week and time of day"
+   ]
+  },
+  {
+   "title": "Ticket speed by channel and assignment status",
+   "question": "Does the channel a ticket comes in on, or whether it currently sits unassigned, separate fast-resolving tickets from slow ones?",
+   "grain": "one row per combination of ticket channel (email, chat, phone, web, social, api) and assignment status (assigned vs unassigned, based on assignee_agent_id)",
+   "columns": [
+    "channel",
+    "assignment_status",
+    "ticket_count (created 2025)",
+    "avg_first_response_minutes",
+    "avg_resolution_minutes",
+    "first_response_breach_rate",
+    "resolution_breach_rate"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets, sla_breaches (breach_kind values per the audit in the companion request tonight — if that comes back with different codes than 'first_response'/'resolution', please use the corrected codes). assignment_status = 'Unassigned' when assignee_agent_id is null, else 'Assigned'. 12 rows total (6 channels x 2 statuses). Order by avg_resolution_minutes descending. Round minutes to whole numbers, rates to 1 decimal percent.",
+   "builds_on": [
+    "Ticket volume and staffing by agent group",
+    "SLA breach rates by agent group"
+   ]
+  },
+  {
+   "title": "Macro usage overview",
+   "question": "How much do agents actually lean on canned-reply macros, and is usage concentrated in a few macros or spread across the library?",
+   "grain": "one row per macro, restricted to the top 20 by usage_count",
+   "columns": [
+    "macro_title",
+    "is_shared",
+    "usage_count",
+    "pct_of_total_macro_usage (this macro's usage_count / sum of usage_count across all macros)",
+    "total_macro_count (constant: count of all non-deleted macros)",
+    "total_macro_usage_sum (constant: sum of usage_count across all macros)",
+    "total_agent_reply_messages_2025 (constant: count of ticket_messages with is_public = true and author_agent_id not null, created_at in 2025, as a rough denominator for how many agent replies exist platform-wide)"
+   ],
+   "details": "Source tables: macros (deleted_at is null), ticket_messages for the context denominator. macros.usage_count is a running lifetime counter (no date filter available on it), so note in the report that usage_count is all-time, not 2025-only, while total_agent_reply_messages_2025 is scoped to 2025 — the ratio is a rough reliance signal, not exact. Order by usage_count descending, top 20 rows; note the total number of macros in the library so we can see how many are barely used.",
+   "builds_on": []
+  }
+ ]
+}

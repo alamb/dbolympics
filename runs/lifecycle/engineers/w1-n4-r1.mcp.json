@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty and referral programme reach by merchant vertical",
+    "--question",
+    "In which merchant verticals does the loyalty/referral programme even exist and get adopted - is B2B wholesale genuinely excluded, and is participation concentrated in a few verticals?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Bea\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per tenant industry/vertical (tenants.industry)\", \"columns_requested\": [\"industry\", \"tenant_count\", \"tenants_with_any_loyalty_program\", \"active_customers\", \"loyalty_members\", \"pct_customers_enrolled\", \"referred_customers\", \"pct_customers_referred\"], \"details\": \"Group all tenants by tenants.industry. tenant_count = distinct tenants in that industry. tenants_with_any_loyalty_program = count of distinct tenants in that industry that have at least one row in loyalty_programs (any status, any date). active_customers = distinct users (is_staff = false) belonging to tenants in that industry who placed at least one order between 2023-01-01 and 2025-12-31. loyalty_members = distinct users among those active customers who have a loyalty_accounts row. pct_customers_enrolled = loyalty_members divided by active_customers, as a percentage. referred_customers = distinct users among those active customers who appear as referred_user_id in referral_redemptions. pct_customers_referred = referred_customers divided by active_customers, as a percentage. Order by active_customers descending, then industry.\", \"builds_on\": [\"B2B invoice payment behavior: loyalty-enrolled vs not\", \"Loyalty and referral programme participation rate over time\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

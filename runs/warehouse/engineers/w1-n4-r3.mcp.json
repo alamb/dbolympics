@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Reasons behind routine stock_adjustments entries, 2025",
+    "--question",
+    "What reasons are recorded against the routine, year-round, single-unit stock_adjustments entries (the stream that appears to feed the cycle_count movements) — is it mostly shrinkage/loss language, or a mix of loss and found-stock reasons, and does the mix matter for sizing a shrinkage provision?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Felix\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"distinct reason text (stock_adjustments.reason)\", \"columns_requested\": [\"reason\", \"event_count\", \"pct_of_total_events (rounded 1dp)\", \"net_quantity_delta (signed sum; negative = net shrinkage)\", \"total_abs_quantity_delta\", \"avg_abs_quantity_delta (rounded 2dp)\"], \"details\": \"Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound). Group by the exact reason text value (do not attempt pattern-matching/bucketing; if the underlying data uses a small fixed set of reason strings this will naturally roll up cleanly; if it turns out to be highly fragmented free text, the report will show that too, which is itself useful to know). Order by event_count descending, tie-break by reason alphabetically. Cap at 50 rows and note the total distinct reason count even if it exceeds 50.\", \"builds_on\": [\"Monthly volume of stock_adjustments table entries, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

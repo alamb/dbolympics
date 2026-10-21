@@ -1,0 +1,51 @@
+{
+ "notes": "Daniel wants to know, for the 3 ticket-heavy merchants (Cragsley, Marrowby, Studio Vrij), whether slowness is explained by something fixable (staffing, channel mix) vs. harder issues, and whether the urgent-SLA failure (50.6% company-wide per Ben Carter) is concentrated in those 3 or systemic. Other teams' posts give useful context I'll want to connect later (Albion Parcel carrier breakdown hitting delivery regardless of merchant/warehouse; the cart-reminder bug hitting 10 merchants incl. Cragsley in Nov; Cragsley's own product-quality tail) - but those are confounders for Daniel's question #4, which he said can wait. Tonight I'm testing the most direct, fixable-vs-not hypotheses for #1 and #2: (1) are the 3 hotspots simply understaffed relative to ticket volume, (2) do they lean on slower channels, and (3) is the urgent-ticket resolution failure broad across the book or concentrated in those same 3 merchants. All three are merchant-grain reports so I can line them up side by side and see if the 3 hotspots stand out consistently or only on one dimension.",
+ "requests": [
+  {
+   "title": "Support agent staffing vs ticket volume, by merchant",
+   "question": "Are Cragsley, Marrowby, and Studio Vrij understaffed relative to their ticket volume compared to the rest of the book?",
+   "grain": "one row per tenant (merchant), among tenants with at least 20 tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "tickets created, 2025",
+    "registered support agents (support_agents rows for tenant)",
+    "distinct agents who handled a ticket in 2025 (count distinct assignee_agent_id, excluding null)",
+    "tickets per active agent (tickets ÷ distinct agents who handled a ticket)",
+    "% tickets unassigned (assignee_agent_id null)"
+   ],
+   "details": "Source: tickets joined to tenants (name) and support_agents (tenant's registered agent headcount, regardless of whether they handled a ticket in 2025). Window: tickets.created_at 2025-01-01 through 2025-12-31. 'Registered support agents' = count of support_agents rows for that tenant_id (current roster, not time-sliced). 'Distinct agents who handled a ticket' = count distinct tickets.assignee_agent_id for that tenant in 2025, excluding nulls. 'Tickets per active agent' = tickets created 2025 ÷ distinct agents who handled a ticket (NULL if zero agents handled any ticket). '% unassigned' = tickets with assignee_agent_id null ÷ tickets created 2025, percentage rounded to 1 decimal. Only include tenants with >=20 tickets created in 2025. Order by tickets per active agent descending (highest ratio = most loaded), tie-break merchant name ascending. Cap at 50 rows per house standard; note total qualifying tenant count.",
+   "builds_on": []
+  },
+  {
+   "title": "Ticket channel mix, by merchant",
+   "question": "Do Cragsley, Marrowby, and Studio Vrij rely more on slower contact channels (e.g. email) than the rest of the book?",
+   "grain": "one row per tenant (merchant), among tenants with at least 20 tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "tickets created, 2025",
+    "% channel = email",
+    "% channel = chat",
+    "% channel = phone",
+    "% channel = web",
+    "% channel = social",
+    "% channel = api"
+   ],
+   "details": "Source: tickets joined to tenants (name). Window: tickets.created_at 2025-01-01 through 2025-12-31. For each tenant, compute the percentage of tickets in 2025 in each tickets.channel value (email, chat, phone, web, social, api), each rounded to 1 decimal; the six percentages should sum to ~100 per row. Only include tenants with >=20 tickets created in 2025 (same threshold as the staffing report, for a consistent peer set). Order by tickets created descending, tie-break merchant name ascending. Cap at 50 rows; note total qualifying tenant count.",
+   "builds_on": []
+  },
+  {
+   "title": "Urgent-priority ticket resolution failure, by merchant",
+   "question": "Is the urgent-ticket resolution failure (missing resolution about half the time, company-wide) concentrated in Cragsley, Marrowby, and Studio Vrij, or is it a broad pattern across the book?",
+   "grain": "one row per tenant (merchant), among tenants with at least 5 urgent-priority tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "urgent tickets created, 2025",
+    "urgent tickets missing resolution target (count)",
+    "urgent resolution miss rate (%)",
+    "all-priority resolution miss rate (%), 2025, for comparison"
+   ],
+   "details": "Source: tickets (priority='urgent' for the main cut, all priorities for the comparison column) joined to sla_policies (via tickets.sla_policy_id, for resolution_target_minutes) and tenants (name). Window: tickets.created_at 2025-01-01 through 2025-12-31. Define a ticket as 'missing resolution target' if: resolved_at is null as of 2025-12-31 (i.e. still unresolved), OR extract(epoch from resolved_at - created_at)/60 > sla_policies.resolution_target_minutes. Exclude tickets with a null sla_policy_id from both numerator and denominator (can't be evaluated) and note how many were excluded. 'Urgent resolution miss rate' = urgent tickets missing target ÷ evaluable urgent tickets, percentage rounded to 1 decimal. 'All-priority resolution miss rate' = same calculation across all priorities for that tenant, for comparison within the same merchant. Only include tenants with >=5 evaluable urgent tickets in 2025. Order by urgent resolution miss rate descending, tie-break merchant name ascending. Cap at 50 rows; note total qualifying tenant count.",
+   "builds_on": []
+  }
+ ]
+}

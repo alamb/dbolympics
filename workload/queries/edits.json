@@ -1,0 +1,143 @@
+{
+ "q379": [
+  {
+   "from": "us.first_order + (us.last_order - us.first_order)/2",
+   "to": "{{timestamp_midpoint(us.first_order, us.last_order)}}",
+   "note": "The midpoint of two timestamps: subtracting them without an interval qualifier is not standard, and the standard form is supported by none of the reference dialects, so a placeholder; its default halves the interval with * 0.5, which DuckDB also takes under integer_division. (docs/RUNNER.md, Dialects)"
+  }
+ ],
+ "q210": [
+  {
+   "from": "select distinct on (quote_code) quote_code, rate\n  from exchange_rates\n  where base_code = 'EUR' and as_of <= DATE '2025-12-31'\n  order by quote_code, as_of desc",
+   "to": "select quote_code, rate\n  from (\n    select quote_code, rate, row_number() over (partition by quote_code order by as_of desc) as rn\n    from exchange_rates\n    where base_code = 'EUR' and as_of <= DATE '2025-12-31'\n  ) ranked\n  where rn = 1",
+   "note": "DISTINCT ON is a PostgreSQL extension: the first row per key written as ROW_NUMBER() = 1, standard SQL."
+  }
+ ],
+ "q359": [
+  {
+   "from": "SELECT DISTINCT ON (s.tenant_id, s.user_id)\n    s.tenant_id, s.user_id, s.id AS sub_id, s.status\n  FROM subscriptions s\n  ORDER BY s.tenant_id, s.user_id, s.started_at DESC, s.id DESC",
+   "to": "SELECT tenant_id, user_id, sub_id, status\n  FROM (\n    SELECT s.tenant_id, s.user_id, s.id AS sub_id, s.status,\n           ROW_NUMBER() OVER (PARTITION BY s.tenant_id, s.user_id ORDER BY s.started_at DESC, s.id DESC) AS rn\n    FROM subscriptions s\n  ) ranked\n  WHERE rn = 1",
+   "note": "DISTINCT ON is a PostgreSQL extension: the first row per key written as ROW_NUMBER() = 1, standard SQL."
+  }
+ ],
+ "q175": [
+  {
+   "from": "SELECT DISTINCT ON (ch.entity_id)\n    ch.entity_id,\n    ch.tenant_id,\n    (ch.before_data->>'stage_id') AS before_stage_id\n  FROM change_history ch\n  JOIN lost_opps lo ON lo.id = ch.entity_id AND lo.tenant_id = ch.tenant_id\n  WHERE ch.entity_table = 'opportunities'\n    AND 'stage_id' = ANY(ch.changed_columns)\n  ORDER BY ch.entity_id, ch.occurred_at DESC",
+   "to": "SELECT entity_id, tenant_id, before_stage_id\n  FROM (\n    SELECT\n      ch.entity_id,\n      ch.tenant_id,\n      (ch.before_data->>'stage_id') AS before_stage_id,\n      ROW_NUMBER() OVER (PARTITION BY ch.entity_id ORDER BY ch.occurred_at DESC) AS rn\n    FROM change_history ch\n    JOIN lost_opps lo ON lo.id = ch.entity_id AND lo.tenant_id = ch.tenant_id\n    WHERE ch.entity_table = 'opportunities'\n      AND 'stage_id' = ANY(ch.changed_columns)\n  ) ranked\n  WHERE rn = 1",
+   "note": "DISTINCT ON is a PostgreSQL extension: the first row per key written as ROW_NUMBER() = 1, standard SQL."
+  },
+  {
+   "from": "ch.before_data->>'stage_id'",
+   "to": "JSON_VALUE(ch.before_data, '$.stage_id')",
+   "note": "`->>` is PostgreSQL's; the standard's JSON_VALUE, which PostgreSQL, MySQL and T-SQL support, returns the same text for a scalar. (docs/RUNNER.md, Dialects)"
+  }
+ ],
+ "q082": [
+  {
+   "from": "SELECT unnest(ARRAY['pending','confirmed','paid','partially_fulfilled','fulfilled','cancelled','refunded']) AS status",
+   "to": "SELECT status FROM (VALUES ('pending'), ('confirmed'), ('paid'), ('partially_fulfilled'), ('fulfilled'), ('cancelled'), ('refunded')) AS s(status)",
+   "note": "unnest in a select list is a PostgreSQL extension: the statuses as a VALUES list, standard SQL."
+  }
+ ],
+ "q250": [
+  {
+   "from": "tk.created_at + (sp.resolution_target_minutes || ' minutes')::interval",
+   "to": "{{add_minutes(tk.created_at, sp.resolution_target_minutes)}}",
+   "note": "An interval built from text is PostgreSQL's; the standard's `n * INTERVAL '1' MINUTE` is not supported by MySQL, T-SQL or SQLite either, so adding minutes to a timestamp is a placeholder whose default is the standard form (docs/RUNNER.md, Dialects)."
+  }
+ ],
+ "q019": [
+  {
+   "from": "SUM(gross_volume_eur) AS gross_volume_eur,",
+   "to": "SUM(gross_volume_eur) AS total_gross_volume_eur,",
+   "note": "An output alias reused the name of an input column the same block still uses; ClickHouse rejects the query, which the standard resolves (docs/RUNNER.md, Dialects: a rewrite that costs nothing on any system goes into the canonical query). The total row's column name does not reach the result: the UNION ALL takes the names of its first branch."
+  },
+  {
+   "from": "SUM(fee_revenue_eur) AS fee_revenue_eur,",
+   "to": "SUM(fee_revenue_eur) AS total_fee_revenue_eur,",
+   "note": "An output alias reused the name of an input column the same block still uses; ClickHouse rejects the query, which the standard resolves (docs/RUNNER.md, Dialects: a rewrite that costs nothing on any system goes into the canonical query). The total row's column name does not reach the result: the UNION ALL takes the names of its first branch."
+  }
+ ],
+ "q090": [
+  {
+   "from": "strftime(m.month, '%Y-%m') AS month,",
+   "to": "strftime(m.month, '%Y-%m') AS month_label,",
+   "note": "An output alias reused the name of an input column the same block still uses; DataFusion rejects the query, which the standard resolves (docs/RUNNER.md, Dialects: a rewrite that costs nothing on any system goes into the canonical query)."
+  }
+ ],
+ "q348": [
+  {
+   "from": "strftime(m.month, '%Y-%m') AS month,",
+   "to": "strftime(m.month, '%Y-%m') AS month_label,",
+   "note": "An output alias reused the name of an input column the same block still uses; DataFusion rejects the query, which the standard resolves (docs/RUNNER.md, Dialects: a rewrite that costs nothing on any system goes into the canonical query)."
+  }
+ ],
+ "q121": [
+  {
+   "from": "DATE(j.dsar_received_at) AS dsar_received_at,",
+   "to": "DATE(j.dsar_received_at) AS dsar_received_on,",
+   "note": "An output alias reused the name of an input column the same block still uses; DataFusion rejects the query, which the standard resolves (docs/RUNNER.md, Dialects: a rewrite that costs nothing on any system goes into the canonical query)."
+  }
+ ],
+ "q255": [
+  {
+   "from": "ROUND(COALESCE(t5.avg_resolution_hours, 0), 1) AS avg_resolution_hours,",
+   "to": "ROUND(COALESCE(t5.avg_resolution_hours, 0), 1) AS avg_resolution_hours_or_zero,",
+   "note": "An output alias reused the name of an input column the same block still uses; DataFusion rejects the query, which the standard resolves (docs/RUNNER.md, Dialects: a rewrite that costs nothing on any system goes into the canonical query)."
+  }
+ ],
+ "q332": [
+  {
+   "from": "CAST(e.completed_at AS date) AS completed_at,",
+   "to": "CAST(e.completed_at AS date) AS completed_on,",
+   "note": "An output alias reused the name of an input column the same block still uses; DataFusion rejects the query, which the standard resolves (docs/RUNNER.md, Dialects: a rewrite that costs nothing on any system goes into the canonical query)."
+  }
+ ],
+ "q333": [
+  {
+   "from": "cast(dsr.completed_at as date) as completed_at,",
+   "to": "cast(dsr.completed_at as date) as completed_on,",
+   "note": "An output alias reused the name of an input column the same block still uses; DataFusion rejects the query, which the standard resolves (docs/RUNNER.md, Dialects: a rewrite that costs nothing on any system goes into the canonical query)."
+  }
+ ],
+ "q399": [
+  {
+   "from": "(after_data->>'usage_count')",
+   "to": "JSON_VALUE(after_data, '$.usage_count')",
+   "note": "`->>` is PostgreSQL's; the standard's JSON_VALUE, which PostgreSQL, MySQL and T-SQL support, returns the same text for a scalar. (docs/RUNNER.md, Dialects)"
+  },
+  {
+   "from": "(before_data->>'usage_count')",
+   "to": "JSON_VALUE(before_data, '$.usage_count')",
+   "note": "`->>` is PostgreSQL's; the standard's JSON_VALUE, which PostgreSQL, MySQL and T-SQL support, returns the same text for a scalar. (docs/RUNNER.md, Dialects)"
+  }
+ ],
+ "q114": [
+  {
+   "from": "(timestamp '2026-01-05' - occurred_at) > interval '30 days'",
+   "to": "occurred_at < TIMESTAMP '2026-01-05' - INTERVAL '30' DAY",
+   "note": "Subtracting two timestamps without an interval qualifier is not standard; the same condition as a timestamp minus a standard interval literal, which PostgreSQL and MySQL support. (docs/RUNNER.md, Dialects)"
+  }
+ ],
+ "q384": [
+  {
+   "from": "(me.month_end_date - o.created_at::date)",
+   "to": "{{date_diff_days(o.created_at::date, me.month_end_date)}}",
+   "note": "A difference of two dates is a number of days in PostgreSQL and needs an interval qualifier in the standard: the date_diff_days placeholder, as for the other date differences. (docs/RUNNER.md, Dialects)"
+  }
+ ],
+ "q033": [
+  {
+   "from": "DATE_PART('day', sb2.delivered_at - sb2.shipped_at)",
+   "to": "{{whole_days_between(sb2.shipped_at, sb2.delivered_at)}}",
+   "note": "The day field of the difference of two timestamps: the standard needs an interval qualifier that none of the reference dialects supports, so a placeholder with the original as default. (docs/RUNNER.md, Dialects)"
+  }
+ ],
+ "q077": [
+  {
+   "from": ") final\n",
+   "to": ") cart_rows\n",
+   "note": "The subquery alias final (a non-reserved word in the standard) is ClickHouse's FINAL modifier; renamed, which costs nothing anywhere. (docs/RUNNER.md, Dialects)"
+  }
+ ]
+}

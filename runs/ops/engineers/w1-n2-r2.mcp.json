@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Fulfillment performance by warehouse, 2025",
+    "--question",
+    "Are there specific fulfillment sites that are consistently slower to process or less reliable on final delivery time?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per warehouse\", \"columns_requested\": [\"warehouse_name\", \"tenant_name\", \"orders_shipped (count in 2025)\", \"avg_processing_days (placed_at to fulfillment.shipped_at)\", \"avg_delivery_days (placed_at to fulfillment.delivered_at)\", \"pct_within_5_days (share with delivery_days <= 5)\"], \"details\": \"Scope: orders with placed_at in 2025-01-01 through 2025-12-31, status = 'fulfilled', restricted to orders that have exactly one row in fulfillments (so the order can be cleanly attributed to a single warehouse) with both shipped_at and delivered_at not null. processing_days = DATEDIFF(day, orders.placed_at, fulfillments.shipped_at); delivery_days = DATEDIFF(day, orders.placed_at, fulfillments.delivered_at). Join fulfillments.warehouse_id -> warehouses, and warehouses.tenant_id -> tenants for tenant_name. Round avg_processing_days and avg_delivery_days to 2 decimals, pct_within_5_days to 1 decimal (as %). Include only warehouses with at least 30 qualifying orders. Order by orders_shipped descending, tie-break by warehouse_name ascending. Cap at 50 rows.\", \"builds_on\": [\"Delivery time by merchant, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

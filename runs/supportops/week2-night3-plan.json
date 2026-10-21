@@ -1,0 +1,53 @@
+{
+ "notes": "Big lead from last night: Report 1 shows Studio Vrij's delivery-tagged tickets average 10,482 minutes and where-is-my-order tickets 10,801 minutes — roughly 6x Cragsley's 1,697/1,819 minutes for the exact same tags — and these two tags are 57-59% of Studio Vrij's entire ticket volume. Marrowby & Vane shows the same pattern at ~4x Cragsley's pace. That's a huge, tag-specific, isolated gap that looks like a fulfillment/carrier problem bleeding into support, not an agent-skill or staffing problem — and it lines up with what the COO and VP CX teams posted this week (a carrier breakdown, and delivery delays driving 'where's my order' tickets). I want to chase that directly tonight by looking at these two tenants' actual shipment/carrier performance. Report 2 (first-response vs post-response split) turned out less diagnostic than hoped: the 50/50 split between first-response delay and post-response delay is nearly identical across all three tenants, so it doesn't distinguish 'slow to start' from 'slow to finish' — both phases just run slower end-to-end for the flagged merchants, consistent with an external (carrier) cause rather than an internal process-stage cause. Report 3 (KB engagement) came back all zeros — the guessed path patterns don't exist in this data, which tells us nothing except that we need to find the real signal before trying again, so I'm spending one slot on that reconnaissance rather than guessing blind a second time.",
+ "requests": [
+  {
+   "title": "Carrier mix and on-time delivery performance, flagged merchants vs. Cragsley",
+   "question": "Do Marrowby & Vane and Studio Vrij rely on a slower or less reliable carrier than Cragsley Outfitters, which would explain their outsized delivery/where-is-my-order ticket resolution times?",
+   "grain": "one row per (tenant, carrier), restricted to Marrowby & Vane, Studio Vrij, and Cragsley Outfitters",
+   "columns": [
+    "tenant_name",
+    "carrier",
+    "shipment_count (shipped_at in 2025)",
+    "pct_of_tenant_shipments",
+    "avg_delivery_days (delivered_at - shipped_at, for shipments with both timestamps)",
+    "pct_delivered_within_3_days"
+   ],
+   "details": "Window: shipments.shipped_at between 2025-01-01 and 2025-12-31, restricted to tenant_id for the three named tenants (shipments has tenant_id directly). Source table: shipments. Order by tenant_name, then shipment_count descending within tenant. Round pct columns to 1 decimal percent, avg_delivery_days to 1 decimal. Goal: see if Studio Vrij/Marrowby & Vane are concentrated on a carrier with materially worse on-time performance than whatever Cragsley mostly uses.",
+   "builds_on": [
+    "Topic mix and resolution time by tag, flagged merchants vs. Cragsley",
+    "Where the delay accumulates: first-response lag vs. post-response handling time"
+   ]
+  },
+  {
+   "title": "Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley",
+   "question": "Did the delivery/where-is-my-order slowness at Marrowby & Vane and Studio Vrij spike in a specific period (e.g. November-December, matching a known carrier breakdown) or run elevated all year?",
+   "grain": "one row per (tenant, month) for 2025, restricted to Marrowby & Vane, Studio Vrij, and Cragsley Outfitters, and to tickets tagged 'delivery' or 'where-is-my-order'",
+   "columns": [
+    "tenant_name",
+    "month_label (YYYY-MM)",
+    "ticket_count",
+    "avg_resolution_minutes",
+    "resolution_breach_rate"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31, restricted to the three named tenants and to tickets with a tag of 'delivery' or 'where-is-my-order' in ticket_tags_map (count once per ticket even if it has both tags). Source tables: tickets, ticket_tags_map, support_tags, sla_breaches (breach_kind='resolution'). Order by tenant_name, then month_label ascending. Round avg_resolution_minutes to whole numbers, rate to 1 decimal percent.",
+   "builds_on": [
+    "Topic mix and resolution time by tag, flagged merchants vs. Cragsley"
+   ]
+  },
+  {
+   "title": "Event name inventory for knowledge-base engagement signal",
+   "question": "Which event_name values in the events table actually correspond to a customer viewing a knowledge-base/help article, so we can build a trustworthy KB-engagement metric next week instead of guessing?",
+   "grain": "one row per distinct event_name, platform-wide, 2025",
+   "columns": [
+    "event_name",
+    "event_count (occurred_at in 2025)",
+    "distinct_user_count"
+   ],
+   "details": "Window: events.occurred_at between 2025-01-01 and 2025-12-31. Source table: events. No filtering on event_name — return all distinct values with their counts so we can visually spot anything knowledge/article/help-related (last week's page_views path-pattern guess returned zero matches, so we need the real signal). Order by event_count descending, top 30 rows, and note the total number of distinct event_name values found even if more than 30.",
+   "builds_on": [
+    "Monthly ticket volume vs. knowledge-base engagement trend"
+   ]
+  }
+ ]
+}

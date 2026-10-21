@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Apparel/footwear discrepancies by warehouse: scale effect or genuine elevated rate?",
+    "--question",
+    "Is the apparel/footwear concentration in stock-count discrepancies explained by those warehouses simply being bigger (more pick locations), or do specific apparel sites show a genuinely higher discrepancy rate per location?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Felix\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"warehouse, restricted to tenants where tenants.industry = 'Apparel & Footwear'\", \"columns_requested\": [\"warehouse_name\", \"tenant_name\", \"distinct_pick_locations (count of this warehouse's stock_locations with kind='pick')\", \"total_routine_adjustments_2025 (count of stock_adjustments rows at this warehouse, created_at in 2025)\", \"events_per_pick_location (total_routine_adjustments_2025 / distinct_pick_locations, rounded 2dp)\", \"distinct_variants_affected\", \"avg_hour_of_day_of_entries (average hour 0-23 extracted from created_at across this warehouse's stock_adjustments rows, rounded 1dp)\"], \"details\": \"Join stock_locations -> warehouses -> tenants, filtered to tenants.industry = 'Apparel & Footwear'. stock_adjustments joined via stock_location_id to warehouses within that filtered set, created_at between 2025-01-01 and 2025-12-31 (half-open bound). Group by warehouse. Order by events_per_pick_location descending (to surface genuinely elevated sites first, not just the biggest ones), tie-break by total_routine_adjustments_2025 descending, then warehouse_name. Cap at 50 rows and note the total distinct apparel warehouse count even if it exceeds 50.\", \"builds_on\": [\"Where 'Missing - suspected theft' tags concentrate: by warehouse\", \"Trend of stock-count discrepancies within 2025: steady climb or step change?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

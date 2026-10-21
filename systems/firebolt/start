@@ -1,0 +1,17 @@
+#!/bin/bash
+# The Firebolt container is started by the benchmark runner (system.toml). Once it answers,
+# create the benchmark's database and start the query program, for
+# the whole run: the runner's protocol on /run/dbo/dbo.sock.
+set -eu
+
+for _ in $(seq 1 600); do
+    if curl -sS --max-time 5 'http://localhost:3473/' --data-binary "SELECT 'firebolt-ready';" 2>/dev/null | grep -q 'firebolt-ready'; then
+        curl -sS 'http://localhost:3473/' --data-binary 'CREATE DATABASE IF NOT EXISTS bench' >/dev/null
+        nohup ./query >/run/dbo/query.log 2>&1 &
+        echo $! > query.pid
+        exit 0
+    fi
+    sleep 1
+done
+echo "firebolt: the server did not answer within 10 min" >&2
+exit 1

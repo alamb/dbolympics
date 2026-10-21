@@ -1,0 +1,11 @@
+[project]
+name = "dbolympics-tools"
+version = "0.1.0"
+description = "Python tooling for the dbolympics benchmark (role play, catalog)"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.5.6",
+]
+
+[tool.uv]
+package = false

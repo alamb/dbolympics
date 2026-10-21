@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  status,\n  COUNT(*) AS export_count,\n  MIN(requested_at) AS earliest_requested_at,\n  MAX(requested_at) AS latest_requested_at,\n  COUNT(completed_at) AS count_with_completed_at,\n  COUNT(file_url) AS count_with_file_url,\n  ROUND(AVG(row_count) FILTER (WHERE row_count IS NOT NULL), 2) AS avg_row_count\nFROM data_exports\nGROUP BY status\nORDER BY export_count DESC, status ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: status, export_count, earliest_requested_at, latest_requested_at, count_with_completed_at, count_with_file_url, avg_row_count"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  status,\n  COUNT(*) AS export_count,\n  MIN(requested_at) AS earliest_requested_at,\n  MAX(requested_at) AS latest_requested_at,\n  COUNT(completed_at) AS count_with_completed_at,\n  COUNT(file_url) AS count_with_file_url,\n  ROUND(AVG(row_count) FILTER (WHERE row_count IS NOT NULL), 2) AS avg_row_count\nFROM data_exports\nGROUP BY status\nORDER BY export_count DESC, status ASC",
+  "note": "Grouped by the raw status string exactly as stored in data_exports, platform-wide (no tenant filter), so the report will show whichever status values actually exist (e.g. 'completed' vs. 'succeeded' etc.) alongside completed_at/file_url fill rates to tell whether exports are genuinely finishing.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `data_exports` by its literal `status` value (no assumption about which string means \"done\"), with counts, date range, and how often `completed_at`/`file_url` are actually populated per status — which will directly show whether \"completed\" is just a naming mismatch or a real fulfillment gap."
+ }
+]

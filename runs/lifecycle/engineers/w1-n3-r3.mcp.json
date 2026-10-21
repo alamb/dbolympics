@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B invoice payment behavior: loyalty-enrolled vs not",
+    "--question",
+    "Among our B2B wholesaler tenants (industrial supplies, office equipment), do customers enrolled in the loyalty programme settle invoices faster and carry fewer overdue balances than non-enrolled customers?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Omar\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per segment: 'loyalty member' vs 'non-member', within B2B wholesaler tenants only\", \"columns_requested\": [\"segment\", \"customer_count\", \"invoice_count\", \"avg_days_to_pay\", \"pct_invoices_paid_late\", \"pct_invoices_currently_overdue\", \"avg_invoice_amount_eur\"], \"details\": \"Scope to tenants whose industry/vertical is a B2B wholesaler (industrial supplies or office equipment - identify via tenants.industry or tenants.name/slug matching those verticals; list which tenants were included in the report notes). Within those tenants, segment users (invoices.user_id) into 'loyalty member' (has a loyalty_accounts row) vs 'non-member'. invoice_count = count of invoices (any status) issued 2023-01-01 to 2025-12-31 for users in that segment. avg_days_to_pay = average of (paid_at - issued_at) in days for invoices with status = 'paid'. pct_invoices_paid_late = share of paid invoices where paid_at is after due_at. pct_invoices_currently_overdue = share of all invoices in the segment with status = 'past_due', or status = 'open' and due_at before 2025-12-31 and amount_due greater than 0. avg_invoice_amount_eur = average invoices.total converted to EUR via exchange_rates (currency_code to EUR, rate as_of issued_at). Order rows: 'loyalty member' first, then 'non-member'.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

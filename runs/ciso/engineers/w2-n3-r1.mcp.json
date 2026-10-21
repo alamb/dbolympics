@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Actor attribution in order_status_history, across all transition types",
+    "--question",
+    "Is the missing 'who changed this' actor specific to order cancellations, or does order_status_history never record an actor for any status transition?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per to_status value in order_status_history\", \"columns_requested\": [\"to_status\", \"total transitions (all-time, 2023-01-01 to 2025-12-31)\", \"transitions with a non-null changed_by_user_id\", \"share with an actor recorded (%)\", \"distinct tenants represented\"], \"details\": \"Source: order_status_history grouped by to_status (pending, confirmed, paid, partially_fulfilled, fulfilled, cancelled, refunded). For each, count total rows, count rows where changed_by_user_id is not null, and the percentage. This tells us whether the actor gap found for cancellations is a systemic property of the table (same for every transition type) or specific to cancellations. Order by total transitions descending, to_status as tie-break (expect 7 rows).\", \"builds_on\": [\"Order status history coverage for cancelled orders\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

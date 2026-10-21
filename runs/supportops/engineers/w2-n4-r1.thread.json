@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH base AS (\n  SELECT\n    s.id,\n    s.shipped_at,\n    s.delivered_at,\n    to_char(s.shipped_at, 'YYYY-MM') AS month_label\n  FROM shipments s\n  JOIN tenants t ON t.id = s.tenant_id\n  WHERE t.name = 'Marrowby & Vane'\n    AND s.carrier = 'Albion Parcel'\n    AND s.shipped_at >= DATE '2025-01-01'\n    AND s.shipped_at < DATE '2026-01-01'\n),\nmonthly_shipment_counts AS (\n  SELECT\n    month_label,\n    COUNT(*) AS shipment_count\n  FROM base\n  GROUP BY month_label\n),\ndelivered_base AS (\n  SELECT\n    month_label,\n    EXTRACT(EPOCH FROM (delivered_at - shipped_at)) / 86400.0 AS delivery_days\n  FROM base\n  WHERE shipped_at IS NOT NULL\n    AND delivered_at IS NOT NULL\n),\nmonthly_delivery_stats AS (\n  SELECT\n    month_label,\n    ROUND(AVG(delivery_days)::numeric, 1) AS avg_delivery_days,\n    ROUND(100.0 * SUM(CASE WHEN delivery_days <= 3 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_delivered_within_3_days\n  FROM delivered_base\n  GROUP BY month_label\n)\nSELECT\n  c.month_label,\n  c.shipment_count,\n  d.avg_delivery_days,\n  d.pct_delivered_within_3_days\nFROM monthly_shipment_counts c\nLEFT JOIN monthly_delivery_stats d ON c.month_label = d.month_label\nORDER BY c.month_label ASC",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Catalog Error: Scalar Function with name to_char does not exist!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH base AS (\n  SELECT\n    s.id,\n    s.shipped_at,\n    s.delivered_at,\n    strftime(s.shipped_at, '%Y-%m') AS month_label\n  FROM shipments s\n  JOIN tenants t ON t.id = s.tenant_id\n  WHERE t.name = 'Marrowby & Vane'\n    AND s.carrier = 'Albion Parcel'\n    AND s.shipped_at >= DATE '2025-01-01'\n    AND s.shipped_at < DATE '2026-01-01'\n),\nmonthly_shipment_counts AS (\n  SELECT\n    month_label,\n    COUNT(*) AS shipment_count\n  FROM base\n  GROUP BY month_label\n),\ndelivered_base AS (\n  SELECT\n    month_label,\n    EXTRACT(EPOCH FROM (delivered_at - shipped_at)) / 86400.0 AS delivery_days\n  FROM base\n  WHERE shipped_at IS NOT NULL\n    AND delivered_at IS NOT NULL\n),\nmonthly_delivery_stats AS (\n  SELECT\n    month_label,\n    ROUND(AVG(delivery_days)::numeric, 1) AS avg_delivery_days,\n    ROUND(100.0 * SUM(CASE WHEN delivery_days <= 3 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_delivered_within_3_days\n  FROM delivered_base\n  GROUP BY month_label\n)\nSELECT\n  c.month_label,\n  c.shipment_count,\n  d.avg_delivery_days,\n  d.pct_delivered_within_3_days\nFROM monthly_shipment_counts c\nLEFT JOIN monthly_delivery_stats d ON c.month_label = d.month_label\nORDER BY c.month_label ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month_label, shipment_count, avg_delivery_days, pct_delivered_within_3_days"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH base AS (\n  SELECT\n    s.id,\n    s.shipped_at,\n    s.delivered_at,\n    strftime(s.shipped_at, '%Y-%m') AS month_label\n  FROM shipments s\n  JOIN tenants t ON t.id = s.tenant_id\n  WHERE t.name = 'Marrowby & Vane'\n    AND s.carrier = 'Albion Parcel'\n    AND s.shipped_at >= DATE '2025-01-01'\n    AND s.shipped_at < DATE '2026-01-01'\n),\nmonthly_shipment_counts AS (\n  SELECT\n    month_label,\n    COUNT(*) AS shipment_count\n  FROM base\n  GROUP BY month_label\n),\ndelivered_base AS (\n  SELECT\n    month_label,\n    EXTRACT(EPOCH FROM (delivered_at - shipped_at)) / 86400.0 AS delivery_days\n  FROM base\n  WHERE shipped_at IS NOT NULL\n    AND delivered_at IS NOT NULL\n),\nmonthly_delivery_stats AS (\n  SELECT\n    month_label,\n    ROUND(AVG(delivery_days)::numeric, 1) AS avg_delivery_days,\n    ROUND(100.0 * SUM(CASE WHEN delivery_days <= 3 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_delivered_within_3_days\n  FROM delivered_base\n  GROUP BY month_label\n)\nSELECT\n  c.month_label,\n  c.shipment_count,\n  d.avg_delivery_days,\n  d.pct_delivered_within_3_days\nFROM monthly_shipment_counts c\nLEFT JOIN monthly_delivery_stats d ON c.month_label = d.month_label\nORDER BY c.month_label ASC",
+  "note": "Shipment counts include all shipped-in-month shipments for Marrowby & Vane / Albion Parcel; avg_delivery_days and pct_delivered_within_3_days are computed only over the subset with both shipped_at and delivered_at populated, so months with no delivered shipments will show null for those two metrics.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per month in 2025 (Jan–Dec) for Marrowby & Vane shipments carried by Albion Parcel, with shipment_count, avg_delivery_days, and pct_delivered_within_3_days — this should let Ben see directly whether Nov–Dec 2025 dipped and whether December recovered."
+ }
+]

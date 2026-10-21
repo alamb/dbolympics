@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Fulfillment shortfall and delivery speed by merchant vertical, 2025",
+    "--question",
+    "Do apparel/footwear merchants, where picking discrepancies are concentrated, actually see more orders go unfulfilled or delivered slowly -- or is that purely an inventory/accounting issue with no customer-facing effect?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per merchant industry/vertical (tenants.industry), 2025\", \"columns_requested\": [\"industry\", \"orders_placed_2025 (orders with placed_at in 2025 and a terminal status: fulfilled, cancelled, or refunded)\", \"pct_orders_with_fulfillment_shortfall (share of those orders where SUM(order_items.quantity_fulfilled) < SUM(order_items.quantity) for the order)\", \"orders_fully_delivered (subset of those orders where status='fulfilled' and every linked shipment, via fulfillments, has a non-null delivered_at)\", \"avg_delivery_days (placed_at to max linked shipment delivered_at, fully-delivered subset only)\", \"pct_within_5_days (fully-delivered subset only)\"], \"details\": \"Tables: orders, order_items, fulfillments, shipments, tenants (industry). Scope: orders.placed_at between 2025-01-01 and 2025-12-31, status in ('fulfilled','cancelled','refunded') for the shortfall calculation (terminal orders only, so the shortfall flag is a final-state fact, not an in-progress one). Group by tenants.industry. Round pct columns to 1 decimal, avg_delivery_days to 2 decimals. Order by pct_orders_with_fulfillment_shortfall descending, tie-break by industry ascending. Expect under 12 rows (one per distinct industry value).\", \"builds_on\": [\"Fulfillment performance by warehouse, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

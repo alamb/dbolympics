@@ -1,0 +1,34 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  'stock_adjustments table' as source,\n  count(*) as row_count,\n  sum(abs(quantity_delta)) as total_abs_quantity,\n  count(distinct variant_id) as distinct_variants_affected,\n  min(created_at) as earliest_date,\n  max(created_at) as latest_date\nfrom stock_adjustments\nwhere created_at >= date '2025-01-01' and created_at < date '2026-01-01'\n\nunion all\n\nselect\n  'stock_movements kind=adjustment ledger' as source,\n  count(*) as row_count,\n  sum(abs(quantity)) as total_abs_quantity,\n  count(distinct variant_id) as distinct_variants_affected,\n  min(occurred_at) as earliest_date,\n  max(occurred_at) as latest_date\nfrom stock_movements\nwhere kind = 'adjustment'\n  and occurred_at >= date '2025-01-01' and occurred_at < date '2026-01-01'\n\norder by case when source = 'stock_adjustments table' then 0 else 1 end",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Binder Error: Could not ORDER BY column \"CASE  WHEN ((\"source\" = 'stock_adjustments table')) THEN (0) ELSE 1 END\": add the expression/function to every SELECT, or move the UNION into a FROM clause."
+ },
+ {
+  "kind": "dry_run",
+  "sql": "select * from (\n  select\n    'stock_adjustments table' as source,\n    count(*) as row_count,\n    sum(abs(quantity_delta)) as total_abs_quantity,\n    count(distinct variant_id) as distinct_variants_affected,\n    min(created_at) as earliest_date,\n    max(created_at) as latest_date,\n    0 as sort_order\n  from stock_adjustments\n  where created_at >= date '2025-01-01' and created_at < date '2026-01-01'\n\n  union all\n\n  select\n    'stock_movements kind=adjustment ledger' as source,\n    count(*) as row_count,\n    sum(abs(quantity)) as total_abs_quantity,\n    count(distinct variant_id) as distinct_variants_affected,\n    min(occurred_at) as earliest_date,\n    max(occurred_at) as latest_date,\n    1 as sort_order\n  from stock_movements\n  where kind = 'adjustment'\n    and occurred_at >= date '2025-01-01' and occurred_at < date '2026-01-01'\n) t\norder by sort_order",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: source, row_count, total_abs_quantity, distinct_variants_affected, earliest_date, latest_date, sort_order"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "select source, row_count, total_abs_quantity, distinct_variants_affected, earliest_date, latest_date from (\n  select\n    'stock_adjustments table' as source,\n    count(*) as row_count,\n    sum(abs(quantity_delta)) as total_abs_quantity,\n    count(distinct variant_id) as distinct_variants_affected,\n    min(created_at) as earliest_date,\n    max(created_at) as latest_date,\n    0 as sort_order\n  from stock_adjustments\n  where created_at >= date '2025-01-01' and created_at < date '2026-01-01'\n\n  union all\n\n  select\n    'stock_movements kind=adjustment ledger' as source,\n    count(*) as row_count,\n    sum(abs(quantity)) as total_abs_quantity,\n    count(distinct variant_id) as distinct_variants_affected,\n    min(occurred_at) as earliest_date,\n    max(occurred_at) as latest_date,\n    1 as sort_order\n  from stock_movements\n  where kind = 'adjustment'\n    and occurred_at >= date '2025-01-01' and occurred_at < date '2026-01-01'\n) t\norder by sort_order",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: source, row_count, total_abs_quantity, distinct_variants_affected, earliest_date, latest_date"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the requested 6 columns, 2 rows, ordered as specified."
+ },
+ {
+  "kind": "submit",
+  "sql": "select source, row_count, total_abs_quantity, distinct_variants_affected, earliest_date, latest_date from (\n  select\n    'stock_adjustments table' as source,\n    count(*) as row_count,\n    sum(abs(quantity_delta)) as total_abs_quantity,\n    count(distinct variant_id) as distinct_variants_affected,\n    min(created_at) as earliest_date,\n    max(created_at) as latest_date,\n    0 as sort_order\n  from stock_adjustments\n  where created_at >= date '2025-01-01' and created_at < date '2026-01-01'\n\n  union all\n\n  select\n    'stock_movements kind=adjustment ledger' as source,\n    count(*) as row_count,\n    sum(abs(quantity)) as total_abs_quantity,\n    count(distinct variant_id) as distinct_variants_affected,\n    min(occurred_at) as earliest_date,\n    max(occurred_at) as latest_date,\n    1 as sort_order\n  from stock_movements\n  where kind = 'adjustment'\n    and occurred_at >= date '2025-01-01' and occurred_at < date '2026-01-01'\n) t\norder by sort_order",
+  "note": "stock_adjustments has no occurred_at column, only created_at, so that is used as \"when recorded\" for that source; stock_movements uses occurred_at as requested. This is an all-tenant, all-currency unit/row-count comparison (no money involved), so no currency conversion was needed.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives two side-by-side aggregate rows (stock_adjustments vs. stock_movements kind='adjustment') for 2025, with row counts, summed absolute quantities, distinct variants affected, and date ranges — enough for Fatima to see whether the two sources reconcile or diverge in volume."
+ }
+]

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Purchase order replenishment performance by supplier, 2025",
+    "--question",
+    "Which suppliers are chronically slow to deliver against purchase orders, relative to what they've promised?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per supplier\", \"columns_requested\": [\"supplier_name\", \"lead_time_days_contracted (suppliers.lead_time_days)\", \"pos_ordered (count of purchase_orders with ordered_at in 2025)\", \"pos_received (of those, count with received_at not null)\", \"avg_actual_lead_days (DATEDIFF(day, ordered_at, received_at), received subset only)\", \"pct_received_late (share of POs with both expected_at and received_at set, where received_at > expected_at)\", \"avg_days_late (average of DATEDIFF(day, expected_at, received_at) for the late subset only)\"], \"details\": \"Tables: purchase_orders (supplier_id, ordered_at, expected_at, received_at, status) joined to suppliers (name, lead_time_days). Scope: purchase_orders.ordered_at between 2025-01-01 and 2025-12-31. Round avg_actual_lead_days and avg_days_late to 1 decimal, pct_received_late to 1 decimal (as %). Include only suppliers with at least 10 POs ordered in the window. Order by pos_ordered descending, tie-break by supplier_name ascending. Cap at 50 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

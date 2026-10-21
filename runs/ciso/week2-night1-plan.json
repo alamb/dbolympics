@@ -1,0 +1,55 @@
+{
+ "notes": "Henrik asked us to prioritize #1 (how wide is the deletion-audit gap) and #3 (how far does the churn-deactivation problem go) this week, so all 3 slots go there tonight. For #1, last week's 6-table sample (products at 0% coverage, users at 69%, three others with zero soft-deletes ever recorded) isn't enough to tell him whether this is \"fix one thing\" or \"fix deletion logging everywhere\" — so tonight I'm running a full census across every table that actually supports soft-deletion, not a hand-picked sample. I'm also addressing a gap in how I framed this last week: orders, invoices and other financial documents don't use deleted_at at all — they're \"deleted\" via a status change (cancelled/void), so testing audit coverage for the specific things Henrik named (orders, financial documents) needs a different query than soft-delete matching, which is report 2. For #3, last week I only checked role holders; tonight's report sizes the exposure across every access surface on churned tenants (user accounts, sessions, API keys, webhooks) so Henrik can judge whether this is a one-line fix (deactivate Owner/Admin) or a broader deprovisioning gap. I'm deliberately not touching #2 (shopper MFA compensating controls) or #4 (old-key sensitivity) tonight per his stated priority, and will pick those up once #1 and #3 are sized.",
+ "requests": [
+  {
+   "title": "Full census of audit-trail deletion coverage, all soft-deletable tables",
+   "question": "Is the missing deletion audit trail we found for products a narrow, one-table problem, or does it extend across most of the tables that support soft-deletion?",
+   "grain": "one row per entity table, covering every production table with a deleted_at column",
+   "columns": [
+    "entity table",
+    "total soft-deleted rows (deleted_at is not null, all history 2023-01-01 to 2025-12-31)",
+    "matching audit_log rows (action = 'delete' and entity_table = this table name, all history)",
+    "coverage rate (%)",
+    "distinct tenants with at least one soft-deleted row"
+   ],
+   "details": "Source: UNION ALL of per-table counts of rows with deleted_at is not null, for every table in the catalog that has a deleted_at column: brands, categories, products, product_variants, collections, users, billing_profiles, plans, price_lists, discounts, coupons, promotions, campaigns, email_templates, segments, landing_pages, referrals, loyalty_programs, ab_tests, experiments, cohorts, funnels, contacts, accounts, knowledge_articles, macros, files, utm_links, suppliers, warehouses (29 tables). For each, separately count audit_log rows with action = 'delete' and entity_table equal to that table's literal name (ignore entity_schema). coverage_rate = matching / total_soft_deleted, rounded to 1 decimal percent, NULL if total_soft_deleted = 0. Order by total_soft_deleted descending (so tables with real volume are visible first), entity table name as tie-break. Expect ~29 rows, under the 50-row cap.",
+   "builds_on": [
+    "Audit-trail coverage of actual soft-deletions, by entity table"
+   ]
+  },
+  {
+   "title": "Audit traceability of order cancellations and invoice voids",
+   "question": "For the two 'deletion-like' events on our financial documents that don't use soft-delete — a cancelled order, a voided invoice — is there any audit_log record at all tying back to that specific row?",
+   "grain": "one row per entity type: 'order cancellations' and 'invoice voids'",
+   "columns": [
+    "entity type",
+    "total events (all-time, 2023-01-01 to 2025-12-31)",
+    "events with at least one matching audit_log row (any action, entity_table + entity_id match)",
+    "coverage rate (%)",
+    "distinct tenants represented"
+   ],
+   "details": "Row 1: orders where status = 'cancelled'. For each such order, check whether any audit_log row exists with entity_table = 'orders' and entity_id = orders.id (any action, not just 'delete', since the logged action type for a cancellation isn't known in advance). Row 2: invoices where status = 'void'. Same existence check against audit_log with entity_table = 'invoices' and entity_id = invoices.id. coverage_rate = events with a match / total events, rounded to 1 decimal percent. This is a looser test than the soft-delete report (any audit row at all for that record, not specifically a 'delete' action) — flag in the report notes that even a 100% match here wouldn't confirm the cancellation/void itself was logged, only that the record has some audit trail presence.",
+   "builds_on": [
+    "Audit-trail coverage of actual soft-deletions, by entity table"
+   ]
+  },
+  {
+   "title": "Access still open on churned tenants, by surface",
+   "question": "Beyond Owner/Administrator accounts, how much other access (ordinary staff logins, open sessions, active API keys, active webhooks) is still live on tenants that have already churned?",
+   "grain": "one row per churned tenant (tenants.status = 'churned')",
+   "columns": [
+    "tenant name",
+    "total users (excluding deleted_at rows)",
+    "users with status = 'active'",
+    "sessions never revoked (revoked_at is null, regardless of expiry)",
+    "active API keys (status = 'active')",
+    "active webhooks (is_active = true)",
+    "service accounts (count, for context; no activity field exists for this table)"
+   ],
+   "details": "Source: tenants where status = 'churned', joined to users (tenant_id, status, deleted_at), sessions (tenant_id, revoked_at), api_keys (tenant_id, status), webhooks (tenant_id, is_active), service_accounts (tenant_id). Count each measure per tenant independently (not a single multi-join to avoid fan-out; use separate aggregated subqueries per tenant_id). Include every churned tenant, even if all counts are zero. Order by 'users with status = active' descending, tenant name as tie-break. Expect a small number of rows (well under 50) — note total churned tenant count.",
+   "builds_on": [
+    "Dormant users holding Owner or Administrator access"
+   ]
+  }
+ ]
+}

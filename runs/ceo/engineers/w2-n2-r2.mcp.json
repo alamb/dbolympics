@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Receivables aging: who owes us and for how long",
+    "--question",
+    "Which merchants are slowest to pay their invoices, how large and how overdue are the balances, and is this concentrated in B2B wholesale?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Bea\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per merchant (tenant) with a nonzero unpaid invoice balance\", \"columns_requested\": [\"merchant name\", \"vertical\", \"total unpaid balance (EUR, sum of amount_due on open/past_due invoices)\", \"count of open/past_due invoices\", \"days overdue on the oldest unpaid invoice (as of 2026-01-05, using due_at)\", \"largest single unpaid invoice (EUR)\", \"net payment terms (days, from billing_profiles.net_terms_days)\"], \"details\": \"Source: invoices (status in 'open','past_due', amount_due > 0) joined to tenants for vertical and billing_profiles for net_terms_days, converting amount_due to EUR using the most recent exchange_rates as_of date on or before 2025-12-31 per currency (a single snapshot rate, consistent with last night's risk-snapshot report). Days overdue = 2026-01-05 minus due_at for the invoice with the earliest due_at among that merchant's open/past_due invoices (floor to whole days, 0 if due_at is in the future or null). Include every merchant with a nonzero unpaid balance, not just B2B \\u2014 I want to see whether B2B wholesalers (Industrial Supplies, Office Supplies) actually dominate the top of the list, or whether that pattern breaks down further out. Order by total unpaid balance EUR descending, tie-break by days overdue descending. Print top 50 and note the total number of merchants with a nonzero balance.\", \"builds_on\": [\"Merchant risk signals snapshot: receivables, traffic and revenue trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

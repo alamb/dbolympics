@@ -1,0 +1,173 @@
+=== Report 1: Discount cost vs. order volume/revenue by discount, 2025 (written by Bea) ===
+Engineer's note: Coupon codes are sourced from coupons linked via order_discounts.coupon_id actually used in 2025 (comma-joined, 'automatic' if none were used); EUR conversion applies the exchange_rates row for each order's placed_at date (weekend rows already carry forward the prior business day's rate per the warehouse convention). No LIMIT is applied in SQL - per the handbook the report print step caps output at 50 rows and notes the full row count; query is fully ordered by discount_amount_eur desc with discount_name as a deterministic tie-break.
+REPORT: Discount cost vs. order volume/revenue by discount, 2025
+QUESTION: Which discounts (promotions/coupons) cost us the most in 2025, and how much order volume and revenue do they sit on?
+discount_name                   | discount_kind | coupon_codes | discount_amount_eur | order_count | order_revenue_eur | discount_pct_of_revenue | distinct_customers | first_order_date           | last_order_date           
+--------------------------------+---------------+--------------+---------------------+-------------+-------------------+-------------------------+--------------------+----------------------------+---------------------------
+Subscription delivery (prepaid) | percentage    | automatic    |             24250.3 |         650 |               0.0 |                    NULL |                 74 | 2025-01-02 11:58:59.390293 | 2025-12-31 19:28:30.272796
+Subscription delivery (prepaid) | percentage    | automatic    |            16524.72 |         354 |               0.0 |                    NULL |                 51 | 2025-01-02 20:45:36.939141 | 2025-12-31 09:19:10.507421
+Subscription delivery (prepaid) | percentage    | automatic    |            11802.62 |         326 |               0.0 |                    NULL |                 57 | 2025-01-03 11:00:13.120386 | 2025-12-30 09:55:25.746387
+Volume tier 10+                 | percentage    | automatic    |            11162.46 |         104 |         306145.13 |                    3.65 |                 28 | 2025-01-06 07:44:00.592182 | 2025-12-16 07:53:08.388578
+Volume tier 50+                 | percentage    | automatic    |            11121.06 |          15 |         100400.09 |                   11.08 |                 13 | 2025-01-30 22:50:53.502141 | 2025-11-19 04:31:29.294344
+Volume tier 10+                 | percentage    | automatic    |             9644.04 |         102 |         197285.77 |                    4.89 |                 32 | 2025-01-05 21:33:30.767642 | 2025-12-19 22:33:49.26592 
+January Sale 2025               | percentage    | automatic    |             8920.65 |         124 |          20453.43 |                   43.61 |                101 | 2025-01-02 06:32:48.191693 | 2025-01-29 22:10:25.756618
+Summer Sale 2025                | percentage    | automatic    |             8259.52 |         146 |          23347.93 |                   35.38 |                134 | 2025-07-01 01:27:00.824622 | 2025-07-21 23:12:53.737039
+Volume tier 10+                 | percentage    | automatic    |             7734.34 |          38 |         187684.36 |                    4.12 |                 12 | 2025-01-04 12:08:46.73159  | 2025-12-23 11:23:06.114114
+Welcome 10% off                 | percentage    | WELCOME10    |             6484.53 |         260 |          54857.68 |                   11.82 |                260 | 2025-01-01 17:39:43.055779 | 2025-12-29 21:08:38.269165
+Welcome 10% off                 | percentage    | WELCOME10    |             6066.57 |           7 |          59412.06 |                   10.21 |                  7 | 2025-04-07 21:02:46.432258 | 2025-12-04 14:45:36.974754
+Subscription delivery (prepaid) | percentage    | automatic    |             5595.96 |         106 |               0.0 |                    NULL |                 21 | 2025-01-07 07:11:51.594656 | 2025-12-30 18:57:56.568504
+Subscription delivery (prepaid) | percentage    | automatic    |             4541.17 |          43 |               0.0 |                    NULL |                  8 | 2025-01-06 16:11:40.547746 | 2025-12-18 14:15:24.27774 
+Welcome 10% off                 | percentage    | WELCOME10    |             3797.23 |           4 |          41015.06 |                    9.26 |                  4 | 2025-01-17 12:42:52.303155 | 2025-08-14 18:59:01.310734
+Summer Sale 2025                | percentage    | automatic    |             3569.73 |          24 |          13367.71 |                    26.7 |                 19 | 2025-07-02 21:26:49.466986 | 2025-07-21 18:35:43.003384
+Black Friday 2025               | percentage    | BF2530       |             3314.68 |          23 |           8342.99 |                   39.73 |                 22 | 2025-11-25 22:10:52.913544 | 2025-12-02 03:51:42.182592
+Welcome 10% off                 | percentage    | WELCOME10    |             2781.16 |         140 |          23682.68 |                   11.74 |                140 | 2025-01-04 10:38:43.022527 | 2025-12-30 16:05:29.83974 
+Welcome 10% off                 | percentage    | WELCOME10    |             2101.89 |           7 |          23581.72 |                    8.91 |                  7 | 2025-02-06 13:01:30.695388 | 2025-12-03 17:07:46.299609
+Volume tier 50+                 | percentage    | automatic    |             1856.19 |           5 |          30591.95 |                    6.07 |                  4 | 2025-01-24 13:35:44.378514 | 2025-12-17 21:09:25.270872
+Summer Sale 2025                | percentage    | automatic    |             1731.49 |          67 |            8100.8 |                   21.37 |                 60 | 2025-07-01 08:47:43.431539 | 2025-07-21 23:06:37.27223 
+Subscription delivery (prepaid) | percentage    | automatic    |             1554.16 |          16 |               0.0 |                    NULL |                  4 | 2025-01-12 18:26:50.795408 | 2025-12-19 13:56:01.167377
+January Sale 2025               | percentage    | automatic    |             1154.67 |          18 |           4230.68 |                   27.29 |                 15 | 2025-01-05 00:29:42.450176 | 2025-01-29 03:23:13.123009
+Volume tier 50+                 | percentage    | automatic    |             1142.61 |           3 |          13149.28 |                    8.69 |                  3 | 2025-09-30 08:54:00.982856 | 2025-11-24 08:10:47.215728
+Black Friday 2025               | percentage    | BF2525       |             1135.09 |          31 |           4034.85 |                   28.13 |                 30 | 2025-11-25 12:40:12.006143 | 2025-12-02 19:22:08.813309
+Welcome 10% off                 | percentage    | WELCOME10    |             1033.86 |          26 |           9705.69 |                   10.65 |                 26 | 2025-01-11 00:12:26.112514 | 2025-12-31 02:22:59.860031
+Black Friday 2025               | percentage    | BF2525       |              842.05 |          21 |           3197.38 |                   26.34 |                 17 | 2025-11-26 09:04:49.813092 | 2025-12-02 15:00:53.733482
+Black Friday 2025               | percentage    | BF2520       |              673.37 |          44 |           3340.47 |                   20.16 |                 40 | 2025-11-25 10:59:27.520109 | 2025-12-02 22:12:32.958563
+Black Friday 2025               | percentage    | BF2530       |              615.75 |          15 |           1806.64 |                   34.08 |                 14 | 2025-11-25 05:58:39.892512 | 2025-12-02 18:26:03.91083 
+Welcome 10% off                 | percentage    | WELCOME10    |              607.94 |          30 |           6457.38 |                    9.41 |                 30 | 2025-01-20 18:01:33.795192 | 2025-12-23 20:51:49.178185
+Welcome 10% off                 | percentage    | WELCOME10    |              522.74 |          60 |            5589.0 |                    9.35 |                 60 | 2025-01-06 16:55:20.641933 | 2025-12-21 07:27:52.494286
+Black Friday 2025               | percentage    | BF2530       |              421.65 |           6 |           1166.08 |                   36.16 |                  5 | 2025-11-27 06:45:29.871859 | 2025-12-02 18:08:38.125263
+Black Friday 2025               | percentage    | BF2515       |              384.04 |           4 |           2416.85 |                   15.89 |                  2 | 2025-11-27 12:00:48.953451 | 2025-12-02 14:42:45.334948
+Summer Sale 2025                | percentage    | automatic    |              373.58 |           8 |           1726.44 |                   21.64 |                  8 | 2025-07-02 10:05:42.363988 | 2025-07-18 10:23:58.328123
+Black Friday 2025               | percentage    | BF2530       |              337.85 |          11 |           1014.14 |                   33.31 |                  9 | 2025-11-26 14:03:14.927289 | 2025-12-02 13:18:50.959247
+Black Friday 2025               | percentage    | BF2530       |              320.17 |           6 |            850.91 |                   37.63 |                  6 | 2025-11-27 09:42:02.395608 | 2025-12-02 14:40:19.774473
+Summer Sale 2025                | percentage    | automatic    |              278.76 |           5 |           1169.89 |                   23.83 |                  4 | 2025-07-04 17:37:28.155988 | 2025-07-17 15:32:54.519817
+January Sale 2025               | percentage    | automatic    |              246.48 |          23 |           1814.05 |                   13.59 |                 22 | 2025-01-03 04:16:19.920428 | 2025-01-28 13:57:01.488625
+Welcome 10% off                 | percentage    | WELCOME10    |              244.84 |           1 |           2399.68 |                    10.2 |                  1 | 2025-10-28 03:55:40.965121 | 2025-10-28 03:55:40.965121
+Welcome 10% off                 | percentage    | WELCOME10    |              217.51 |           5 |           2348.82 |                    9.26 |                  5 | 2025-03-29 08:45:24.698481 | 2025-12-21 17:22:16.083714
+Summer Sale 2025                | percentage    | automatic    |              215.31 |          10 |           1322.44 |                   16.28 |                  8 | 2025-07-04 05:55:56.27717  | 2025-07-20 08:06:15.138141
+Subscription delivery (prepaid) | percentage    | automatic    |              202.82 |           3 |               0.0 |                    NULL |                  1 | 2025-10-21 21:21:21.797654 | 2025-12-21 20:49:21.797654
+January Sale 2025               | percentage    | automatic    |              199.01 |          18 |           1486.75 |                   13.39 |                 17 | 2025-01-03 19:14:32.111174 | 2025-01-29 19:25:44.633766
+Black Friday 2025               | percentage    | BF2520       |              194.85 |           5 |            846.86 |                   23.01 |                  5 | 2025-11-25 19:06:04.943086 | 2025-12-01 23:14:31.945049
+Black Friday 2025               | percentage    | BF2515       |              189.91 |          13 |           1301.52 |                   14.59 |                 12 | 2025-11-25 13:09:53.511091 | 2025-12-01 20:54:08.280888
+Welcome 10% off                 | percentage    | WELCOME10    |              176.98 |          13 |           1999.07 |                    8.85 |                 13 | 2025-01-10 22:39:39.664592 | 2025-12-23 19:00:36.611325
+Welcome 10% off                 | percentage    | WELCOME10    |              169.21 |          14 |           1938.65 |                    8.73 |                 14 | 2025-03-11 14:45:41.886149 | 2025-12-31 14:58:15.783532
+Summer Sale 2025                | percentage    | automatic    |              159.56 |           5 |             420.5 |                   37.94 |                  4 | 2025-07-02 20:07:32.006876 | 2025-07-18 18:53:11.062627
+Black Friday 2025               | percentage    | BF2520       |              152.97 |          20 |            837.43 |                   18.27 |                 18 | 2025-11-25 14:48:38.344555 | 2025-12-02 18:17:46.337131
+Black Friday 2025               | percentage    | BF2530       |              139.68 |           4 |            355.25 |                   39.32 |                  4 | 2025-11-28 19:43:10.683411 | 2025-12-01 21:19:01.472568
+Welcome 10% off                 | percentage    | WELCOME10    |              137.89 |           1 |           1551.32 |                    8.89 |                  1 | 2025-04-14 13:53:09.65033  | 2025-04-14 13:53:09.65033 
+(257 rows, first 50 printed)
+
+=== Report 2: Discount spend concentration by tenant and vertical, 2025 (written by Grace) ===
+Engineer's note: Grain is one row per tenant (120 tenants expected; report prints the top 50 by discount EUR). Order count and revenue are based on all non-cancelled orders placed in 2025; tenants with zero discounts in the period still appear with 0 discount/share. "Distinct discount codes/coupons" counts distinct coupon_id (falling back to the free-text code when coupon_id is null).
+REPORT: Discount spend concentration by tenant and vertical, 2025
+QUESTION: Are one or two merchants (or one vertical) responsible for most of our discount spend, relative to their share of revenue?
+tenant_name            | vertical                  | discount_amount_eur | order_revenue_eur | discount_pct_of_revenue | order_count | distinct_discount_codes | share_of_company_discount_pct
+-----------------------+---------------------------+---------------------+-------------------+-------------------------+-------------+-------------------------+------------------------------
+Castell Fasteners      | Industrial Supplies (B2B) |            26831.67 |         376053.99 |                    7.14 |         156 |                       1 |                         15.93
+Grind Collective       | Food & Coffee             |            24713.89 |          24732.45 |                   99.92 |        1094 |                       2 |                         14.67
+Honeycomb Larder       | Food & Coffee             |            16642.16 |          17169.59 |                   96.93 |         610 |                       1 |                          9.88
+Cragsley Outfitters    | Apparel & Footwear        |            14744.05 |         695715.59 |                    2.12 |        3486 |                       1 |                          8.75
+OfficeHub Nordic       | Office Supplies (B2B)     |            14406.96 |         399338.22 |                    3.61 |         167 |                       1 |                          8.55
+Marrowby & Vane        | Apparel & Footwear        |            13433.31 |          275390.8 |                    4.88 |        1674 |                       1 |                          7.97
+Deskline Supplies      | Office Supplies (B2B)     |            13387.76 |         285178.35 |                    4.69 |          75 |                       1 |                          7.95
+Kibblewick             | Pet Supplies              |            12185.44 |          22531.09 |                   54.08 |         651 |                       2 |                          7.23
+Cinder Peak Sports Co. | Sports & Outdoor          |             9072.94 |         122664.88 |                     7.4 |         328 |                       2 |                          5.39
+Feather & Fin          | Pet Supplies              |             5729.19 |           6695.71 |                   85.57 |         215 |                       2 |                           3.4
+Saffron & Sage         | Beauty                    |             4567.44 |           6674.76 |                   68.43 |         113 |                       1 |                          2.71
+Fennel & Flint         | Home & Living             |             1743.03 |          64080.39 |                    2.72 |         379 |                       2 |                          1.03
+The Balm Room          | Beauty                    |             1601.58 |          12420.47 |                   12.89 |         101 |                       1 |                          0.95
+Petalcourt Beauty      | Beauty                    |             1395.12 |          60927.41 |                    2.29 |         674 |                       2 |                          0.83
+Oakhurst Tailoring     | Apparel & Footwear        |              934.85 |          24024.22 |                    3.89 |         155 |                       2 |                          0.55
+Coastline Interiors    | Home & Living             |              784.96 |          20669.23 |                     3.8 |         149 |                       2 |                          0.47
+Thistlecombe           | Apparel & Footwear        |              654.88 |          11735.12 |                    5.58 |          87 |                       2 |                          0.39
+Bytefield              | Consumer Electronics      |              519.74 |          12458.03 |                    4.17 |          22 |                       2 |                          0.31
+Kayak Corner           | Sports & Outdoor          |              498.56 |          39065.09 |                    1.28 |         101 |                       1 |                           0.3
+Velvet Ash             | Apparel & Footwear        |              455.74 |          23591.19 |                    1.93 |         130 |                       1 |                          0.27
+Juniper Apothecary     | Beauty                    |               430.8 |          17051.87 |                    2.53 |         149 |                       2 |                          0.26
+Willow & Wren          | Home & Living             |              428.74 |          18796.06 |                    2.28 |          95 |                       2 |                          0.25
+Nordic Bloom Cosmetics | Beauty                    |              415.68 |           16425.2 |                    2.53 |         135 |                       2 |                          0.25
+Lamplight Living       | Home & Living             |              348.96 |           6630.61 |                    5.26 |          48 |                       2 |                          0.21
+Stoneware Studio       | Home & Living             |              292.65 |           2952.89 |                    9.91 |          25 |                       1 |                          0.17
+Alpine Loft            | Sports & Outdoor          |              244.84 |           2430.37 |                   10.07 |           2 |                       1 |                          0.15
+Circuit Harbor         | Consumer Electronics      |              231.12 |          18806.68 |                    1.23 |          18 |                       2 |                          0.14
+The Pencil Case        | Books & Stationery        |              202.82 |             25.95 |                  781.56 |           4 |                       0 |                          0.12
+Courtside Collective   | Sports & Outdoor          |              180.61 |           6639.97 |                    2.72 |          19 |                       2 |                          0.11
+Brick & Bobbin         | Apparel & Footwear        |              143.94 |           3589.13 |                    4.01 |          25 |                       2 |                          0.09
+Hus & Hem              | Home & Living             |              131.24 |           5173.25 |                    2.54 |          34 |                       2 |                          0.08
+Silverthread           | Jewelry & Accessories     |              115.19 |           3001.87 |                    3.84 |          13 |                       2 |                          0.07
+Roast Republic         | Food & Coffee             |              111.36 |           5488.11 |                    2.03 |          51 |                       2 |                          0.07
+Little Larch Kids      | Apparel & Footwear        |              105.05 |           2582.94 |                    4.07 |          22 |                       2 |                          0.06
+Rosehip Lab            | Beauty                    |              100.13 |            2857.4 |                     3.5 |          29 |                       2 |                          0.06
+Haven Linen            | Home & Living             |               88.97 |           3993.52 |                    2.23 |          24 |                       2 |                          0.05
+Signalbox              | Consumer Electronics      |               80.36 |           1439.85 |                    5.58 |           5 |                       1 |                          0.05
+Meadow Row             | Apparel & Footwear        |               60.31 |           9825.26 |                    0.61 |          24 |                       1 |                          0.04
+Glasshouse Grooming    | Beauty                    |               57.73 |           1397.46 |                    4.13 |           9 |                       2 |                          0.03
+Fell & Fjell           | Sports & Outdoor          |               57.53 |          35677.12 |                    0.16 |          79 |                       1 |                          0.03
+Purrfect Pantry        | Pet Supplies              |               57.41 |           3543.62 |                    1.62 |          73 |                       2 |                          0.03
+Barkley & Co.          | Pet Supplies              |               49.37 |           2740.46 |                     1.8 |          36 |                       1 |                          0.03
+Snout & Sons           | Pet Supplies              |                41.9 |            383.16 |                   10.93 |           7 |                       1 |                          0.02
+Fjordline Wear         | Apparel & Footwear        |               38.24 |           7915.46 |                    0.48 |          54 |                       1 |                          0.02
+Greyfriars Supply      | Apparel & Footwear        |               32.84 |            3149.4 |                    1.04 |          14 |                       2 |                          0.02
+Tail Wag Supply        | Pet Supplies              |               19.74 |           5728.03 |                    0.34 |          89 |                       1 |                          0.01
+Tiny Atelier           | Home & Living             |               17.35 |           3750.14 |                    0.46 |          32 |                       1 |                          0.01
+Teapot Society         | Food & Coffee             |               14.51 |             78.81 |                   18.41 |           1 |                       1 |                          0.01
+Olive & Oak Pantry     | Food & Coffee             |               12.05 |            118.55 |                   10.17 |           1 |                       1 |                          0.01
+Folio & Fern           | Books & Stationery        |               11.02 |           1963.85 |                    0.56 |          43 |                       1 |                          0.01
+(50 rows)
+
+=== Report 3: Coupon redemption patterns: repeat use, limit breaches and post-expiry usage, 2025 (written by Omar) ===
+Engineer's note: Grouped by coupons.id (coupon_code shown as the label) since codes aren't globally unique across tenants; discount amounts were converted to EUR directly from coupon_redemptions.currency_code/redeemed_at (that table already carries both, so the orders join for currency/placed_at wasn't needed). Full 2023-2025 history was scanned as requested, with the printed table limited to the top 50 most suspicious coupons per the sort order.
+REPORT: Coupon redemption patterns: repeat use, limit breaches and post-expiry usage, 2025
+QUESTION: Which coupon codes show signs of overuse or abuse — repeated redemption by the same customer, redemptions beyond stated limits, or use after the coupon's campaign window ended?
+coupon_code | status  | usage_limit | per_customer_limit | times_redeemed | distinct_customers | max_redemptions_by_customer | redemptions_after_expiry | redemptions_before_start | total_discount_eur
+------------+---------+-------------+--------------------+----------------+--------------------+-----------------------------+--------------------------+--------------------------+-------------------
+BF2530      | expired |        NULL |               NULL |             44 |                 35 |                           5 |                        0 |                        0 |               NULL
+BF2315      | expired |        NULL |               NULL |              3 |                  1 |                           3 |                        0 |                        0 |              35.72
+BF2315      | expired |        NULL |               NULL |            163 |                140 |                           3 |                        0 |                        0 |            5866.93
+BF2330      | expired |        NULL |               NULL |            108 |                 87 |                           3 |                        0 |                        0 |             7476.8
+BF2415      | expired |        NULL |               NULL |            105 |                 92 |                           3 |                        0 |                        0 |            3076.74
+BF2415      | expired |        NULL |               NULL |              4 |                  2 |                           3 |                        0 |                        0 |              87.75
+BF2415      | expired |        NULL |               NULL |            246 |                220 |                           3 |                        0 |                        0 |            7585.12
+BF2425      | expired |        NULL |               NULL |             13 |                 10 |                           3 |                        0 |                        0 |             409.98
+BF2425      | expired |        NULL |               NULL |             51 |                 41 |                           3 |                        0 |                        0 |            1317.72
+BF2515      | expired |        NULL |               NULL |              4 |                  2 |                           3 |                        0 |                        0 |             384.04
+BF2520      | expired |        NULL |               NULL |             10 |                  6 |                           3 |                        0 |                        0 |               NULL
+BF2525      | expired |        NULL |               NULL |              7 |                  5 |                           3 |                        0 |                        0 |               NULL
+BF2530      | expired |        NULL |               NULL |             10 |                  6 |                           3 |                        0 |                        0 |               NULL
+MEGA40      | expired |        NULL |               NULL |             73 |                 60 |                           3 |                        0 |                        0 |               NULL
+BF2315      | expired |        NULL |               NULL |              4 |                  3 |                           2 |                        0 |                        0 |               NULL
+BF2315      | expired |        NULL |               NULL |              3 |                  2 |                           2 |                        0 |                        0 |             105.56
+BF2315      | expired |        NULL |               NULL |             47 |                 42 |                           2 |                        0 |                        0 |               NULL
+BF2315      | expired |        NULL |               NULL |              6 |                  5 |                           2 |                        0 |                        0 |             118.22
+BF2315      | expired |        NULL |               NULL |             12 |                 10 |                           2 |                        0 |                        0 |               NULL
+BF2315      | expired |        NULL |               NULL |              4 |                  3 |                           2 |                        0 |                        0 |              31.75
+BF2320      | expired |        NULL |               NULL |              7 |                  4 |                           2 |                        0 |                        0 |             162.04
+BF2320      | expired |        NULL |               NULL |              5 |                  4 |                           2 |                        0 |                        0 |              48.83
+BF2320      | expired |        NULL |               NULL |             26 |                 23 |                           2 |                        0 |                        0 |               NULL
+BF2320      | expired |        NULL |               NULL |              8 |                  7 |                           2 |                        0 |                        0 |               NULL
+BF2320      | expired |        NULL |               NULL |              8 |                  7 |                           2 |                        0 |                        0 |              235.6
+BF2320      | expired |        NULL |               NULL |              7 |                  6 |                           2 |                        0 |                        0 |               NULL
+BF2325      | expired |        NULL |               NULL |             11 |                  9 |                           2 |                        0 |                        0 |               NULL
+BF2325      | expired |        NULL |               NULL |              9 |                  8 |                           2 |                        0 |                        0 |               NULL
+BF2325      | expired |        NULL |               NULL |              8 |                  6 |                           2 |                        0 |                        0 |             183.53
+BF2325      | expired |        NULL |               NULL |              7 |                  6 |                           2 |                        0 |                        0 |             366.96
+BF2330      | expired |        NULL |               NULL |              5 |                  4 |                           2 |                        0 |                        0 |               NULL
+BF2330      | expired |        NULL |               NULL |              6 |                  5 |                           2 |                        0 |                        0 |               NULL
+BF2415      | expired |        NULL |               NULL |             23 |                 21 |                           2 |                        0 |                        0 |             525.64
+BF2415      | expired |        NULL |               NULL |              6 |                  5 |                           2 |                        0 |                        0 |              24.32
+BF2415      | expired |        NULL |               NULL |              7 |                  6 |                           2 |                        0 |                        0 |               NULL
+BF2415      | expired |        NULL |               NULL |             22 |                 20 |                           2 |                        0 |                        0 |               NULL
+BF2420      | expired |        NULL |               NULL |             31 |                 28 |                           2 |                        0 |                        0 |               NULL
+BF2420      | expired |        NULL |               NULL |             21 |                 19 |                           2 |                        0 |                        0 |            1149.61
+BF2420      | expired |        NULL |               NULL |             13 |                 12 |                           2 |                        0 |                        0 |               NULL
+BF2425      | expired |        NULL |               NULL |              5 |                  4 |                           2 |                        0 |                        0 |               NULL
+BF2425      | expired |        NULL |               NULL |             12 |                 11 |                           2 |                        0 |                        0 |             226.39
+BF2425      | expired |        NULL |               NULL |             16 |                 13 |                           2 |                        0 |                        0 |             282.22
+BF2430      | expired |        NULL |               NULL |             12 |                 10 |                           2 |                        0 |                        0 |             499.62
+BF2430      | expired |        NULL |               NULL |             11 |                 10 |                           2 |                        0 |                        0 |             804.31
+BF2430      | expired |        NULL |               NULL |              4 |                  3 |                           2 |                        0 |                        0 |               NULL
+BF2430      | expired |        NULL |               NULL |             70 |                 64 |                           2 |                        0 |                        0 |               NULL
+BF2515      | expired |        NULL |               NULL |             13 |                 12 |                           2 |                        0 |                        0 |             189.91
+BF2515      | expired |        NULL |               NULL |             13 |                 12 |                           2 |                        0 |                        0 |               NULL
+BF2520      | expired |        NULL |               NULL |             45 |                 41 |                           2 |                        0 |                        0 |             682.36
+BF2520      | expired |        NULL |               NULL |              6 |                  5 |                           2 |                        0 |                        0 |               NULL
+(50 rows)

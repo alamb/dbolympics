@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-level delivery reliability: Lowlands Express by destination lane, full year 2025 (unified re-check)",
+    "--question",
+    "Confirmed and reconciled: how much does Lowlands Express's order-level reliability differ between its home lanes (Netherlands/Belgium/France) and everywhere else, versus the rest of our carriers combined?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per lane_group: 'Lowlands core (NL/BE/FR)', 'Lowlands non-core (other countries)', 'All other carriers combined'\", \"columns_requested\": [\"lane_group\", \"orders_fully_delivered\", \"avg_delivery_days\", \"pct_within_5_days\", \"share_of_orders_pct\"], \"details\": \"Same scoping and single-carrier attribution rule as the other two reports in this set (orders placed_at in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null). For orders where shipments.carrier = 'Lowlands Express', split by destination country (orders.shipping_address_id -> addresses -> countries.name): 'Lowlands core (NL/BE/FR)' if country in ('Netherlands','Belgium','France'), else 'Lowlands non-core (other countries)'. All remaining orders (any other carrier) go to 'All other carriers combined'. Please also report the raw count of orders in each group and confirm the three groups sum to the same total order count as the full-year carrier report in this batch, so I can verify consistency across the two reports. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order: Lowlands core first, then Lowlands non-core, then All other carriers combined. Expect 3 rows.\", \"builds_on\": [\"Order-level delivery reliability: Lowlands Express by destination lane, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

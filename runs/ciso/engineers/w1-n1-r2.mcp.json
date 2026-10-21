@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "MFA adoption rate by merchant, staff vs. shoppers",
+    "--question",
+    "For each merchant, what share of staff users and what share of shopper (non-staff) users have a confirmed, active MFA device, versus relying on password only?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per tenant (merchant)\", \"columns_requested\": [\"tenant name\", \"tenant status\", \"staff user count\", \"staff users with confirmed MFA\", \"staff MFA rate (%)\", \"shopper user count\", \"shopper users with confirmed MFA\", \"shopper MFA rate (%)\", \"total users\"], \"details\": \"Source: users (tenant_id, is_staff, deleted_at) joined to tenants for name/status, and to mfa_devices (tenant_id, user_id, confirmed_at) to determine MFA status. A user counts as having 'confirmed MFA' if they have at least one mfa_devices row with confirmed_at not null. Exclude soft-deleted users (deleted_at is null). Split counts by is_staff = true (staff) vs is_staff = false (shopper/end-user). Compute staff_mfa_rate = staff_with_mfa / staff_count (null-safe if staff_count = 0), same for shopper rate, rounded to 1 decimal percent. Include all 120 tenants that have at least one user; order by staff MFA rate ascending (worst coverage first) with tenant name as tie-break, so the report surfaces the weakest merchants first. Note total tenant count returned vs. the 50-row cap.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

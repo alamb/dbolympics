@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT t.name as tenant_name,\n  jr.total_job_runs_2025,\n  jr.failed_runs_2025,\n  round(jr.failed_runs_2025 * 100.0 / jr.total_job_runs_2025, 1) as failure_rate_pct,\n  round(jr.avg_duration_seconds_failed, 1) as avg_duration_seconds_failed,\n  coalesce(o.total_orders_2025, 0) as total_orders_2025,\n  case when coalesce(o.total_orders_2025, 0) = 0 then null\n       else round(jr.failed_runs_2025 / o.total_orders_2025 * 1000.0, 1)\n  end as failed_runs_per_1000_orders\nFROM tenants t\nJOIN (\n  SELECT tenant_id,\n    count(*) as total_job_runs_2025,\n    count(*) FILTER (WHERE status = 'failed') as failed_runs_2025,\n    avg(duration_ms / 1000.0) FILTER (WHERE status = 'failed') as avg_duration_seconds_failed\n  FROM job_runs\n  WHERE queued_at >= timestamp '2025-01-01' AND queued_at < timestamp '2026-01-01'\n  GROUP BY tenant_id\n) jr ON jr.tenant_id = t.id\nLEFT JOIN (\n  SELECT tenant_id, count(*) as total_orders_2025\n  FROM orders\n  WHERE placed_at >= timestamp '2025-01-01' AND placed_at < timestamp '2026-01-01'\n  GROUP BY tenant_id\n) o ON o.tenant_id = t.id\nORDER BY jr.failed_runs_2025 DESC, t.name ASC\nLIMIT 20",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, total_job_runs_2025, failed_runs_2025, failure_rate_pct, avg_duration_seconds_failed, total_orders_2025, failed_runs_per_1000_orders"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT t.name as tenant_name,\n  jr.total_job_runs_2025,\n  jr.failed_runs_2025,\n  round(jr.failed_runs_2025 * 100.0 / jr.total_job_runs_2025, 1) as failure_rate_pct,\n  round(jr.avg_duration_seconds_failed, 1) as avg_duration_seconds_failed,\n  coalesce(o.total_orders_2025, 0) as total_orders_2025,\n  case when coalesce(o.total_orders_2025, 0) = 0 then null\n       else round(jr.failed_runs_2025 / o.total_orders_2025 * 1000.0, 1)\n  end as failed_runs_per_1000_orders\nFROM tenants t\nJOIN (\n  SELECT tenant_id,\n    count(*) as total_job_runs_2025,\n    count(*) FILTER (WHERE status = 'failed') as failed_runs_2025,\n    avg(duration_ms / 1000.0) FILTER (WHERE status = 'failed') as avg_duration_seconds_failed\n  FROM job_runs\n  WHERE queued_at >= timestamp '2025-01-01' AND queued_at < timestamp '2026-01-01'\n  GROUP BY tenant_id\n) jr ON jr.tenant_id = t.id\nLEFT JOIN (\n  SELECT tenant_id, count(*) as total_orders_2025\n  FROM orders\n  WHERE placed_at >= timestamp '2025-01-01' AND placed_at < timestamp '2026-01-01'\n  GROUP BY tenant_id\n) o ON o.tenant_id = t.id\nORDER BY jr.failed_runs_2025 DESC, t.name ASC\nLIMIT 20",
+  "note": "avg_duration_seconds_failed is computed from job_runs.duration_ms/1000 (the only duration field available), averaged over failed runs only; failed_runs_per_1000_orders is left blank (NULL) when a tenant has zero 2025 orders, per the request.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns the top 20 tenants by 2025 failed job runs, with total/failed job run counts, failure rate %, average failure duration (seconds), 2025 order volume (0 if none), and failed runs per 1,000 orders (blank for zero-order tenants) — ordered by failed runs descending, tenant name as tie-break."
+ }
+]

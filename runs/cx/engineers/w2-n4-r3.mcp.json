@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Agent-level ticket performance within the three hotspot merchants",
+    "--question",
+    "Within Cragsley, Marrowby, and Studio Vrij, is slow/stuck-ticket handling spread evenly across the support team, or concentrated in one or two agents?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per support agent, within Cragsley Outfitters, Marrowby & Vane, and Studio Vrij, all-priority tickets created in 2025\", \"columns_requested\": [\"merchant name\", \"agent display name\", \"tickets handled, 2025\", \"avg resolution hours\", \"median resolution hours\", \"SLA breach rate (%)\"], \"details\": \"Source: tickets joined to support_agents (via assignee_agent_id, for display_name) and sla_breaches (for breach rate), filtered to the three named tenants. Window: tickets.created_at in 2025-01-01 through 2025-12-31, excluding tickets with assignee_agent_id null. avg/median resolution hours = extract(epoch from resolved_at - created_at)/3600 over that agent's tickets with resolved_at not null. SLA breach rate = distinct tickets for that agent with >=1 row in sla_breaches \\u00f7 tickets handled by that agent, percentage rounded to 1 decimal. Round resolution hours to 1 decimal. Order by merchant name ascending, then avg resolution hours descending within merchant. Expect at most 17 rows (8+5+4 agents across the three merchants, per last week's registered-agent counts).\", \"builds_on\": [\"Support agent staffing vs ticket volume, by merchant\", \"Urgent-ticket resolution-time distribution, slow merchants vs a fast baseline\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

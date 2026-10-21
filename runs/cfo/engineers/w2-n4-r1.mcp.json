@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Revenue Reconciliation via Ledger Accounts, Including VAT, by Quarter",
+    "--question",
+    "Once VAT/sales-tax is included on the ledger side (not just net-of-tax revenue), does the ledger's gross billed amount tie to the payments table's net captured amount each quarter?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Ines\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one calendar quarter, 2025\", \"columns_requested\": [\"quarter\", \"ledger_gross_billed_eur (sum of credit amounts where ledger_accounts.account_type='revenue' OR ledger_accounts.name='VAT / sales tax payable', minus sum of debit amounts where ledger_accounts.account_type='contra_revenue' OR ledger_accounts.name='VAT / sales tax payable', all for ledger_entries.occurred_at in the quarter)\", \"payments_net_amount_eur (sum of payments.amount - payments.amount_refunded, captured_at in the quarter, status captured/refunded/partially_refunded)\", \"diff_eur\", \"diff_pct\"], \"details\": \"Same method as last night's revenue reconciliation report (EUR conversion per-row via exchange_rates on the ledger entry's own occurred_at/currency_code for the ledger side, and on captured_at/currency_code for the payments side), but this time include the 'VAT / sales tax payable' ledger account's credits (at capture) and debits (at refund reversal) in the ledger-side total alongside 'revenue'-type accounts and 'contra_revenue'-type debits, so the ledger total represents the full gross-billed-minus-refunded amount rather than tax-exclusive revenue. Group by calendar quarter of occurred_at (ledger side) / captured_at (payments side). Order chronologically 2025-Q1 to 2025-Q4 (4 rows).\", \"builds_on\": [\"2025 Revenue Reconciliation via Correct Ledger Accounts, by Quarter\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

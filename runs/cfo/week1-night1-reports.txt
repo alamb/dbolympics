@@ -1,0 +1,62 @@
+=== Report 1: Tidewick Processing Fee Revenue by Month, 2025 (written by Bea) ===
+Engineer's note: The payouts.status codes aren't enumerated in the catalog, so I filtered status IN ('paid','completed') as the settled/completed states; please flag if the warehouse uses different literal status values so we can correct. All 12 months of 2025 are shown (zero-filled where no settled payouts exist), with 2024 fee revenue for the same month as the comparison column.
+REPORT: Tidewick Processing Fee Revenue by Month, 2025
+QUESTION: How much processing-fee revenue did Tidewick earn each month in 2025, and how is it trending?
+month   | payout_count | gross_volume_eur | fee_revenue_eur | net_paid_out_eur | fee_rate_pct | fee_revenue_prior_year_eur
+--------+--------------+------------------+-----------------+------------------+--------------+---------------------------
+2025-01 |          503 |        199172.31 |         4954.45 |        151256.63 |          2.5 |                    2988.79
+2025-02 |          426 |        117777.21 |         2907.62 |          95906.6 |          2.5 |                    3263.45
+2025-03 |          475 |        135070.48 |         3567.13 |        115334.32 |          2.6 |                     2972.1
+2025-04 |          449 |        188851.76 |         5006.79 |        169982.71 |          2.7 |                    3242.26
+2025-05 |          482 |        127570.11 |         3482.02 |         98002.35 |          2.7 |                    3490.98
+2025-06 |          463 |        113673.02 |         3123.65 |         91578.07 |          2.7 |                    2773.41
+2025-07 |          484 |        132602.63 |         3604.89 |         108283.9 |          2.7 |                    2844.58
+2025-08 |          474 |        141126.23 |         4276.29 |         118864.4 |          3.0 |                    2727.22
+2025-09 |          458 |         122449.4 |         3165.85 |        100229.52 |          2.6 |                    2991.07
+2025-10 |          507 |        154129.95 |         4108.16 |        130131.01 |          2.7 |                    3558.57
+2025-11 |          621 |        236843.96 |         6380.01 |        199899.74 |          2.7 |                    4548.44
+2025-12 |          775 |        322182.01 |          8609.0 |        250319.95 |          2.7 |                    7526.96
+(12 rows)
+
+=== Report 2: Top Merchants by 2025 Gross Payment Volume and Fee Revenue (written by Bea) ===
+Engineer's note: Grain is one tenant aggregated over 2025 payouts with status completed/paid, gross/fee converted EUR via same-day EUR exchange rate (1.0 when already EUR); shares and cumulative share are computed against the full 2025 tenant universe (before the top-25 cut), and since the pre-LIMIT result set is one row per tenant with any 2025 payout activity, the report's printed total-row-count gives the analyst's requested "how many tenants had activity" figure.
+REPORT: Top Merchants by 2025 Gross Payment Volume and Fee Revenue
+QUESTION: Which merchants account for the largest share of Tidewick's gross payment volume and processing-fee revenue in 2025?
+rank | merchant_name                 | industry_vertical         | tenant_status | gross_volume_eur | gross_volume_share_pct | cumulative_gross_volume_share_pct | fee_revenue_eur | fee_revenue_share_pct
+-----+-------------------------------+---------------------------+---------------+------------------+------------------------+-----------------------------------+-----------------+----------------------
+   1 | Cragsley Outfitters           | Apparel & Footwear        | active        |        702797.52 |                  17.69 |                             17.69 |        22263.37 |                 23.79
+   2 | Ampfeld Elektronik            | Consumer Electronics      | active        |        490656.47 |                  12.35 |                             30.04 |          8608.2 |                   9.2
+   3 | Marrowby & Vane               | Apparel & Footwear        | active        |        276394.66 |                   6.96 |                              37.0 |         4858.84 |                  5.19
+   4 | Kontor24 Bürobedarf           | Office Supplies (B2B)     | active        |        236709.76 |                   5.96 |                             42.95 |         3701.85 |                  3.96
+   5 | Ballycorran Industrial Supply | Industrial Supplies (B2B) | active        |        178917.44 |                    4.5 |                             47.46 |          2758.4 |                  2.95
+   6 | Brennquell Kaffee             | Food & Coffee             | active        |        176384.58 |                   4.44 |                              51.9 |         5539.25 |                  5.92
+   7 | Midland Safety Wear           | Industrial Supplies (B2B) | active        |         155767.8 |                   3.92 |                             55.82 |         3779.36 |                  4.04
+   8 | Cinder Peak Sports Co.        | Sports & Outdoor          | active        |        126336.27 |                   3.18 |                              59.0 |         3877.43 |                  4.14
+   9 | OfficeHub Nordic              | Office Supplies (B2B)     | active        |        111821.72 |                   2.81 |                             61.81 |         3618.19 |                  3.87
+  10 | Studio Vrij                   | Apparel & Footwear        | active        |        107823.51 |                   2.71 |                             64.53 |         1885.07 |                  2.01
+  11 | Castell Fasteners             | Industrial Supplies (B2B) | active        |        107753.57 |                   2.71 |                             67.24 |         3499.84 |                  3.74
+  12 | Gratlinie Outdoor             | Sports & Outdoor          | active        |         94039.66 |                   2.37 |                             69.61 |         2104.17 |                  2.25
+  13 | Deskline Supplies             | Office Supplies (B2B)     | active        |         64727.75 |                   1.63 |                             71.23 |          974.76 |                  1.04
+  14 | Fennel & Flint                | Home & Living             | active        |         62508.63 |                   1.57 |                             72.81 |         1739.27 |                  1.86
+  15 | Petalcourt Beauty             | Beauty                    | active        |         61865.09 |                   1.56 |                             74.36 |         1225.61 |                  1.31
+  16 | Hanse Industriebedarf         | Industrial Supplies (B2B) | active        |         46691.54 |                   1.18 |                             75.54 |         1315.17 |                  1.41
+  17 | Polder Packaging              | Industrial Supplies (B2B) | active        |         40169.59 |                   1.01 |                             76.55 |         1369.96 |                  1.46
+  18 | Grind Collective              | Food & Coffee             | past_due      |         39682.45 |                    1.0 |                             77.55 |         1265.15 |                  1.35
+  19 | Kayak Corner                  | Sports & Outdoor          | active        |          39521.7 |                   0.99 |                             78.54 |         1174.45 |                  1.25
+  20 | Wiesgrund Wohnen              | Home & Living             | active        |         37813.12 |                   0.95 |                              79.5 |          710.12 |                  0.76
+  21 | Linden & Loom                 | Home & Living             | active        |         36583.58 |                   0.92 |                             80.42 |          693.92 |                  0.74
+  22 | Fell & Fjell                  | Sports & Outdoor          | active        |         33288.47 |                   0.84 |                             81.26 |          468.76 |                   0.5
+  23 | Honeycomb Larder              | Food & Coffee             | active        |         31808.64 |                    0.8 |                             82.06 |         1145.98 |                  1.22
+  24 | Kibblewick                    | Pet Supplies              | active        |         31741.18 |                    0.8 |                             82.85 |           732.3 |                  0.78
+  25 | Sourdough Club                | Food & Coffee             | active        |         28997.99 |                   0.73 |                             83.58 |          577.02 |                  0.62
+(25 rows)
+
+=== Report 3: Merchant Concentration Trend: 2024 vs 2025 (written by Ines) ===
+Engineer's note: Filtered payouts.status to the two completed-equivalent codes ('completed','paid') since the catalog doesn't enumerate payout statuses explicitly; EUR conversion uses each payout's paid_at date against exchange_rates (base_code=EUR), dividing local amount by the EUR->local rate.
+REPORT: Merchant Concentration Trend: 2024 vs 2025
+QUESTION: Is Tidewick's volume and revenue concentration among its largest merchants growing or shrinking year over year?
+year | active_merchant_count | total_gross_volume_eur | top5_gross_volume_eur | top5_share_pct | top10_gross_volume_eur | top10_share_pct | top10_fee_share_pct
+-----+-----------------------+------------------------+-----------------------+----------------+------------------------+-----------------+--------------------
+2024 |                    92 |             3090208.98 |            1622754.42 |           52.5 |             2028894.53 |            65.7 |                67.3
+2025 |                   113 |             3972987.99 |            1885475.85 |           47.5 |             2563609.72 |            64.5 |                65.1
+(2 rows)

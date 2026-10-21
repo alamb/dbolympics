@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Support response & resolution time trend, monthly",
+    "--question",
+    "Is first-response and resolution speed on support tickets getting better or worse over time?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one calendar month, platform-wide across all tenants\", \"columns_requested\": [\"month (YYYY-MM)\", \"tickets created\", \"tickets with a first response (count)\", \"avg first response hours\", \"median first response hours\", \"tickets resolved (count)\", \"avg resolution hours\", \"median resolution hours\", \"SLA breach rate (%)\"], \"details\": \"Source: tickets, joined to sla_breaches for breach rate. Grain the month on tickets.created_at (date_trunc to month / use calendar_days.month_label for the label). Window: 2023-01-01 through 2025-12-31 (full history, 36 rows). First response hours = extract(epoch from first_response_at - created_at)/3600, only for tickets where first_response_at is not null (report both the count with a response and the avg/median so the denominator is clear). Resolution hours = extract(epoch from resolved_at - created_at)/3600 for tickets where resolved_at is not null. SLA breach rate = distinct tickets in that month's cohort with at least one row in sla_breaches, divided by tickets created that month, as a percentage rounded to 1 decimal. Round all hour figures to 1 decimal. Note in the report how many of the 36 months are returned, and flag that the most recent 1-2 months will understate resolution/response times for tickets still open (right-censoring) so we read the tail with caution. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

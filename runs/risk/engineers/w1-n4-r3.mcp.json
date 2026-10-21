@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Retention policy coverage for audit and compliance-relevant tables",
+    "--question",
+    "Do we have retention policies actually defined, active, and consistently enforced for the tables that matter most to this questionnaire (audit log, access log, change history, DSARs, compliance events, login attempts), and could any of them be purging data sooner than the history we'd want to cite?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Viktor\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per entity_table value, aggregated across all tenants' retention_policies rows, for entity_table in (audit_log, access_log, change_history, data_subject_requests, compliance_events, login_attempts)\", \"columns_requested\": [\"entity_table\", \"tenants_with_policy (count of distinct tenant_id with a retention_policies row for this table)\", \"pct_tenants_with_policy (out of 120 tenants)\", \"avg_retention_days\", \"min_retention_days\", \"max_retention_days\", \"pct_policies_active (is_active = true)\", \"pct_policies_run_in_last_90_days (last_run_at >= 2025-10-03)\"], \"details\": \"Source: retention_policies, grouped by entity_table, counting distinct tenant_id and aggregating retention_days/is_active/last_run_at. Purpose: sanity-check Rosa's concern that we might be 'quietly losing history before our stated retention period is up' \\u2014 e.g. if audit_log's min_retention_days turns out to be shorter than the ~3 years of history we're already citing in this week's other reports, that's a contradiction worth flagging before we commit to any retention claim in the questionnaire. Order by entity_table.\", \"builds_on\": [\"Audit log volume and actor identification by month\", \"Audit log coverage for identity and access-control tables\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

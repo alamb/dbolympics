@@ -1,0 +1,60 @@
+{
+ "notes": "Last night's B2B report raised a real data-integrity flag I need to resolve before I can trust the 38.9%-of-revenue materiality number: 6 of the 9 tenants with CRM deal activity (Ballycorran Industrial Supply, Hanse Industriebedarf, Kontor24 Burobedarf, Midland Safety Wear, Papeterie Grossiste, Polder Packaging) show exactly 0.0 across contract value, 2025 revenue, AND open receivables simultaneously, despite deal counts from 6 to 136 - that pattern (three independent measures all exactly zero together) looks like a conversion or join failure, not genuine zero business activity, and I want to check the raw native-currency numbers before concluding anything. Separately, the age-bucket dip and payment-method report together close out Rosa's timing question cleanly: bank_transfer payments average 15.7 days to capture (only 61.1% within 14 days) versus instant capture for card/wallet/credit, which fully explains the mid-range dip as pure timing, not a structural hole - I'm confident enough in that to not spend another slot on it. The segments/cohorts report found no company-wide \"active customer\" definition already in use (these are per-merchant marketing audiences, not Tidewick's own customer count), but it did validate that a recency-based \"ordered in the last N days\" concept (the \"Lapsed 90 days\" segment) is the operational analog marketing already relies on - good enough to write up without further digging. Tonight's three slots: (1) diagnose the zero-value B2B tenant anomaly in native currency with no FX conversion, (2) pull Castell Fasteners' actual open invoices since my €14,481 figure doesn't match Merchant Success's reported €5,080 and the board pack can't show two different numbers for the same merchant, (3) check whether Cragsley Outfitters' outsized share of late refunds is just proportional to its size or a real outlier, by comparing late-refund share against each top merchant's own total refund volume.",
+ "requests": [
+  {
+   "title": "Diagnose zero-value B2B deal tenants in native currency",
+   "question": "Are the 6 B2B-CRM tenants showing exactly 0.0 revenue/contract value/receivables genuinely inactive, or is this a currency-conversion or join artifact hiding real activity?",
+   "grain": "tenant",
+   "columns": [
+    "tenant_name",
+    "tenant_default_currency_code",
+    "deal_currency_codes",
+    "deal_count",
+    "deals_with_positive_value_count",
+    "raw_contract_value_total",
+    "raw_deal_line_items_total",
+    "orders_count_2025",
+    "payments_captured_count_2025"
+   ],
+   "details": "Population: the same 9 tenants that have at least one row in the deals table (as in last night's report). For each: tenant_default_currency_code = tenants.default_currency_code. deal_currency_codes = a comma-separated list (string_agg, distinct) of deals.currency_code values used by that tenant's deals. deal_count = count of deals rows. deals_with_positive_value_count = count of those deals where contract_value > 0. raw_contract_value_total = sum of deals.contract_value with NO currency conversion (plain native-currency sum; if multiple currencies appear for one tenant, note this but still sum raw). raw_deal_line_items_total = sum of (deal_line_items.quantity * deal_line_items.unit_price * (1 - deal_line_items.discount_pct)) across all deal_line_items belonging to this tenant's deals, also with no currency conversion, as a cross-check against raw_contract_value_total. orders_count_2025 = count of this tenant's orders (any status) placed in 2025, to check if the tenant has any order activity at all. payments_captured_count_2025 = count of this tenant's payments with status in ('captured','refunded','partially_refunded') and captured_at in 2025. Tables: deals, deal_line_items, tenants, orders, payments. Order by deal_count descending.",
+   "builds_on": [
+    "B2B wholesale tenants identified by CRM deal activity, with revenue and receivables"
+   ]
+  },
+  {
+   "title": "Castell Fasteners open invoices in detail",
+   "question": "What are Castell Fasteners' actual open invoices, so we can reconcile my €14,481 open-receivables figure against Merchant Success's reported €5,080 and present one consistent number to the board?",
+   "grain": "invoice",
+   "columns": [
+    "invoice_number",
+    "status",
+    "currency_code",
+    "total",
+    "amount_due",
+    "issued_at",
+    "due_at",
+    "days_overdue"
+   ],
+   "details": "Population: all invoices belonging to the tenant 'Castell Fasteners' (join via billing_profiles or invoices.tenant_id directly to tenants where tenants.name = 'Castell Fasteners') with status in ('open','past_due') and amount_due > 0, as of the snapshot date 2025-12-31. Show the native currency_code and amounts as stored (no EUR conversion needed since this is a single-tenant, single-currency drill-down - but include currency_code so I can confirm). days_overdue = 2025-12-31 minus due_at, in days (0 or negative shown as 0 if not yet due). Tables: invoices, tenants (and billing_profiles if needed for the tenant join). Order by amount_due descending.",
+   "builds_on": [
+    "B2B wholesale tenants identified by CRM deal activity, with revenue and receivables"
+   ]
+  },
+  {
+   "title": "Late-refund share as a percentage of each merchant's own refund volume",
+   "question": "Is Cragsley Outfitters' outsized share of company-wide late refunds just proportional to how big it is, or does it refund late at a higher rate than other large merchants?",
+   "grain": "tenant (top merchants by total 2025 refund volume)",
+   "columns": [
+    "tenant_name",
+    "total_refunds_2025_eur",
+    "late_refunds_2025_eur",
+    "pct_of_own_refunds_late",
+    "company_avg_pct_late_2025"
+   ],
+   "details": "Population: payment_refunds with status='succeeded' and processed_at in 2025, grouped by tenant. total_refunds_2025_eur = sum of payment_refunds.amount for the tenant, converted to EUR via exchange_rates (base_code='EUR', quote_code=payment_refunds.currency_code, as_of=processed_at date). late_refunds_2025_eur = the subset of those refunds that are 'late' (processed_at is after the paid_at of the payout that settled the original payment, found via payout_items.payment_id = payment_refunds.payment_id joined to payouts; refunds whose payment has no matching payout_items row do not count as late), converted to EUR the same way. pct_of_own_refunds_late = late_refunds_2025_eur / total_refunds_2025_eur * 100, rounded to 1 decimal. company_avg_pct_late_2025 = the same ratio computed company-wide across ALL tenants (a single repeated value on every row, for easy comparison), rounded to 1 decimal. Tables: payment_refunds, payout_items, payouts, tenants, exchange_rates. Show only the top 15 tenants by total_refunds_2025_eur. Order by total_refunds_2025_eur descending.",
+   "builds_on": [
+    "Late-refund concentration and trend by merchant"
+   ]
+  }
+ ]
+}

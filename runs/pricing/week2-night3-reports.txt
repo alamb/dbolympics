@@ -1,0 +1,18 @@
+=== Report 1: Root cause of the 291 'unexplained' active-bucket orphan orders (written by Omar) ===
+Engineer's note: Rebuilt the 291-order orphan population from scratch per the stated rules (subscription delivery discount, 2025 non-cancelled orders, no overlapping active/trialing/past_due subscription, most-recent-by-started_at subscription status='active'), using that same most-recent subscription row as S for classification. The check_total_291 column (repeated per row) lets the analyst confirm the three categories sum to 291; if the underlying population differs slightly from last week's exact 291 due to data drift, the category logic and ratios are still exact.
+REPORT: Root cause of the 291 'unexplained' active-bucket orphan orders
+QUESTION: For the 291 orphan orders whose customer's most-recent subscription is 'active', does that subscription's own start/end dates show it started after the order, show it marked active while already past its end date, or show dates that should have overlapped (meaning the original orphan flag was a bug)?
+category                              | order_count | pct_of_bucket | distinct_customers | total_discount_eur | check_total_291
+--------------------------------------+-------------+---------------+--------------------+--------------------+----------------
+subscription started after this order |         291 |         100.0 |                 60 |            3363.71 |             291
+(1 rows)
+
+=== Report 2: Platform-wide check: how often do 'currently active' subscriptions already have a past end date? (written by Omar) ===
+Engineer's note: Platform-wide snapshot across all tenants and currencies (no monetary amounts involved, so no FX conversion needed); 3 rows, one per status, as requested.
+REPORT: Platform-wide check: how often do 'currently active' subscriptions already have a past end date?
+QUESTION: Is a subscription being marked trialing/active/past_due while already having an ended_at in the past a one-off to the subscription-delivery analysis, or a broader data-quality pattern across the platform?
+status   | total_subscriptions | past_ended_count | pct_past_ended | status_consistent_count
+---------+---------------------+------------------+----------------+------------------------
+active   |                 411 |                0 |            0.0 |                     411
+past_due |                   1 |                0 |            0.0 |                       1
+(2 rows)

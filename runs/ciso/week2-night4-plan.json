@@ -1,0 +1,57 @@
+{
+ "notes": "Night 3 sharpened every thread nicely. Report 1 confirms the \"no actor\" gap in order_status_history is NOT cancellation-specific — it's 0.0% across every single status transition (pending, paid, fulfilled, cancelled, refunded; 150k+ rows, ~118 tenants) — a systemic table-wide property, not a narrow bug. Report 2 gives the clean #2 number: 88.3% of shoppers (9,910) are password-only with literally no backup factor, vs. 11.7% who at least inherit some protection from an OAuth provider — and recent-activity rates are nearly identical between the two groups (47.9% vs 46.9%), so OAuth adoption isn't just an artifact of inactive accounts. Report 3 is the most consequential: the long-lived (4+ year) active keys are dominated by integration-type keys (\"ERP sync\", \"Accounting sync\", \"Warehouse management sync\", \"Marketplace product feed sync\") nearly all carrying `limit_scope = admin_api`, used daily (every row shows ~5 days since last use, clustered right at month-end — looks like a nightly batch job), and they belong to our largest, most revenue-concentrated merchants (Cragsley Outfitters, Marrowby & Vane both appear with 4-5 such keys each). That's \"old + broad + important account\" together, exactly what Henrik flagged as the real risk combination.\n\nLast night of the cycle — I want three closing numbers rather than opening new threads: (1) the full scope tally across all 76 old keys (the printed list only showed 50), (2) whether admin_api scope is concentrated in old keys specifically or is just how all integration keys are scoped regardless of age (tells us if \"old+broad\" is a rotation failure or a design norm), and (3) closing the loop between the churn and API-key findings by checking whether the 2 active keys sitting on churned tenants carry that same elevated scope.",
+ "requests": [
+  {
+   "title": "Scope tally across all 76 long-lived (4+ year) active API keys",
+   "question": "Of all 76 active API keys that are 4+ years old, how many actually carry the broad 'admin_api' rate-limit scope versus no scope recorded at all — the full count, not just the 50 printed last night?",
+   "grain": "one row per distinct limit_scope value (including a 'no scope recorded' category for keys with no matching rate_limits row)",
+   "columns": [
+    "scope category ('admin_api', any other distinct limit_scope values found, or 'no scope recorded')",
+    "distinct key count (count distinct api_keys.id, not rate_limits rows)",
+    "share of the 76 keys (%)",
+    "distinct tenants represented"
+   ],
+   "details": "Source: api_keys where status = 'active' and created_at < (2026-01-05 minus 4 years) — the same 76-key population as last night's detail report — left-joined to rate_limits on api_key_id. Group by rate_limits.limit_scope (treat null, i.e. no matching rate_limits row, as its own category 'no scope recorded'). Count DISTINCT api_keys.id per group so a key is not double-counted if it somehow has more than one rate_limits row. Order by distinct key count descending, scope category as tie-break.",
+   "builds_on": [
+    "Detail list of the oldest active API keys (4+ years), by tenant"
+   ]
+  },
+  {
+   "title": "Is admin_api scope concentrated in old keys, or standard across all ages?",
+   "question": "Are broadly-scoped (admin_api) keys specifically a feature of our oldest, longest-unrotated keys, or is that scope just how every integration key is set up regardless of age — i.e. is 'old + broad' a rotation failure or simply the norm?",
+   "grain": "one row per active-key age bucket (the same 5 buckets used previously: under 90 days, 90 days-1 year, 1-2 years, 2-4 years, 4+ years)",
+   "columns": [
+    "age bucket",
+    "total active keys in bucket",
+    "of those, keys with rate_limits.limit_scope = 'admin_api'",
+    "share admin_api-scoped (%)",
+    "of those, keys with no matching rate_limits row ('no scope recorded')",
+    "distinct tenants represented"
+   ],
+   "details": "Source: api_keys where status = 'active', bucketed by age (2026-01-05 minus created_at) into the same 5 fixed ranges as the earlier age-distribution report, left-joined to rate_limits on api_key_id (count distinct api_keys.id per bucket to avoid double-counting if a key has multiple rate_limits rows). Order rows by bucket from youngest to oldest in the fixed sequence (not alphabetical), so the trend is readable top to bottom.",
+   "builds_on": [
+    "Active API key age distribution (rotation hygiene)",
+    "Scope tally across all 76 long-lived (4+ year) active API keys"
+   ]
+  },
+  {
+   "title": "Active API keys on churned tenants: scope and recent use",
+   "question": "The 2 churned tenants found earlier with a still-active API key (Dewdrop Studio, Aurum & Ash) — do those specific keys carry elevated (admin_api) scope, and how recently were they actually used?",
+   "grain": "one row per active api_keys row belonging to a tenant with tenants.status = 'churned'",
+   "columns": [
+    "tenant name",
+    "key name",
+    "age in days (2026-01-05 minus created_at)",
+    "last_used_at",
+    "days since last use",
+    "associated rate_limits.limit_scope, if any",
+    "associated rate_limits.max_requests, if any"
+   ],
+   "details": "Source: api_keys where status = 'active', joined to tenants where tenants.status = 'churned', left-joined to rate_limits on api_key_id. Expect a small result (2 rows based on the 'Access still open on churned tenants' report from two nights ago, which found 1 active key each for Dewdrop Studio and Aurum & Ash). Order by tenant name, then key name.",
+   "builds_on": [
+    "Access still open on churned tenants, by surface",
+    "Detail list of the oldest active API keys (4+ years), by tenant"
+   ]
+  }
+ ]
+}

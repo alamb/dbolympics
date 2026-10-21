@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH target_pipelines AS (\n  SELECT p.id AS pipeline_id, p.tenant_id AS tenant_id\n  FROM pipelines p\n  JOIN tenants t ON t.id = p.tenant_id\n  WHERE t.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging')\n    AND p.name = 'New business'\n),\nmonths AS (\n  SELECT DISTINCT month_start FROM calendar_days WHERE calendar_date BETWEEN DATE '2023-01-01' AND DATE '2025-12-31'\n),\ncreated AS (\n  SELECT date_trunc('month', o.created_at)::date AS month_start, count(*) AS cnt\n  FROM opportunities o\n  JOIN target_pipelines tp ON tp.pipeline_id = o.pipeline_id AND tp.tenant_id = o.tenant_id\n  WHERE o.created_at >= DATE '2023-01-01' AND o.created_at < DATE '2026-01-01'\n  GROUP BY 1\n),\nclosed AS (\n  SELECT date_trunc('month', o.closed_at)::date AS month_start, count(*) AS cnt\n  FROM opportunities o\n  JOIN target_pipelines tp ON tp.pipeline_id = o.pipeline_id AND tp.tenant_id = o.tenant_id\n  WHERE o.is_closed = true AND o.closed_at >= DATE '2023-01-01' AND o.closed_at < DATE '2026-01-01'\n  GROUP BY 1\n)\nSELECT to_char(m.month_start, 'YYYY-MM') AS month,\n       coalesce(c.cnt,0) AS opportunities_created,\n       coalesce(cl.cnt,0) AS opportunities_closed\nFROM months m\nLEFT JOIN created c ON c.month_start = m.month_start\nLEFT JOIN closed cl ON cl.month_start = m.month_start\nORDER BY m.month_start",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Catalog Error: Scalar Function with name to_char does not exist!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "WITH target_pipelines AS (\n  SELECT p.id AS pipeline_id, p.tenant_id AS tenant_id\n  FROM pipelines p\n  JOIN tenants t ON t.id = p.tenant_id\n  WHERE t.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging')\n    AND p.name = 'New business'\n),\nmonths AS (\n  SELECT DISTINCT month_start, month_label FROM calendar_days WHERE calendar_date BETWEEN DATE '2023-01-01' AND DATE '2025-12-31'\n),\ncreated AS (\n  SELECT date_trunc('month', o.created_at)::date AS month_start, count(*) AS cnt\n  FROM opportunities o\n  JOIN target_pipelines tp ON tp.pipeline_id = o.pipeline_id AND tp.tenant_id = o.tenant_id\n  WHERE o.created_at >= DATE '2023-01-01' AND o.created_at < DATE '2026-01-01'\n  GROUP BY 1\n),\nclosed AS (\n  SELECT date_trunc('month', o.closed_at)::date AS month_start, count(*) AS cnt\n  FROM opportunities o\n  JOIN target_pipelines tp ON tp.pipeline_id = o.pipeline_id AND tp.tenant_id = o.tenant_id\n  WHERE o.is_closed = true AND o.closed_at >= DATE '2023-01-01' AND o.closed_at < DATE '2026-01-01'\n  GROUP BY 1\n)\nSELECT m.month_label AS month,\n       coalesce(c.cnt,0) AS opportunities_created,\n       coalesce(cl.cnt,0) AS opportunities_closed\nFROM months m\nLEFT JOIN created c ON c.month_start = m.month_start\nLEFT JOIN closed cl ON cl.month_start = m.month_start\nORDER BY m.month_start",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, opportunities_created, opportunities_closed"
+ },
+ {
+  "kind": "text",
+  "text": "This compiles correctly with the right columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH target_pipelines AS (\n  SELECT p.id AS pipeline_id, p.tenant_id AS tenant_id\n  FROM pipelines p\n  JOIN tenants t ON t.id = p.tenant_id\n  WHERE t.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging')\n    AND p.name = 'New business'\n),\nmonths AS (\n  SELECT DISTINCT month_start, month_label FROM calendar_days WHERE calendar_date BETWEEN DATE '2023-01-01' AND DATE '2025-12-31'\n),\ncreated AS (\n  SELECT date_trunc('month', o.created_at)::date AS month_start, count(*) AS cnt\n  FROM opportunities o\n  JOIN target_pipelines tp ON tp.pipeline_id = o.pipeline_id AND tp.tenant_id = o.tenant_id\n  WHERE o.created_at >= DATE '2023-01-01' AND o.created_at < DATE '2026-01-01'\n  GROUP BY 1\n),\nclosed AS (\n  SELECT date_trunc('month', o.closed_at)::date AS month_start, count(*) AS cnt\n  FROM opportunities o\n  JOIN target_pipelines tp ON tp.pipeline_id = o.pipeline_id AND tp.tenant_id = o.tenant_id\n  WHERE o.is_closed = true AND o.closed_at >= DATE '2023-01-01' AND o.closed_at < DATE '2026-01-01'\n  GROUP BY 1\n)\nSELECT m.month_label AS month,\n       coalesce(c.cnt,0) AS opportunities_created,\n       coalesce(cl.cnt,0) AS opportunities_closed\nFROM months m\nLEFT JOIN created c ON c.month_start = m.month_start\nLEFT JOIN closed cl ON cl.month_start = m.month_start\nORDER BY m.month_start",
+  "note": "Scoped to the five named tenants' 'New business' pipeline as requested; one row per month Jan 2023-Dec 2025 (36 rows), with zero-filled months where no opportunities were created/closed.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per month from 2023-01 through 2025-12 (36 rows total) with `opportunities_created` and `opportunities_closed` counts, scoped to the five named B2B tenants' 'New business' pipelines — this will let Daniel see directly whether Oct–Dec 2025 creation volume tailed off (pointing to an ingestion gap) or stayed normal while closures simply caught up (a genuine pipeline freeze)."
+ }
+]

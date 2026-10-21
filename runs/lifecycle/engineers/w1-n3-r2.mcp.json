@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty and referral programme participation rate over time",
+    "--question",
+    "What share of our active customer base is enrolled in loyalty or has ever used a referral code, and is that share growing, flat, or shrinking over time?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Viktor\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per calendar quarter from 2023-Q1 through 2025-Q4\", \"columns_requested\": [\"quarter\", \"active_customers_cumulative\", \"loyalty_members_cumulative\", \"pct_customers_loyalty_members\", \"referred_customers_cumulative\", \"pct_customers_referred\"], \"details\": \"For each quarter end date (2023-03-31, 2023-06-30, ... 2025-12-31), compute cumulative counts as of that date: active_customers_cumulative = distinct users (is_staff = false) with at least one order placed_at on or before the quarter end; loyalty_members_cumulative = distinct users with a loyalty_accounts.enrolled_at on or before the quarter end; pct_customers_loyalty_members = loyalty_members_cumulative / active_customers_cumulative as a percentage; referred_customers_cumulative = distinct referred_user_id in referral_redemptions with redeemed_at on or before the quarter end; pct_customers_referred = referred_customers_cumulative / active_customers_cumulative as a percentage. Use calendar_days to get correct quarter-end dates. Order by quarter ascending.\", \"builds_on\": [\"Loyalty points and referral reward cost by month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

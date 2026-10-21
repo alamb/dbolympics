@@ -1,0 +1,70 @@
+=== Report 1: Single-item vs. multi-item conversion, controlling for guest vs. logged-in status (written by Grace) ===
+Engineer's note: Excluded carts with item_count = 0 per the request's note (if any exist); all other filters applied as specified. 4 rows, one per user-status x item-count-group cell.
+REPORT: Single-item vs. multi-item conversion, controlling for guest vs. logged-in status
+QUESTION: Does the 'single-item carts convert worse' pattern hold once we separate out guest (never logged in) carts, or is it mostly just another expression of the guest-vs-logged-in gap?
+user_status | item_count_group | cart_count | conversion_pct
+------------+------------------+------------+---------------
+logged_in   | multi-item       |       7552 |           67.8
+logged_in   | single-item      |       4757 |           51.0
+guest       | multi-item       |       2054 |            0.0
+guest       | single-item      |       6834 |            0.0
+(4 rows)
+
+=== Report 2: What kind of email reaches shoppers who recover a stalled cart? (written by Bea) ===
+Engineer's note: Each matched email_log row is counted once even if it fell inside the recovery window of more than one stalled cart for the same user (DISTINCT on email_log.id), to keep email_count from double-counting. 'Stalled' is operationalized as: cart created in range and not (status='converted' with converted_at within 1h of created_at) — carts lacking any converted_at are treated as stalled.
+REPORT: What kind of email reaches shoppers who recover a stalled cart?
+QUESTION: Is the email that correlates with cart recovery a deliberate cart-reminder/recovery mechanism, or just general marketing/engagement email that happens to land in that window?
+template_code         | template_name         | channel | email_count | pct_of_matched_emails
+----------------------+-----------------------+---------+-------------+----------------------
+order_confirmation    | Order confirmation    | email   |         193 |                  24.9
+order_confirmation    | Order confirmation    | email   |          90 |                 11.61
+shipping_confirmation | Shipping confirmation | email   |          85 |                 10.97
+delivered             | Delivery confirmation | email   |          63 |                  8.13
+shipping_confirmation | Shipping confirmation | email   |          51 |                  6.58
+delivered             | Delivery confirmation | email   |          39 |                  5.03
+order_confirmation    | Order confirmation    | email   |          36 |                  4.65
+order_confirmation    | Order confirmation    | email   |          34 |                  4.39
+refund_issued         | Refund issued         | email   |          24 |                   3.1
+order_confirmation    | Order confirmation    | email   |          19 |                  2.45
+order_confirmation    | Order confirmation    | email   |          19 |                  2.45
+shipping_confirmation | Shipping confirmation | email   |          18 |                  2.32
+delivered             | Delivery confirmation | email   |          16 |                  2.06
+delivered             | Delivery confirmation | email   |          15 |                  1.94
+shipping_confirmation | Shipping confirmation | email   |          12 |                  1.55
+shipping_confirmation | Shipping confirmation | email   |          12 |                  1.55
+subscription_receipt  | Subscription receipt  | email   |          11 |                  1.42
+delivered             | Delivery confirmation | email   |          10 |                  1.29
+refund_issued         | Refund issued         | email   |           8 |                  1.03
+shipping_confirmation | Shipping confirmation | email   |           8 |                  1.03
+delivered             | Delivery confirmation | email   |           5 |                  0.65
+refund_issued         | Refund issued         | email   |           4 |                  0.52
+password_reset        | Password reset        | email   |           1 |                  0.13
+password_reset        | Password reset        | email   |           1 |                  0.13
+refund_issued         | Refund issued         | email   |           1 |                  0.13
+(25 rows)
+
+=== Report 3: Weekday-matched cart conversion baseline for Cragsley Outfitters, Sep 29 – Nov 25 2025 (written by Omar) ===
+Engineer's note: One row per date for every Monday/Tuesday from 2025-09-29 to 2025-11-25 (18 rows), carts_created and overall_conversion_pct computed over all carts created that date regardless of status lifecycle timing, matching the prior Cragsley daily report definition.
+REPORT: Weekday-matched cart conversion baseline for Cragsley Outfitters, Sep 29 – Nov 25 2025
+QUESTION: Were Nov 24-25 (the start of the reminder-email outage) unusually low for their day of week, or within normal week-to-week variation?
+date       | day_of_week | carts_created | overall_conversion_pct
+-----------+-------------+---------------+-----------------------
+2025-09-29 | Monday      |            27 |                   29.6
+2025-09-30 | Tuesday     |            18 |                   33.3
+2025-10-06 | Monday      |            28 |                   28.6
+2025-10-07 | Tuesday     |            35 |                   34.3
+2025-10-13 | Monday      |            42 |                   45.2
+2025-10-14 | Tuesday     |            26 |                   42.3
+2025-10-20 | Monday      |            23 |                   39.1
+2025-10-21 | Tuesday     |            28 |                   21.4
+2025-10-27 | Monday      |            29 |                   34.5
+2025-10-28 | Tuesday     |            28 |                   39.3
+2025-11-03 | Monday      |            38 |                   31.6
+2025-11-04 | Tuesday     |            41 |                   29.3
+2025-11-10 | Monday      |            32 |                   43.8
+2025-11-11 | Tuesday     |            42 |                   28.6
+2025-11-17 | Monday      |            51 |                   45.1
+2025-11-18 | Tuesday     |            38 |                   52.6
+2025-11-24 | Monday      |            49 |                   36.7
+2025-11-25 | Tuesday     |            48 |                   31.3
+(18 rows)

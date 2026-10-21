@@ -1,0 +1,35 @@
+#!/bin/bash
+set -e
+
+# The threads and memory of this run (the server would otherwise size itself).
+sudo tee /etc/clickhouse-server/config.d/zz-limits.yaml >/dev/null <<EOF
+max_server_memory_usage: $((DBO_MEMORY_BYTES * 9 / 10))
+EOF
+sudo tee /etc/clickhouse-server/users.d/zz-limits.yaml >/dev/null <<EOF
+profiles:
+  default:
+    max_threads: $DBO_THREADS
+EOF
+
+sudo clickhouse start
+
+# PostgreSQL runs in its own container (system.toml). Once both answer, connect them.
+export PGPASSWORD="Dbolympics-Bench-2026!"
+pg=(psql -h 127.0.0.1 -U postgres -X -q -v ON_ERROR_STOP=1)
+for _ in $(seq 1 120); do
+    if clickhouse-client --query "SELECT 1" >/dev/null 2>&1 && "${pg[@]}" -c 'SELECT 1' >/dev/null 2>&1; then
+        "${pg[@]}" <<'EOF'
+CREATE EXTENSION IF NOT EXISTS pg_clickhouse;
+CREATE SERVER IF NOT EXISTS ch_srv FOREIGN DATA WRAPPER clickhouse_fdw
+       OPTIONS (driver 'binary', host '127.0.0.1', dbname 'default');
+CREATE USER MAPPING IF NOT EXISTS FOR CURRENT_USER SERVER ch_srv OPTIONS (user 'default');
+EOF
+        # the query program, for the whole run: the runner's protocol on /run/dbo/dbo.sock
+        nohup ./query >/run/dbo/query.log 2>&1 &
+        echo $! > query.pid
+        exit 0
+    fi
+    sleep 1
+done
+echo "pg_clickhouse: ClickHouse or PostgreSQL did not answer within 120 s" >&2
+exit 1

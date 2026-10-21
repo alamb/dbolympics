@@ -1,0 +1,58 @@
+{
+ "notes": "Night 3 reframes the whole story. Report 1 shows kind='adjustment' movements are NOT a steady monthly stream at all: 406 of 407 events fall on a single timestamp, 2025-12-31 22:59:59.999999, with only one lone event back in May. Report 2 confirms this: all 30 largest rows share that exact timestamp and reference_type='correction', and — strikingly — every single one of the top 30 belongs to B2B wholesale merchants (Deskline Supplies, OfficeHub Nordic, Kontor24 Bürobedarf, Hanse Industriebedarf, Castell Fasteners, Ballycorran Industrial Supply, Midland Safety Wear), in categories like Desks, Copy Paper, Toner, Storage, Drills, Bolts — exactly the \"industrial supplies / office equipment\" verticals from the company briefing, not apparel/electronics/food. And the net direction is all positive (units_over, i.e. gains, not shrinkage) — the opposite skew from the cycle_count stream. This looks like a once-a-year bulk stocktake/reconciliation true-up specific to the B2B wholesale book, not an ongoing operational accuracy problem.\n\nReport 3's cross-check delivers the key structural finding: stock_adjustments table has 10,194 rows, averaging 1.0 unit each, spread Jan 1 - Dec 31 — almost exactly matching stock_movements kind='cycle_count' (10,193 events, also always 1 unit). That strongly suggests stock_adjustments is the human-entered source behind the routine cycle_count stream, while stock_movements kind='adjustment' (407 events, all Dec 31) is a completely separate, rare, bulk mechanism unrelated to stock_adjustments. I need to confirm this before writing the memo, since it changes which number is \"the\" ongoing accuracy metric (cycle_count/stock_adjustments, ~260k EUR/year, steady) versus a one-off year-end event (adjustment-kind, ~138k EUR, concentrated in one day and one merchant segment).\n\nThis is the last night, so my three requests tonight are built to close out open definitional questions before I write Friday's memo: (A) confirm stock_adjustments is spread evenly through the year like cycle_count (not clustered like the Dec-31 batch) — settling the \"two separate mechanisms\" theory; (B) quantify exactly how concentrated the Dec-31 bulk correction is by merchant/vertical, since Tobias specifically asked whether exposure clusters by merchant; (C) get the reason-text breakdown behind the routine stock_adjustments entries, to give Tobias's shrinkage-vs-gain provision question real qualitative grounding beyond just the signed quantity. Reservation reliability (Q4) I'm treating as settled from night 2 (99.3% released on time, 0% stuck past expiry) and don't need another slot there.",
+ "requests": [
+  {
+   "title": "Monthly volume of stock_adjustments table entries, 2025",
+   "question": "Does the stock_adjustments table show a steady, roughly even pattern across 2025 (like the cycle_count movement stream it appears to feed), or does it also cluster at year-end like the stock_movements kind='adjustment' ledger?",
+   "grain": "calendar month (Jan 2025 - Dec 2025)",
+   "columns": [
+    "month (YYYY-MM)",
+    "adjustment_count (rows in stock_adjustments)",
+    "total_abs_quantity_delta (sum of abs(quantity_delta))",
+    "net_quantity_delta (signed sum; negative = net shrinkage)",
+    "distinct_variants_affected",
+    "avg_abs_quantity_delta (rounded 2dp)"
+   ],
+   "details": "Source: stock_adjustments, filtered on created_at between 2025-01-01 and 2025-12-31 (half-open: created_at >= 2025-01-01 and < 2026-01-01), since the table has no occurred_at column. Group by the month of created_at. No joins needed. Order by month ascending.",
+   "builds_on": [
+    "Cross-check: stock_adjustments table vs stock_movements adjustment-kind ledger, 2025"
+   ]
+  },
+  {
+   "title": "Which merchants drove the December 31 bulk stock correction",
+   "question": "The 407 stock_movements kind='adjustment' events (nearly all on 2025-12-31) appeared, in the top-30 detail, to be entirely B2B wholesale merchants (office equipment / industrial supplies) — is that concentration total, or do other merchants/verticals also appear further down the list?",
+   "grain": "tenant (one row per tenant with at least one kind='adjustment' stock_movements event in 2025)",
+   "columns": [
+    "tenant_name",
+    "industry (tenants.industry)",
+    "adjustment_events",
+    "abs_units_variance",
+    "net_units_variance (signed; positive = net gain found)",
+    "estimated_value_eur (same costing/FX method as prior reports)",
+    "share_of_total_value_pct"
+   ],
+   "details": "Source: stock_movements where kind='adjustment', occurred_at between 2025-01-01 and 2025-12-31 (half-open bound). Join stock_locations -> warehouses -> tenants to attribute each event to its owning tenant; pull tenants.industry directly. Group by tenant. Order by estimated_value_eur descending, tie-break by tenant_name. Expect well under 50 distinct tenants (likely 10-20) — print all of them if under 50 and note the total count either way.",
+   "builds_on": [
+    "Largest individual stock adjustments in 2025",
+    "Scale of adjustment-kind stock movements by month, 2025"
+   ]
+  },
+  {
+   "title": "Reasons behind routine stock_adjustments entries, 2025",
+   "question": "What reasons are recorded against the routine, year-round, single-unit stock_adjustments entries (the stream that appears to feed the cycle_count movements) — is it mostly shrinkage/loss language, or a mix of loss and found-stock reasons, and does the mix matter for sizing a shrinkage provision?",
+   "grain": "distinct reason text (stock_adjustments.reason)",
+   "columns": [
+    "reason",
+    "event_count",
+    "pct_of_total_events (rounded 1dp)",
+    "net_quantity_delta (signed sum; negative = net shrinkage)",
+    "total_abs_quantity_delta",
+    "avg_abs_quantity_delta (rounded 2dp)"
+   ],
+   "details": "Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound). Group by the exact reason text value (do not attempt pattern-matching/bucketing; if the underlying data uses a small fixed set of reason strings this will naturally roll up cleanly; if it turns out to be highly fragmented free text, the report will show that too, which is itself useful to know). Order by event_count descending, tie-break by reason alphabetically. Cap at 50 rows and note the total distinct reason count even if it exceeds 50.",
+   "builds_on": [
+    "Monthly volume of stock_adjustments table entries, 2025"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add a System · DB Olympics</title>
+<meta name="description" content="How to run your own database system in DB Olympics.">
+<link rel="preload" href="fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+<!--HEAD-->
+<link rel="stylesheet" href="style.css">
+<style>
+.doc h1 { font-size: 40px; margin: 0 0 12px; }
+.doc .lead { font-size: 19px; color: var(--ink-2); margin: 0 0 8px; }
+.doc section { margin-top: 48px; }
+.doc p, .doc li { color: var(--ink-2); }
+.doc p { margin: 0 0 12px; }
+.doc ol, .doc ul { padding-left: 1.3em; margin: 0 0 12px; }
+.doc li { margin-bottom: 6px; }
+.doc li b, .doc p b { color: var(--ink); font-weight: 600; }
+.doc code { font-family: var(--mono); font-size: 0.82em; }
+.doc pre { font: 13px/1.6 var(--mono); background: var(--code-bg); padding: 12px 16px; border-radius: 3px; overflow-x: auto; margin: 0 0 12px; }
+.toc { font-size: 15px; color: var(--muted); margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.toc a { color: var(--ink-2); }
+table.spec { width: 100%; border-collapse: collapse; font-size: 15px; margin: 6px 0 12px; }
+.spec th { font-weight: 400; color: var(--muted); text-align: left; padding: 0 12px 6px 0; border-bottom: 1px solid var(--ink);
+  font-variant-caps: all-small-caps; letter-spacing: 0.06em; white-space: nowrap; }
+.spec td { padding: 7px 12px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
+.spec td:first-child { color: var(--ink); white-space: nowrap; }
+.spec tr:last-child td { border-bottom: 1px solid var(--ink); }
+@media (max-width: 640px) { .doc h1 { font-size: 32px; } }
+</style>
+</head>
+<body>
+<div class="page doc">
+
+<!--TOPBAR-->
+
+<h1>Add a system</h1>
+<p class="lead measure">How to run your own database system in DB Olympics: what a system consists of, how the
+  benchmark talks to it, and the rules it plays by.</p>
+<nav class="toc" aria-label="Contents">
+  <a href="#parts">What a system is</a><a href="#protocol">The protocol</a><a href="#rules">Rules</a><a href="#try">Try it</a>
+</nav>
+
+<section id="parts" class="measure">
+  <h2>What a system is</h2>
+  <p>A self-contained directory <code>systems/&lt;name&gt;/</code> in the repository: the scripts that install and
+    start the system, and its <b>query program</b>, through which the benchmark talks to it. The benchmark does the
+    rest: it builds a container image, starts it with the machine's cores and memory, creates the schema, loads the
+    data, runs and times the queries, and checks the results.</p>
+  <table class="spec">
+    <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>system.toml</code></td><td>the statement that loads a Parquet file, the system's spellings of the
+        placeholders and its type names, session settings, and containers to start next to the system's own</td></tr>
+      <tr><td><code>install</code></td><td>installs the system in its container (Ubuntu 26.04, as root, with network,
+        with every file of the directory) and builds the query program; runs once, when the image is built</td></tr>
+      <tr><td><code>start</code></td><td>starts the system's servers, if it has any, and its query program; it gets the
+        run's cores and memory in <code>DBO_THREADS</code> and <code>DBO_MEMORY_BYTES</code></td></tr>
+      <tr><td><code>query.rs</code></td><td>the query program, in Rust (with its <code>Cargo.toml</code> and
+        <code>Cargo.lock</code>): runs for the whole run, serves the protocol below and runs every statement on the
+        system, or holds the system embedded; <code>main</code> hands the system to <code>dbo::serve</code>
+        (<code>systems/dbo</code>: the protocol, the loop and the timer)</td></tr>
+      <tr><td><code>stop</code></td><td>optional: stops the query program and the servers at the end</td></tr>
+      <tr><td><code>logo.svg</code></td><td>optional: the system's mark on this website, any SVG, fitted into a square; drawn in
+        <code>currentColor</code>, it takes the page's colours, also when the system is highlighted</td></tr>
+    </tbody>
+  </table>
+  <p>A system that comes as a container image needs only a <code>[[container]]</code> entry, and a query program that
+    connects to it. A system file, for Umbra:</p>
+  <pre>name = "umbra"
+version = "experimental"
+
+[load]
+statement = "COPY {table} FROM '{file}' WITH (FORMAT parquet)"
+
+[dialect]
+settings = ["SET debug.semana.pgdatesub = true"]
+
+[[container]]
+name = "db"
+image = "docker.io/umbradb/umbra:experimental"
+env = { PARALLEL = "{threads}", MEMORY = "{memory_mb}M", PGHOST = "/run/dbo" }</pre>
+</section>
+
+<section id="protocol" class="measure">
+  <h2>The protocol</h2>
+  <p>The benchmark sends every statement to the query program over a Unix socket, one at a time, on one connection that
+    stays open for the whole run. It measures every request itself, from sending it to having the whole answer;
+    nothing the system reports counts.</p>
+  <ul>
+    <li><b>Request:</b> a <code>u32</code> length of the rest, a <code>u32</code> timeout in milliseconds (0: none),
+      then one SQL statement in UTF-8. All integers are little-endian. Settings, the schema, the loads (one statement
+      per table) and the queries all come this way.</li>
+    <li><b>Answer:</b> a <code>u32</code> length of the rest, a <code>u8</code> status (0 ok, 1 error, 2 timeout),
+      then the statement's result as CSV without a header (NULL as an empty field, the empty string as
+      <code>""</code>; nothing for a statement without one) or the error text.</li>
+    <li><b>Timeouts:</b> a statement still running at its timeout is cancelled, and the system answers the next
+      request as usual.</li>
+  </ul>
+  <p>Each system decides how its query program starts and connects. The query programs are Rust programs with the
+    system's own Rust client: the <code>postgres</code> crate for the systems that speak the PostgreSQL protocol,
+    <code>ureq</code> for HTTP interfaces, Arrow Flight for Arrow Flight SQL. The protocol code is the same in every
+    one, so a new one copies it and only has to run a statement on the system and cancel the running one. An
+    embedded engine lives inside its query program, as DuckDB, chDB and DataFusion do. The system's
+    <code>install</code> builds it.</p>
+</section>
+
+<section id="rules" class="measure">
+  <h2>Rules</h2>
+  <ul>
+    <li><b>The same schema for every system.</b> A system may change type names and append text to
+      <code>CREATE TABLE</code> (a table engine, for example); no indexes and no other tables.</li>
+    <li><b>The same queries.</b> A system may spell the placeholders its own way, under the
+      <a href="methodology.html#dialects">criteria of the methodology</a>, and use its own settings to follow the
+      SQL standard more closely; nothing else.</li>
+    <li><b>The query program passes the SQL through unchanged.</b> A difference of dialect goes into the system file,
+      never into the query program.</li>
+    <li><b>The system loads the data itself</b>, from read-only Parquet files: one file and one statement per table
+      and load.</li>
+    <li><b>The system lives for the whole run.</b> It is never restarted, and nothing starts per statement: the
+      query program keeps one connection to the system.</li>
+    <li><b>No result caches.</b> Queries repeat on unchanged data; a cached result would not be a measurement.</li>
+    <li><b>No network.</b> Whatever the system needs must be in its image after <code>install</code>.</li>
+  </ul>
+</section>
+
+<section id="try" class="measure">
+  <h2>Try it</h2>
+  <p>On Linux with Podman and Rust, after the host setup of the repository:</p>
+  <pre>cargo build --release --workspace
+./target/release/dbo-bench render --system &lt;name&gt; --out rendered/&lt;name&gt;   # what the system gets
+./target/release/dbo-bench run --benchmark bench/benchmark_sf1.toml --system &lt;name&gt; --config sf1-c8a.2xlarge --keep</pre>
+  <p>Results go to <code>systems/&lt;name&gt;/&lt;date&gt;/</code>; every error and every difference from a reference
+    result is in <code>bench/out/&lt;date&gt;/sf1-c8a.2xlarge/&lt;name&gt;/errors.log</code> (kept with <code>--keep</code>). When the system runs, send the
+    directory as a pull request to the repository.</p>
+</section>
+
+<footer>
+  <span>DB Olympics · <a href="https://db.in.tum.de/~birler/">Altan Birler</a> · <a href="https://db.in.tum.de/~schmidt/">Tobias Schmidt</a></span>
+  <span><a href="index.html">Results</a> · <a href="methodology.html">Methodology</a> · <a href="queries/index.html">Queries</a></span>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+ "notes": "Tobias ranked #1 (2025 revenue mix) and #2 (merchant concentration) as this week's priorities, so I'm spending all 3 slots there tonight.\n\nScoping note on #1: I looked for a table that records merchants paying Tidewick its own monthly platform-plan fee. The `plans`/`subscriptions`/`invoices` tables are tenant-scoped and model each *merchant's* own subscription business toward *their* end customers (invoice.order_id/subscription_id point at the merchant's own orders/users) — they are not Tidewick billing the merchant. The only piece of Tidewick's own revenue that is actually observable in this warehouse is the processing fee Tidewick keeps on settled payments, captured explicitly in `payouts.fee_amount` per the handbook. So tonight I'm only requesting the processing-fee side of #1, trended monthly, and I'll flag to Tobias in the memo that platform-plan fee revenue isn't in this warehouse (likely lives in Tidewick's own internal billing/finance system) before promising a full split.\n\nFor #2, I expect a small number of merchants to dominate — my hypothesis is the top ~10% of merchants account for well over half of gross volume. I'm requesting one snapshot (who the big merchants are and their share in 2025) and one two-point trend (2024 vs 2025) to directly test whether that concentration is growing or shrinking, which is the risk question Tobias actually asked.\n\nAll three reports use `payouts` (gross/fee/net already split there) converted to EUR via `exchange_rates`, joined on the payout's currency and settlement date.",
+ "requests": [
+  {
+   "title": "Tidewick Processing Fee Revenue by Month, 2025",
+   "question": "How much processing-fee revenue did Tidewick earn each month in 2025, and how is it trending?",
+   "grain": "one calendar month in 2025",
+   "columns": [
+    "month (YYYY-MM)",
+    "payout count",
+    "gross volume (EUR)",
+    "fee revenue (EUR) — Tidewick's processing-fee take",
+    "net paid out to merchants (EUR)",
+    "fee rate (%) = fee revenue / gross volume",
+    "fee revenue same month prior year (EUR)"
+   ],
+   "details": "Source: payouts (gross_amount, fee_amount, net_amount, currency_code, paid_at/arrival_date). Include only payouts with a non-null paid_at and status indicating completed/paid settlement. Bucket by month of paid_at using calendar_days.month_label for 2025-01 through 2025-12. Convert each payout's amounts from its currency_code to EUR using exchange_rates (base_code='EUR', quote_code=payout currency, as_of = date(paid_at)); EUR amount = amount / rate. For the 'prior year' column, compute the same aggregation for the matching month in 2024. Round money to 2 decimals and the fee rate to 1 decimal place. Order by month ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "Top Merchants by 2025 Gross Payment Volume and Fee Revenue",
+   "question": "Which merchants account for the largest share of Tidewick's gross payment volume and processing-fee revenue in 2025?",
+   "grain": "one tenant (merchant), aggregated over 2025",
+   "columns": [
+    "rank",
+    "merchant name",
+    "industry/vertical",
+    "tenant status",
+    "gross volume (EUR)",
+    "gross volume share of total (%)",
+    "cumulative gross volume share (%)",
+    "fee revenue (EUR)",
+    "fee revenue share of total (%)"
+   ],
+   "details": "Source: payouts joined to tenants on tenant_id (for name, industry, status). Filter to payouts with paid_at in 2025 and completed/paid status. Convert gross_amount and fee_amount to EUR via exchange_rates as in the monthly report. Aggregate per tenant_id, compute each tenant's share of the 2025 total gross volume and total fee revenue across all tenants, and a running cumulative gross-volume share down the ranked list. Order by gross volume EUR descending, tie-break by tenant_id ascending. Print the top 25 rows; note in the report how many tenants had any 2025 payout activity in total.",
+   "builds_on": []
+  },
+  {
+   "title": "Merchant Concentration Trend: 2024 vs 2025",
+   "question": "Is Tidewick's volume and revenue concentration among its largest merchants growing or shrinking year over year?",
+   "grain": "one calendar year (2024, 2025)",
+   "columns": [
+    "year",
+    "active merchant count (tenants with >=1 completed payout that year)",
+    "total gross volume (EUR)",
+    "top 5 merchants' gross volume (EUR)",
+    "top 5 share of total gross volume (%)",
+    "top 10 merchants' gross volume (EUR)",
+    "top 10 share of total gross volume (%)",
+    "top 10 share of total fee revenue (%)"
+   ],
+   "details": "Source: payouts joined to tenants. For each of 2024 and 2025 separately, aggregate gross_amount and fee_amount (converted to EUR via exchange_rates as in the other two reports) per tenant_id for payouts with completed/paid status and paid_at in that year. Rank tenants within each year by gross volume EUR descending to identify that year's top 5 and top 10, then sum their gross volume and fee revenue and express as a percentage of that year's total across all active tenants. Round shares to 1 decimal place. Order by year ascending (2 rows total).",
+   "builds_on": []
+  }
+ ]
+}

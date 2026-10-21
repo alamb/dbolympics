@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Tenant Size vs Carts.remind Job Failure Exposure, 2025",
+    "--question",
+    "Were the 10 tenants hit by the November carts.remind job failures large/top-tier accounts, or did exposure look unrelated to merchant size?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Omar\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per tenant\", \"columns_requested\": [\"tenant_name\", \"total_orders_2025\", \"total_revenue_eur_2025\", \"revenue_rank\", \"was_affected_by_nov_carts_remind_failure\"], \"details\": \"Tables: orders (placed_at in 2025, any status) for total_orders_2025 and total_revenue_eur_2025 (sum of grand_total converted to EUR using exchange_rates: base_code='EUR', quote_code=orders.currency_code, as_of matching date(placed_at), amount_eur = grand_total / rate). revenue_rank = dense rank of tenants by total_revenue_eur_2025 descending (1 = largest). was_affected_by_nov_carts_remind_failure = 'Yes' if the tenant has at least one row in job_runs joined to jobs (job_runs.job_id = jobs.id) where jobs.handler = 'carts.remind', job_runs.status = 'failed', and job_runs.queued_at in November 2025, else 'No'. Order by was_affected_by_nov_carts_remind_failure descending (Yes first), then revenue_rank ascending. Limit to 30 rows so all 10 affected tenants appear plus the next ~20 largest unaffected tenants for comparison.\", \"builds_on\": [\"Merchants Hit Hardest by Job Failures, 2025\", \"2025 Job Failures by Job Type (Handler)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

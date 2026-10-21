@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  kind,\n  count(*) AS event_count,\n  min(abs(quantity)) AS min_abs_qty,\n  max(abs(quantity)) AS max_abs_qty,\n  round(avg(abs(quantity)), 2) AS avg_abs_qty,\n  percentile_cont(0.5) WITHIN GROUP (ORDER BY abs(quantity)) AS median_abs_qty,\n  round(100.0 * count(*) FILTER (WHERE abs(quantity) = 1) / count(*), 1) AS pct_abs_qty_eq_1,\n  sum(abs(quantity)) AS total_abs_qty\nFROM stock_movements\nWHERE occurred_at >= timestamp '2025-01-01' AND occurred_at < timestamp '2026-01-01'\nGROUP BY kind\nORDER BY kind",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: kind, event_count, min_abs_qty, max_abs_qty, avg_abs_qty, median_abs_qty, pct_abs_qty_eq_1, total_abs_qty"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles correctly."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  kind,\n  count(*) AS event_count,\n  min(abs(quantity)) AS min_abs_qty,\n  max(abs(quantity)) AS max_abs_qty,\n  round(avg(abs(quantity)), 2) AS avg_abs_qty,\n  percentile_cont(0.5) WITHIN GROUP (ORDER BY abs(quantity)) AS median_abs_qty,\n  round(100.0 * count(*) FILTER (WHERE abs(quantity) = 1) / count(*), 1) AS pct_abs_qty_eq_1,\n  sum(abs(quantity)) AS total_abs_qty\nFROM stock_movements\nWHERE occurred_at >= timestamp '2025-01-01' AND occurred_at < timestamp '2026-01-01'\nGROUP BY kind\nORDER BY kind",
+  "note": "Used occurred_at >= 2025-01-01 and < 2026-01-01 (equivalent to the requested inclusive range) for a clean half-open bound on timestamps.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `stock_movements` by `kind` for 2025, computing count, min/max/avg/median of `abs(quantity)`, the percentage of rows with `abs(quantity)=1`, and the total absolute quantity — directly answering whether the ±1 pattern is unique to `cycle_count` or common across movement kinds."
+ }
+]

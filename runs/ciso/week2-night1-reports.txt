@@ -1,0 +1,64 @@
+=== Report 1: Full census of audit-trail deletion coverage, all soft-deletable tables (written by Omar) ===
+Engineer's note: The requested list actually enumerates 30 distinct tables (not 29 as labeled) — all 30 are included, all confirmed to have a deleted_at column in the catalog. Audit matching is by entity_table name only (entity_schema ignored), as specified.
+REPORT: Full census of audit-trail deletion coverage, all soft-deletable tables
+QUESTION: Is the missing deletion audit trail we found for products a narrow, one-table problem, or does it extend across most of the tables that support soft-deletion?
+entity_table       | total_soft_deleted | matching_audit_rows | coverage_rate_pct | tenants_with_soft_deleted
+-------------------+--------------------+---------------------+-------------------+--------------------------
+products           |                615 |                   0 |               0.0 |                        91
+users              |                 39 |                  27 |              69.2 |                        20
+ab_tests           |                  0 |                   0 |              NULL |                         0
+accounts           |                  0 |                   0 |              NULL |                         0
+billing_profiles   |                  0 |                   0 |              NULL |                         0
+brands             |                  0 |                   0 |              NULL |                         0
+campaigns          |                  0 |                   0 |              NULL |                         0
+categories         |                  0 |                   0 |              NULL |                         0
+cohorts            |                  0 |                   0 |              NULL |                         0
+collections        |                  0 |                   0 |              NULL |                         0
+contacts           |                  0 |                   0 |              NULL |                         0
+coupons            |                  0 |                   0 |              NULL |                         0
+discounts          |                  0 |                   0 |              NULL |                         0
+email_templates    |                  0 |                   0 |              NULL |                         0
+experiments        |                  0 |                   0 |              NULL |                         0
+files              |                  0 |                   0 |              NULL |                         0
+funnels            |                  0 |                   0 |              NULL |                         0
+knowledge_articles |                  0 |                   0 |              NULL |                         0
+landing_pages      |                  0 |                   0 |              NULL |                         0
+loyalty_programs   |                  0 |                   0 |              NULL |                         0
+macros             |                  0 |                   0 |              NULL |                         0
+plans              |                  0 |                   0 |              NULL |                         0
+price_lists        |                  0 |                   0 |              NULL |                         0
+product_variants   |                  0 |                   0 |              NULL |                         0
+promotions         |                  0 |                   0 |              NULL |                         0
+referrals          |                  0 |                   0 |              NULL |                         0
+segments           |                  0 |                   0 |              NULL |                         0
+suppliers          |                  0 |                   0 |              NULL |                         0
+utm_links          |                  0 |                   0 |              NULL |                         0
+warehouses         |                  0 |                   0 |              NULL |                         0
+(30 rows)
+
+=== Report 2: Audit traceability of order cancellations and invoice voids (written by Viktor) ===
+Engineer's note: Events are scoped to 2023-01-01..2025-12-31 using orders.cancelled_at / invoices.voided_at (the rows where that timestamp is null despite the terminal status are excluded from the count, since there's no other way to date them). Match test is an EXISTS on audit_log by (entity_table, entity_id, tenant_id) with any action — as requested, this only proves some audit trail exists for the row, not that the cancellation/void itself was the logged event; even 100% coverage would not confirm that.
+REPORT: Audit traceability of order cancellations and invoice voids
+QUESTION: For the two 'deletion-like' events on our financial documents that don't use soft-delete — a cancelled order, a voided invoice — is there any audit_log record at all tying back to that specific row?
+entity_type         | total_events | events_with_match | coverage_rate_pct | distinct_tenants
+--------------------+--------------+-------------------+-------------------+-----------------
+invoice voids       |            0 |                 0 |              NULL |                0
+order cancellations |         1712 |                 3 |               0.2 |               90
+(2 rows)
+
+=== Report 3: Access still open on churned tenants, by surface (written by Felix) ===
+Engineer's note: Per the request's explicit Details (users/sessions/api_keys/webhooks/service_accounts, no role join specified), this counts all users of any role — it does not separately exclude Owner/Administrator accounts, since no roles/user_roles join was given in the spec. If you want Owner/Admin excluded from the user counts specifically, that needs a follow-up report joining user_roles/roles.
+REPORT: Access still open on churned tenants, by surface
+QUESTION: Beyond Owner/Administrator accounts, how much other access (ordinary staff logins, open sessions, active API keys, active webhooks) is still live on tenants that have already churned?
+tenant_name        | total_users | active_users | open_sessions | active_api_keys | active_webhooks | service_accounts
+-------------------+-------------+--------------+---------------+-----------------+-----------------+-----------------
+Saltmarsh Knitwear |          18 |           18 |           300 |               0 |               0 |                0
+Petal & Pestle     |          10 |           10 |           223 |               0 |               0 |                0
+Dewdrop Studio     |           9 |            9 |           171 |               1 |               1 |                1
+Halden Boots       |           8 |            8 |           120 |               0 |               0 |                0
+Marginalia         |           8 |            8 |            80 |               0 |               0 |                0
+Aurum & Ash        |           7 |            7 |            73 |               1 |               1 |                1
+Northwire Audio    |           7 |            7 |           191 |               0 |               0 |                0
+Paddock & Pine     |           7 |            7 |            46 |               0 |               0 |                0
+Klara Beauty       |           5 |            5 |           110 |               0 |               0 |                0
+(9 rows)

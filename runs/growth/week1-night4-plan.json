@@ -1,0 +1,53 @@
+{
+ "notes": "Last night's industry breakdown overturned my earlier 'discounted orders are healthier' read: that was Simpson's-paradox-driven by B2B contract pricing (huge baskets, 40+ items/order) and near-free subscription trial offers in Food & Coffee/Pet Supplies (avg order value ~6-8 EUR). Within actual consumer retail verticals (apparel, beauty, electronics, home, sports), discounted orders have equal-or-lower AOV and meaningfully HIGHER return rates than full-price ones — the opposite of the pooled story. That's resolved and ready for the memo, no further query needed there. The loyalty report is the one open thread: members show lower order frequency and AOV than non-members, which is counterintuitive, and I suspect the same composition trap (loyalty concentrated in low-AOV subscription verticals) — worth one check before I tell Chloé 'loyalty doesn't move the needle.' Email engagement (29.9% open, 2.4% click, healthy bounce/unsubscribe) looked like a normal, non-alarming baseline with only one channel actually used, so I'm not spending a slot chasing it further. With this being the last night, I'm using the remaining two slots to close out Chloé's still-open questions: the referral half of Q4, and a first look at Q5 (A/B tests), both as compact baseline reports for the Friday memo.",
+ "requests": [
+  {
+   "title": "Is loyalty members' lower spend a within-industry effect or a merchant-mix effect?",
+   "question": "Within the same industry, do loyalty-program members actually order more or spend more than non-members, or does the platform-wide 'members look worse' result just reflect which verticals have more loyalty members enrolled?",
+   "grain": "one row per industry that has at least one tenant with an active loyalty program",
+   "columns": [
+    "industry - tenants.industry",
+    "members_count - distinct users with a loyalty_accounts row who placed >=1 order with placed_at in 2025 at a tenant in this industry",
+    "nonmembers_count - distinct users without a loyalty_accounts row who placed >=1 order with placed_at in 2025 at a tenant in this industry",
+    "avg_orders_per_member - that industry's members' total 2025 orders / members_count, rounded to 2 decimals",
+    "avg_orders_per_nonmember - same calc for non-members, rounded to 2 decimals",
+    "avg_order_value_member_eur - average grand_total (EUR) of members' 2025 orders in this industry, rounded to 0 decimals",
+    "avg_order_value_nonmember_eur - average grand_total (EUR) of non-members' 2025 orders in this industry, rounded to 0 decimals"
+   ],
+   "details": "Source: orders joined to tenants (for industry) and loyalty_accounts (match on user_id and tenant_id) to classify each ordering user as member/non-member, same definitions as last night's loyalty report. Restrict to industries where tenants.id appears in loyalty_programs with is_active = true (i.e. only verticals where loyalty is actually offered). Convert grand_total to EUR the same way as prior money reports (exchange_rates, base_code='EUR', quote_code=order currency, as_of=placed_at date, EUR=rate 1). Order by industry ascending.",
+   "builds_on": [
+    "Do loyalty program members behave differently from other shoppers?"
+   ]
+  },
+  {
+   "title": "Do referred or referring shoppers spend differently than everyone else?",
+   "question": "Among shoppers who place orders, do people who were referred in, or who refer others, show different order frequency or spend than everyone else?",
+   "grain": "one row per shopper segment: 'referred', 'referrer', or 'neither'",
+   "columns": [
+    "segment - 'referred' (user_id appears in referral_redemptions.referred_user_id), else 'referrer' (user_id appears in referrals.referrer_user_id), else 'neither'",
+    "users_count - count of distinct users in that segment who placed at least one order with placed_at in 2025",
+    "orders_count_2025 - count of those users' orders placed_at in 2025",
+    "avg_orders_per_user - orders_count_2025 / users_count, rounded to 2 decimals",
+    "avg_order_value_eur - average grand_total (EUR) across that segment's 2025 orders, rounded to 0 decimals",
+    "total_revenue_eur - sum of grand_total (EUR) for that segment's 2025 orders, rounded to 0 decimals"
+   ],
+   "details": "Source: orders (placed_at in 2025, all tenants), classify each ordering user by checking membership in referral_redemptions.referred_user_id first, then referrals.referrer_user_id, else 'neither' (mutually exclusive, in that priority order, to handle users who are both). Convert grand_total to EUR the same way as prior money reports. Exactly 3 output rows, ordered 'referred', 'referrer', 'neither'.",
+   "builds_on": []
+  },
+  {
+   "title": "Do we run A/B tests, and do we act on the results?",
+   "question": "How many A/B tests has the platform run, in what state are they, and how often does a test actually end with a declared winner?",
+   "grain": "one row per ab_tests.status value",
+   "columns": [
+    "status - ab_tests.status (draft, running, paused, completed, archived)",
+    "tests_count - count of ab_tests in that status, all tenants, all-time",
+    "share_of_tests_pct - tests_count / total tests across all statuses * 100, rounded to 1 decimal",
+    "tests_with_winner_declared_count - count of tests in that status where winner_variant_id is not null",
+    "avg_variants_per_test - average number of linked ab_variants rows per test in that status, rounded to 1 decimal",
+    "avg_duration_days - average of (ended_at - started_at) in days for tests in that status where both are not null, rounded to 1 decimal"
+   ],
+   "details": "Source: ab_tests left joined to ab_variants (count per ab_test_id) for the variants average; no date filter, all-time, all tenants, since this is a first look at whether the capability is used at all. Order by tests_count descending, tie-break status ascending.",
+   "builds_on": []
+  }
+ ]
+}

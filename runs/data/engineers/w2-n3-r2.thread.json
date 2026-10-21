@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t0.invoice_number AS invoice_number,\n  t0.status AS status,\n  t0.currency_code AS currency_code,\n  t0.total AS total,\n  t0.amount_due AS amount_due,\n  t0.issued_at AS issued_at,\n  t0.due_at AS due_at,\n  CASE\n    WHEN t0.due_at IS NULL THEN 0\n    ELSE GREATEST(CAST(DATE '2025-12-31' - CAST(t0.due_at AS date) AS integer), 0)\n  END AS days_overdue\nFROM invoices t0\nJOIN tenants t1 ON t1.id = t0.tenant_id\nWHERE t1.name = 'Castell Fasteners'\n  AND t0.status IN ('open', 'past_due')\n  AND t0.amount_due > 0\nORDER BY t0.amount_due DESC, t0.invoice_number ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: invoice_number, status, currency_code, total, amount_due, issued_at, due_at, days_overdue"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the requested columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t0.invoice_number AS invoice_number,\n  t0.status AS status,\n  t0.currency_code AS currency_code,\n  t0.total AS total,\n  t0.amount_due AS amount_due,\n  t0.issued_at AS issued_at,\n  t0.due_at AS due_at,\n  CASE\n    WHEN t0.due_at IS NULL THEN 0\n    ELSE GREATEST(CAST(DATE '2025-12-31' - CAST(t0.due_at AS date) AS integer), 0)\n  END AS days_overdue\nFROM invoices t0\nJOIN tenants t1 ON t1.id = t0.tenant_id\nWHERE t1.name = 'Castell Fasteners'\n  AND t0.status IN ('open', 'past_due')\n  AND t0.amount_due > 0\nORDER BY t0.amount_due DESC, t0.invoice_number ASC",
+  "note": "Joined invoices directly to tenants on tenant_id (name = 'Castell Fasteners'); billing_profiles was not needed since invoices carries tenant_id. Amounts are shown as stored in the invoice's native currency_code, no FX conversion applied, per request.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report pulls every Castell Fasteners invoice with status `open` or `past_due` and `amount_due > 0` directly from `invoices` joined to `tenants`, showing native currency, amounts, issue/due dates, and days overdue (floored at 0) as of the 2025-12-31 snapshot, ordered by amount_due descending — this should let Yuki reconcile the €14,481 figure line-by-line against Merchant Success's €5,080."
+ }
+]

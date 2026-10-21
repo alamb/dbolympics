@@ -1,0 +1,59 @@
+{
+ "notes": "Night 1 take-aways: (a) delivery times are broadly stable most of the year (avg ~3.6-4.1 days, median 3-4, ~83-90% within 5 days), but both Nov 2025 and Dec 2024 show clear peak-season degradation (Nov 2025 worst: avg 4.7, only 78.7% within 5 days) -- confirms Priya's stress-test hypothesis; (b) the Oct-Dec 2025 weekly report pinpoints the worst weeks as 2025-11-24 and 2025-12-01 (Black Friday/Cyber Monday through early Dec), where pct-within-5-days fell to 73.5% and 56.1% and backlog (undelivered) roughly tripled, before recovering to 80-93% by mid-to-late December -- so the operation did wobble under peak load but recovered within 1-2 weeks; (c) the merchant-level report shows huge spread in reliability (pct-within-5-days from ~0.92 down to ~0.54) that does NOT line up cleanly with vertical (Food & Coffee has both the best and some of the worst performers), which points to carrier or warehouse-specific causes rather than product-category causes -- this is the natural next question (Priya's priority #3) and also helps explain the peak-season wobble. Tonight I'm moving into carriers and warehouses, and decomposing total delivery time into warehouse processing time vs. carrier transit time so we know which stage is actually the bottleneck, especially during peak.",
+ "requests": [
+  {
+   "title": "Carrier transit performance by quarter, 2025",
+   "question": "Which carriers are consistently fast and dependable, and did any carrier's transit time blow out specifically during peak (Q4)?",
+   "grain": "one row per carrier and calendar quarter",
+   "columns": [
+    "carrier",
+    "quarter (e.g. 2025-Q1)",
+    "shipments_shipped (count of shipments with shipped_at in that quarter)",
+    "shipments_delivered (of those, count with a non-null delivered_at as of the 2025-12-31 cutoff)",
+    "avg_transit_days (mean, shipped_at to delivered_at, delivered subset only)",
+    "median_transit_days",
+    "pct_within_3_days (share of delivered shipments with transit_days <= 3)",
+    "pct_delivered (shipments_delivered / shipments_shipped)"
+   ],
+   "details": "Table: shipments (carrier, shipped_at, delivered_at). Scope: shipments.shipped_at between 2025-01-01 and 2025-12-31. Quarter = calendar quarter of shipped_at (use calendar_days.quarter_num/quarter_start). transit_days = DATEDIFF(day, shipped_at, delivered_at), computed only where delivered_at is not null; round avg/median to 2 decimals, pct columns to 1 decimal (as %). Note for the report: shipments shipped very late in Q4 (especially December) may show lower pct_delivered simply because delivery hadn't completed by the 2025-12-31 cutoff -- flag this caveat in the printed notes rather than treating it as a carrier failure. Group by carrier, quarter_start. Order by carrier ascending, quarter ascending.",
+   "builds_on": [
+    "Delivery time trend, monthly (2024-2025)",
+    "Peak season weekly fulfillment performance (Oct-Dec 2025)"
+   ]
+  },
+  {
+   "title": "Fulfillment performance by warehouse, 2025",
+   "question": "Are there specific fulfillment sites that are consistently slower to process or less reliable on final delivery time?",
+   "grain": "one row per warehouse",
+   "columns": [
+    "warehouse_name",
+    "tenant_name",
+    "orders_shipped (count in 2025)",
+    "avg_processing_days (placed_at to fulfillment.shipped_at)",
+    "avg_delivery_days (placed_at to fulfillment.delivered_at)",
+    "pct_within_5_days (share with delivery_days <= 5)"
+   ],
+   "details": "Scope: orders with placed_at in 2025-01-01 through 2025-12-31, status = 'fulfilled', restricted to orders that have exactly one row in fulfillments (so the order can be cleanly attributed to a single warehouse) with both shipped_at and delivered_at not null. processing_days = DATEDIFF(day, orders.placed_at, fulfillments.shipped_at); delivery_days = DATEDIFF(day, orders.placed_at, fulfillments.delivered_at). Join fulfillments.warehouse_id -> warehouses, and warehouses.tenant_id -> tenants for tenant_name. Round avg_processing_days and avg_delivery_days to 2 decimals, pct_within_5_days to 1 decimal (as %). Include only warehouses with at least 30 qualifying orders. Order by orders_shipped descending, tie-break by warehouse_name ascending. Cap at 50 rows.",
+   "builds_on": [
+    "Delivery time by merchant, 2025"
+   ]
+  },
+  {
+   "title": "Order fulfillment stage breakdown, monthly 2025",
+   "question": "When total delivery time lengthens (e.g. during peak), is the slowdown in warehouse processing (pick/pack/ship) or in carrier transit?",
+   "grain": "one row per calendar month of order placement, 2025 only",
+   "columns": [
+    "month (YYYY-MM)",
+    "orders_qualifying (count used for this report)",
+    "avg_processing_days (placed_at to fulfillment.shipped_at)",
+    "avg_transit_days (fulfillment.shipped_at to fulfillment.delivered_at)",
+    "avg_total_days (placed_at to fulfillment.delivered_at)",
+    "pct_within_5_days_total"
+   ],
+   "details": "Scope: orders with placed_at in 2025-01-01 through 2025-12-31, status='fulfilled', restricted to orders with exactly one row in fulfillments (same simplifying rule as the warehouse report, for clean stage attribution) where that fulfillment has shipped_at and delivered_at both not null. processing_days = DATEDIFF(day, orders.placed_at, fulfillments.shipped_at); transit_days = DATEDIFF(day, fulfillments.shipped_at, fulfillments.delivered_at); total_days = DATEDIFF(day, orders.placed_at, fulfillments.delivered_at) (should roughly equal processing_days + transit_days -- use this as an internal sanity check, note any material mismatch in the report). Round all day averages to 2 decimals, pct to 1 decimal. Group by month_label of placed_at. Order by month ascending. Expect 12 rows. Also report orders_qualifying so I can compare this subset's size against the 'orders_delivered' counts in the original monthly trend report (single-fulfillment orders will be a subset of all delivered orders).",
+   "builds_on": [
+    "Delivery time trend, monthly (2024-2025)"
+   ]
+  }
+ ]
+}

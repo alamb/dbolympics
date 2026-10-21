@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket topic mix and recent shift",
+    "--question",
+    "What kinds of problems are shoppers contacting merchants about most, and has that mix shifted in the last 6 months versus the prior 6?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per support tag (platform-wide, tag name)\", \"columns_requested\": [\"tag name\", \"tickets, last 6 months (Jul-Dec 2025)\", \"tickets, prior 6 months (Jan-Jun 2025)\", \"share of tickets, last 6 months (%)\", \"share of tickets, prior 6 months (%)\", \"share change (percentage points)\", \"avg resolution hours, last 6 months\"], \"details\": \"Source: tickets joined to ticket_tags_map and support_tags (group by support_tags.name across all tenants, since we want the platform-level theme). A ticket can carry multiple tags; count each ticket once per tag it carries (so a ticket with 2 tags contributes to both tag rows - note this in the report so totals don't have to sum to ticket volume). Period A = tickets.created_at between 2025-07-01 and 2025-12-31 inclusive; period B = 2025-01-01 to 2025-06-30 inclusive. Share of tickets = tag's ticket count in that period / total tagged-ticket-tag-rows in that period, as a percentage rounded to 1 decimal. Share change = share in period A minus share in period B, in percentage points, rounded to 1 decimal. avg resolution hours (period A only) = extract(epoch from resolved_at - created_at)/3600 averaged over that tag's resolved tickets in period A, rounded to 1 decimal. Order by tickets in the last 6 months descending, tie-break by tag name ascending. Report total distinct tag count returned (expect well under 50 rows).\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

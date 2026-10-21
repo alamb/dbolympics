@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale: Dollar-Weighted vs Count-Weighted Win Rate by Rep",
+    "--question",
+    "Is Youssef Meijer's pattern of winning small deals but losing his biggest one a one-off, or do several reps actually perform worse on a dollar basis than their deal-count win rate suggests?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Felix\", \"situation\": \"b2b-pipeline-review\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per sales rep (opportunities.owner_user_id) with at least 3 closed New-business opportunities\", \"columns_requested\": [\"rep_name\", \"merchant\", \"opportunities_closed\", \"count_win_rate_pct\", \"total_amount_won_eur\", \"total_amount_lost_eur\", \"dollar_weighted_win_rate_pct\", \"gap_pct_points (count_win_rate_pct minus dollar_weighted_win_rate_pct)\"], \"details\": \"Prompted by the Youssef Meijer case file: he won 4 of 7 deals by count (57.1%) but his 3 losses included a \\u20ac26,000 deal, so by value he won only \\u20ac14,100 of \\u20ac54,800 total pipeline (~25.7%) \\u2014 a huge gap between count-based and dollar-based win rate. This report checks whether that pattern is common across reps. Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true, grouped by owner_user_id (join users for full_name, tenants for merchant name), excluding reps with fewer than 3 closed opportunities. Convert amount to EUR: if currency_code = 'EUR', amount_eur = amount; otherwise amount_eur = amount / rate from exchange_rates (base_code='EUR', quote_code=currency_code, as_of nearest date on or before closed_at). count_win_rate_pct = closed_won / opportunities_closed * 100. dollar_weighted_win_rate_pct = total_amount_won_eur / (total_amount_won_eur + total_amount_lost_eur) * 100. gap_pct_points = count_win_rate_pct - dollar_weighted_win_rate_pct (positive means the rep's count-based win rate overstates how they're doing in euros, i.e. they're losing their biggest deals). Order by gap_pct_points descending so the reps most like Youssef Meijer float to the top.\", \"builds_on\": [\"B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business) \\u2014 Corrected\", \"Youssef Meijer: Individual New-Business Opportunities\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

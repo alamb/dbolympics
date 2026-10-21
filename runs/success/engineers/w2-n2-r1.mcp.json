@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Pre-churn warning signs across sales, repeat buying, refunds, and support tickets",
+    "--question",
+    "In the months before a churned merchant's last order, did sales, shopper repeat-buying, refund rates, or support ticket volume already show warning signs?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Grace\", \"situation\": \"churn-task-force\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per merchant (tenant) with status equal to churned\", \"columns_requested\": [\"merchant name\", \"industry\", \"orders final 90 days\", \"orders prior 90 days\", \"revenue growth pct\", \"repeat rate final 90 days\", \"repeat rate prior 90 days\", \"refund rate final 90 days\", \"refund rate prior 90 days\", \"tickets final 90 days\", \"tickets prior 90 days\"], \"details\": \"For each churned tenant, anchor date is that tenant's own max orders.placed_at excluding cancelled orders. Final window is anchor minus 90 days through anchor. Prior window is anchor minus 180 days through anchor minus 91 days. Orders and revenue from orders table, converted to EUR via exchange_rates, excluding cancelled orders; revenue growth pct is final revenue minus prior revenue, divided by prior revenue, blank if prior is zero. Repeat rate is distinct customers with at least two orders divided by distinct customers with at least one order, per window. Refund rate is sum of payment_refunds.amount EUR divided by sum of payments.amount EUR captured in that window. Tickets is count of tickets rows with created_at in that window for that tenant. Order by orders final 90 days ascending, tie-break tenant_id. Cap 50 rows, note total count.\", \"builds_on\": [\"Churned merchants: identification, size, and timeline\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

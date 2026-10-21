@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH affected AS (\n  SELECT DISTINCT jr.tenant_id\n  FROM job_runs jr\n  JOIN jobs j ON j.id = jr.job_id\n  WHERE j.name = 'carts.remind'\n    AND jr.status = 'failed'\n    AND jr.started_at >= DATE '2025-11-01'\n    AND jr.started_at < DATE '2025-12-01'\n)\nSELECT\n  CASE WHEN wd.tenant_id IN (SELECT tenant_id FROM affected) THEN 'Affected' ELSE 'Other' END AS group_name,\n  COUNT(DISTINCT wd.tenant_id) AS tenant_count,\n  COUNT(*) AS total_deliveries_2025,\n  ROUND(100.0 * SUM(CASE WHEN wd.status = 'success' THEN 1 ELSE 0 END) / COUNT(*), 2) AS success_rate_pct,\n  ROUND(100.0 * SUM(CASE WHEN wd.status = 'failed' THEN 1 ELSE 0 END) / COUNT(*), 2) AS failed_rate_pct,\n  ROUND(100.0 * SUM(CASE WHEN wd.status IN ('pending', 'retrying') THEN 1 ELSE 0 END) / COUNT(*), 2) AS pending_or_retrying_rate_pct\nFROM webhook_deliveries wd\nJOIN webhooks w ON w.id = wd.webhook_id\nWHERE wd.created_at >= TIMESTAMP '2025-01-01 00:00:00'\n  AND wd.created_at < TIMESTAMP '2026-01-01 00:00:00'\nGROUP BY group_name\nORDER BY group_name",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: group_name, tenant_count, total_deliveries_2025, success_rate_pct, failed_rate_pct, pending_or_retrying_rate_pct"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly and returns exactly the requested columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH affected AS (\n  SELECT DISTINCT jr.tenant_id\n  FROM job_runs jr\n  JOIN jobs j ON j.id = jr.job_id\n  WHERE j.name = 'carts.remind'\n    AND jr.status = 'failed'\n    AND jr.started_at >= DATE '2025-11-01'\n    AND jr.started_at < DATE '2025-12-01'\n)\nSELECT\n  CASE WHEN wd.tenant_id IN (SELECT tenant_id FROM affected) THEN 'Affected' ELSE 'Other' END AS group_name,\n  COUNT(DISTINCT wd.tenant_id) AS tenant_count,\n  COUNT(*) AS total_deliveries_2025,\n  ROUND(100.0 * SUM(CASE WHEN wd.status = 'success' THEN 1 ELSE 0 END) / COUNT(*), 2) AS success_rate_pct,\n  ROUND(100.0 * SUM(CASE WHEN wd.status = 'failed' THEN 1 ELSE 0 END) / COUNT(*), 2) AS failed_rate_pct,\n  ROUND(100.0 * SUM(CASE WHEN wd.status IN ('pending', 'retrying') THEN 1 ELSE 0 END) / COUNT(*), 2) AS pending_or_retrying_rate_pct\nFROM webhook_deliveries wd\nJOIN webhooks w ON w.id = wd.webhook_id\nWHERE wd.created_at >= TIMESTAMP '2025-01-01 00:00:00'\n  AND wd.created_at < TIMESTAMP '2026-01-01 00:00:00'\nGROUP BY group_name\nORDER BY group_name",
+  "note": "The \"Affected\" cohort is derived directly in this query as the distinct tenant_ids with a failed job_runs row for a job named 'carts.remind' in Nov 2025 (since I don't have the earlier report's exact tenant list to join against) — if that prior report used a different job name/handler key or a slightly different definition of \"affected,\" the two numbers may not line up exactly with 10 tenants.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. One note on an assumption I had to make: since I don't have direct access to the tenant list from the \"prior reports,\" I reconstructed the Affected cohort inline as the distinct tenants with a failed `job_runs` row where `jobs.name = 'carts.remind'` in November 2025. If that prior report identified the cohort differently (e.g., a different job key or date boundary), the counts could diverge slightly from the expected 10 tenants — flagged this in the submit note for the analyst to verify."
+ }
+]

@@ -1,0 +1,60 @@
+{
+ "requests": [
+  {
+   "title": "B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business) — Corrected",
+   "question": "Among reps who own B2B wholesale new-business opportunities, are a few reps clearly underperforming on win rate or cycle time, or is performance broadly similar?",
+   "grain": "one row per sales rep (opportunities.owner_user_id)",
+   "columns": [
+    "rep_name",
+    "merchant",
+    "opportunities_closed",
+    "closed_won",
+    "closed_lost",
+    "win_rate_pct",
+    "avg_days_open",
+    "avg_amount_eur"
+   ],
+   "details": "Last night's attempt at this exact report returned 0 rows; the engineer's note said it filtered tenants with an exact match (industry IN ('industrial supplies','office equipment')) rather than the ILIKE pattern used successfully in earlier reports, which likely matched zero tenants. To remove all ambiguity, please filter explicitly by tenant name instead: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging') — these are the 5 wholesale merchants confirmed present in every prior report this week. Filter opportunities to pipeline_id = that tenant's 'New business' pipeline (join pipelines on name = 'New business'), is_closed = true, grouped by owner_user_id (join users for full_name as rep_name, tenants for merchant name). Exclude reps with fewer than 3 closed opportunities in scope (note the excluded rep count in the report notes). avg_days_open = avg(closed_at - created_at) in days. For avg_amount_eur: if the opportunity's currency_code = 'EUR', amount_eur = amount directly (do not rely on a self-referential EUR/EUR row in exchange_rates, which may not exist and produced NULLs in a prior report); otherwise amount_eur = amount / rate where rate is from exchange_rates with base_code = 'EUR', quote_code = opportunity.currency_code, as_of = the nearest date on or before closed_at. Order by win_rate_pct ascending (worst first), tie-break by opportunities_closed descending, then rep_name ascending.",
+   "builds_on": [
+    "B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business)"
+   ]
+  },
+  {
+   "title": "B2B Wholesale: Win Rate and Average Deal Size by Merchant (New Business) — Corrected",
+   "question": "Does the merchant-level win-rate pattern hold once we also see typical deal size per merchant, and can we fix last night's missing EUR averages?",
+   "grain": "one row per wholesale merchant (tenant)",
+   "columns": [
+    "merchant",
+    "currency_code (tenant default)",
+    "opportunities_closed",
+    "closed_won",
+    "closed_lost",
+    "win_rate_pct",
+    "avg_days_open",
+    "avg_amount_eur"
+   ],
+   "details": "Re-run of last night's merchant report, which returned NULL avg_amount_eur for 4 of 5 merchants (all the EUR-denominated ones; only the one USD merchant, Castell Fasteners, returned a value) — almost certainly because converting EUR amounts via a EUR/EUR identity lookup in exchange_rates failed to find a matching row. Filter explicitly: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true. For avg_amount_eur: if currency_code = 'EUR', amount_eur = amount directly (skip the exchange_rates join entirely for EUR rows); otherwise amount_eur = amount / rate from exchange_rates where base_code = 'EUR', quote_code = opportunity.currency_code, as_of = nearest date on or before closed_at. Include tenants.default_currency_code as a reference column so the reader can see which merchant is USD vs EUR. Order by win_rate_pct ascending, tie-break by opportunities_closed descending, then merchant name.",
+   "builds_on": [
+    "B2B Wholesale: Win Rate and Cycle Time by Merchant (New Business)"
+   ]
+  },
+  {
+   "title": "B2B Wholesale: Win Rate and Cycle Time by Deal-Size Band (New Business)",
+   "question": "Does a bigger deal size correlate with a better or worse chance of closing, and does it drag out the cycle time?",
+   "grain": "one row per deal-size band (based on EUR-converted opportunity amount)",
+   "columns": [
+    "amount_band_eur",
+    "opportunities_closed",
+    "closed_won",
+    "closed_lost",
+    "win_rate_pct",
+    "avg_days_open"
+   ],
+   "details": "Prompted by an odd pattern in an earlier won-vs-lost comparison: lost New-business opportunities had a LOWER average amount (5628.59 EUR) than won ones (7097.90 EUR), but a HIGHER median amount (6520.14 vs 5880.52 EUR) — suggesting the amount distribution isn't simply 'bigger deals win more' and deserves a direct bucket breakdown rather than just an average. Filter: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true. Convert amount to EUR per opportunity: if currency_code = 'EUR', amount_eur = amount; otherwise amount_eur = amount / rate from exchange_rates (base_code='EUR', quote_code=currency_code, as_of nearest date on or before closed_at). Bucket amount_eur into: '<3000', '3000-5999', '6000-8999', '9000-11999', '12000+'. For each band: count of opportunities closed, closed won, closed lost, win_rate_pct, and avg_days_open (avg of closed_at - created_at in days). Order by band ascending (by lower bound).",
+   "builds_on": [
+    "New Business Only: Won vs Lost Opportunity Characteristics"
+   ]
+  }
+ ],
+ "notes": "Night 3 take: two of three reports came back broken/empty, and I need my last night to fix the essential one and still land priority 5. The merchant-level report (Report 1) worked but had a clear bug: avg_amount_eur was NULL for 4 of 5 merchants (all the EUR ones) — almost certainly a failed EUR-to-EUR identity lookup in exchange_rates rather than a real data gap. The rep-level report (Report 2) came back with 0 rows because the engineer used an exact-match tenant filter (industry IN (...)) instead of the pattern that's worked all week, so it silently matched nothing — this is still an open, important gap (Patrick's Q4) and needs a clean re-run. The open-pipeline-age report (Report 3) also returned 0 rows, but I'm treating that as a real, confirmed finding rather than a bug: night 1's stage report already showed zero open opportunities at every New-business stage for every wholesale tenant, so there is genuinely no live open new-business pipeline in the warehouse right now — worth flagging to Patrick/Samuel as 'we can't assess forward-looking staleness risk because there's no open pipeline to look at; the only staleness signal we have is backward-looking (lost deals average ~35 days open vs ~9 for won).' Spending tonight's three slots on: (1) the corrected rep-level report with an explicit, unambiguous tenant-name filter, (2) a corrected merchant-level report with an explicit EUR-conversion fix, and (3) a deal-size-band breakdown to chase the odd avg-vs-median flip in the won/lost amount comparison, which gives a real answer to Patrick's optional #5 on deal size vs win rate. Payment terms (also part of #5) aren't captured anywhere in the B2B CRM/deals schema for the wholesaler's own customers, so I'm leaving that out of the memo as 'not measurable from current data' rather than forcing a weak proxy."
+}

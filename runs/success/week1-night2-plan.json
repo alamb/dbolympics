@@ -1,0 +1,16 @@
+{
+ "notes": "test",
+ "requests": [
+  {
+   "title": "Test",
+   "question": "Test question",
+   "grain": "one row per tenant",
+   "columns": [
+    "a",
+    "b"
+   ],
+   "details": "test details",
+   "builds_on": []
+  }
+ ]
+}

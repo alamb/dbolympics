@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Single-item vs. multi-item conversion, controlling for guest vs. logged-in status",
+    "--question",
+    "Does the 'single-item carts convert worse' pattern hold once we separate out guest (never logged in) carts, or is it mostly just another expression of the guest-vs-logged-in gap?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Grace\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per combination of user status (guest / logged-in) and item-count group (single-item / multi-item)\", \"columns_requested\": [\"user status (guest / logged-in)\", \"item count group (single-item / multi-item, 2+)\", \"cart count\", \"conversion pct\"], \"details\": \"Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-12-31. user_status = 'guest' if carts.user_id is null, else 'logged_in'. item_count_group = 'single-item' if carts.item_count = 1, 'multi-item' if carts.item_count >= 2 (exclude item_count = 0 if any exist). conversion_pct = share of carts in that cell with status='converted', rounded 1 decimal. 4 rows total. Order rows: logged_in/multi-item, logged_in/single-item, guest/multi-item, guest/single-item.\", \"builds_on\": [\"Single-item vs. multi-item cart conversion, by tenant\", \"Email nudge effect on stalled carts, controlling for guest vs. logged-in customers\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

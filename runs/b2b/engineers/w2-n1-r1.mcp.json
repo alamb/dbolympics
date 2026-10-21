@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Lost B2B Wholesale Deals: When Does Activity Happen Relative to the Deal's Life",
+    "--question",
+    "For deals that eventually get lost, does sales activity cluster early, stay steady throughout, or come in a late flurry right before the deal is given up on — or does it go quiet before the end (stalled and forgotten)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Ines\", \"situation\": \"b2b-pipeline-review\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per lifecycle quartile (relative position within each lost opportunity's own created_at-to-closed_at window)\", \"columns_requested\": [\"lifecycle_quartile (Q1 0-25%, Q2 25-50%, Q3 50-75%, Q4 75-100% of the deal's own duration)\", \"total_activities_in_bucket\", \"pct_of_total_activities\", \"opportunities_with_at_least_one_activity_in_bucket\", \"pct_of_lost_opportunities_with_activity_in_bucket\"], \"details\": \"Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, opportunities where is_closed = true and is_won = false. For each such opportunity, join activities where activities.opportunity_id = opportunity.id. For each activity compute relative_position = (activity.occurred_at - opportunity.created_at) / NULLIF(opportunity.closed_at - opportunity.created_at, 0), expressed as a fraction of the deal's own lifespan. Bucket into quartiles: Q1 [0, 0.25), Q2 [0.25, 0.5), Q3 [0.5, 0.75), Q4 [0.75, 1.0] inclusive of activities right at closed_at. If any activity falls outside [0,1] (e.g. logged after closed_at, or the opportunity has zero duration), put it in a 5th 'outside window' bucket rather than discarding it, and flag how many rows that affects. total_activities_in_bucket = count of activities in that bucket; pct_of_total_activities = that count / total activities across all lost opportunities in scope; opportunities_with_at_least_one_activity_in_bucket = distinct opportunity count; pct_of_lost_opportunities_with_activity_in_bucket = that count / total lost opportunities in scope (a fixed denominator across rows). Order Q1 through Q4, then 'outside window' last if present.\", \"builds_on\": [\"New Business Only: Won vs Lost Opportunity Characteristics\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

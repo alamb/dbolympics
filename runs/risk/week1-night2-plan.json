@@ -1,0 +1,60 @@
+{
+ "notes": "Reading night 1 critically before spending more slots:\n\nReport 1 (DSAR): Volumes are tiny (0-4/month) but several months show \"still_open_overdue\" = 1, including one from as far back as 2023-05 and 2024-07, still unresolved as of 2025-12-31. That is a serious red flag for the exact claim Aylin expects to be pressed on — unless it's a data-definition artifact. The engineer's note says \"completed\" = completed_at IS NOT NULL, bypassing the status column entirely. If a request was closed as e.g. \"rejected\" or \"cancelled\" without completed_at being populated, it would wrongly show as \"still open and overdue\" forever. I need to reconcile against the actual status column before we can honestly tell Aylin whether these are real breaches or a timestamp/status mismatch (this is exactly Rosa's \"timestamp trust\" concern).\n\nReport 2 (Access): My own request had a flawed proxy — I treated roles.is_system (=\"built-in, cannot be deleted role\") as \"elevated/admin access,\" but 100% of active staff (548/548) hold a system role, which only makes sense if is_system marks a default baseline role every user gets, not a privilege tier. I need to re-derive \"elevated access\" from actual permissions/role_permissions data instead. Also notable: only 2 staff users total are deactivated and zero are suspended/invited across 120 tenants and 3 years — worth separately checking whether access is actively managed at all (grants/revocations happening over time) rather than static.\n\nReport 3 (Audit log continuity): Mostly reassuring — audit_log volume is steady (~3-5k/month) after the Jan 2024 migration from archive-only logging, actor_user_id nulls track almost exactly with system/api actor_type (so nulls aren't unexplained — they're mostly non-human actors, which is a decent signal for Rosa's \"one actor one identity\" concern). One thing to flag: all of 2023's audit activity lives only in audit_log_archive (live table has 0 rows pre-Dec-2023) — that's an artifact of the archival job's cutoff, not a gap, but I should keep unioning both tables going forward rather than relying on audit_log alone in any future report.\n\nTonight (3 slots), I'm staying on Aylin's top two priorities to fix these data-quality issues before we write anything down: (1) reconcile the DSAR \"open/overdue\" numbers against the actual status column and check SLA-window (due_at) consistency; (2) replace the flawed is_system access proxy with a real permission-category-based view of elevated access by staff status; (3) check whether role grants/revocations are actively happening over time (evidence access is \"reviewed/current\") and whether those changes are attributable to identifiable actors. I'm holding off on priority #2 (MFA/login security) and #4 (retention) until night 3, and will sync with Aylin before Thursday as agreed.",
+ "requests": [
+  {
+   "title": "DSAR backlog reconciliation by status and request type",
+   "question": "Do the data subject requests that look 'open and overdue' by timestamp actually carry an open status, or is that an artifact of missing completed_at values on closed requests — and is the due_at SLA window itself consistent?",
+   "grain": "one row per combination of data_subject_requests.status and request_type, across all tenants, all received_at dates from 2023-01-01 through 2025-12-31",
+   "columns": [
+    "status (raw status column value)",
+    "request_type",
+    "count_requests",
+    "count_with_completed_at",
+    "count_without_completed_at",
+    "count_overdue_open (completed_at is null AND due_at < 2025-12-31)",
+    "pct_due_at_null (share of this group where due_at is null)",
+    "avg_sla_window_days (avg of due_at - received_at in days, where due_at not null)",
+    "oldest_open_received_at (earliest received_at among rows with completed_at null, else blank)"
+   ],
+   "details": "Source: data_subject_requests. This directly tests last night's finding that several months showed requests still open/overdue years later — need to see whether those rows' status column says something like 'completed'/'closed'/'rejected' (i.e. a timestamp-population gap) versus a genuinely open status like 'in_progress'/'received'. Also check whether due_at - received_at is a consistent SLA window per request_type (e.g. always ~30 days) as a timestamp-trust check, or whether due_at is frequently null/inconsistent. All tenants combined. Order by status, then request_type.",
+   "builds_on": [
+    "DSAR volume and timeliness by month"
+   ]
+  },
+  {
+   "title": "Elevated access by permission category and staff status",
+   "question": "Which permission categories represent real elevated/admin-type access, how many staff users hold each, and do any non-active (invited/suspended/deactivated) staff still hold them?",
+   "grain": "one row per permissions.category value, computed over users where is_staff = true across all tenants, as a current-state snapshot as of 2025-12-31",
+   "columns": [
+    "category",
+    "staff_users_with_category (distinct is_staff=true users holding >=1 role granting a permission in this category, via user_roles -> role_permissions -> permissions)",
+    "pct_of_all_staff (that count divided by total is_staff=true, non-deleted user count)",
+    "active_count (of those users, status = 'active')",
+    "non_active_count (status in invited/suspended/deactivated)",
+    "distinct_permission_codes (count of distinct permissions.code in this category, for context)"
+   ],
+   "details": "Sources: permissions (category, code), role_permissions, user_roles, users (is_staff=true, exclude deleted_at not null). This replaces last night's is_system proxy, which turned out not to distinguish privilege level (100% of staff held an is_system role). The goal is to find which categories look sensitive (e.g. billing, security, admin, user-management) and whether non_active_count is non-trivial for those — that would be the stale-access signal Aylin is asking about. Order by staff_users_with_category descending.",
+   "builds_on": [
+    "Staff access currency by account status"
+   ]
+  },
+  {
+   "title": "Role grant and revocation activity over time",
+   "question": "Is staff access actively granted and revoked over time (evidence of ongoing access management), and can we attribute those changes to an identifiable actor?",
+   "grain": "one row per calendar month (occurred_at), combining audit_log and audit_log_archive, filtered to entity_table = 'user_roles', from 2023-01 through 2025-12",
+   "columns": [
+    "month (YYYY-MM)",
+    "role_grants_created (count where action = 'create')",
+    "role_grants_removed (count where action = 'delete')",
+    "net_change (created minus removed)",
+    "distinct_actor_user_id (count of distinct non-null actor_user_id performing these changes in the month)",
+    "pct_actor_user_id_null (share of these change rows where actor_user_id is null)"
+   ],
+   "details": "Sources: audit_log UNION audit_log_archive (same shape; last night's report showed 2023 activity lives only in the archive table, so both must be combined to avoid a false gap), filtered to entity_table = 'user_roles'. This checks whether role access is a living, actively-managed process (grants and removals happening continuously, ideally net_change roughly stable / removals present) versus a static set that was configured once and never touched — and whether changes tie back to a real actor rather than an anonymous/system process. Order by month ascending.",
+   "builds_on": [
+    "Audit log volume and actor identification by month",
+    "Staff access currency by account status"
+   ]
+  }
+ ]
+}

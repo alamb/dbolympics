@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Referred vs non-referred customer early behavior",
+    "--question",
+    "Do customers acquired through a referral behave better in their first 90 days - more orders, more revenue, more likely to return, fewer refunds - than customers acquired another way?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Felix\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per acquisition segment: 'referred' vs 'other'\", \"columns_requested\": [\"segment\", \"customer count\", \"avg orders in first 90 days\", \"avg revenue in first 90 days (EUR)\", \"share with a 2nd order within 90 days (%)\", \"share with a 2nd order within 90-180 days (%)\", \"refund rate within first 90 days (%)\"], \"details\": \"Population: users (is_staff = false) across all tenants whose account created_at is between 2023-01-01 and 2025-10-02 (so a full 90-day and 180-day window is observable before data end 2025-12-31), and who placed at least one order. Segment = 'referred' if the user appears as referred_user_id in referral_redemptions, else 'other'. For each customer, 'day 0' is their first order's placed_at. Orders/revenue in first 90 days = orders placed in [day0, day0+90 days); revenue in orders.grand_total converted to EUR via exchange_rates (rate as_of placed_at, orders.currency_code to EUR). 'Share with a 2nd order within 90 days' = % of customers with a 2nd distinct order placed within 90 days of day 0. 'Share with a 2nd order within 90-180 days' = % of customers (among those without a 2nd order in the first 90 days) whose 2nd order falls between day0+90 and day0+180. Refund rate within first 90 days = share of orders placed in that window that have payments.amount_refunded > 0 or an order_returns row. Order rows with 'referred' first, then 'other'.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

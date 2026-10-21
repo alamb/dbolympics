@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  request_type,\n  status,\n  count(*) AS request_count,\n  min(received_at)::date AS earliest_received_at,\n  max(received_at)::date AS latest_received_at,\n  round(\n    percentile_cont(0.5) WITHIN GROUP (\n      ORDER BY extract(epoch FROM (completed_at - received_at)) / 86400.0\n    ) FILTER (WHERE completed_at IS NOT NULL),\n    1\n  ) AS median_days_to_close\nFROM data_subject_requests\nGROUP BY request_type, status\nORDER BY request_type, status",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: request_type, status, request_count, earliest_received_at, latest_received_at, median_days_to_close"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the right columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  request_type,\n  status,\n  count(*) AS request_count,\n  min(received_at)::date AS earliest_received_at,\n  max(received_at)::date AS latest_received_at,\n  round(\n    percentile_cont(0.5) WITHIN GROUP (\n      ORDER BY extract(epoch FROM (completed_at - received_at)) / 86400.0\n    ) FILTER (WHERE completed_at IS NOT NULL),\n    1\n  ) AS median_days_to_close\nFROM data_subject_requests\nGROUP BY request_type, status\nORDER BY request_type, status",
+  "note": "Full history, all tenants, request_type/status left exactly as stored (no casing normalization) per request, so any oddball strings will surface as their own rows. Median days-to-close is blank (NULL) for type/status combinations with no completed_at values.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `data_subject_requests` by `(request_type, status)` exactly as stored, with count, earliest/latest `received_at`, and median days-to-close (NULL where no rows have `completed_at`) — full history, no tenant filter, ordered by type then status so Priyanka can trace how the ~48 and ~60 figures reconcile against the ground truth."
+ }
+]

@@ -1,0 +1,59 @@
+{
+ "notes": "Report 1's ledger columns are the big finding. For every refunded payment, ledger_credit_total exactly equals payment_amount + amount_refunded, not net_amount: e.g. OfficeHub Nordic SO-100363 (265,275.15 paid, fully refunded) shows ledger_credit_total = 530,550.30 = 2x the payment, and Fell & Fjell #1179 shows 69,408.75 = 34,885.85 + 34,522.90 exactly. My ledger_debit_credit_diff column is useless for catching this (it's 0 everywhere by construction, since any balanced journal entry nets to zero regardless of which accounts are touched) — I designed that check too naively. Before I tell Tobias \"the ledger balances,\" I need to see the actual account-level entries for a few of these to confirm this is just a normal (and explainable) refund-accounting pattern — e.g. a reversing entry on a different account — rather than revenue being double-booked.\n\nTwo more things in Report 1 don't fit any pattern and need chasing at scale rather than left as anecdotes: Castell Fasteners' SO-100233 (no refund, not yet paid out) has ledger_credit_total of 805.56 against a payment_amount of 752.91 — an unexplained ~7% gap; and Marrowby & Vane's #3307 (a tiny $20 payment) has NULL ledger_credit_total, meaning no ledger entries exist for it at all. Given this week's pattern across other teams (CISO: deletions and role changes with zero audit trail), an \"orphan payment with no ledger entry\" is exactly the kind of gap auditors will zero in on, so I want to know if that's a one-off or systemic before Friday.\n\nTonight's three slots: (1) pull the actual ledger line items for the flagged refunded + anomalous sample payments to explain the credit-total pattern; (2) run the same credit-total-vs-payment reconciliation across ALL of 2025's payments (not just the 25-sample) to see if the \"+refund\" pattern is universal/explainable and how big the \"other mismatch\" and \"no ledger entries\" buckets really are; (3) quantify the no-ledger-entry gap by merchant to see if it's concentrated or spread thin.",
+ "requests": [
+  {
+   "title": "Ledger Line-Item Detail for Flagged Sample Payments, 2025",
+   "question": "What do the actual ledger entries look like for the refunded and anomalous payments flagged in the transaction walkthrough, and does the accounting treatment of refunds make sense?",
+   "grain": "one ledger_entries row, for a fixed list of flagged payments",
+   "columns": [
+    "merchant_name",
+    "order_number",
+    "ledger_account_name",
+    "account_type",
+    "direction",
+    "amount",
+    "currency_code",
+    "description",
+    "entry_group",
+    "occurred_at"
+   ],
+   "details": "Source: ledger_entries joined to ledger_accounts (for name/account_type), joined to payments via ledger_entries.payment_id, joined to orders (for order_number) and tenants (for merchant_name). Restrict to the ledger entries for exactly these 9 (merchant, order_number) pairs from last night's walkthrough sample: (OfficeHub Nordic, SO-100363), (Fell & Fjell, #1179), (Courtside Collective, CC-100015), (Ampfeld Elektronik, #1727), (Ballycorran Industrial Supply, SO-100835), (Ballycorran Industrial Supply, SO-100608), (Midland Safety Wear, SO-100307), (Halden Boots, #1004), (Castell Fasteners, SO-100233) — match each pair to its order then its payment(s). Show every ledger_entries row tied to those payment_id(s), not aggregated. Order by merchant_name, order_number, occurred_at, entry_group.",
+   "builds_on": [
+    "Audit Sample: End-to-End Transaction Walkthrough, 2025"
+   ]
+  },
+  {
+   "title": "Ledger-to-Payment Reconciliation Pattern at Scale, 2025",
+   "question": "Across all of 2025's payments, does the 'ledger credit = payment + refund' pattern seen in the sample hold universally, and how large are the 'no ledger entries' and 'other mismatch' buckets?",
+   "grain": "one reconciliation category, over all payments captured in 2025",
+   "columns": [
+    "reconciliation_category",
+    "payment_count",
+    "pct_of_payments",
+    "total_payment_amount_eur",
+    "total_ledger_credit_eur",
+    "total_ledger_debit_eur"
+   ],
+   "details": "Source: payments with status in a captured/refunded/partially_refunded state and captured_at in 2025. For each payment, aggregate linked ledger_entries (via payment_id) into total credit amount and total debit amount, converting each ledger_entries.amount to EUR via exchange_rates matched on ledger_entries.currency_code and date(ledger_entries.occurred_at) — do not assume the ledger entry's currency matches the payment's currency, convert each independently. Also convert payments.amount and amount_refunded to EUR via exchange_rates on captured_at. Classify each payment into exactly one reconciliation_category: 'no ledger entries' (zero linked ledger_entries rows); else 'credit = net amount' if total_ledger_credit_eur is within 1% (or €1, whichever is larger) of (payment_amount_eur - amount_refunded_eur); else 'credit = payment + refund' if total_ledger_credit_eur is within the same tolerance of (payment_amount_eur + amount_refunded_eur); else 'other mismatch'. Count payments and sum amounts per category; pct_of_payments is each category's share of all qualifying 2025 payments. Order by payment_count descending.",
+   "builds_on": [
+    "Audit Sample: End-to-End Transaction Walkthrough, 2025"
+   ]
+  },
+  {
+   "title": "Payments With No Ledger Entries, by Merchant, 2025",
+   "question": "Is the 'payment with zero ledger entries' gap concentrated in a few merchants, or spread thinly across many?",
+   "grain": "one tenant (merchant), for 2025",
+   "columns": [
+    "merchant_name",
+    "total_payments_2025",
+    "payments_without_ledger_entries",
+    "pct_without_ledger_entries",
+    "amount_at_risk_eur (sum of payment_amount for payments with no ledger entries, converted to EUR)"
+   ],
+   "details": "Source: payments with status in a captured/refunded/partially_refunded state and captured_at in 2025, LEFT JOIN to a per-payment count of ledger_entries via payment_id. Convert payment amounts to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=date(captured_at)). Group by tenant_id/merchant_name. Only include tenants with at least 1 payment that has zero linked ledger_entries. Order by amount_at_risk_eur descending, tie-break merchant_name ascending; print up to 30 rows and note in the report how many tenants in total had at least one such gap.",
+   "builds_on": [
+    "Audit Sample: End-to-End Transaction Walkthrough, 2025"
+   ]
+  }
+ ]
+}

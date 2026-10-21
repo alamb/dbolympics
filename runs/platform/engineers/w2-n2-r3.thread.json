@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n    t2.name AS tenant_name,\n    t0.created_at AS created_at,\n    t0.subject AS subject,\n    t0.status AS status,\n    t0.priority AS priority\nFROM tickets t0\nJOIN users t1 ON t1.id = t0.requester_user_id\nJOIN tenants t2 ON t2.id = t1.tenant_id\nWHERE t2.name IN (\n    'Ampfeld Elektronik',\n    'Brennquell Kaffee',\n    'Cinder Peak Sports Co.',\n    'Cragsley Outfitters',\n    'Fennel & Flint',\n    'Gratlinie Outdoor',\n    'Kibblewick',\n    'Marrowby & Vane',\n    'Petalcourt Beauty',\n    'Studio Vrij'\n)\nAND t0.created_at >= DATE '2025-10-27'\nAND t0.created_at < DATE '2025-11-24'\nAND (\n    lower(t0.subject) LIKE '%cart%'\n    OR lower(t0.subject) LIKE '%remind%'\n    OR lower(t0.subject) LIKE '%duplicate%'\n    OR lower(t0.subject) LIKE '%missing%'\n    OR lower(t0.subject) LIKE '%email%'\n)\nORDER BY t0.created_at ASC, t0.id ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, created_at, subject, status, priority"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n    t2.name AS tenant_name,\n    t0.created_at AS created_at,\n    t0.subject AS subject,\n    t0.status AS status,\n    t0.priority AS priority\nFROM tickets t0\nJOIN users t1 ON t1.id = t0.requester_user_id\nJOIN tenants t2 ON t2.id = t1.tenant_id\nWHERE t2.name IN (\n    'Ampfeld Elektronik',\n    'Brennquell Kaffee',\n    'Cinder Peak Sports Co.',\n    'Cragsley Outfitters',\n    'Fennel & Flint',\n    'Gratlinie Outdoor',\n    'Kibblewick',\n    'Marrowby & Vane',\n    'Petalcourt Beauty',\n    'Studio Vrij'\n)\nAND t0.created_at >= DATE '2025-10-27'\nAND t0.created_at < DATE '2025-11-24'\nAND (\n    lower(t0.subject) LIKE '%cart%'\n    OR lower(t0.subject) LIKE '%remind%'\n    OR lower(t0.subject) LIKE '%duplicate%'\n    OR lower(t0.subject) LIKE '%missing%'\n    OR lower(t0.subject) LIKE '%email%'\n)\nORDER BY t0.created_at ASC, t0.id ASC",
+  "note": "Query returns every matching ticket ordered by created_at (no row cap applied here); if the batch run returns more than 50 rows, only the first 50 will print per house rules and the analyst should check the total row count noted on the report.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report joins `tickets` → `users` (on `requester_user_id`) → `tenants`, filters to the 10 named merchants, the Oct 27–Nov 23 2025 window, and subject lines matching cart/remind/duplicate/missing/email (case-insensitive), ordered by `created_at` ascending with a tie-break on ticket id for determinism."
+ }
+]

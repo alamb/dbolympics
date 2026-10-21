@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket volume and SLA performance by merchant",
+    "--question",
+    "Is ticket volume and SLA breach pain concentrated in a handful of merchants, and do any merchants stand out as outliers?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Felix\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per tenant (merchant)\", \"columns_requested\": [\"tenant_name\", \"ticket_count (created in 2025)\", \"pct_of_total_tickets\", \"cumulative_pct_of_total_tickets (rows ordered by ticket_count desc)\", \"first_response_breach_rate\", \"resolution_breach_rate\", \"avg_resolution_minutes\", \"agent_count (distinct support_agents belonging to that tenant via agent_group_members, or via support_agents.tenant_id if simpler)\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets (join tenants for name), sla_breaches (breach_kind = first_response / resolution, as % of that tenant's tickets with sla_policy_id not null), support_agents. Order by ticket_count descending; print the top 30 rows but note the total number of tenants with at least one ticket in 2025. Round rates to 1 decimal percent, cumulative_pct to 1 decimal.\", \"builds_on\": [\"Ticket volume and staffing by agent group\", \"SLA breach rates by agent group\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

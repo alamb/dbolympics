@@ -1,0 +1,55 @@
+{
+ "notes": "Night 1 raised one real problem and gave two solid answers:\n\nReport 1 (the 'active' bucket breakdown) came back broken: only 1 of the 3 categories printed (88 orders, 30.2%), leaving 203 of the 291 orders unaccounted for entirely rather than showing 0-count rows. That smells like an inner-join dropping orders that had no matching 'older subscription' row — i.e. the 'preceded first-ever subscription' case was silently excluded rather than counted as zero. I can't hand Marco a number built on a query that's missing 70% of its own population, so this is priority one tonight: re-run with explicit NOT EXISTS/LEFT JOIN logic and a self-check total that must sum to 291.\n\nReport 2 is a genuinely good, clean answer to Marco's trend question: leakage rose from ~€200/month in 2023 to a 2024 peak (~€2,000-3,300/month, Feb-Oct 2024), then has declined every month since, down to €819 in Nov 2025 and €0 in Dec 2025. This is the opposite of accelerating — it looks like a historical, now-shrinking gap. I want one more cut — by tenant — before I tell Marco it's broadly resolved, in case the decline is really just one or two tenants fixing something while others stay flat (which would change the \"how urgent\" answer).\n\nReport 3 (Welcome10 drivers) shows returns spread across many apparel/footwear categories (Outerwear and Boots are the largest single contributors but no runaway concentration), with 9-19 day order-to-return gaps — consistent with normal apparel fit/try-and-return behavior, not quick-flip abuse. Combined with last week's finding that this instance's return rate is only +2.3pp above this tenant's own baseline (which is already ~37%), I think the right framing is shifting: refund-exceeding-discount-cost looks largely mechanical for any % discount at a high-baseline-return apparel merchant, not something the coupon itself is causing. I don't think this needs another report — I'll fold it into the memo with that caveat.\n\nTonight's three slots: (1) fix the broken categorization query, (2) the size-matched incrementality re-cut Marco asked for, (3) a tenant-level cut of the leakage trend to confirm the decline is broad-based before I call it resolved.",
+ "requests": [
+  {
+   "title": "Corrected categorization of all 291 active-bucket orphan subscription-delivery orders",
+   "question": "With a query that doesn't silently drop unmatched orders, how do all 291 orphan orders (customer's most-recent subscription status = 'active') actually break down: preceded their first subscription, fell between two subscription stints, or genuinely unexplained?",
+   "grain": "one row per explanation category, covering the full 291-order population",
+   "columns": [
+    "category: 'preceded first-ever subscription' (no other subscription row exists with started_at <= order date) / 'fell between two subscription stints' (an older subscription row exists with started_at <= order date, but its own started_at/ended_at window plus status history does not cover the order date) / 'unexplained'",
+    "order count",
+    "% of the 291-order bucket",
+    "distinct customers",
+    "total discount amount (EUR)"
+   ],
+   "details": "Source: identical population to last week's report (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at in 2025, status != 'cancelled', no overlapping subscription with status in trialing/active/past_due) restricted to the subset whose most-recent subscription (by started_at) has status='active' (291 orders). For each order, use a LEFT JOIN or NOT EXISTS pattern (not an INNER JOIN) against subscriptions to find any OTHER subscription row for that user+tenant with started_at <= order.placed_at that is not the most-recent one; classify based on whether such a row exists and whether it covers placed_at. Every one of the 291 orders must land in exactly one category — add a check that order counts sum to 291 (note this explicitly in the report). Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by order count descending. Print all categories.",
+   "builds_on": [
+    "Is the 'active' 18% of orphan subscription-delivery orders a categorization artifact or a real gap?"
+   ]
+  },
+  {
+   "title": "Incrementality re-cut: order value matched by basket size (item count), 2025",
+   "question": "Controlling for how many distinct items are in the order, do discounted orders (our four main marketing promotions) still show a higher average order value than non-discounted orders, or does the earlier lift mostly reflect that discounts land on already-bigger baskets?",
+   "grain": "one row per item-count bucket (1 item, 2 items, 3 items, 4 items, 5+ items)",
+   "columns": [
+    "item count bucket",
+    "discounted order count (orders in 2025 carrying 'Welcome 10% off', 'Black Friday 2025', 'January Sale 2025', or 'Summer Sale 2025')",
+    "avg discounted order subtotal, pre-discount (EUR)",
+    "non-discounted order count (same tenants' other 2025 orders with no row in order_discounts)",
+    "avg non-discounted order subtotal (EUR)",
+    "lift (EUR)",
+    "lift (%)"
+   ],
+   "details": "Source: order_discounts + discounts (name in the four promotion names) + orders (status != 'cancelled', placed_at in 2025, currency_code, tenant_id, user_id) for the discounted side; item count = count of distinct order_items rows per order (not quantity sum). For the comparison side, restrict to the same set of tenants that ran at least one of these four discounts in 2025, and use their other 2025 orders with no row in order_discounts, bucketed the same way by order_items count. Convert subtotal to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Group orders with 5 or more items into a single '5+' bucket. Order by item count bucket ascending. Print all 5 buckets.",
+   "builds_on": [
+    "Aggregate within-customer basket-size lift by promotion family, 2025"
+   ]
+  },
+  {
+   "title": "Tenant-level breakdown of the lapsed-subscriber leakage trend, by half-year",
+   "question": "Is the decline in lapsed-subscriber free-delivery leakage since late 2024 broad-based across all affected tenants, or driven by one or two tenants fixing something while others stayed flat?",
+   "grain": "one row per tenant and half-year period (2023-H1 through 2025-H2, 6 periods)",
+   "columns": [
+    "tenant name",
+    "half-year period",
+    "orphan orders where most-recent subscription status = 'canceled' (count)",
+    "distinct customers",
+    "total discount amount (EUR)"
+   ],
+   "details": "Source: same confirmed-leakage population as the monthly trend report (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at 2023-01-01 to 2025-12-31, status != 'cancelled', no overlapping active/trialing/past_due subscription, most-recent subscription status = 'canceled') joined to tenants for name. Bucket placed_at into half-year periods (2023-H1 = Jan-Jun 2023, 2023-H2 = Jul-Dec 2023, etc. through 2025-H2). Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Include all 6 tenants identified in the original subscription-delivery analysis (Grind Collective, Honeycomb Larder, Kibblewick, Feather & Fin, Saffron & Sage, The Balm Room) even in periods with zero orphan orders (zero-fill). Order by tenant name, then period ascending. Print all rows (expect up to 36).",
+   "builds_on": [
+    "Monthly trend of confirmed lapsed-subscriber free-delivery leakage, 2023-2025"
+   ]
+  }
+ ]
+}

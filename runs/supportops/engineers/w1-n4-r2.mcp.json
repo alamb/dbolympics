@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket volume and speed by topic tag",
+    "--question",
+    "Are certain ticket topics (support tags) driving a disproportionate share of volume or taking much longer to resolve than others?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Omar\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per support_tag, restricted to the top 20 by ticket_count\", \"columns_requested\": [\"tag_name\", \"ticket_count (2025, via ticket_tags_map)\", \"avg_first_response_minutes\", \"avg_resolution_minutes\", \"first_response_breach_rate\", \"resolution_breach_rate\", \"total_tagged_tickets_2025 (constant: count of distinct tickets created in 2025 with at least one tag)\", \"total_tickets_2025 (constant: all tickets created in 2025, for comparison against total_tagged_tickets_2025)\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets, ticket_tags_map, support_tags, sla_breaches (breach_kind = 'first_response' / 'resolution', confirmed codes from last night's audit). A ticket with multiple tags counts once per tag it carries. Order by ticket_count descending, top 20 rows; note the total number of distinct tags in use and highlight if total_tagged_tickets_2025 is materially below total_tickets_2025 (meaning a lot of tickets carry no topic tag at all, which would limit how far topic-based routing/KB investment can go).\", \"builds_on\": [\"Ticket speed by channel and assignment status\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

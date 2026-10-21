@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Privacy request volume reconciliation: counts by type and status",
+    "--question",
+    "What is the defensible, auditable count of privacy (DSAR) requests by type and status, so we can reconcile against the ~48 figure quoted elsewhere and the 60 we found last week before briefing the regulator?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Felix\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per (request_type, status) combination, across full history, all tenants\", \"columns_requested\": [\"request_type\", \"status\", \"count\", \"earliest received_at (date)\", \"latest received_at (date)\", \"median days to close (completed_at minus received_at, in days, for rows where completed_at is not null; blank if none)\"], \"details\": \"Source: data_subject_requests, no date or tenant filter (full history, platform-wide, matching what last week's reports covered). Group by request_type and status exactly as stored (do not normalize casing) so we can see if any unexpected type/status strings exist. This is meant to be the single ground-truth table that explains how other reported totals (e.g. Risk & Payments' ~48) might be a subset of ours (e.g. excluding a status or request_type) \\u2014 order by request_type, then status, so all rows for a type are grouped together.\", \"builds_on\": [\"Data subject request status audit: does completed_at reflect true closure?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

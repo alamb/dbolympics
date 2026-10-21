@@ -1,0 +1,57 @@
+{
+ "notes": "Night 3 wraps up the \"why\" story nicely: the quarterly urgent-ticket data shows resolution genuinely degrades in the exact quarter each merchant's load spiked (Cragsley/Marrowby worst in Q4 - e.g. Marrowby's avg urgent resolution hours jumps to 139.5h in Q4 vs 8.8-43.6h other quarters; Studio Vrij's catastrophic Q2 (219.5h avg) bleeds into Q3 (109h) before recovering to a healthy 3.9h in Q4, which is itself reassuring evidence of recovery). The Q4-vs-rest report shows the \"flat headcount through a volume surge\" pattern is NOT unique to the three named merchants - roughly half of the 22-merchant qualifying book shows a real Q4 ratio jump (Grind Collective's Q4 ratio, 23.3, is actually worse than Cragsley's), so this looks like a broad, platform-fixable seasonal-staffing gap rather than three merchants being uniquely mismanaged. The resolution-time-distribution report adds useful differentiation: Cragsley's slowness is spread broadly across most tickets (a genuine capacity shortfall), while Marrowby and Studio Vrij each have a distinct ~18-21% long tail of urgent tickets stuck past 7 days or still open - a different, more surgical fix (stuck-ticket escalation) than Cragsley's. For this final night, I want to (1) confirm the load-correlation effect holds across all priorities, not just urgent, to make sure the core finding generalizes, (2) get a quick merchant-profile cut (industry, size, order volume) across the qualifying book to address Daniel's question #4 about whether \"something else\" (not just speed) explains the hotspots, and (3) check whether the long tails at Marrowby/Studio Vrij are concentrated in one or two agents (a coaching fix) or spread across their whole team (a true capacity fix) - directly useful for recommending a fix in the memo.",
+ "requests": [
+  {
+   "title": "Quarterly all-priority ticket performance vs load, hotspot merchants",
+   "question": "Does the load-correlation pattern found for urgent tickets (worse performance in the quarter each merchant's ticket-per-agent ratio spiked) also hold across all tickets, not just urgent ones?",
+   "grain": "one row per tenant and calendar quarter in 2025, for Cragsley Outfitters, Marrowby & Vane, Studio Vrij, and Grind Collective, all priorities",
+   "columns": [
+    "merchant name",
+    "quarter (2025-Q1..Q4)",
+    "tickets created",
+    "avg resolution hours (all priorities)",
+    "median resolution hours (all priorities)",
+    "SLA breach rate (%)"
+   ],
+   "details": "Source: tickets joined to sla_breaches (for breach rate) and tenants, filtered to the four named tenants. Grain the quarter on tickets.created_at within 2025, all priorities included. avg/median resolution hours = extract(epoch from resolved_at - created_at)/3600 over tickets with resolved_at not null that quarter. SLA breach rate = distinct tickets that quarter with >=1 row in sla_breaches ÷ tickets created that quarter, percentage rounded to 1 decimal (same definition used in the original monthly trend report from two weeks ago). Round resolution hours to 1 decimal. Order by merchant name ascending, then quarter ascending. Expect 16 rows; this is meant to sit alongside the already-collected quarterly tickets-per-agent figures (from 'Ticket load per agent over 2025') for comparison, so no need to repeat that column here.",
+   "builds_on": [
+    "Ticket load per agent over 2025, hotspot merchants vs a comparable peer",
+    "Quarterly urgent-ticket performance, hotspot merchants vs comparison peer"
+   ]
+  },
+  {
+   "title": "Merchant profile snapshot: industry, size, and order volume",
+   "question": "Before calling 'respond faster' the headline fix, do the three hotspot merchants simply differ in business profile (vertical, size, order volume) in ways that would naturally explain more support load, independent of staffing or speed?",
+   "grain": "one row per tenant, among tenants with at least 20 tickets created in 2025 (same qualifying set as the staffing/channel/complexity reports)",
+   "columns": [
+    "merchant name",
+    "industry (tenants.industry)",
+    "employee count (tenants.employee_count)",
+    "orders placed, 2025",
+    "avg order value 2025 (EUR equivalent)"
+   ],
+   "details": "Source: tenants (industry, employee_count) joined to orders (count and grand_total for 2025). Window: orders.placed_at in 2025-01-01 through 2025-12-31. Convert each order's grand_total to EUR using exchange_rates (base_code='EUR', quote_code=orders.currency_code, matching as_of to the order's placed_at date, using the prior business day's rate for weekends per house convention) before averaging; round avg order value to 2 decimals. Only include the same 22 tenants with >=20 tickets created in 2025 used in prior reports this week. Order by orders placed descending, tie-break merchant name ascending.",
+   "builds_on": [
+    "Support agent staffing vs ticket volume, by merchant"
+   ]
+  },
+  {
+   "title": "Agent-level ticket performance within the three hotspot merchants",
+   "question": "Within Cragsley, Marrowby, and Studio Vrij, is slow/stuck-ticket handling spread evenly across the support team, or concentrated in one or two agents?",
+   "grain": "one row per support agent, within Cragsley Outfitters, Marrowby & Vane, and Studio Vrij, all-priority tickets created in 2025",
+   "columns": [
+    "merchant name",
+    "agent display name",
+    "tickets handled, 2025",
+    "avg resolution hours",
+    "median resolution hours",
+    "SLA breach rate (%)"
+   ],
+   "details": "Source: tickets joined to support_agents (via assignee_agent_id, for display_name) and sla_breaches (for breach rate), filtered to the three named tenants. Window: tickets.created_at in 2025-01-01 through 2025-12-31, excluding tickets with assignee_agent_id null. avg/median resolution hours = extract(epoch from resolved_at - created_at)/3600 over that agent's tickets with resolved_at not null. SLA breach rate = distinct tickets for that agent with >=1 row in sla_breaches ÷ tickets handled by that agent, percentage rounded to 1 decimal. Round resolution hours to 1 decimal. Order by merchant name ascending, then avg resolution hours descending within merchant. Expect at most 17 rows (8+5+4 agents across the three merchants, per last week's registered-agent counts).",
+   "builds_on": [
+    "Support agent staffing vs ticket volume, by merchant",
+    "Urgent-ticket resolution-time distribution, slow merchants vs a fast baseline"
+   ]
+  }
+ ]
+}

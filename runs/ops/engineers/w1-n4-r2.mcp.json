@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Purchase order replenishment performance by quarter, 2025",
+    "--question",
+    "Did supplier replenishment slow down or back up around peak season, and did it clear by year-end?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per calendar quarter of ordered_at, 2025, aggregated across all suppliers\", \"columns_requested\": [\"quarter (e.g. 2025-Q1)\", \"pos_ordered\", \"pos_received (received_at not null)\", \"avg_actual_lead_days (ordered_at to received_at, received subset)\", \"pct_received_late (received_at > expected_at, among POs with both dates set)\", \"avg_days_late (for the late subset only)\", \"pos_still_open_at_cutoff (status in ('submitted','partially_received') and received_at is null, as measured against the 2025-12-31 data cutoff)\"], \"details\": \"Table: purchase_orders. Scope: ordered_at between 2025-01-01 and 2025-12-31, grouped by calendar quarter of ordered_at (use calendar_days.quarter_num/quarter_start). Round day metrics to 1 decimal, pct to 1 decimal. Please flag in the report that pos_still_open_at_cutoff will naturally be higher for Q4 (especially POs ordered in December) simply because there hasn't been time to receive them before 2025-12-31 -- this is expected right-censoring, not necessarily a sign of backlog, and should be read alongside Q1-Q3 as a baseline. Order by quarter ascending. Expect 4 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

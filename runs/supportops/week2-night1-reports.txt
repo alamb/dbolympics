@@ -1,0 +1,35 @@
+=== Report 1: Staffing load vs. ticket complexity, top merchants benchmark (written by Grace) ===
+Engineer's note: avg_resolution_minutes is computed only over tickets with a resolved_at timestamp (still-open tickets are excluded from that average but still count toward ticket_count, agent ratios and breach rate); agent_count is a simple distinct count of support_agents rows per tenant with no date filter, matching the stated "as used in last week's report" convention.
+REPORT: Staffing load vs. ticket complexity, top merchants benchmark
+QUESTION: For Marrowby & Vane and Studio Vrij, does their high breach rate look like a staffing shortfall (high tickets-per-agent) or inherently harder tickets (more back-and-forth, higher-priority mix), compared to other top merchants like Cragsley Outfitters?
+tenant_name         | ticket_count | agent_count | tickets_per_agent | avg_messages_per_ticket | pct_high_or_urgent_priority | avg_resolution_minutes | resolution_breach_rate
+--------------------+--------------+-------------+-------------------+-------------------------+-----------------------------+------------------------+-----------------------
+Marrowby & Vane     |          231 |           5 |              46.2 |                     3.3 |                        31.6 |                 5096.0 |                   39.4
+Studio Vrij         |          166 |           4 |              41.5 |                     3.7 |                        15.7 |                 7503.6 |                   38.6
+Grind Collective    |          122 |           3 |              40.7 |                     3.8 |                         9.8 |                 3865.3 |                   33.6
+Petalcourt Beauty   |          119 |           4 |              29.8 |                     3.8 |                        31.9 |                 2922.5 |                   32.8
+Cragsley Outfitters |          400 |           8 |              50.0 |                     3.5 |                        26.0 |                 2348.3 |                   29.8
+Brennquell Kaffee   |          137 |           4 |              34.3 |                     3.7 |                        39.4 |                  956.3 |                   11.7
+(6 rows)
+
+=== Report 2: Macro usage_count audit trail reconciliation (written by Ines) ===
+Engineer's note: We don't have last week's report output stored to match macro ids against, so the 5 macros here are today's top 5 by macros.usage_count (tie-broken by id) rather than a literal re-identification of last week's rows — flag if that set needs to match exactly, we'd need the prior report's macro ids. Also note change_history is only filtered by entity_table='macros' and changed_columns containing 'usage_count' (no entity_schema filter was specified/available), and per-macro figures are null for logged_update_event_count fields if no matching change_history rows exist.
+REPORT: Macro usage_count audit trail reconciliation
+QUESTION: Can we independently verify what macros.usage_count is actually counting, using the audit trail, before we repeat that number anywhere?
+macro_title         | current_usage_count | logged_update_event_count | sum_of_logged_increments | first_logged_update_at | last_logged_update_at | macro_created_at   
+--------------------+---------------------+---------------------------+--------------------------+------------------------+-----------------------+--------------------
+Refund processed    |                1840 |                         0 |                     NULL |                   NULL |                  NULL | 2018-07-03 09:00:00
+Refund processed    |                 730 |                         0 |                     NULL |                   NULL |                  NULL | 2024-02-06 10:00:00
+Refund processed    |                 697 |                         0 |                     NULL |                   NULL |                  NULL | 2018-09-18 09:00:00
+Where is my order   |                 651 |                         0 |                     NULL |                   NULL |                  NULL | 2019-02-15 10:00:00
+Return instructions |                 647 |                         0 |                     NULL |                   NULL |                  NULL | 2019-04-03 16:00:00
+(5 rows)
+
+=== Report 3: Ticket tag coverage: tagged vs. untagged volume and speed (written by Bea) ===
+Engineer's note: avg_resolution_minutes is computed only over tickets with a non-null resolved_at (unresolved tickets have no resolution duration); breach rates are the share of each status's tickets with at least one sla_breaches row of that kind.
+REPORT: Ticket tag coverage: tagged vs. untagged volume and speed
+QUESTION: What share of 2025 tickets carry no topic tag at all, and do untagged tickets differ from tagged ones enough to change the topic/breach story from last week?
+coverage_status | ticket_count | pct_of_total_tickets | avg_resolution_minutes | resolution_breach_rate | first_response_breach_rate
+----------------+--------------+----------------------+------------------------+------------------------+---------------------------
+Tagged          |         2320 |                100.0 |                 2687.0 |                   20.3 |                       37.7
+(1 rows)

@@ -1,0 +1,5 @@
+[
+ "Checkout itself went down for ~2 hours on Black Friday (Nov 28, 14:00-16:00 UTC) — we normally take 5-10% of a day's orders in that window, but took just 1 order (0.5%) that day, versus 22 orders in the same window on Black Friday 2024.",
+ "That outage, not a separate bug, was the real cause of last week's \"cart-reminder email\" failures — all 20 failures were the same error, in the same hour, and it hasn't recurred since (the only severe checkout outage in 2 months of data).",
+ "About 1 in 14 of the sync notifications we send to merchants' accounting/inventory systems get stuck retrying rather than completing — steady all year, but 91% of the stuck volume sits with just 4 merchants, led by Brennquell Kaffee (~1,574 stuck deliveries)."
+]

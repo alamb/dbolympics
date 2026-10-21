@@ -1,0 +1,6 @@
+#!/bin/bash
+# the query program
+if [ -f query.pid ]; then
+    kill "$(cat query.pid)" 2>/dev/null || true
+    rm -f query.pid
+fi

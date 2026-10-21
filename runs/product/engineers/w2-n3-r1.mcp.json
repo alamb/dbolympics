@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Email nudge effect on stalled carts, controlling for guest vs. logged-in customers",
+    "--question",
+    "Once we separate carts that could never receive an email (guests) from logged-in customers who simply weren't emailed, does receiving an email still look like it drives recovery?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Omar\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per group: received an email (logged-in) / logged-in but no email / guest (no user to email)\", \"columns_requested\": [\"group\", \"cart count\", \"pct eventually converted\", \"median days to convert (converted carts only)\"], \"details\": \"Same population and definitions as the prior 'stalled carts that receive an email' report: the 6 retail tenants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik), carts with created_at in 2025-01-01 to 2025-11-30, restricted to carts not already converted within the first hour of creation. 'received_email' = non-null user_id with at least one email_log row (same tenant_id and user_id) with sent_at between created_at+1h and created_at+48h. 'logged_in_no_email' = non-null user_id with no such email_log row. 'guest' = null user_id (can never be matched to an email). pct_eventually_converted and median_days_to_convert use the same definitions as before. Order rows: received_email, logged_in_no_email, guest.\", \"builds_on\": [\"Do stalled carts that receive an email convert more often?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

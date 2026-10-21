@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Landfall Freight & Lowlands Express performance by destination country, full year 2025",
+    "--question",
+    "Are our two chronically weak carriers bad everywhere, or concentrated on specific lanes/countries?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per carrier and destination country (Landfall Freight and Lowlands Express only), full year 2025\", \"columns_requested\": [\"carrier\", \"destination_country\", \"shipments_shipped\", \"avg_transit_days\", \"pct_within_3_days\", \"share_of_carrier_shipments_pct (this country's shipments / that carrier's total 2025 shipments, x100)\"], \"details\": \"Tables: shipments (carrier in ('Landfall Freight','Lowlands Express'), shipped_at between 2025-01-01 and 2025-12-31, delivered_at) joined via fulfillments -> orders -> addresses (shipping_address_id) -> countries. transit_days = DATEDIFF(day, shipped_at, delivered_at), delivered subset only. Round avg_transit_days to 2 decimals, pct columns to 1 decimal. Include only countries with at least 15 shipments for that carrier in the year. Order by carrier ascending, then shipments_shipped descending.\", \"builds_on\": [\"Carrier transit performance by quarter, 2025\", \"Carrier transit performance, Q4 2025 (complete)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

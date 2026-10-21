@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Linking rejected erasure requests to active legal holds",
+    "--question",
+    "Do the 3 long-open 'rejected' data subject requests correspond to the same shopper and tenant as the 3 active legal holds for payment disputes?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per data_subject_requests record with status = 'rejected', left-joined to legal_holds on matching tenant_id and subject_user_id = legal_holds.subject_user_id\", \"columns_requested\": [\"dsar public_id\", \"tenant name\", \"dsar subject_user_id\", \"dsar request type\", \"dsar received_at (date)\", \"matched legal hold name (null if no match)\", \"legal hold subject_user_id (null if no match)\", \"legal hold reason (truncated, null if no match)\", \"legal hold is_active\", \"legal hold placed_at (date)\", \"days between dsar received_at and hold placed_at\"], \"details\": \"Source: data_subject_requests filtered to status = 'rejected' (expect exactly 3 rows, from Marrowby & Vane, Rue Lafayette Studio, Cragsley Outfitters per night 3). LEFT JOIN legal_holds ON legal_holds.tenant_id = data_subject_requests.tenant_id AND legal_holds.subject_user_id = data_subject_requests.subject_user_id. If subject_user_id isn't populated on data_subject_requests for these rows, fall back to matching on tenant_id only and show legal_holds rows placed within 3 days of received_at as candidate matches, noting which join strategy was used. Order by dsar received_at ascending.\", \"builds_on\": [\"Currently open data subject requests: age and overdue detail\", \"Data subject request status audit: does completed_at reflect true closure?\", \"Legal holds: active scope, coverage, and staleness\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

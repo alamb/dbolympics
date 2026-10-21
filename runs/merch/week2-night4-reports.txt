@@ -1,0 +1,85 @@
+=== Report 1: Bundle Creation Timing: Seeded in a Batch or Built Up Organically? (written by Omar) ===
+Engineer's note: One row per calendar month 2023-01 through 2025-12, built off the full calendar so zero-activity months still appear; counts are based on product_bundles.created_at regardless of tenant vertical (verticals live on tenants, not requested as a column per the grain given).
+REPORT: Bundle Creation Timing: Seeded in a Batch or Built Up Organically?
+QUESTION: Does the suspiciously clean 100%/0% bundle adoption split by vertical look like genuine, ongoing merchant activity, or does it look like a one-time data-seeding event?
+month   | bundles_created_count | distinct_tenants_creating_a_bundle
+--------+-----------------------+-----------------------------------
+2023-01 |                     2 |                                  1
+2023-02 |                     0 |                                  0
+2023-03 |                     6 |                                  2
+2023-04 |                     4 |                                  1
+2023-05 |                     4 |                                  1
+2023-06 |                     1 |                                  1
+2023-07 |                     0 |                                  0
+2023-08 |                     0 |                                  0
+2023-09 |                     0 |                                  0
+2023-10 |                     0 |                                  0
+2023-11 |                     1 |                                  1
+2023-12 |                     2 |                                  1
+2024-01 |                     1 |                                  1
+2024-02 |                     0 |                                  0
+2024-03 |                     0 |                                  0
+2024-04 |                     0 |                                  0
+2024-05 |                     3 |                                  1
+2024-06 |                     2 |                                  1
+2024-07 |                     1 |                                  1
+2024-08 |                     5 |                                  3
+2024-09 |                     0 |                                  0
+2024-10 |                     9 |                                  3
+2024-11 |                     0 |                                  0
+2024-12 |                     3 |                                  1
+2025-01 |                     0 |                                  0
+2025-02 |                     0 |                                  0
+2025-03 |                     3 |                                  1
+2025-04 |                     2 |                                  1
+2025-05 |                     8 |                                  4
+2025-06 |                     1 |                                  1
+2025-07 |                     1 |                                  1
+2025-08 |                     6 |                                  2
+2025-09 |                     7 |                                  3
+2025-10 |                     0 |                                  0
+2025-11 |                     0 |                                  0
+2025-12 |                     0 |                                  0
+(36 rows)
+
+=== Report 2: Return and Damage Rates for Fragile vs Other Home & Living Categories (written by Viktor) ===
+Engineer's note: Grain is by category name, rolled up across all Home & Living tenants that sold units in the product's primary category during 2025 (categories with zero units sold in the window are excluded since return rate would be undefined); damage-related share is computed only among the category's own returns, so it's null when return_count is 0.
+REPORT: Return and Damage Rates for Fragile vs Other Home & Living Categories
+QUESTION: Do fragile homeware categories (cookware, glassware, tableware, decor) see more damage-related returns than other Home & Living categories, supporting the in-transit-breakage theory for the December dip?
+category_name | units_sold_last_12mo | return_count | return_rate_pct | pct_returns_damage_related
+--------------+----------------------+--------------+-----------------+---------------------------
+Bedding       |                  387 |           56 |            14.5 |                        3.6
+Decor         |                  675 |           49 |             7.3 |                       26.5
+Towels        |                  379 |           27 |             7.1 |                        3.7
+Furniture     |                  148 |           10 |             6.8 |                       40.0
+Cookware      |                  599 |           38 |             6.3 |                       15.8
+Appliances    |                  260 |           15 |             5.8 |                       26.7
+Lighting      |                  207 |           12 |             5.8 |                       25.0
+Textiles      |                  564 |           31 |             5.5 |                        9.7
+Glassware     |                  304 |           15 |             4.9 |                       26.7
+Tableware     |                  226 |           10 |             4.4 |                       30.0
+Bathroom      |                   20 |            0 |             0.0 |                       NULL
+Bedroom       |                    1 |            0 |             0.0 |                       NULL
+(12 rows)
+
+=== Report 3: Fennel & Flint December 2025: Product-Level Review Breakdown (written by Felix) ===
+Engineer's note: units_sold_last_12mo is defined per the Wiesgrund report's spec as calendar-year 2025 order_items (not a true trailing-12-month window from report date), to match "same definitions" as requested.
+REPORT: Fennel & Flint December 2025: Product-Level Review Breakdown
+QUESTION: Is Fennel & Flint's declining rating trend concentrated in specific products, or spread broadly across its catalog, in parallel to what we found at Wiesgrund Wohnen?
+product_name                             | category_name | review_count | avg_rating | pct_1_2_star | units_sold_last_12mo
+-----------------------------------------+---------------+--------------+------------+--------------+---------------------
+Sea Salt Candle                          | Decor         |            1 |       1.00 |        100.0 |                    6
+Washed Organic Cotton Duvet Cover        | Bedding       |            1 |       1.00 |        100.0 |                   27
+Fluted Recycled Glass Vase               | Decor         |            1 |       1.00 |        100.0 |                   10
+Reactive Glaze Set of 4 Dinner Plate Set | Tableware     |            1 |       1.00 |        100.0 |                   10
+Retro Kettle                             | Appliances    |            1 |       2.00 |        100.0 |                    3
+Cedar & Smoke Candle                     | Decor         |            1 |       3.00 |          0.0 |                   14
+Fringed Throw                            | Textiles      |            1 |       3.00 |          0.0 |                   19
+Round 24cm Enamelled Cast Iron Casserole | Cookware      |            1 |       3.00 |          0.0 |                    4
+Carbon Steel 26cm Frying Pan             | Cookware      |            1 |       4.00 |          0.0 |                   27
+Santoku 18cm Chef's Knife                | Cookware      |            1 |       5.00 |          0.0 |                    3
+Plush Organic Cotton Bath Towel          | Towels        |            1 |       5.00 |          0.0 |                   13
+Tumblers Set of 4 Glassware Set          | Glassware     |            1 |       5.00 |          0.0 |                   26
+Round 24cm Cast Iron Casserole Dish      | Cookware      |            1 |       5.00 |          0.0 |                    6
+Percale Organic Cotton Duvet Cover       | Bedding       |            1 |       5.00 |          0.0 |                    5
+(14 rows)

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "GMV growth by merchant cohort: new vs existing, per quarter",
+    "--question",
+    "Is Tidewick's order-volume growth coming from newly-joined merchants or from existing merchants transacting more?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per calendar quarter and cohort (new vs existing)\", \"columns_requested\": [\"quarter\", \"cohort (new or existing)\", \"merchant count (distinct tenants with a qualifying order that quarter)\", \"order count\", \"GMV EUR\", \"share of that quarter's total GMV (%)\"], \"details\": \"Source: orders joined to tenants (on tenant_id) to classify each merchant as 'new' or 'existing' for a given quarter: a tenant is 'new' in a quarter if tenants.created_at falls within that same quarter, otherwise 'existing' (tenants.created_at before quarter start). Window: quarters 2024-Q1 through 2025-Q4 (8 quarters), using orders.placed_at to assign the quarter. Include only orders with status in ('paid','partially_fulfilled','fulfilled','refunded'), matching the growth-by-quarter report in this same batch. Convert orders.grand_total to EUR the same way (amount_eur = amount / rate, base_code='EUR', quote_code=orders.currency_code, as_of = orders.placed_at date). For each quarter there should be exactly two rows (new, existing); share of total GMV = that cohort's GMV EUR divided by the quarter's combined (new+existing) GMV EUR. Order by quarter ascending, then cohort (new before existing).\", \"builds_on\": [\"Merchant and order growth by quarter\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

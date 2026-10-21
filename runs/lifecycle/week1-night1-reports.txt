@@ -1,0 +1,63 @@
+=== Report 1: Loyalty points and referral reward cost by month (written by Ines) ===
+Engineer's note: Direction 'earn' is treated as issuance and any other direction value as redemption, per the request; magnitudes are taken as absolute point values. EUR conversion uses the exchange rate as of the transaction/redemption date, falling back to rate=1 only when the program/redemption currency is already EUR and no matching rate row exists. 36 monthly rows (2023-01 through 2025-12) are produced, all fitting on one page.
+REPORT: Loyalty points and referral reward cost by month
+QUESTION: How much is the loyalty/referral programme costing the business each month - points value issued and redeemed, outstanding points liability, and referral rewards paid - and is that cost trending up or down?
+month   | points_earned_value_eur | points_redeemed_value_eur | net_points_liability_change_eur | cumulative_points_liability_eur | referral_rewards_paid_eur | referral_redemptions_count | new_loyalty_enrollments
+--------+-------------------------+---------------------------+---------------------------------+---------------------------------+---------------------------+----------------------------+------------------------
+2023-01 |                     0.0 |                       0.0 |                             0.0 |                             0.0 |                       0.0 |                          0 |                      26
+2023-02 |                 6795.86 |                       0.0 |                         6795.86 |                         6795.86 |                       0.0 |                          0 |                      26
+2023-03 |                12269.48 |                       0.0 |                        12269.48 |                        19065.34 |                       0.0 |                          0 |                      19
+2023-04 |                 7731.07 |                    458.87 |                          7272.2 |                        26337.54 |                       0.0 |                          0 |                      28
+2023-05 |                 9182.52 |                    558.57 |                         8623.95 |                        34961.49 |                      9.72 |                          1 |                      27
+2023-06 |                14861.39 |                   2016.52 |                        12844.87 |                        47806.36 |                      9.93 |                          1 |                      24
+2023-07 |                10904.88 |                   1391.71 |                         9513.17 |                        57319.54 |                       0.0 |                          0 |                      30
+2023-08 |                10592.47 |                   2571.75 |                         8020.72 |                        65340.26 |                     20.11 |                          2 |                      23
+2023-09 |                 9777.02 |                   1727.34 |                         8049.68 |                        73389.93 |                     29.93 |                          3 |                      31
+2023-10 |                 8161.54 |                   1978.64 |                          6182.9 |                        79572.83 |                       0.0 |                          0 |                      28
+2023-11 |                12610.08 |                   3112.38 |                          9497.7 |                        89070.53 |                     20.01 |                          2 |                      46
+2023-12 |                25959.23 |                   7487.64 |                        18471.59 |                       107542.12 |                      10.0 |                          1 |                      43
+2024-01 |                36333.27 |                  12003.69 |                        24329.58 |                        131871.7 |                     10.09 |                          1 |                      21
+2024-02 |                18973.71 |                   3612.65 |                        15361.06 |                       147232.76 |                     39.95 |                          4 |                      21
+2024-03 |                13914.19 |                   2514.62 |                        11399.57 |                       158632.33 |                      9.94 |                          1 |                      35
+2024-04 |                 14554.7 |                   3945.76 |                        10608.94 |                       169241.27 |                     10.02 |                          1 |                      24
+2024-05 |                12483.15 |                   2568.98 |                         9914.17 |                       179155.44 |                     19.54 |                          2 |                      36
+2024-06 |                18731.61 |                   6646.59 |                        12085.02 |                       191240.46 |                      10.0 |                          1 |                      31
+2024-07 |                25923.37 |                   4972.11 |                        20951.27 |                       212191.72 |                      9.55 |                          1 |                      22
+2024-08 |                15720.94 |                    5803.3 |                         9917.64 |                       222109.37 |                     29.46 |                          3 |                      30
+2024-09 |                11399.38 |                   4548.98 |                          6850.4 |                       228959.77 |                      10.0 |                          1 |                      34
+2024-10 |                13686.25 |                   4764.38 |                         8921.87 |                       237881.64 |                     39.87 |                          4 |                      35
+2024-11 |                17138.65 |                   5816.06 |                        11322.59 |                       249204.23 |                     29.64 |                          3 |                      56
+2024-12 |                26937.99 |                   9161.06 |                        17776.93 |                       266981.16 |                     59.93 |                          6 |                      71
+2025-01 |                45225.29 |                  11588.55 |                        33636.73 |                       300617.89 |                       9.7 |                          1 |                      47
+2025-02 |                27586.88 |                   6466.53 |                        21120.34 |                       321738.23 |                     29.83 |                          3 |                      26
+2025-03 |                26353.26 |                   7491.37 |                        18861.89 |                       340600.12 |                      10.0 |                          1 |                      44
+2025-04 |                 23342.5 |                   8413.71 |                        14928.78 |                       355528.91 |                     20.03 |                          2 |                      27
+2025-05 |                19817.63 |                   7308.03 |                        12509.59 |                        368038.5 |                     19.72 |                          2 |                      62
+2025-06 |                19227.78 |                   6181.43 |                        13046.34 |                       381084.84 |                     29.31 |                          3 |                      36
+2025-07 |                28562.11 |                   6813.17 |                        21748.94 |                       402833.78 |                     19.93 |                          2 |                      45
+2025-08 |                24608.79 |                   4983.28 |                        19625.51 |                       422459.29 |                     20.21 |                          2 |                      35
+2025-09 |                16433.11 |                   7573.74 |                         8859.38 |                       431318.67 |                     29.09 |                          3 |                      47
+2025-10 |                17719.35 |                   6618.06 |                        11101.29 |                       442419.96 |                     39.53 |                          4 |                      58
+2025-11 |                25165.22 |                   7469.68 |                        17695.53 |                       460115.49 |                     29.33 |                          3 |                      58
+2025-12 |                40316.76 |                   9213.83 |                        31102.93 |                       491218.42 |                     28.67 |                          3 |                      86
+(36 rows)
+
+=== Report 2: Loyalty member vs non-member customer behavior (written by Omar) ===
+Engineer's note: Lifetime orders/repeat-rate/refund-rate denominators use all orders (any status) per the population definition; revenue and AOV use non-cancelled orders only, as specified. Tenure and revenue dates use COALESCE(placed_at, created_at); EUR conversion divides local amount by the EUR→currency exchange rate for that date.
+REPORT: Loyalty member vs non-member customer behavior
+QUESTION: Do enrolled loyalty members actually order more often, spend more, stick around longer, and return items less than non-member customers, as of today?
+segment        | customer_count | avg_lifetime_orders | avg_lifetime_revenue_eur | avg_order_value_eur | avg_tenure_days | repeat_purchase_rate_pct | refund_rate_pct
+---------------+----------------+---------------------+--------------------------+---------------------+-----------------+--------------------------+----------------
+loyalty member |           1330 |                3.72 |                   687.99 |              194.40 |           199.7 |                     67.7 |            32.4
+non-member     |           8310 |                5.55 |                  1511.84 |              281.57 |           234.1 |                     71.7 |            15.5
+(2 rows)
+
+=== Report 3: Referred vs non-referred customer early behavior (written by Felix) ===
+Engineer's note: Day0 = first order with non-null placed_at per user; "2nd order within 90 days" is derived as orders_90d >= 2 (equivalent since day0 is the min placed_at, any additional order in the window is necessarily the chronological 2nd order). Refund flag uses payments.amount_refunded > 0 OR an order_returns row, per order, within the 90-day window. Revenue converted to EUR via exchange_rates (base_code=EUR, quote_code=order currency, as_of = order placed_at's date); EUR orders pass through unconverted.
+REPORT: Referred vs non-referred customer early behavior
+QUESTION: Do customers acquired through a referral behave better in their first 90 days - more orders, more revenue, more likely to return, fewer refunds - than customers acquired another way?
+segment  | customer_count | avg_orders_90d | avg_revenue_90d_eur | pct_2nd_order_within_90d | pct_2nd_order_90_180d | refund_rate_90d_pct
+---------+----------------+----------------+---------------------+--------------------------+-----------------------+--------------------
+referred |             60 |           2.20 |              631.51 |                     50.0 |                  33.3 |                14.4
+other    |           7329 |           1.90 |              526.81 |                     48.4 |                  29.8 |                21.9
+(2 rows)

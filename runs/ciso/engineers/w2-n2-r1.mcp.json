@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order status history coverage for cancelled orders",
+    "--question",
+    "Generic audit_log barely covers order cancellations (0.2%) — but does the purpose-built order_status_history table actually capture who cancelled each order and when?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per tenant that has at least one cancelled order\", \"columns_requested\": [\"tenant name\", \"cancelled orders (orders.status = 'cancelled', all-time)\", \"matching order_status_history rows (same order_id, to_status = 'cancelled')\", \"coverage rate (%)\", \"of matches, rows with a non-null changed_by_user_id (a named actor, not just a timestamp)\"], \"details\": \"Source: orders where status = 'cancelled', left-joined to order_status_history on order_status_history.order_id = orders.id and order_status_history.to_status = 'cancelled' (same tenant_id). coverage_rate = orders with at least one such matching history row / total cancelled orders for that tenant, rounded to 1 decimal percent. Also report how many of the matched rows have changed_by_user_id is not null, since a transition logged with no actor still doesn't answer 'who'. Order by coverage rate ascending (worst first), cancelled orders count descending as tie-break, tenant name as final tie-break. Cap at 50 rows; note total tenant count if more (expect ~90 per last night's report 2).\", \"builds_on\": [\"Audit traceability of order cancellations and invoice voids\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

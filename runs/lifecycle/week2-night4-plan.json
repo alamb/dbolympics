@@ -1,0 +1,56 @@
+{
+ "notes": "Night 3 was the turning point. Within Apparel, tenure-controlled, genuinely engaged members (ever redeemed a point) clearly beat non-members of the same tenure - roughly double the orders and 85-91% more revenue at 12-24 and 24-plus month tenure, with refund rates statistically indistinguishable from non-members. The 'member penalty' seen all along turns out to live entirely in the 83% of members who enrolled but have never redeemed a single point - they underperform both the engaged members and non-members on every metric. Unit economics confirm the realized cost is 100% concentrated in that engaged 17% (225 of 1330 members), and for them it's a rich 40.95% of their own revenue - a much higher 'discount rate' than the blended 19.4% figure suggested, though against genuinely larger, more valuable customers. The new wrinkle: among engaged members, annualized order frequency drops sharply after their first redemption (6.64 to 2.79 orders/year) and 30% place no order at all afterward - before I call this a 'redemption kills engagement' story I need to rule out that it's just normal customer-lifecycle deceleration that would show up for anyone. For this final night: (1) test whether that frequency drop is specific to redeemers or a universal pattern, by comparing first-half vs second-half-of-tenure frequency across non-members, never-redeemed members and ever-redeemed members; (2) confirm the engagement-separates-good-from-bad-members finding holds platform-wide, not just in Apparel; (3) check whether members who redeem quickly after enrolling (likely signup-bonus hunters) are disproportionately the ones who never order again, which would be the clearest 'reward without real repeat purchase' red flag Aisha asked about.",
+ "requests": [
+  {
+   "title": "Order frequency deceleration by customer group: first half vs second half of tenure",
+   "question": "Does order frequency drop off after a member's first redemption because redeeming specifically reduces engagement, or do non-members and never-redeemed members show the same kind of natural slowdown over their lifetime?",
+   "grain": "one row per combination of customer group (non-member, never-redeemed member, ever-redeemed member) and lifetime period (first half, second half)",
+   "columns": [
+    "group",
+    "period",
+    "customer_count",
+    "total_orders",
+    "orders_per_customer_per_year",
+    "refund_rate_pct"
+   ],
+   "details": "Population: all users (is_staff = false, any tenant/vertical) with at least 2 orders placed between 2023-01-01 and 2025-12-31 (need at least 2 orders to define a meaningful midpoint). Group: 'non-member' if no loyalty_accounts row; otherwise 'ever-redeemed member' if they have at least one 'burn'-direction loyalty_transactions row, else 'never-redeemed member'. For each customer, compute the midpoint date exactly halfway between their first and last order placed_at; 'first half' = orders placed before the midpoint, 'second half' = orders on or after the midpoint. total_orders and customer_count are counts within each group/period. orders_per_customer_per_year = total_orders in that period divided by (sum of each customer's exposed days in that period divided by 365), where exposed days for 'first half' = midpoint minus first order date, and for 'second half' = last order date minus midpoint (floor at 1 day). refund_rate_pct = share of orders in the group/period with payments.amount_refunded greater than 0 OR an order_returns row. Order rows by group (non-member, never-redeemed member, ever-redeemed member), then period (first half, second half).",
+   "builds_on": [
+    "Member order behavior before vs after their first points redemption"
+   ]
+  },
+  {
+   "title": "Platform-wide: never-redeemed vs ever-redeemed members vs non-members, by tenure",
+   "question": "Does the Apparel finding - that engaged (ever-redeemed) members beat tenure-matched non-members while never-redeemed members lag behind - hold up across the whole platform, or was it specific to Apparel?",
+   "grain": "one row per combination of account-tenure band and customer group: 'non-member', 'never-redeemed member', 'ever-redeemed member', across all tenants and verticals",
+   "columns": [
+    "tenure_band",
+    "group",
+    "customer_count",
+    "avg_lifetime_orders",
+    "avg_lifetime_revenue_eur",
+    "avg_order_value_eur",
+    "refund_rate_pct"
+   ],
+   "details": "Identical definitions to the 'Apparel: never-redeemed vs ever-redeemed members vs non-members, by tenure' report, but with no industry filter - include users across all tenants and verticals. Population: users (is_staff = false) with at least one order 2023-01-01 to 2025-12-31. Tenure band = time from users.created_at to 2025-12-31, bucketed 'under 6 months', '6 to 12 months', '12 to 24 months', 'over 24 months'. Group: 'non-member' if no loyalty_accounts row; 'ever-redeemed member' if at least one 'burn'-direction loyalty_transactions row; else 'never-redeemed member'. Revenue/AOV use non-cancelled orders converted to EUR via exchange_rates (as_of placed_at); avg_lifetime_orders and refund_rate_pct use all orders (any status); refund = payments.amount_refunded greater than 0 OR an order_returns row. Order rows by tenure_band (youngest to oldest), then group ('non-member', 'never-redeemed member', 'ever-redeemed member').",
+   "builds_on": [
+    "Apparel: never-redeemed vs ever-redeemed members vs non-members, by tenure"
+   ]
+  },
+  {
+   "title": "Post-redemption drop-off by how quickly members first redeemed",
+   "question": "Are members who redeem points very soon after enrolling - likely signup-bonus hunters - disproportionately the ones who never place another order, which would be the clearest sign of rewards given without real repeat purchase behind them?",
+   "grain": "one row per time-to-first-redemption bucket, among members who have redeemed at least once",
+   "columns": [
+    "time_to_first_redemption_bucket",
+    "member_count",
+    "pct_with_no_orders_after_redemption",
+    "avg_orders_after_per_customer",
+    "avg_revenue_after_eur"
+   ],
+   "details": "Population: users with a loyalty_accounts row who have at least one 'burn'-direction loyalty_transactions row. For each such user, compute days between loyalty_accounts.enrolled_at and the occurred_at of their first 'burn' transaction; bucket into 'within 30 days of enrollment', '31 to 180 days', 'over 180 days'. pct_with_no_orders_after_redemption = share of members in the bucket with zero orders placed on or after their first redemption's occurred_at. avg_orders_after_per_customer = average count of orders (any status) placed on or after the first redemption, per member in the bucket (including zeros). avg_revenue_after_eur = average EUR revenue (non-cancelled orders, grand_total converted via exchange_rates as_of placed_at) from orders placed on or after the first redemption, per member in the bucket (including zeros). Order rows by time_to_first_redemption_bucket in the order listed above.",
+   "builds_on": [
+    "Member order behavior before vs after their first points redemption"
+   ]
+  }
+ ]
+}

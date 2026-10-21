@@ -1,0 +1,55 @@
+{
+ "notes": "Night 2 reframed the whole job-reliability story: queue delay and run duration are flat and tiny every single week (no \"lateness\" problem exists at all), and ALL 20 failures in the entire Oct-Dec window happened in one week (2025-11-24) in one handler (carts.remind), hitting exactly 10 tenants. So this isn't a chronic reliability problem - it's one contained one-week incident tied to the abandoned-cart-reminder job. Report 3 showed something genuinely useful: the health-check unhealthy rate spiked (2.44% vs a ~1% baseline) in that exact same week, suggesting monitoring did catch it. Given this, tonight I pivot to what Samuel needs about those 10 tenants specifically (are they top-tier/large accounts, did it track with order volume, did it coincide with ticket pain) since that's now answerable precisely rather than generically, and I use my third slot to open up webhook delivery reliability (Diego's #5), which I haven't touched yet and which is a more directly merchant-facing failure mode than internal jobs turned out to be.",
+ "requests": [
+  {
+   "title": "Tenant Size vs Carts.remind Job Failure Exposure, 2025",
+   "question": "Were the 10 tenants hit by the November carts.remind job failures large/top-tier accounts, or did exposure look unrelated to merchant size?",
+   "grain": "one row per tenant",
+   "columns": [
+    "tenant_name",
+    "total_orders_2025",
+    "total_revenue_eur_2025",
+    "revenue_rank",
+    "was_affected_by_nov_carts_remind_failure"
+   ],
+   "details": "Tables: orders (placed_at in 2025, any status) for total_orders_2025 and total_revenue_eur_2025 (sum of grand_total converted to EUR using exchange_rates: base_code='EUR', quote_code=orders.currency_code, as_of matching date(placed_at), amount_eur = grand_total / rate). revenue_rank = dense rank of tenants by total_revenue_eur_2025 descending (1 = largest). was_affected_by_nov_carts_remind_failure = 'Yes' if the tenant has at least one row in job_runs joined to jobs (job_runs.job_id = jobs.id) where jobs.handler = 'carts.remind', job_runs.status = 'failed', and job_runs.queued_at in November 2025, else 'No'. Order by was_affected_by_nov_carts_remind_failure descending (Yes first), then revenue_rank ascending. Limit to 30 rows so all 10 affected tenants appear plus the next ~20 largest unaffected tenants for comparison.",
+   "builds_on": [
+    "Merchants Hit Hardest by Job Failures, 2025",
+    "2025 Job Failures by Job Type (Handler)"
+   ]
+  },
+  {
+   "title": "Support Ticket Volume Around the Nov 2025 Carts.remind Incident",
+   "question": "Did support ticket volume spike for the 10 affected tenants around the week of the carts.remind failures, compared to other tenants?",
+   "grain": "one row per ISO week, Nov 1 - Dec 31 2025, split into affected vs other tenants",
+   "columns": [
+    "week_start",
+    "tickets_affected_tenants",
+    "avg_tickets_per_affected_tenant",
+    "tickets_other_tenants",
+    "avg_tickets_per_other_tenant"
+   ],
+   "details": "Table tickets, filtered to created_at >= 2025-11-01 and < 2026-01-01, grouped by ISO week (calendar_days.week_start). 'Affected' tenants are the 10 identified via job_runs joined to jobs where handler='carts.remind', status='failed', queued_at in November 2025 (same definition as the prior request); 'other' is every other tenant with status in (trial, active, past_due, suspended, churned) -- i.e. all remaining tenants. avg_tickets_per_affected_tenant = tickets_affected_tenants / 10; avg_tickets_per_other_tenant = tickets_other_tenants / (total tenant count - 10). Order by week_start ascending.",
+   "builds_on": [
+    "2025 Job Failures by Job Type (Handler)"
+   ]
+  },
+  {
+   "title": "2025 Webhook Delivery Reliability Trend",
+   "question": "How reliable were webhook deliveries to merchants' own systems across 2025, and what time window does the data actually cover?",
+   "grain": "one row per calendar month",
+   "columns": [
+    "month",
+    "total_deliveries",
+    "success_count",
+    "success_rate_pct",
+    "failed_count",
+    "failure_rate_pct",
+    "avg_duration_ms",
+    "distinct_webhooks"
+   ],
+   "details": "Table webhook_deliveries. Filter created_at >= 2025-01-01 and < 2026-01-01 (requesting the full year; per the pattern seen with job_runs and system_health_checks, report back whatever months actually have rows rather than erroring). Group by month of created_at. success_rate_pct = success_count/total_deliveries*100 rounded 2dp (success_count = status='success'); failure_rate_pct similarly for status='failed'. avg_duration_ms over non-null duration_ms, rounded to whole number. distinct_webhooks = count distinct webhook_id. Platform-wide, all tenants. Order by month ascending.",
+   "builds_on": []
+  }
+ ]
+}

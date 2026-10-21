@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Where orders stall after checkout: status-transition funnel, Q4 2025",
+    "--question",
+    "Within the post-checkout order lifecycle, is the drop-off to a paid order a single cliff at one status or a slow bleed spread across several, and which status is it?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Bea\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per order status\", \"columns_requested\": [\"status\", \"orders reaching this status (count)\", \"pct of total orders in window\", \"median hours from order creation to reaching this status\"], \"details\": \"Base population: orders with created_at in 2025-10-01 to 2025-12-31, restricted to the same 10 tenants as the Q4 funnel report (tenant_id lookup by name as in the companion request). total_orders = count of distinct such orders. For each status in (pending, confirmed, paid, partially_fulfilled, fulfilled, cancelled, refunded), 'orders reaching this status' = count of distinct orders that have at least one row in order_status_history with to_status = that status (occurred within the same order's lifetime, no extra date filter beyond the order being in the base population). Median hours = median of (first order_status_history.created_at with that to_status for the order) minus orders.created_at, in hours, rounded to 1 decimal. pct of total orders = orders_reaching_status / total_orders * 100, rounded to 1 decimal. Order rows by pct of total orders descending, tie-break by status name.\", \"builds_on\": [\"Storefront-to-order funnel for top merchants, Q4 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

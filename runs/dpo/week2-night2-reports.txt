@@ -1,0 +1,39 @@
+=== Report 1: Pre-2023 data subject requests: backfill or data quality issue? (written by Bea) ===
+Engineer's note: Returns full history of data_subject_requests rows with received_at before 2023-01-01, one row each, with the received_at-to-created_at gap (in days) as the key diagnostic column; if this exceeds 50 rows only the first 50 by received_at will print, and the report should note the true row count.
+REPORT: Pre-2023 data subject requests: backfill or data quality issue?
+QUESTION: Are the data subject requests received before 2023-01-01 legitimate historical/backfilled compliance records, or a data quality artifact?
+public_id                            | tenant_name         | request_type  | status    | received_at                | completed_at               | created_at                 | days_received_to_created | notes                                   
+-------------------------------------+---------------------+---------------+-----------+----------------------------+----------------------------+----------------------------+--------------------------+-----------------------------------------
+0bf5fe16-9c96-4a01-9861-ba58a8c62338 | Grind Collective    | erasure       | completed | 2020-04-24 22:06:57.286184 | 2020-04-28 19:22:51.144924 | 2020-04-24 22:06:57.286184 |                      0.0 |                                         
+4531b08c-8444-4f57-aed1-451f6cbf1fed | Ampfeld Elektronik  | erasure       | completed | 2021-01-23 02:55:03.615711 | 2021-02-15 17:08:35.966168 | 2021-01-23 02:55:03.615711 |                      0.0 |                                         
+ddc3341d-2a13-41d3-b194-d7f512b94132 | Marrowby & Vane     | erasure       | completed | 2021-04-11 23:28:00.777156 | 2021-04-16 02:45:58.630788 | 2021-04-11 23:28:00.777156 |                      0.0 |                                         
+81cb284d-fa6d-4e79-a51f-fdc9751181c9 | Linden & Loom       | rectification | completed | 2021-09-23 02:23:50.083272 | 2021-11-10 23:23:48.284517 | 2021-09-23 02:23:50.083272 |                      0.0 | Customer asked to correct their name and
+74bec8f7-3b6e-4350-8535-caee73c055e1 | Marrowby & Vane     | erasure       | completed | 2021-10-14 04:22:31.788939 | 2021-10-16 12:27:24.652039 | 2021-10-14 04:22:31.788939 |                      0.0 |                                         
+df4dc623-ddb6-4508-81af-ee136635850b | Cragsley Outfitters | erasure       | completed | 2022-01-31 05:23:11.927364 | 2022-02-05 01:44:35.9245   | 2022-01-31 05:23:11.927364 |                      0.0 |                                         
+cfddd972-efd4-4480-9ab3-12a867c46b79 | Coastline Interiors | erasure       | completed | 2022-05-31 18:23:29.874953 | 2022-06-03 15:01:02.294238 | 2022-05-31 18:23:29.874953 |                      0.0 |                                         
+bedcac86-0871-457a-82e8-900fbc81b15b | Coastline Interiors | rectification | completed | 2022-07-17 05:06:49.81761  | 2022-07-21 08:14:49.470638 | 2022-07-17 05:06:49.81761  |                      0.0 | Customer asked to correct their name and
+f9ddeb61-8a65-4ffc-8a99-2d6746cab8ee | Wiesgrund Wohnen    | erasure       | completed | 2022-08-15 14:29:36.076473 | 2022-08-26 12:47:21.258026 | 2022-08-15 14:29:36.076473 |                      0.0 |                                         
+2554d690-68f1-4e5f-a5bd-aa9ecd805f5b | Midland Safety Wear | erasure       | completed | 2022-08-25 20:01:46.884542 | 2022-09-02 12:46:29.129135 | 2022-08-25 20:01:46.884542 |                      0.0 |                                         
+9d2b79e8-cda0-4cb2-9d5c-12b4629b1428 | Brennquell Kaffee   | access        | completed | 2022-08-25 22:06:26.754811 | 2022-08-27 13:04:32.510653 | 2022-08-25 22:06:26.754811 |                      0.0 |                                         
+1ad45648-063f-4e1f-b4dc-374c76223fb3 | Brennquell Kaffee   | access        | completed | 2022-11-20 04:39:40.390136 | 2022-12-16 13:57:08.602069 | 2022-11-20 04:39:40.390136 |                      0.0 |                                         
+(12 rows)
+
+=== Report 2: Data export fulfillment audit: are access/portability exports actually completing? (written by Viktor) ===
+Engineer's note: Grouped by the raw status string exactly as stored in data_exports, platform-wide (no tenant filter), so the report will show whichever status values actually exist (e.g. 'completed' vs. 'succeeded' etc.) alongside completed_at/file_url fill rates to tell whether exports are genuinely finishing.
+REPORT: Data export fulfillment audit: are access/portability exports actually completing?
+QUESTION: Is 'zero completed data exports' real, or is 'completed' simply the wrong status string for this table — and are shoppers who filed access requests actually receiving their data?
+status  | export_count | earliest_requested_at      | latest_requested_at        | count_with_completed_at | count_with_file_url | avg_row_count
+--------+--------------+----------------------------+----------------------------+-------------------------+---------------------+--------------
+expired |           11 | 2022-08-25 23:06:26.754811 | 2025-09-01 06:56:20.570772 |                      11 |                  11 |       1456.09
+(1 rows)
+
+=== Report 3: Evidence check on the 3 legal-hold-linked chargeback disputes (written by Ines) ===
+Engineer's note: Legal holds for these 3 tenants have no entity_schema/entity_table/entity_id populated, so there is no direct link to a specific disputed payment or ticket; as instructed, the report approximates evidence using the subject user's most recent payment (via orders) and most recent/open support tickets as indirect signals of whether the dispute is still live.
+REPORT: Evidence check on the 3 legal-hold-linked chargeback disputes
+QUESTION: For the 3 accounts under a payment-dispute legal hold, what internal evidence (payment status, support ticket activity) suggests whether the underlying dispute is still active or has gone stale?
+tenant_name          | subject_user_id | hold_placed_date | days_since_placed | latest_payment_status | latest_payment_updated_date | latest_payment_amount | latest_payment_currency | open_ticket_count | latest_ticket_activity_date | days_since_ticket_activity
+---------------------+-----------------+------------------+-------------------+-----------------------+-----------------------------+-----------------------+-------------------------+-------------------+-----------------------------+---------------------------
+Marrowby & Vane      |            1933 | 2023-05-27       |               954 | partially_refunded    | 2025-03-11                  |              530.9000 | GBP                     |                 0 |                        NULL |                       NULL
+Rue Lafayette Studio |            5911 | 2024-07-10       |               544 | captured              | 2024-12-05                  |               86.9900 | EUR                     |                 0 |                        NULL |                       NULL
+Cragsley Outfitters  |            6446 | 2025-03-22       |               289 | partially_refunded    | 2025-07-08                  |               90.9100 | USD                     |                 0 |                        NULL |                       NULL
+(3 rows)

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Trend of stock-count discrepancies within 2025: steady climb or step change?",
+    "--question",
+    "Did the 24% year-over-year rise in routine stock-count discrepancies climb steadily, or did it step up at a specific point in the year (and is that step explained by more warehouses coming online, or a genuine per-location worsening)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Omar\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"half-month period, 2025 (24 periods: each calendar month split into days 1-15 and 16-end)\", \"columns_requested\": [\"period_label (e.g. '2025-01 (1-15)')\", \"events (count of stock_adjustments rows with created_at in the period)\", \"abs_units_variance (sum of abs(quantity_delta))\", \"net_units_variance (signed sum; negative = net shrinkage)\", \"distinct_locations_active (distinct stock_location_id with >=1 stock_adjustments row in the period)\", \"events_per_active_location (events / distinct_locations_active, rounded 2dp)\", \"new_warehouses_opened_this_period (count of warehouses.created_at falling within the period, across all tenants)\"], \"details\": \"Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound: >= 2025-01-01 and < 2026-01-01), split into 24 half-month periods using day_of_month <= 15 vs > 15 (use calendar_days.day_of_month to derive this, or equivalent date-part logic). Join stock_locations on stock_location_id only to confirm location identity for distinct_locations_active (no warehouse rollup needed here, kept for report 3 below). For new_warehouses_opened_this_period, count warehouses.created_at falling in the same half-month window, independent of the stock_adjustments join \\u2014 this is a separate count over the same time axis, not a join. Order by period ascending (chronological), which with 24 rows is already a unique, deterministic order.\", \"builds_on\": [\"Monthly volume of stock_adjustments table entries, 2025\", \"Scale of stock count discrepancies by month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

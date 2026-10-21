@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Currently open data subject requests: age and overdue detail",
+    "--question",
+    "Which specific data subject requests are still open right now, how old are they, and which are overdue?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per data_subject_requests record where completed_at is null as of 2026-01-05\", \"columns_requested\": [\"request public_id\", \"tenant name\", \"request type\", \"status\", \"received at (date)\", \"due at (date, or blank if not set)\", \"days since received (2026-01-05 minus received_at)\", \"days overdue (2026-01-05 minus due_at, 0 or blank if due_at is null or in the future)\", \"assigned to (users.full_name via assigned_to_user_id, 'unassigned' if null)\"], \"details\": \"Source: data_subject_requests joined to tenants (tenant name) and users (assigned_to_user_id -> full_name). Filter: completed_at IS NULL. Use literal date 2026-01-05 for all age math, not CURRENT_DATE. This should return a small number of rows (expected around 5, matching the still_open_count totals from last night's monthly report: 2023-05, 2024-07, 2025-03, and two from 2025-12). Order by received_at ascending so the oldest, most at-risk requests print first.\", \"builds_on\": [\"Data subject requests: monthly volume, closure time, and overdue backlog\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

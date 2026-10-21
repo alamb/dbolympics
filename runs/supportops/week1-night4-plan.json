@@ -1,0 +1,57 @@
+{
+ "notes": "Good news first: the breach_kind audit confirms only two codes exist (first_response: 878 rows, resolution: 474 rows) matching our assumption almost exactly, so the 37.7%/20.3% headline breach rates from night 1 are solid — I can give Daniel that number with confidence. The channel/assignment report was mostly a null result: only 12 tickets platform-wide are currently unassigned (vs ~2,300 total), so 'sitting unassigned' isn't a scale driver of slowness even though those 12 do breach badly — and channel spreads resolution time by only ~12% (2626-2940 min), far smaller than the 3x spread we saw across merchants. So channel/assignment are minor levers; merchant identity remains the dominant driver, which I'll state plainly in the memo. The macro report shows real concentration (top 20 of 600 macros carry ~27% of lifetime usage) but also a red flag I need to note rather than resolve: lifetime macro usage (37,230) dwarfs even several years of 2025-scale agent reply volume (4,279), so I can't respond with a clean 'reliance %' — I'll flag that as a data caveat, not a finding. For this last night I'm closing out the remaining asks: KB article effectiveness (priority 4b), ticket volume/speed by topic (Daniel's 'certain topics' question, and it also tells us where KB investment should go), and CSAT against resolution speed (priority 5, directly testing whether satisfaction tracks the SLA/speed picture).",
+ "requests": [
+  {
+   "title": "Knowledge base article effectiveness",
+   "question": "Which knowledge base articles get used, and are the ones we have actually rated as helpful by customers?",
+   "grain": "one row per published knowledge article, restricted to the top 20 by view_count",
+   "columns": [
+    "title",
+    "knowledge_category_name",
+    "view_count",
+    "helpful_count",
+    "not_helpful_count",
+    "helpful_rate (helpful_count / (helpful_count + not_helpful_count), null if no feedback)",
+    "total_published_articles (constant: count of knowledge_articles with is_published = true and deleted_at is null)",
+    "platform_avg_helpful_rate (constant: sum(helpful_count) / sum(helpful_count + not_helpful_count) across all published articles)"
+   ],
+   "details": "Source tables: knowledge_articles (is_published = true, deleted_at is null), knowledge_categories. No date window needed since view_count/helpful_count are lifetime counters on the article. Order by view_count descending, top 20 rows; note the total number of published articles in the library so we can see concentration vs. the long tail, and flag any of the top 20 with a helpful_rate notably below the platform average.",
+   "builds_on": []
+  },
+  {
+   "title": "Ticket volume and speed by topic tag",
+   "question": "Are certain ticket topics (support tags) driving a disproportionate share of volume or taking much longer to resolve than others?",
+   "grain": "one row per support_tag, restricted to the top 20 by ticket_count",
+   "columns": [
+    "tag_name",
+    "ticket_count (2025, via ticket_tags_map)",
+    "avg_first_response_minutes",
+    "avg_resolution_minutes",
+    "first_response_breach_rate",
+    "resolution_breach_rate",
+    "total_tagged_tickets_2025 (constant: count of distinct tickets created in 2025 with at least one tag)",
+    "total_tickets_2025 (constant: all tickets created in 2025, for comparison against total_tagged_tickets_2025)"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets, ticket_tags_map, support_tags, sla_breaches (breach_kind = 'first_response' / 'resolution', confirmed codes from last night's audit). A ticket with multiple tags counts once per tag it carries. Order by ticket_count descending, top 20 rows; note the total number of distinct tags in use and highlight if total_tagged_tickets_2025 is materially below total_tickets_2025 (meaning a lot of tickets carry no topic tag at all, which would limit how far topic-based routing/KB investment can go).",
+   "builds_on": [
+    "Ticket speed by channel and assignment status"
+   ]
+  },
+  {
+   "title": "CSAT score by resolution speed bucket",
+   "question": "Does customer satisfaction after a resolved ticket track with how fast it was resolved and whether it breached SLA, or does something else seem to drive it?",
+   "grain": "one row per resolution-time bucket, for tickets created in 2025 that have both a resolved_at timestamp and a csat_responses score",
+   "columns": [
+    "resolution_time_bucket (Under 4h, 4-24h, 1-3 days, 3-7 days, Over 7 days, based on resolved_at - created_at)",
+    "ticket_count",
+    "avg_csat_score",
+    "pct_resolution_sla_breached (share of tickets in the bucket with a sla_breaches row of breach_kind = 'resolution')",
+    "avg_resolution_minutes (actual average within the bucket, as a sanity check on the bucket boundaries)"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31, resolved_at not null, joined to csat_responses on ticket_id (one response per ticket per the unique constraint). Source tables: tickets, csat_responses, sla_breaches. Order rows from fastest to slowest bucket (Under 4h first, Over 7 days last). Round avg_csat_score to 2 decimals, pct to 1 decimal percent, minutes to whole numbers.",
+   "builds_on": [
+    "SLA breach_kind code audit and validation"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty member refund rate by merchant vertical",
+    "--question",
+    "Is the elevated refund rate among loyalty members a broad pattern across verticals, or is it concentrated in one or two verticals that happen to have naturally high returns, such as apparel?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Grace\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per combination of tenant industry and loyalty segment (member vs non-member)\", \"columns_requested\": [\"industry\", \"segment\", \"customer_count\", \"avg_lifetime_orders\", \"avg_order_value_eur\", \"refund_rate_pct\"], \"details\": \"Same population and definitions as the earlier 'Loyalty member vs non-member behavior by account tenure' report: users (is_staff = false) with at least one order 2023-01-01 to 2025-12-31, grouped by tenants.industry and by segment ('loyalty member' if present in loyalty_accounts, else 'non-member'). avg_order_value_eur uses non-cancelled orders, grand_total converted to EUR via exchange_rates (rate as_of placed_at). refund_rate_pct = share of orders (any status) with payments.amount_refunded greater than 0 OR an order_returns row. Only include industries with at least 20 customers in both segments to keep the comparison meaningful; note in the report how many industries were excluded for low volume. Order by industry, then segment ('loyalty member' before 'non-member').\", \"builds_on\": [\"Loyalty member vs non-member behavior by account tenure\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

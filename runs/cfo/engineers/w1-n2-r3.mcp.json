@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant Refund Rate Outliers, 2025 (merchants with 50+ captured payments)",
+    "--question",
+    "Which individual merchants have refund rates well above or below their peers, net of vertical effects?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one tenant, for 2025\", \"columns_requested\": [\"merchant name\", \"vertical\", \"tenant status\", \"payment count\", \"gross captured (EUR)\", \"amount refunded (EUR)\", \"refund rate (%)\", \"vertical avg refund rate (%) (for comparison)\", \"refund rate vs vertical avg (percentage points)\"], \"details\": \"Source: payments joined to tenants. Filter to payments captured in 2025 (captured_at in 2025, status reflecting captured/refunded/partially_refunded), convert amount and amount_refunded to EUR via exchange_rates as in the vertical report. Restrict to tenants with at least 50 qualifying payments in 2025 to avoid small-sample noise (note how many tenants were excluded by this filter in the report notes). Join/compute each tenant's vertical's volume-weighted average refund rate (same definition as the vertical report) to show how far each merchant sits from its vertical's norm. Order by refund rate descending, tie-break merchant name ascending; print the top 20 highest and note total qualifying tenant count.\", \"builds_on\": [\"Refund Rate by Merchant Vertical, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Refund friction and what follows: fast vs slow refunds",
+    "--question",
+    "Where refunds take longer to process, do shoppers rate us worse and come back less often afterward?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Bea\", \"situation\": \"churn-task-force\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per refund-speed group (fast: processed within 7 days; slow: more than 7 days)\", \"columns_requested\": [\"group\", \"refund count\", \"avg processing days\", \"pct with another order within 90 days after\", \"avg csat score within 30 days after\"], \"details\": \"From payment_refunds (status equal to succeeded, created_at, processed_at), joined via payments to orders to get user_id. processing days is processed_at minus created_at; group is fast if 7 or fewer days, slow if more. pct with another order within 90 days after is the share of refund events where that user placed another order (excluding cancelled) with placed_at between processed_at and processed_at plus 90 days. avg csat score within 30 days after is the average csat_responses.score where submitted_at is between processed_at and processed_at plus 30 days for that user. Order by group. Expect 2 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Payout net-formula drift by currency",
+    "--question",
+    "Does net equal gross minus fee cleanly for payouts in every currency, or do certain currencies show persistent drift in that basic arithmetic, separate from the refund timing issue already found?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Omar\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"currency code, using the payout's native currency with no FX conversion applied\", \"columns_requested\": [\"currency_code\", \"payout_count\", \"gross_native_total\", \"fee_native_total\", \"net_native_total\", \"net_check_diff_native\", \"net_check_diff_pct\"], \"details\": \"Scope: all payouts across the full history from 2023-01-01 to 2025-12-31, grouped by payouts.currency_code, deliberately kept in native currency with no EUR conversion so this checks pure arithmetic consistency without introducing any FX rounding or rate matching as a confound. payout_count is the count of payouts in that currency. gross_native_total is the sum of payouts.gross_amount. fee_native_total is the sum of payouts.fee_amount. net_native_total is the sum of payouts.net_amount. net_check_diff_native is net_native_total minus the quantity gross_native_total minus fee_native_total, which should be close to 0 if net equals gross minus fee holds. net_check_diff_pct is net_check_diff_native divided by gross_native_total, times 100, rounded to 2 decimals. Table: payouts. Order by payout_count descending.\", \"builds_on\": [\"Payout reconciliation to gross, fees and refunds\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

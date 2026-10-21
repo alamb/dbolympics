@@ -1,0 +1,3481 @@
+{
+ "q001": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY fee_revenue_eur DESC, t.name: tenants.name is not unique; two tenants with the same name and equal fee revenue tie at the top level and at the FETCH 50 cut (also the cumulative window has the same tie, so cumulative_fee_share_pct differs).",
+  "tiebreaker": "t.id (in the window ORDER BY too)",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY fee_revenue_eur DESC, t.name (top level, FETCH 50 and the cumulative window): tenant names are not unique",
+  "remaining": null
+ },
+ "q005": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY q.quarter_start, but quarters is grouped by (quarter_start, year_num, quarter_num) and the output label is year_num || '-Q' || quarter_num. Nothing in the schema makes quarter_start determine year_num/quarter_num: two calendar_days rows with the same quarter_start and different year_num/quarter_num give two rows with equal sort key and different labels and values. Verified: appending q.year_num, q.quarter_num to the ORDER BY makes Umbra report nothing.",
+  "tiebreaker": "q.year_num, q.quarter_num",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY q.quarter_start, but quarters groups by (quarter_start, year_num, quarter_num) and calendar_days has only calendar_date as key, so one quarter_start can yield several rows with different quarter labels (calendar-only)",
+  "remaining": null
+ },
+ "q006": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "agg groups by (year_num, quarter_num, quarter_start, cohort) but ORDER BY has only year_num, quarter_num, cohort. calendar_days declares only calendar_date as key, so nothing makes (year_num, quarter_num) determine quarter_start: two calendar days with the same year/quarter but different quarter_start give two rows with the same sort key and different counts. (The CASE over cohort is fine; the checker accepts it on its own.) This is a weak REAL: it needs an inconsistent calendar. Pattern 1 (SUM OVER (PARTITION BY ...) in the output) also triggers the flag.",
+  "tiebreaker": "quarter_start",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: agg is grouped by (year_num, quarter_num, quarter_start, cohort) but ordered by year_num, quarter_num, cohort; the schema does not make (year_num, quarter_num) determine quarter_start",
+  "remaining": null
+ },
+ "q007": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY vertical (output alias of the COALESCE expression); ORDER BY fee_revenue_eur DESC, vertical covers the group key. Only the window SUM(SUM(fee)) OVER () share column is undetermined for the checker (GROUP BY alias alone verified not flagged).",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q008": {
+  "verdict": "PEDANTIC",
+  "pattern": "1",
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ablation",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q012": {
+  "verdict": "PEDANTIC",
+  "pattern": 3,
+  "calendar_only": false,
+  "reason": "q is SELECT DISTINCT year_num, quarter_num, so ORDER BY q.year_num, q.quarter_num is a key of q. Every other block is LEFT JOINed on its GROUP BY key (year_num, quarter_num), and the quarter label is built from the sort columns. Deterministic; the checker loses the FD across the two-column left joins.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q013": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "months = DISTINCT (month_num, month_label) from calendar_days; the schema does not make month_label a function of month_num (no constraint, only PK calendar_date), so two 2025 rows with month_num 1 and different labels give two output rows tied on t0.month_num. Holds in practice (label is 'YYYY-MM'), not by schema.",
+  "tiebreaker": "t0.month_label",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "months is DISTINCT (month_num, month_label) from calendar_days, whose only key is calendar_date, so two labels for one month_num tie on ORDER BY t0.month_num (calendar-only)",
+  "remaining": null
+ },
+ "q014": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW: primary key not a key when the table also has a UNIQUE constraint (window ordered by the key)",
+  "calendar_only": false,
+  "reason": "tenant_metrics is keyed by tenant_id (UNION, then single-column left joins), the join with tenants is on its primary key, totals is one row; both windows and the ORDER BY use (gross DESC, tenant_id), a key. Bisect on SF1: dropping both windows clears the flag; either window alone is flagged; dropping the tenants join or joining cities (primary key only) instead clears it.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q015": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ROW_NUMBER() OVER (PARTITION BY yr ORDER BY gross_eur DESC) ties when two tenants have the same yearly gross_eur. top5_gross/top10_gross stay deterministic (equal values are summed), but top10_fee is not: two tenants with equal gross_eur and different fee_eur at ranks 10/11 change top10_fee_share_pct. The order flag follows from that window value; ORDER BY yt.yr itself is a key of year_totals and top_agg.",
+  "tiebreaker": "add tenant_id to the window ORDER BY (ORDER BY gross_eur DESC, tenant_id)",
+  "source": "review",
+  "findings": [
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ROW_NUMBER() OVER (PARTITION BY yr ORDER BY gross_eur DESC) ties on equal yearly gross; the rank-10/11 cut changes top10_fee",
+  "remaining": null
+ },
+ "q018": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY refund_rate_pct DESC, m.merchant_name, and tenants.name is not unique: two tenants with the same name and the same refund rate tie, and FETCH FIRST 20 may cut between them",
+  "tiebreaker": "m.tenant_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY refund_rate_pct DESC, merchant_name before FETCH FIRST 20: tenant names are not unique",
+  "remaining": null
+ },
+ "q019": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY month_num only. monthly_2025 groups by (month_label, month_num); calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1), so two 2025 dates with month_num=1 but different month_label give two rows with equal month_num (and a calendar row with month_num=13 would tie with the TOTAL row). Otherwise UNION ALL with a disjoint literal 13 (pattern 2).",
+  "tiebreaker": "month_label (after month_num)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: ORDER BY month_num, but rows are per (month_label, month_num) and calendar_days only has calendar_date as key, so one month_num can carry several labels; a 2025 calendar row labelled 'TOTAL' with month_num 13 would even tie with the total row (month_num, month_label alone still flagged), so all output columns are appended",
+  "remaining": null
+ },
+ "q020": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW: LEFT JOIN on a multi-column key with a computed key expression",
+  "calendar_only": false,
+  "reason": "t2 is grouped by (cap_year, cap_quarter), so (quarter_year, quarter_num) is its key and each t2 row matches at most one t4 row; ORDER BY t2.quarter_year, t2.quarter_num is total. Pattern 3 is fixed, but with the 'prior year' expression the FD to t4's columns is still lost.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q021": {
+  "verdict": "PEDANTIC",
+  "pattern": 3,
+  "calendar_only": false,
+  "reason": "quarters is DISTINCT (year_num, quarter_num). apparel_agg and company_agg are grouped by (year_num, quarter_num) and LEFT JOINed on both columns. ORDER BY q.year_num, q.quarter_num is the key.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q023": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY refund_rate_q3_pct DESC NULLS LAST, merchant_name: tenants.name is not unique; two same-named tenants with equal (or both NULL) Q3 refund rate tie, at the top level and at the FETCH 30 cut.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY refund_rate_q3_pct DESC NULLS LAST, merchant_name: tenant names are not unique, ties at the top level and at FETCH 30",
+  "remaining": null
+ },
+ "q024": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY year_num, quarter_num, but quarters is DISTINCT (quarter_start, year_num, quarter_num) and the left joins go on quarter_start. Two calendar quarter_starts with the same (year_num, quarter_num) would tie with different amounts. Verified: adding quarter_start to the ORDER BY makes Umbra report nothing.",
+  "tiebreaker": "quarter_start",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: quarters is DISTINCT (quarter_start, year_num, quarter_num) ordered by year_num, quarter_num; the schema does not make those determine quarter_start",
+  "remaining": null
+ },
+ "q026": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY orders_delivered DESC, t.name, and the name is not unique: two tenants with the same name and the same delivered count tie at the LIMIT 50 cut",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY orders_delivered DESC, t.name before FETCH 50: tenant names are not unique",
+  "remaining": null
+ },
+ "q028": {
+  "verdict": "REAL",
+  "pattern": 3,
+  "calendar_only": true,
+  "reason": "ORDER BY carrier, quarter_start but grain is DISTINCT (carrier, quarter_start, year_num, quarter_num); calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1), so one quarter_start can come with two (year_num, quarter_num) labels -> tied rows with different 'quarter'. The multi-column LEFT JOINs on (carrier, quarter_start) would also trip pattern 3 after fixing.",
+  "tiebreaker": "g.year_num, g.quarter_num",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: grain is DISTINCT (carrier, quarter_start, year_num, quarter_num); by schema quarter_start does not determine year_num/quarter_num",
+  "remaining": null
+ },
+ "q029": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY orders_shipped DESC, w.name: warehouses are unique only on (tenant_id, code), so two warehouses (for example of different tenants) can share a name and have the same orders_shipped. Then tenant_name and the averages differ between the tied rows, and the FETCH FIRST 50 cut can pick either.",
+  "tiebreaker": "w.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY orders_shipped DESC, w.name before FETCH FIRST 50: warehouse names are unique only per (tenant_id, code), not globally",
+  "remaining": null
+ },
+ "q031": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY carrier, ORDER BY shipments DESC, carrier (group key); percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile",
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q033": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY group, st.tenant_name, shipments_count DESC, carrier: rows are per (tenant_id, carrier) and tenants.name is not unique; two tenants with the same listed name, the same carrier and shipment count tie with different shares/transit stats.",
+  "tiebreaker": "st.tenant_id (after tenant_name)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "rows are per (tenant_id, carrier), ordered by group, tenant_name, count, carrier: tenant names are not unique",
+  "remaining": null
+ },
+ "q034": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY agg.pos_ordered DESC, s.name: suppliers are unique only on (tenant_id, code); names are not unique (58 duplicate names at SF1). Two suppliers with the same name and the same pos_ordered tie with different lead times and rates, and the FETCH FIRST 50 cut can keep either one.",
+  "tiebreaker": "s.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY pos_ordered DESC, s.name: supplier names are not unique, ties at the top level and at FETCH 50",
+  "remaining": null
+ },
+ "q036": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY pct_out_of_stock DESC, warehouse_name, and warehouses are unique only on (tenant_id, code): two warehouses named 'Main' with the same out-of-stock pct tie (tenant_name and counts may differ)",
+  "tiebreaker": "w0.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY pct_out_of_stock DESC, warehouse_name FETCH 50: warehouse names are unique only per tenant (tenant_id, code), so equal names tie with different tenant/counts",
+  "remaining": null
+ },
+ "q037": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY md.month_start but month_dim is DISTINCT (month_start, month_label); calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1): two labels for one month_start tie. Single-column LEFT JOINs on month_start are fine.",
+  "tiebreaker": "md.month_label",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "month_dim is DISTINCT (month_start, month_label); calendar_days only keys calendar_date, so two labels for one month_start tie (calendar-only)",
+  "remaining": null
+ },
+ "q038": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY tickets_created DESC, t_tenant.name: tenants.name is not unique (only id, public_id, slug are). Two merchants with the same name and the same ticket count tie, and their response and resolution metrics differ.",
+  "tiebreaker": "t_tenant.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY tickets_created DESC, tenant name: tenant names are not unique; FETCH FIRST 50 cut",
+  "remaining": null
+ },
+ "q041": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY mayjun_count DESC, tn.name: tenants.name is not unique; same-named tenants with equal May-Jun counts tie (also at FETCH 50).",
+  "tiebreaker": "tn.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY mayjun_count DESC, tn.name before FETCH FIRST 50: tenant names are not unique",
+  "remaining": null
+ },
+ "q042": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): FULL OUTER JOIN keeps no FDs",
+  "calendar_only": false,
+  "reason": "om and rm are each grouped by month, so COALESCE(om.month, rm.month) is a key of the FULL OUTER JOIN result.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "om and rm are each grouped by month (never NULL after the WHERE filters) and full-outer-joined on month, so COALESCE(om.month, rm.month) is unique per result row",
+  "remaining": "checker cannot see that COALESCE of the two join keys of a FULL OUTER JOIN of two blocks keyed on that column is a key"
+ },
+ "q044": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY returns_requested DESC, t.name: two tenants with the same name and the same return count tie",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY returns_requested DESC, t.name: tenant names are not unique, ties at the top level and at FETCH 50",
+  "remaining": null
+ },
+ "q045": {
+  "verdict": "PEDANTIC",
+  "pattern": "4",
+  "calendar_only": false,
+  "reason": "The label is injective in the group key. ORDER BY date_trunc('month', submitted_at) clears the flag. (percentile_cont here is not flagged.)",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per month (group key date_trunc('month', submitted_at)); ORDER BY its YYYY-MM label, which is one-to-one with the group key",
+  "remaining": "checker cannot see that the year_month label of date_trunc('month', x) is injective"
+ },
+ "q046": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY t2.avg_score, t0.name: tenants.name is not unique (only id, public_id, slug are). Two merchants with the same name and the same avg_score tie, and tenant_id is in the output.",
+  "tiebreaker": "t0.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY avg_score, t0.name before FETCH 50: tenant names are not unique and tenant_id is in the output",
+  "remaining": null
+ },
+ "q047": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): parallel CASE",
+  "calendar_only": false,
+  "reason": "bucket_sort_key determines resolution_bucket, so the ORDER BY is total.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per (resolution_bucket, bucket_sort_key); both CASEs use identical WHEN conditions with distinct results, so bucket_sort_key determines resolution_bucket",
+  "remaining": "checker cannot see that the parallel CASE sort key determines the label"
+ },
+ "q048": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): joins with aggregates lose keys (groupjoin / join of aggregation blocks on their key)",
+  "calendar_only": false,
+  "reason": "month_start is a key of every block, so ORDER BY t0.month_start determines all columns. Even t0 JOIN t1 alone (no to_char, no percentile) is flagged; t0 alone is clean. Not pattern 4: outputting t0.month_start instead of to_char is still flagged.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q049": {
+  "verdict": "PEDANTIC",
+  "pattern": "1",
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ablation",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q051": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): cast in an equi-join key (text = varchar(n))",
+  "calendar_only": false,
+  "reason": "months is DISTINCT month, and order_agg and coupon_agg are grouped by month, joined with single-column LEFT JOINs. So m.month is a key and ORDER BY m.month is total. The first-round ablation label '1+3' is wrong: the query has no window, and the left joins are on one column.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q052": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY direct_sessions_2025 DESC, tenant_name: two tenants with the same name and the same direct-session count (e.g. both 0) tie at the LIMIT 15 cut",
+  "tiebreaker": "t0.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY direct_sessions_2025 DESC, tenant_name before FETCH FIRST 15: tenant names are not unique",
+  "remaining": null
+ },
+ "q054": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY delta_pct_points DESC, orders_jan_jul_2025 DESC FETCH 15: two tenants with equal delta and equal Jan/Jul order count tie (different name/industry/other columns), and the cut can pick either.",
+  "tiebreaker": "t0.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY delta_pct_points DESC, orders_jan_jul_2025 DESC: two tenants with equal delta and Jan/Jul count tie, at the top level and at FETCH 15",
+  "remaining": null
+ },
+ "q064": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): joins with aggregates lose keys (groupjoin / join of aggregation blocks on their key)",
+  "calendar_only": false,
+  "reason": "ORDER BY ends with t.id and every block is grouped by tenant_id and left-joined on it. Turning ra JOIN ca into a LEFT JOIN clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q066": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "months is SELECT DISTINCT (month_start, month_label) FROM calendar_days, and the ORDER BY is only month_start. calendar_days has only calendar_date as its key, so nothing makes month_start determine month_label. Two days of one month with different month_label values give two rows with the same month_start and different labels. Real only by the letter of the schema (an inconsistent calendar). The first-round label (pattern 3, ablation) was wrong.",
+  "tiebreaker": "m.month_label",
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: months is DISTINCT (month_start, month_label); by schema month_start does not determine month_label",
+  "remaining": null
+ },
+ "q067": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY status, ORDER BY CASE status ..., status (group key); percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile",
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q068": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "months is SELECT DISTINCT (month_start, month_label) FROM calendar_days, and the ORDER BY is only month_start. calendar_days has only calendar_date as its key, so nothing makes month_start determine month_label. Two days of one month with different month_label values give two rows with the same month_start and different labels. Real only by the letter of the schema (an inconsistent calendar). The first-round label (pattern 3, ablation) was wrong.",
+  "tiebreaker": "m.month_label",
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: months is DISTINCT (month_label, month_start) and calendar_days is keyed only by calendar_date, so one month_start can carry two labels and ORDER BY m.month_start leaves them tied",
+  "remaining": null
+ },
+ "q070": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): inner join to a GROUP BY subquery on its key",
+  "calendar_only": false,
+  "reason": "Grouped by cu.category plus columns it determines (st is one row, cpc keyed by category); ORDER BY ..., cu.category. Removing the cpc join or making it a LEFT JOIN clears the flag; removing the staff_totals cross join does not.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q074": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY m.month_start, but months is DISTINCT (month_label, month_start), and month_label (the output) is not determined by month_start in the schema. Inconsistent calendar rows would give two rows for one month_start. Verified: adding m.month_label makes Umbra report nothing.",
+  "tiebreaker": "m.month_label",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: months is DISTINCT (month_label, month_start) ordered by month_start, which does not determine month_label in the schema",
+  "remaining": null
+ },
+ "q076": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY overall_visit_to_paid_pct DESC NULLS LAST, tenant_name: two top-10 tenants with the same name and the same pct (or both NULL) tie, and their other columns differ",
+  "tiebreaker": "tenant_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY overall_visit_to_paid_pct DESC NULLS LAST, tenant_name: tenant names are not unique, so two top-10 tenants with the same name and pct tie",
+  "remaining": null
+ },
+ "q077": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Window findings come from the correlated ORDER BY ... FETCH FIRST 1 subqueries (rewritten to row_number): web_sessions ORDER BY started_at DESC ties for two sessions of the same tenant/user with equal started_at but different user_agent/utm_source; orders ORDER BY created_at DESC ties for two orders of one cart with equal created_at (different id/status). Limit: top-6 channels by COUNT(*) DESC FETCH 6 can tie at the cut, changing which channels map to 'other'.",
+  "tiebreaker": "ws.id DESC after started_at; o.id DESC after created_at; raw_channel after COUNT(*) DESC",
+  "source": "review",
+  "findings": [
+   "window",
+   "window",
+   "window",
+   "window",
+   "limit",
+   "window"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "the latest-web-session and latest-order FETCH FIRST 1 subqueries tie on equal started_at / created_at, and the top-6 channel cut (ORDER BY COUNT(*) DESC FETCH 6) can tie",
+  "remaining": null
+ },
+ "q078": {
+  "verdict": "PEDANTIC",
+  "pattern": "4 + 5",
+  "calendar_only": false,
+  "reason": "GROUP BY cohort_month takes the input column (the month date). ORDER BY cohort_month takes the output column, which is to_char of the key and one-to-one. row_number is over (placed_at, id), which is unique, so first and second orders are determined. The first-round label (pattern 1) no longer applies.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "GROUP BY the input column cohort_month (a month date), ORDER BY the output label year_month(cohort_month), which is one-to-one on month dates; row_number orders by (placed_at, id), which is unique",
+  "remaining": "checker cannot see that the 'YYYY-MM' label of a month-start date is injective"
+ },
+ "q079": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "tenants.name is not unique: two tenants named e.g. 'Kibblewick' (both in the IN list) with the same visits_per_order (or both NULL) tie and differ in industry and counts. With t.id appended the checker reports nothing.",
+  "tiebreaker": "t.id",
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY visits_per_order, tenant name: tenant names are not unique",
+  "remaining": null
+ },
+ "q080": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "The LIMIT is inside top_tenants: ORDER BY order_count DESC FETCH FIRST 10 with no tie-breaker. If the 10th and 11th tenants have the same order count, a different tenant feeds base_orders, which changes every output value. The 'percentile' finding is the known percentile_cont false positive (pattern 5).",
+  "tiebreaker": "o2.tenant_id (ORDER BY order_count DESC, o2.tenant_id)",
+  "source": "review",
+  "findings": [
+   "percentile",
+   "limit"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "top_tenants: ORDER BY order_count DESC FETCH FIRST 10 has no tie-breaker, so tenants tied at the cut feed different orders into every output value",
+  "remaining": null
+ },
+ "q081": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "Grouped by duration_bucket; the ORDER BY CASE maps all 5 possible bucket values to distinct numbers. Only pct_of_carts = SUM(COUNT(*)) OVER () is undetermined; verified that replacing that window removes the flag (the CASE order itself is accepted).",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false,
+  "final": "deterministic",
+  "final_reason": "grouped by duration_bucket, which takes only the 5 CASE literals, and the ORDER BY CASE maps all 5 to distinct numbers; SUM(COUNT(*)) OVER () is the same for every row",
+  "remaining": "checker cannot see that the ORDER BY CASE is injective on the 5 possible bucket values"
+ },
+ "q082": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only the percentile finding remains; statuses are distinct unnest literals and are grouped by s.status; ORDER BY pct, s.status is total.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q083": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY t.name, b.bucket. The ORDER BY t.name, CASE b.bucket ... maps all 5 possible bucket values to distinct numbers, so it covers the group key. The only cause is the window SUM(COUNT(*)) OVER (PARTITION BY t.name): removing that column makes Umbra report nothing, even with the CASE ordering kept, so the checker already handles the CASE.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false,
+  "final": "deterministic",
+  "final_reason": "grouped by (t.name, b.bucket); ORDER BY t.name and a CASE that maps each of the five possible bucket values to a distinct number, so the order covers the group key, and the window is an unordered SUM over a partition",
+  "remaining": "checker does not treat the window SUM(COUNT(*)) OVER (PARTITION BY t.name) as determined by the group key"
+ },
+ "q084": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "target_tenants filters by name, and names are not unique (e.g. two tenants named 'Kibblewick'); ORDER BY pct_over_7_days DESC NULLS LAST, t.name then ties when the pct is equal or both NULL",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "target_tenants selects by name and tenant names are not unique; ORDER BY pct DESC NULLS LAST, t.name ties for same-named tenants with equal (or NULL) pct",
+  "remaining": null
+ },
+ "q086": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY delivery_bucket, ORDER BY CASE ..., delivery_bucket (group key); COUNT(*) OVER (PARTITION BY ...) is order-insensitive; percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q087": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only the percentile finding remains; grouped by grp; ORDER BY CASE grp is one-to-one.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per grp; grp is 'has_return' or 'no_return', and ORDER BY CASE grp maps them to 0 and 1",
+  "remaining": "checker does not use the CASE over the grouping key (percentile aggregate in the block)"
+ },
+ "q088": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY m.month_start but months is DISTINCT (month_start, month_label); calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1).",
+  "tiebreaker": "m.month_label",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: months is DISTINCT (month_start, month_label) and calendar_days is keyed only by calendar_date, so ORDER BY m.month_start can tie two labels of one month",
+  "remaining": null
+ },
+ "q089": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): cast in an equi-join key (text = varchar(n))",
+  "calendar_only": false,
+  "reason": "Every output column is a function of m.month_label (single-column left joins on group keys). Even if months had two rows with the same label (inconsistent calendar), they would be identical. Casting either side to the other's type clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q091": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "Grouped by o.status, pay left-joined on its single group key status; ORDER BY ..., pop.status covers the key. Only pct_of_orders (SUM() OVER ()) blocks it; verified that removing the window removes the flag.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q093": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY m.month_start, and months is DISTINCT (month_start, month_label). Also, payout_month_agg and refund_month_agg are grouped by (month_start, month_label) but joined on month_start only. With inconsistent calendar rows, one month_start can have several labels, which duplicates rows with different sums. Verified: grouping pg/rf by month_start only and ordering by m.month_start, m.month_label makes Umbra report nothing. Only the extra ORDER BY m.month_label is still flagged, through the duplicating join.",
+  "tiebreaker": "m.month_label, and group payout_month_agg/refund_month_agg by month_start only (or join on both columns)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: months is DISTINCT (month_start, month_label) ordered by month_start; and pg/rf are grouped by (month_start, month_label) but joined on month_start only, so one month row can match several pg/rf rows with different sums",
+  "remaining": null
+ },
+ "q094": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): joins of aggregates",
+  "calendar_only": false,
+  "reason": "t3 and t4 are both grouped by order_status, and the ORDER BY ends with t3.order_status. On the new build, the first-round cause (the CTE with a computed column referenced twice) is no longer enough by itself.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q095": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "GROUP BY timing_bucket, ORDER BY refund_amount_eur DESC only: two buckets with equal refund amount tie. (Window share column is pattern 1 as well.)",
+  "tiebreaker": "timing_bucket",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by timing_bucket but ORDER BY refund_amount_eur DESC only: two buckets with equal amounts tie",
+  "remaining": null
+ },
+ "q097": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): UNION ALL branches made disjoint by mutually exclusive WHERE gates (not a literal tag)",
+  "calendar_only": false,
+  "reason": "At most one branch produces rows; each is keyed by its aging_bucket column (GROUP BY / DISTINCT). Gating branch 2 with 1 = 0 clears the flag; removing both gates is flagged (as it should be).",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "the two UNION ALL branches are gated by mutually exclusive conditions (cnt > 0 vs cnt = 0), and each yields one row per aging_bucket (GROUP BY / DISTINCT), so the trailing aging_bucket in the ORDER BY is a key",
+  "remaining": "checker cannot see that the WHERE gates make the UNION ALL branches disjoint"
+ },
+ "q098": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): scalar subquery with LIMIT 1",
+  "calendar_only": false,
+  "reason": "cu.currency_code is DISTINCT, all left joins are on one key column, and the ORDER BY ends with cu.currency_code. as_of is unique per (base_code, quote_code), so the LIMIT 1 value is determined.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q100": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): joins with aggregates lose keys (groupjoin / join of aggregation blocks on their key)",
+  "calendar_only": false,
+  "reason": "week_start is a key of both. Removing the ip_max join or making it a LEFT JOIN clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q101": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "GROUP BY t.id, but ORDER BY staff_mfa_rate_pct, tenant_name: two tenants with the same name and the same rate (e.g. both NULL with no staff, which sorts last but still ties) come out in either order. tenant_id is in the output, so the order is visible",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY staff_mfa_rate_pct, tenant_name before FETCH 50: tenant names are not unique and tenant_id is in the output",
+  "remaining": null
+ },
+ "q102": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY permission_count DESC, users_assigned DESC, t.name, r.name FETCH 50: roles are unique per (tenant_id, name) but tenants.name is not unique; two same-named tenants each with an equally named role and equal counts tie (is_system, users_active, most_recent_login may differ).",
+  "tiebreaker": "r.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY counts, t.name, r.name: tenant names are not unique, so two same-named tenants with equally named roles tie; FETCH FIRST 50 cut",
+  "remaining": null
+ },
+ "q104": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY total_login_attempts DESC, tenant_name: tenants.name is not unique (only id, public_id, slug are). Two tenants with the same name and the same attempt count tie, and their status and other counts differ. The GROUP BY includes t.id, so the tenants are not merged.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY total_login_attempts DESC, tenant_name: grouped by t.id, and tenant names are not unique",
+  "remaining": null
+ },
+ "q106": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY last_login_at, t.name, u.email, r.name: tenants.name is not unique and users.email is only unique per tenant; two same-named tenants each with an owner of the same email and same last login tie, with different tenant_status/created_at; affects the FETCH 50 cut.",
+  "tiebreaker": "t.id after t.name",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per user_roles row, ordered by last_login, t.name, u.email, r.name: tenant names are not unique and emails are unique only per tenant, so ties at the top level and the FETCH 50 cut",
+  "remaining": null
+ },
+ "q107": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Grouped by t.id, but ordered by active_never_used DESC, active_unused_90d DESC, t.name. Tenant names are not unique. Two tenants with the same name and the same two counts tie with different status, total keys and so on, and the FETCH FIRST 50 cut may pick either.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by t.id but ORDER BY two counts and t.name: tenant names are not unique, ties at the top level and at FETCH 50",
+  "remaining": null
+ },
+ "q109": {
+  "verdict": "PEDANTIC",
+  "pattern": 2,
+  "calendar_only": false,
+  "reason": "UNION ALL of six single-row branches, each tagged with a distinct literal entity_table; ORDER BY coverage_rate_pct, entity_table is total",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q112": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "months is SELECT DISTINCT (month_start, month_label) FROM calendar_days, and the ORDER BY is only month_start. calendar_days has only calendar_date as its key, so nothing makes month_start determine month_label. Two days of one month with different month_label values give two rows with the same month_start and different labels. Real only by the letter of the schema (an inconsistent calendar). The first-round label (pattern 3, ablation) was wrong.",
+  "tiebreaker": "t0.month_label",
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: t0 is DISTINCT (month_start, month_label) ordered by month_start only; the schema does not make month_start determine month_label",
+  "remaining": null
+ },
+ "q113": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "Window: ROW_NUMBER() PARTITION BY tenant_id, user_id, purpose ORDER BY occurred_at DESC ties for two consent records of the same user/purpose at the same occurred_at with different status, so net_active_optins varies. Order: ORDER BY purpose, month_start but m groups by (month_start, month_label); calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1) (also the correlated subqueries reference several outer columns, see NEW correlated-multi-outer).",
+  "tiebreaker": "cr.id DESC in the window; metrics.month_label in ORDER BY",
+  "source": "review",
+  "findings": [
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ROW_NUMBER per (tenant, user, purpose) ORDER BY occurred_at DESC ties for two records at the same instant with different status; and m is grouped by (month_start, month_label), so labels for one month_start tie (calendar-only)",
+  "remaining": null
+ },
+ "q121": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Two legal holds of the same subject user placed on the same day (or 2 days before and 2 days after the request) tie; rn = 1 picks either, so legal_hold_name, reason, placed_at differ. The ablation verdict (pattern 1) was wrong. After adding lh.id the checker still flags: the ORDER BY because dsr.id becomes a key only through rn = 1 (round-1 pattern), and the window itself on SF1 only while the OR join condition is present (a plain equi-join clears it; not reproduced on toy tables).",
+  "tiebreaker": "lh.id as the last window ORDER BY key: ROW_NUMBER() OVER (PARTITION BY dsr.id ORDER BY ABS(...), lh.id)",
+  "source": "review round 2",
+  "findings": [
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "two legal holds at the same day distance from the request tie in the ROW_NUMBER; rn = 1 picks either",
+  "remaining": null
+ },
+ "q122": {
+  "verdict": "PEDANTIC",
+  "pattern": "4",
+  "calendar_only": false,
+  "reason": "The ORDER BY is a one-to-one label of the group key.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per month (grouped by date_trunc('month', created_at)); ORDER BY month_start, which is CAST(date_trunc(...) AS date) of the grouping key and one-to-one with it",
+  "remaining": "checker does not see that CAST(date_trunc('month', ts) AS date) is injective on the group key (or derive the year_month label from it)"
+ },
+ "q124": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY 1 (CAST(date_trunc AS date)), ORDER BY 1; percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q125": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY failed_runs_2025 DESC, t.name: tenants.name is not unique; ties at the top level and the FETCH 20 cut.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY failed_runs DESC, t.name with FETCH 20: tenant names are not unique",
+  "remaining": null
+ },
+ "q130": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "One row per tenant, ordered by affected flag DESC, revenue_rank, tenant_name. Tenant names are not unique (unique in the SF1 data, not in the schema). Two tenants with the same name, the same affected flag and the same 2025 revenue tie with possibly different total_orders_2025, and the 30-row cut may pick either. (DENSE_RANK over a value is deterministic, but pattern 1 also applies.)",
+  "tiebreaker": "tenant_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per tenant, ORDER BY affected flag, revenue_rank, tenant_name: tenant names are not unique, ties at the top level and at FETCH 30",
+  "remaining": null
+ },
+ "q132": {
+  "verdict": "PEDANTIC",
+  "pattern": "4",
+  "calendar_only": false,
+  "reason": "The ORDER BY is a one-to-one label of the group key.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per month (group key date_trunc('month', created_at)); ORDER BY its CAST to date, which is one-to-one with the group key",
+  "remaining": "checker cannot see that CAST(date_trunc('month', x) AS date) is injective in date_trunc('month', x)"
+ },
+ "q134": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "GROUP BY w.id, w.name, t.name; ORDER BY rates DESC, webhook_name FETCH 20: webhooks.name is not unique (not even per tenant); two webhooks with equal name and rates tie.",
+  "tiebreaker": "w.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY the rates, webhook_name before FETCH 20: webhooks.name is not unique and the group is per w.id",
+  "remaining": null
+ },
+ "q136": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY revenue_eur_last_12mo DESC, merchant_name: tenants.name is not unique (only id, public_id, slug are). Two merchants with the same name and the same rounded revenue (for example 0) tie, and their product and review metrics differ.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY revenue DESC, merchant_name: tenant names are not unique; FETCH FIRST 50 cut",
+  "remaining": null
+ },
+ "q137": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): parallel CASE (label and sort key with the same WHEN conditions)",
+  "calendar_only": false,
+  "reason": "Both CASEs have identical WHEN conditions on a non-NULL image_count and distinct literal results, so bucket_order determines the label. ORDER BY bucket_order, image_count_bucket clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "the two CASEs have identical WHEN conditions on the non-NULL image_count (COALESCE(...,0)) and distinct literal results, so bucket_order determines image_count_bucket; one row per bucket",
+  "remaining": "checker does not see that parallel CASEs make bucket_order determine image_count_bucket"
+ },
+ "q138": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY t0.month_start, and months is DISTINCT (month_label AS month, month_start). The month label (output and join key) is not determined by month_start in the schema. Verified: adding t0.month makes Umbra report nothing.",
+  "tiebreaker": "t0.month",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: months is DISTINCT (month_label, month_start) ordered by month_start, which does not determine the month label in the schema",
+  "remaining": null
+ },
+ "q140": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "t0 = DISTINCT (month_label, month_start), ORDER BY t0.month_start only. calendar_days has no constraint making month_start determine month_label, so two days with the same month_start and different month_label give two rows with the same sort key and different output. A weak REAL (needs an inconsistent calendar).",
+  "tiebreaker": "t0.month_label",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: t0 is DISTINCT (month_label, month_start) ordered by month_start only; the schema does not make month_start determine month_label",
+  "remaining": null
+ },
+ "q142": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY rating_change_pts, d.review_count DESC: two Home & Living tenants with equal change and review count tie (different names/ratings).",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per tenant ordered by rating_change_pts, review_count: two tenants with equal values tie with different names and ratings",
+  "remaining": null
+ },
+ "q144": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY revenue_eur_last_12mo DESC, merchant_name: tenants.name is not unique (only id, public_id, slug are). Same name and the same rounded revenue gives a tie with different collection and bundle metrics.",
+  "tiebreaker": "t.id (or tr.tenant_id)",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY revenue DESC, merchant_name: tenant names are not unique; FETCH FIRST 50 cut",
+  "remaining": null
+ },
+ "q145": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "window: ROW_NUMBER() OVER (ORDER BY revenue_eur DESC) has ties, so which tenants pass rn <= 50 can differ. order: ORDER BY poor_rated_product_count DESC, pct DESC, merchant_name, and tenants.name is not unique.",
+  "tiebreaker": "tenant_id in the window ORDER BY; t.id at the end of the top-level ORDER BY",
+  "source": "review",
+  "findings": [
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ROW_NUMBER() OVER (ORDER BY revenue_eur DESC) has no tie-breaker, so tenants tied at rank 50 may or may not pass rn <= 50; top-level ORDER BY ends in merchant_name, and tenant names are not unique",
+  "remaining": null
+ },
+ "q146": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY units_sold DESC, revenue_eur DESC, product_name: product names are not unique (unique only on (tenant_id, slug); 827 duplicate names at SF1). Two products with the same name, units and revenue tie with a different merchant or reviews, and the FETCH FIRST 50 cut may pick either.",
+  "tiebreaker": "se.product_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY units DESC, revenue DESC, product_name with FETCH 50: product names are not unique",
+  "remaining": null
+ },
+ "q147": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): parallel CASE + joins of aggregates",
+  "calendar_only": false,
+  "reason": "tier_order determines tier, and product_agg has one row per tier, so ORDER BY ta.tier_order is total. row_number is over (revenue DESC, t.id), which is unique. The window (pattern 1) no longer matters.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "tier and tier_order are derived from the same rnk ranges, so they are one-to-one; tier_agg and product_agg have one row per tier, so ORDER BY ta.tier_order is total (and rnk uses row_number over (revenue DESC, t.id), unique)",
+  "remaining": "checker cannot see that tier_order determines tier (two CASEs over the same rnk thresholds)"
+ },
+ "q148": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ties in SF1 result",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per discount ordered by discount_amount_eur DESC, d.name; discount names are not unique, so two discounts with equal amount and name tie",
+  "remaining": null
+ },
+ "q149": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY discount_amount_eur DESC, tenant_name FETCH 50: tenants.name not unique; two same-named tenants with equal rounded discount tie. (Window share column is pattern 1 too.)",
+  "tiebreaker": "t.id (expose in combined)",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY discount_amount_eur DESC, tenant_name before FETCH 50: tenant names are not unique; no tenant key is exposed in combined, so the remaining output columns break the tie",
+  "remaining": null
+ },
+ "q150": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ties in SF1 result",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by coupon_id; coupon codes are unique only per tenant, so two coupons with the same code and counts tie; FETCH FIRST 50 cut",
+  "remaining": null
+ },
+ "q152": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY redemptions_over_usage_limit DESC, customers_exceeding DESC, coupon_code: coupons are unique only on (tenant_id, code), so two tenants' coupons can share a code (269 duplicate codes at SF1) and tie on both counts. tenant_name and the other columns differ, and the FETCH FIRST 50 cut can pick either. (COUNT(*) OVER () is the same for all rows.)",
+  "tiebreaker": "c.id (or c.tenant_id after coupon_code)",
+  "source": "review",
+  "findings": [
+   "limit"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY ..., coupon_code before FETCH FIRST 50: coupons are unique only on (tenant_id, code), so two tenants' coupons with the same code and counts tie",
+  "remaining": null
+ },
+ "q153": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "limit: top_discounts ORDER BY total_discount_spend_eur DESC FETCH 15 has no tie-breaker, so equal spend at the cut picks different discounts. order: ORDER BY lift_pct NULLS LAST, discount_name, and discount names are not unique (discounts has no unique constraint; at SF1 13 names repeat across tenants); e.g. two same-named discounts with NULL lift_pct tie.",
+  "tiebreaker": "discount_id in top_discounts and at the end of the top-level ORDER BY",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "top_discounts ORDER BY spend DESC FETCH 15 has no tie-breaker; top level ORDER BY lift_pct, discount_name, and discount names are not unique",
+  "remaining": null
+ },
+ "q154": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Tenant names are not unique: two tenants with the same name and the same orphan order count tie and differ in the other columns. The ablation verdict was wrong. With t.id appended the checker still flags, from the inner joins of five aggregates grouped by tenant_id (known joins-with-aggregates pattern).",
+  "tiebreaker": "t.id",
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY orphan_order_count DESC, t.name: tenant names are not unique, so two same-named tenants with equal counts tie",
+  "remaining": null
+ },
+ "q155": {
+  "verdict": "REAL",
+  "pattern": "order finding: NEW (known): inner join to a GROUP BY subquery on its key (groupjoin)",
+  "calendar_only": false,
+  "reason": "STRING_AGG(DISTINCT code, ', ') has no ORDER BY, so a discount with several coupon codes can give 'A, B' or 'B, A' (the round-one doc already lists q155 as a real string_agg case; the ablation label PEDANTIC/3 was wrong). The order finding itself is pedantic: the ORDER BY ends with d.id, the discounts primary key, and disc, cmp and cc are each grouped by discount_id.",
+  "tiebreaker": "STRING_AGG(DISTINCT code, ', ' ORDER BY code)",
+  "source": "review round 2",
+  "findings": [
+   "aggregate",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "STRING_AGG(DISTINCT code, ', ') has no ORDER BY, so a discount with several coupon codes can give 'A, B' or 'B, A' (the top-level ORDER BY already ends with d.id)",
+  "remaining": null
+ },
+ "q156": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ties in SF1 result",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY return_rate_lift_pp DESC NULLS LAST, discount_name: discounts.name is not unique, rows are per discount",
+  "remaining": null
+ },
+ "q158": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): cast in an equi-join key (text = varchar(n))",
+  "calendar_only": false,
+  "reason": "Every output column is a function of pn.name; ORDER BY ..., pn.name. Casting the VALUES column to varchar(255) clears the flag even without DISTINCT, so the VALUES-key pattern is not needed here.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q159": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY td.discount_name, and discounts are unique only on id: two discounts both named 'Welcome 10% off' (e.g. in different tenants), each with 260 orders, are both in target_discounts and tie",
+  "tiebreaker": "td.discount_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY discount_name: discount names are not unique (several tenants have 'Welcome 10% off')",
+  "remaining": null
+ },
+ "q160": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY month_start but months is DISTINCT (month_label, month_start); calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1); with such ties the running SUM OVER (ORDER BY month_start ROWS ...) is also order-dependent. Otherwise pattern 1 for the window column.",
+  "tiebreaker": "month_label (also in the window ORDER BY)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: months is DISTINCT (month_label, month_start) and calendar_days is keyed only by calendar_date, so one month_start can carry two labels; ORDER BY month_start then ties both at top level and in the running SUM window (whose ROWS frame makes the cumulative value order-dependent)",
+  "remaining": null
+ },
+ "q163": {
+  "verdict": "PEDANTIC",
+  "pattern": 3,
+  "calendar_only": false,
+  "reason": "grain_keys is DISTINCT (tenure_band, segment), and all four aggregates are grouped by (tenure_band, segment) and LEFT JOINed on both columns. The ORDER BY CASE expressions map the only possible values of tenure_band (4 literals) and segment (2 literals) injectively. Synthetic tests show the checker accepts the CASE ordering. Even with ORDER BY gk.tenure_band, gk.segment the query is still flagged on SF1, so the cause is the two-column left joins.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false,
+  "final": "deterministic",
+  "final_reason": "grain_keys is DISTINCT (tenure_band, segment), every aggregate is grouped by both and LEFT JOINed on both, and the ORDER BY CASEs are injective on the 4 possible bands and 2 possible segments",
+  "remaining": "checker does not keep the key through the two-column LEFT JOINs and cannot see that the CASEs are injective on the possible literal values"
+ },
+ "q164": {
+  "verdict": "PEDANTIC",
+  "pattern": "3",
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ablation",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q165": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Groups are (rr.tenant_id, referrer_user_id) but ORDER BY is redemption_count DESC, referrer_user_id; nothing in the schema stops the same referrer_user_id from appearing under two tenant_ids (rr.tenant_id is not tied to the referral's or user's tenant), giving tied rows with different tenant_name. Schema-level only; also contains patterns 1 and 3, which do not matter here.",
+  "tiebreaker": "ra.tenant_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "groups are (rr.tenant_id, referrer_user_id) but ORDER BY redemption_count DESC, referrer_user_id: the schema does not tie rr.tenant_id to the referrer, so one referrer can appear under two tenants and tie (also at FETCH 50)",
+  "remaining": null
+ },
+ "q170": {
+  "verdict": "PEDANTIC",
+  "pattern": "3",
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ablation",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false,
+  "final": "deterministic",
+  "final_reason": "one row per (industry, segment) (grouped, LEFT JOINs on both keys to tables grouped by them); segment is two-valued and the ORDER BY CASE maps the two values to 0/1, so (industry, CASE) is a key",
+  "remaining": "checker cannot see that the CASE over the two-valued segment is one-to-one (appending isc.segment clears it)"
+ },
+ "q172": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY wt.merchant, s.sort_position, s.stage_name. Stages are unique only per pipeline ((pipeline_id, sort_position) and (pipeline_id, name)), and 9 tenants have more than one pipeline. A tenant with two pipelines that each have a stage with the same sort_position and name ties with a different pipeline_name and counts. Tenant names are also not unique. (No such tie at SF1.)",
+  "tiebreaker": "s.stage_id (or wt.tenant_id, s.pipeline_name)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "stages are unique only per pipeline and tenant names are not unique, so ORDER BY merchant, sort_position, stage_name ties across pipelines",
+  "remaining": null
+ },
+ "q173": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only the percentile finding remains; grouped by cd.month_label; ORDER BY month (the same column) is total.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q174": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY co.is_won, ORDER BY co.is_won (group key); the scalar ORDER BY er.as_of DESC FETCH FIRST 1 is on a unique key; percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q176": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only the percentile finding remains; grouped by is_won; ORDER BY CASE is_won is one-to-one. The as_of DESC FETCH FIRST 1 scalar subquery is not flagged and is deterministic, because as_of is unique per (base_code, quote_code).",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per is_won (NOT NULL boolean); ORDER BY CASE WHEN is_won THEN 0 ELSE 1 END is one-to-one; the as_of DESC FETCH FIRST 1 subquery is keyed by the exchange_rates unique key",
+  "remaining": "checker does not use the CASE over the grouping key (percentile aggregate in the block)"
+ },
+ "q177": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY month_label, ORDER BY month (group key); percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q178": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY win_rate_pct, opportunities_closed DESC, t.name; GROUP BY t.id: two tenants with the same name and equal win rate and count tie. (The FETCH FIRST 1 inside the scalar subquery is deterministic: exchange_rates is unique on (base_code, quote_code, as_of).)",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY win_rate_pct, opportunities_closed DESC, t.name; grouped by t.id, and tenant names are not unique (the scalar FETCH FIRST 1 is deterministic: exchange_rates is unique on (base_code, quote_code, as_of))",
+  "remaining": null
+ },
+ "q181": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "GROUP BY owner_user_id, rep_name, merchant; ORDER BY win_rate_pct, opportunities_closed DESC, rep_name: users.full_name not unique; two reps with the same name and equal win rate/count tie (merchant/averages differ). The exchange_rates FETCH 1 is fine: (base, quote, as_of) is unique.",
+  "tiebreaker": "owner_user_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by owner_user_id, ordered by win rate, count, rep_name: users.full_name is not unique",
+  "remaining": null
+ },
+ "q182": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY win_rate_pct, opportunities_closed DESC, merchant: tenants.name is not unique (only id, public_id, slug are). Two tenants with one of the listed names and equal win rate and count tie, and currency_code, avg_days_open and avg_amount_eur differ.",
+  "tiebreaker": "t0.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY win_rate_pct, opportunities_closed DESC, merchant: tenant names are not unique (the IN list does not make them so), so same-named tenants with equal rate and count tie",
+  "remaining": null
+ },
+ "q183": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): parallel CASE",
+  "calendar_only": false,
+  "reason": "band_sort determines amount_band_eur. The as_of DESC FETCH 1 scalar subquery is deterministic (as_of is unique per currency pair) and is not flagged.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "grouped by (amount_band_eur, band_sort), two CASEs with identical conditions (NULL also lands in the same ELSE in both), so band_sort determines amount_band_eur and one row per band_sort",
+  "remaining": "checker cannot see that parallel CASEs with the same conditions determine each other"
+ },
+ "q184": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "row_number per variant ordered by preference and unit cost: two suppliers with equal preference and cost tie, and their currency and cost can differ",
+  "tiebreaker": "sp.supplier_id",
+  "source": "review",
+  "findings": [
+   "window"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "row_number per variant ordered by preference and unit_cost: two suppliers with equal preference and cost tie, and their currency can differ",
+  "remaining": null
+ },
+ "q185": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Two suppliers of a variant with the same preference and unit_cost but different currency_code tie, and rn = 1 picks either, changing estimated_value_eur. Also tenant and warehouse names are not unique (warehouses are unique per (tenant_id, code)), so two warehouses with equal value, variance and names tie with different event counts. The ablation verdict was wrong. With both tie-breakers the checker reports nothing.",
+  "tiebreaker": "window: ORDER BY CASE WHEN is_preferred ..., unit_cost, id (or supplier_id); top level: ..., location_kind, warehouse_id",
+  "source": "review round 2",
+  "findings": [
+   "limit",
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "window: suppliers of a variant with equal preference and unit_cost but different currency tie for rn = 1; top level: tenant and warehouse names are not unique",
+  "remaining": null
+ },
+ "q188": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "variant_cost picks rn = 1 from ROW_NUMBER() OVER (PARTITION BY variant_id ORDER BY is_preferred DESC, unit_cost ASC). supplier_products is unique only on (supplier_id, variant_id), so two suppliers of one variant can have equal is_preferred and unit_cost but different currency_code. Which one is picked changes er.rate and so value_eur, estimated_value_eur, the share and the top-level order. The first-round label (pattern 1, ablation) was wrong. SF1 has no such tie.",
+  "tiebreaker": "add supplier_id (or id) to the row_number ORDER BY",
+  "source": "review round 2",
+  "findings": [
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "variant_cost picks rn = 1 of ROW_NUMBER() OVER (PARTITION BY variant_id ORDER BY is_preferred DESC, unit_cost ASC); supplier_products is unique only on (supplier_id, variant_id), so two suppliers with equal preference and cost but different currency_code tie and change value_eur",
+  "remaining": null
+ },
+ "q189": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY category, and the ORDER BY CASE category maps all 4 possible category values to distinct numbers. The only cause is the window sum(count(*)) OVER (): removing it makes Umbra report nothing, even with the CASE ordering kept.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false,
+  "final": "deterministic",
+  "final_reason": "grouped by category, which takes only the 4 CASE literals, and the ORDER BY CASE maps all 4 to distinct numbers; sum(count(*)) OVER () is the same for every row",
+  "remaining": "checker cannot see that the ORDER BY CASE is injective on the 4 possible category values"
+ },
+ "q190": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "same as q184",
+  "tiebreaker": "sp.supplier_id",
+  "source": "review",
+  "findings": [
+   "window"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ROW_NUMBER() OVER (PARTITION BY variant_id ORDER BY is_preferred DESC, unit_cost ASC): two suppliers of a variant with equal preference and cost tie, and rn = 1 can pick either one's currency (so a different EUR value)",
+  "remaining": null
+ },
+ "q192": {
+  "verdict": "PEDANTIC",
+  "pattern": 2,
+  "calendar_only": false,
+  "reason": "UNION ALL of two single-row aggregates tagged with literal sort_order 0 and 1; ORDER BY sort_order is total",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q193": {
+  "verdict": "PEDANTIC",
+  "pattern": "4",
+  "calendar_only": false,
+  "reason": "Injective label of the group key; ORDER BY date_trunc('month', t0.created_at) clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per month (group key date_trunc('month', created_at)); ORDER BY its YYYY-MM label, which is one-to-one with the group key",
+  "remaining": "checker cannot see that the year_month label of date_trunc('month', x) is injective"
+ },
+ "q194": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY estimated_value_eur DESC, tenant_name: the subquery groups by t.id but tenants.name is not unique (only id, public_id, slug are). Two same-named tenants with equal estimated value tie, and their industry and units differ. (share_of_total uses SUM() OVER (), which is pattern 1, but the tie is real.)",
+  "tiebreaker": "t.id (expose it in sub)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY estimated_value_eur DESC, tenant_name: sub groups by t.id but tenant names are not unique; no tenant key is exposed in sub, so the remaining output columns break the tie",
+  "remaining": null
+ },
+ "q195": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY reason; ORDER BY event_count DESC, reason covers the key. Only pct_of_total_events (SUM(COUNT(*)) OVER ()) is undetermined; verified that removing the window removes both flags.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q196": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): cast in an equi-join key (text = varchar(n))",
+  "calendar_only": false,
+  "reason": "all_rows is a UNION (distinct), so agent_group_name is its key. tm and ac are grouped by group name (single-column left joins), and the ORDER BY ends with r.agent_group_name.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q197": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ts is keyed by (agent_group_id, agent_group_name), but agent_groups is unique only on (tenant_id, name): two groups named 'Tier 1' in different tenants with the same resolution_breach_rate tie (and a real group named 'Unassigned queue' can tie with the NULL group)",
+  "tiebreaker": "ts.agent_group_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "agent group names are unique only per tenant: two groups with the same name and breach rate tie",
+  "remaining": null
+ },
+ "q198": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW: CAST(varchar group key AS text) label not seen as injective",
+  "calendar_only": false,
+  "reason": "The 'overall' branch is one row with sort_rank 0 (literal tag, now handled); within sort_rank 1 priority is the group key, and varchar(n) -> text is lossless. Removing the cast clears the flag; keeping only per_priority (no UNION) is still flagged. The fix in Umbra (1352f26b3) makes casts of non-strings into text invertible, not of varchar.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "the overall row is alone at sort_rank 0; within sort_rank 1 priority is CAST of the grouping key b.priority to text, which is lossless, so it is unique and breaks every tie",
+  "remaining": "checker does not treat CAST(varchar AS text) of the group key as injective"
+ },
+ "q199": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY ticket_count DESC, tenant_name: tenants.name is not unique (only id, public_id, slug are). Two same-named tenants with the same ticket count tie; the breach rates and agent counts differ, and so does the cumulative sum over the same order.",
+  "tiebreaker": "tenant_id (also in the window ORDER BY)",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY ticket_count DESC, tenant_name with FETCH 30: tenant names are not unique (the cumulative window uses the default RANGE frame, so peers share one value and need no fix)",
+  "remaining": null
+ },
+ "q200": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Groups are (tenant_id, agent_group_id); ORDER BY ticket_count DESC, ten.name, ag.name, and tenants.name is not unique; agent_groups.name is unique only per agent_groups.tenant_id, which is not tied to tickets.tenant_id. Two same-named tenants with same-named groups and equal ticket counts tie (also at FETCH 20).",
+  "tiebreaker": "ta.tenant_id, ta.agent_group_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "groups are (tenant_id, agent_group_id) but ORDER BY ticket_count DESC, ten.name, ag.name: tenant names are not unique and agent group names are unique only per agent_groups.tenant_id, so rows can tie (also at FETCH 20)",
+  "remaining": null
+ },
+ "q201": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "Grouped by day_name, iso_day_of_week, time_of_day_bucket, bucket_order; ordered by iso_day_of_week, bucket_order. The schema does not make iso_day_of_week determine day_name, so this is REAL. The bucket part is pedantic: bucket_order and time_of_day_bucket are CASEs on hr with identical conditions, so each determines the other. The checker misses that too, much like pattern 4: ORDER BY ..., day_name alone is still flagged, while adding day_name, time_of_day_bucket makes Umbra report nothing.",
+  "tiebreaker": "day_name (time_of_day_bucket is needed only to satisfy the checker)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: grouped by (day_name, iso_day_of_week, time_of_day_bucket, bucket_order) but ordered by iso_day_of_week, bucket_order; the schema does not make iso_day_of_week determine day_name",
+  "remaining": null
+ },
+ "q204": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY m.usage_count DESC, m.title, and macros are unique only on (tenant_id, title): the same macro title in two tenants with equal usage_count ties (is_shared may differ)",
+  "tiebreaker": "m.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY usage_count DESC, title before FETCH 20: macro titles are unique only per tenant",
+  "remaining": null
+ },
+ "q208": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY currency_code; ORDER BY total_fee_eur DESC, currency_code covers the key; only the SUM(...) OVER () share column is undetermined for the checker.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q210": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Top-level ORDER BY unpaid DESC, traffic_change ASC, merchant_name: tenants.name is not unique (only id, public_id, slug are). Two same-named tenants with equal unpaid balance and traffic change tie, with different fee change and days since last order. The second 'limit' finding (line 5) is PEDANTIC: it is the DISTINCT ON (quote_code) ... ORDER BY quote_code, as_of DESC in latest_rates. With base_code = 'EUR' and UNIQUE (base_code, quote_code, as_of), (quote_code, as_of) is unique, so the row picked is unique. Top-level DISTINCT ON is not flagged; under a join it is, and the checker also does not treat quote_code as a key of the DISTINCT ON result.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY unpaid DESC, traffic_change, merchant_name before FETCH FIRST 50: tenant names are not unique (the DISTINCT ON in latest_rates is deterministic: base_code is fixed and (base_code, quote_code, as_of) is unique)",
+  "remaining": null
+ },
+ "q211": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY change_vs_baseline_pp DESC NULLS LAST, refund_amount_q3_eur DESC, merchant_name: tenants.name is not unique; e.g. two same-named tenants with NULL change and zero refunds tie.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY change DESC, refund amount DESC, merchant_name: tenant names are not unique",
+  "remaining": null
+ },
+ "q213": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY total_shipping_cost_eur_2025 DESC, merchant_name, but tenants.name is not unique. Two tenants with the same name and the same rounded shipping cost (for example both 0, with no 2025 shipments, which most tenants beyond the top 50 are) tie, with different vertical and other values, both in the order and at the FETCH 50 cut. The first-round label (pattern 3, ablation) was wrong.",
+  "tiebreaker": "t.id",
+  "source": "review round 2",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY total_shipping_cost_eur_2025 DESC, merchant_name: tenant names are not unique (e.g. two same-named tenants with cost 0), ties at the top level and at FETCH 50",
+  "remaining": null
+ },
+ "q214": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "One row per tenant, ordered by CASE status, fee_revenue_ttm_eur DESC, merchant_name. Tenant names are not unique. Two tenants with the same status, fee revenue (e.g. both 0) and name tie with different vertical, tenure and recency.",
+  "tiebreaker": "tb.tenant_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per tenant ordered by status CASE, fee revenue DESC, merchant_name; tenant names are not unique, so same-named tenants with equal status and revenue tie",
+  "remaining": null
+ },
+ "q218": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY pe.gross_eur DESC, t.name: two tenants with the same name and equal gross volume tie",
+  "tiebreaker": "pe.tenant_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY gross_eur DESC, t.name before FETCH 20: tenant names are not unique",
+  "remaining": null
+ },
+ "q219": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): FULL OUTER JOIN keeps no FDs",
+  "calendar_only": false,
+  "reason": "Both sides are grouped by vertical, so the coalesced vertical is a key. The ablation verdict named pattern 3; turning the FULL OUTER JOIN into a LEFT JOIN clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "both sides are grouped by a non-NULL vertical, so the FULL OUTER JOIN gives one row per coalesced vertical, which ends the ORDER BY",
+  "remaining": "checker keeps no keys through FULL OUTER JOIN"
+ },
+ "q220": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ROW_NUMBER() OVER (PARTITION BY tenant_id ORDER BY payment_amount_eur DESC) and ROW_NUMBER() OVER (PARTITION BY tenant_id, refund_kind ORDER BY amount_refunded DESC) have no tie-breaker. Two payments of a tenant with equal EUR amount (or equal refund) make the sampled payment arbitrary, and so the order_number and amounts shown. The inner FETCH FIRST 8 / 4 by amount alone can also cut through ties. SF1 has 1550 (tenant, amount, currency) groups with more than one 2025 payment. The first-round label (pattern 1, ablation) was wrong.",
+  "tiebreaker": "payment_id in both row_number ORDER BYs and in the three inner ORDER BY ... FETCH FIRST",
+  "source": "review round 2",
+  "findings": [
+   "window",
+   "window",
+   "limit",
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ROW_NUMBER() per tenant by payment_amount_eur DESC and per (tenant, refund_kind) by amount_refunded DESC, and the inner ORDER BY amount ... FETCH FIRST 8 / 4, have no tie-breaker; equal amounts make the sampled payments arbitrary",
+  "remaining": "top-level ORDER BY CASE sample_category ..., payment_amount DESC, payment_id is unique: the CASE is injective on the three categories, and payment_id is unique within each category (largest: one row per payment; refund: the FULL and PARTIAL branches are disjoint by refund_kind; typical: one row per tile, and enriched is unique on payment_id). The checker cannot see that the UNION ALL branches are disjoint."
+ },
+ "q221": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY lag_category; ORDER BY return_count DESC, lag_category covers the key; only SUM(SUM()) OVER () share column.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q222": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ties in SF1 result",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by coupon_id, ordered by repeat discount DESC, coupon_code with FETCH 20: coupon codes are unique only per tenant",
+  "remaining": null
+ },
+ "q223": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ties in SF1 result",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY merchant_name, order_number, occurred_at, entry_group: the entries of one entry group (e.g. a debit/credit pair) share occurred_at and differ in account, direction and amount, and tenant names are not unique; no ledger entry key is in scope",
+  "remaining": null
+ },
+ "q224": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY payment_count DESC only. Two reconciliation categories with the same payment count tie, and their amounts differ.",
+  "tiebreaker": "reconciliation_category",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per reconciliation_category ordered only by payment_count DESC; two categories with the same count tie with different amounts",
+  "remaining": null
+ },
+ "q225": {
+  "verdict": "PEDANTIC",
+  "pattern": "1",
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ablation",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q228": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "Grouped by (month_label, month_start), ordered by month_start; the schema does not make month_label a function of month_start (calendar_days has only PK calendar_date), so two groups can share month_start. Holds in practice, not by schema.",
+  "tiebreaker": "month_label",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by (month_label, month_start), ordered by month_start; calendar_days only keys calendar_date, so two labels for one month_start tie (calendar-only)",
+  "remaining": null
+ },
+ "q230": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW: a composite-key column bound to a constant does not combine with join-bound key columns",
+  "calendar_only": false,
+  "reason": "Rows are keyed by payment_id (payments.id; all joins are on keys; ledger_credit grouped by payment_id); ORDER BY diff_eur DESC, cl.payment_id. The rate join is on the unique key (base_code, quote_code, as_of). Replacing the exchange rate join clears the flag; binding base_code to a column instead of 'EUR' clears it; even ORDER BY cl.payment_id alone is flagged. Inner joins are affected too.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q232": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): groupjoin / joins of aggregates",
+  "calendar_only": false,
+  "reason": "agg is keyed by (destination_country, period). totals has one row per period, and qualified one row per destination_country. So ORDER BY a.destination_country, a.period is total. countries.name is not unique, but grouping by it makes it a key of agg.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q233": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY a.warehouse_name, CASE period: agg is keyed by warehouse_id and warehouse names are not unique (unique only on (tenant_id, code)), so two warehouses with the same name tie on (name, period). (The CASE over period is fine; the checker accepts that construct.)",
+  "tiebreaker": "a.warehouse_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "agg is keyed by (warehouse_id, period); warehouse names are not unique",
+  "remaining": null
+ },
+ "q235": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY carrier; ORDER BY shipments_shipped DESC, carrier covers the key; only SUM(COUNT(*)) OVER () share column (percentile_cont also present, pattern 5).",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q236": {
+  "verdict": "PEDANTIC",
+  "pattern": "4",
+  "calendar_only": false,
+  "reason": "Injective label of the group key; ORDER BY EXTRACT(QUARTER FROM ordered_at) clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per quarter (grouped by EXTRACT(QUARTER FROM ordered_at)); ORDER BY the label '2025-Q' || CAST(quarter AS INTEGER), which is one-to-one with the group key",
+  "remaining": "checker does not see that '2025-Q' || CAST(EXTRACT(QUARTER ...) AS INTEGER) is injective on the group key"
+ },
+ "q238": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY carrier_group, ORDER BY carrier_group. Only share_of_orders_pct (SUM(COUNT(*)) OVER ()) blocks it; verified that removing the window removes the flag.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q239": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "agg is grouped by (period, carrier_group), and that is the ORDER BY. The only cause is the window SUM(...) OVER (PARTITION BY period): removing it makes Umbra report nothing.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q241": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW: UNION ALL of grouped rows and a literal-labelled total row (not provable with FDs)",
+  "calendar_only": false,
+  "reason": "Deterministic only by arithmetic. A real carrier named 'ALL CARRIERS' sorts with the total row (CASE = 1). Equal orders_fully_delivered then means it is the only carrier, and then both rows are identical (avg, pct, and share = 100.0). No FD reasoning can show this. Pattern 2 (fixed) needs an explicit branch tag, so the query is still flagged. If wanted, an explicit tag column (0/1) in the ORDER BY would satisfy the checker.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "carrier is the group key of per_carrier; a real carrier named 'ALL CARRIERS' can tie with the total row only if its count equals the total, i.e. it is the only carrier group, and then both rows are identical",
+  "remaining": "checker cannot prove the arithmetic argument that a tie between the total row and a carrier named 'ALL CARRIERS' implies identical rows"
+ },
+ "q242": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "group_agg groups by (year_num, quarter_num, carrier_group) but ORDER BY uses only quarter_num and a CASE rank of carrier_group; year_num is from calendar_days and calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1) (two 2025 dates with equal quarter_num and different year_num give tied rows with different 'quarter'). The CASE rank is injective over carrier_group's 4-value domain and is not what the checker objects to (CASE orderings are accepted, even non-injective ones, see unsound-orderby-expr.test).",
+  "tiebreaker": "ga.year_num (before quarter_num), optionally ga.carrier_group",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "group_agg groups by (year_num, quarter_num, carrier_group) but ORDER BY uses quarter_num and a CASE rank of carrier_group only; calendar_days has only calendar_date as key, so year_num is not determined and two rows can tie with different quarter labels (calendar-only)",
+  "remaining": "checker still flags the CASE rank of carrier_group; carrier_group can only be the three named carriers (ranks 1-3) or 'All other carriers' (ELSE 4), so the CASE is injective on it (appending ga.carrier_group as well silences the checker)"
+ },
+ "q244": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY tickets_per_active_agent DESC NULLS LAST, merchant_name: tenants.name is not unique (only id, public_id, slug are). Two same-named merchants with the same ratio tie, and their ticket and agent counts differ.",
+  "tiebreaker": "t.tenant_id (ten.id)",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per tenant ordered by ratio DESC NULLS LAST, merchant_name FETCH 50; tenant names are not unique, so same-named tenants with equal ratio tie (and the cut can change)",
+  "remaining": null
+ },
+ "q245": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "GROUP BY t.id, t.name but ORDER BY tickets_2025 DESC, merchant_name; tenants.name is not unique; same-named tenants with equal ticket counts tie with different channel percentages (also at FETCH 50).",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY tickets_2025 DESC, merchant_name before FETCH 50: grouped by t.id, tenant names are not unique",
+  "remaining": null
+ },
+ "q246": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY urgent_miss_rate_pct DESC, merchant_name: tenant names are not unique. Two tenants with the same name and miss rate tie with different counts, and the FETCH FIRST 50 cut may pick either.",
+  "tiebreaker": "u.tenant_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY miss rate DESC, merchant_name: tenant names are not unique; FETCH FIRST 50 cut",
+  "remaining": null
+ },
+ "q247": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY avg_messages_per_ticket DESC, merchant_name: two tenants with the same name and the same average tie at the LIMIT 50 cut (count(*) OVER () also hits pattern 1)",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY avg_messages_per_ticket DESC, merchant_name before FETCH FIRST 50: tenant names are not unique",
+  "remaining": null
+ },
+ "q248": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY urgent_miss_rate_pct DESC, merchant_name FETCH 50: tenant names not unique; two same-named tenants with equal miss rate tie.",
+  "tiebreaker": "t9.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY miss rate DESC, merchant_name with FETCH 50: tenant names are not unique",
+  "remaining": null
+ },
+ "q250": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY m.name, q.q_num, ORDER BY m.name, q.q_num (group key); percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q251": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY tickets_per_agent_q4 DESC, merchant_name: tenants.name is not unique (only id, public_id, slug are). Two same-named merchants with the same Q4 ratio tie, and the Q1-Q3 figures differ.",
+  "tiebreaker": "tn.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY tickets_per_agent_q4 DESC, merchant_name: tenant names are not unique, so same-named tenants with equal Q4 ratio tie",
+  "remaining": null
+ },
+ "q253": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only the percentile finding remains; grouped by (merchant_name, yr, qtr), and the ORDER BY is the same three columns. merchant_name is not unique, but grouping merges same-name tenants, so the rows are still keyed.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q254": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "GROUP BY t.name, t.industry, t.employee_count (not t.id); ORDER BY orders_placed_2025 DESC, merchant_name: two groups with the same name but different industry or employee_count and equal order counts tie.",
+  "tiebreaker": "t.industry, t.employee_count (the rest of the group key)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by (t.name, t.industry, t.employee_count) but ordered by orders DESC, merchant_name; two groups with the same name and count but different industry/employee_count tie",
+  "remaining": null
+ },
+ "q255": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Rows are (tenant, agent), ordered by merchant_name, avg_resolution_hours DESC NULLS LAST, agent_display_name. Neither the tenant name nor support_agents.display_name is unique (10 duplicate display names within a tenant at SF1). Two agents of one tenant with the same display name and the same average (or both NULL) tie with different tickets_handled, median and breach rate. Patterns 3 (multi-column LEFT JOINs t4/t5/t6) and 5 also affect the checker here.",
+  "tiebreaker": "t0.tenant_id, t0.assignee_agent_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "rows are (tenant, agent); neither the tenant name nor the agent display name is unique, so two agents with the same name and average tie",
+  "remaining": null
+ },
+ "q256": {
+  "verdict": "PEDANTIC",
+  "pattern": "3 (+ NEW: CTE with a computed column referenced twice)",
+  "calendar_only": false,
+  "reason": "t2 = DISTINCT (industry, order_group), so ORDER BY t2.industry, t2.order_group is total; t3/t4/t5 are grouped by (industry, order_group) and LEFT JOINed on both columns. The checker misses pattern 3 (multi-column LEFT JOIN). t0 is also a CTE with computed columns (CASE, / er.rate) referenced several times and grouped, the NEW CTE shape.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q258": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): cast in an equi-join key (text = varchar(n))",
+  "calendar_only": false,
+  "reason": "month_label is a key of months (DISTINCT), single-column left joins on group keys. Casting months.month_label to text clears the flag. The ablation verdict (pattern 3) was wrong.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q260": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): joins of aggregates (shared CTE with a join)",
+  "calendar_only": false,
+  "reason": "Both are grouped by (industry, segment) and joined on both columns, so ORDER BY au.industry, au.segment is a key.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q261": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): joins with aggregates lose keys (groupjoin / join of aggregation blocks on their key)",
+  "calendar_only": false,
+  "reason": "All blocks are grouped by their join keys. ORDER BY s.industry, CASE WHEN s.segment = 'referrer' THEN 0 ELSE 1 END is injective because segment is always 'referrer' or 'non-referrer' (the checker accepts it anyway, see unsound-orderby-expr.test). Making both joins LEFT JOINs clears the flag; replacing the CASE with s.segment does not.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per (industry, segment); segment is always 'referrer' or 'non-referrer', so the CASE is one-to-one, and the joins are on the grouping keys",
+  "remaining": "checker loses keys through joins of aggregation blocks on their keys"
+ },
+ "q262": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): parallel CASE",
+  "calendar_only": false,
+  "reason": "sort_key determines bucket_label; orders_before is a COUNT and never NULL.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "sort_key and bucket_label are parallel CASEs with identical WHEN conditions on orders_before (a COUNT, never NULL) and distinct results, so sort_key determines the label; one row per bucket",
+  "remaining": "checker does not see that parallel CASEs make sort_key determine bucket_label"
+ },
+ "q263": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "agg is grouped by (industry, attribution_status), and that is the ORDER BY. The scalar exchange-rate subquery has at most one row (unique (base_code, quote_code, as_of)). The only cause is the window SUM(COUNT(*)) OVER (PARTITION BY industry): removing it makes Umbra report nothing.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q268": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW: LEFT JOIN + GROUP BY, ORDER BY an aggregate and the primary key (plan without groupjoin)",
+  "calendar_only": false,
+  "reason": "One row per tenant; t.id is in the ORDER BY, so order and FETCH FIRST 50 are deterministic. On SF1: inner join clears the flag, ORDER BY t.id alone clears it, removing the WHERE or the FETCH does not.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q269": {
+  "verdict": "PEDANTIC",
+  "pattern": "1",
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ablation",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q272": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW: parallel literal columns across UNION ALL branches (sort key determines label)",
+  "calendar_only": false,
+  "reason": "window_sort determines window_label (one literal pair per branch). t5 is a single-column left join on its key, and t6/t7 are left-joined on their group key (shopper_group, window_label). Patterns 2 and 3 are fixed, but this is still flagged. Plan-dependent: reduced versions are flagged only in some runs, while the full query and repro A are flagged in every run.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q273": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW: correlated scalar subquery referencing 2+ outer columns (likely the multi-column join of pattern 3 after decorrelation)",
+  "calendar_only": false,
+  "reason": "ORDER BY days_since_last_order DESC, t.id: t.id is the tenants PK; o is joined on its group key tenant_id = t.id; the correlated COUNT(*) subqueries depend only on t.id and o.last_ts. Checker misses that correlated scalar subqueries over several outer columns (t.id, o.last_ts) are determined by the outer key; with one correlated column it is not flagged.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q275": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "The LIMIT inside top15 (line 28: ORDER BY revenue_eur_total DESC FETCH FIRST 15, no tie-breaker) is REAL: a tie at 15th place changes which tenants are reported. The top-level findings (ORDER BY tickets_last_90_days DESC, top15.tenant_id) are PEDANTIC. top15.tenant_id is top15's key, and the rest is joined on it. On SF1 they stay flagged even with a tie-breaker in top15. Bisected to top15 LEFT JOIN tickets_agg ON tenant_id with a non-sort column of tickets_agg in the output: a join of two aggregation blocks on the group key.",
+  "tiebreaker": "tenant_id in top15 (ORDER BY revenue_eur_total DESC, tenant_id)",
+  "source": "review",
+  "findings": [
+   "limit",
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "top15 ORDER BY revenue_eur_total DESC FETCH 15 has no tie-breaker, so a tie at 15th place changes which tenants are reported",
+  "remaining": null
+ },
+ "q276": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "GROUP BY t.id, t.name but ORDER BY failed_attempts_feb DESC, tenant_name; tenants.name is not unique.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by t.id but ORDER BY failed_attempts_feb DESC, tenant_name: tenant names are not unique",
+  "remaining": null
+ },
+ "q278": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY received_at over raw data_subject_requests rows: received_at is not unique. Two rejected requests received at the same instant tie with different request_type and dates. (Only 3 rows at SF1, no tie.)",
+  "tiebreaker": "id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY received_at over raw data_subject_requests rows: received_at is not unique",
+  "remaining": null
+ },
+ "q280": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY severity, ORDER BY total_events DESC, severity (group key); percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q281": {
+  "verdict": "PEDANTIC",
+  "pattern": 2,
+  "calendar_only": false,
+  "reason": "UNION ALL of five single-row aggregates, each tagged with a distinct literal table_name; ORDER BY table_name is total",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q282": {
+  "verdict": "PEDANTIC",
+  "pattern": 2,
+  "calendar_only": false,
+  "reason": "UNION ALL of three branches tagged with distinct table_name literals, each grouped by extract(year) with output CAST(... AS int) year; ORDER BY table_name, year is a key.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q283": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY tt.tenant_name: tenant_totals is grouped by (tenant_id, tenant_name), but tenants.name is not unique (only id, public_id, slug are). Two tenants named 'Studio Vrij' would tie with different metrics.",
+  "tiebreaker": "tt.tenant_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY tenant_name: tenant names are not unique",
+  "remaining": null
+ },
+ "q284": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Rows are tenants x quarters; ORDER BY b.tenant_name, year, quarter; tenants.name is not unique (filter is by name), so two tenants named 'Studio Vrij' tie per quarter with different counts. Also has pattern 3 left joins, which do not matter here.",
+  "tiebreaker": "b.tenant_id after b.tenant_name",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "rows are tenant x quarter, ORDER BY tenant_name, year_num, quarter_num; tenants are filtered by name, and names are not unique, so two same-named tenants tie per quarter with different counts",
+  "remaining": null
+ },
+ "q287": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only the percentile finding remains; grouped by duration_bucket; the ORDER BY CASE maps the 5 buckets to distinct numbers.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "grouped by duration_bucket, which takes only the 5 CASE literals, and the ORDER BY CASE maps all 5 to distinct numbers; PERCENTILE_CONT is order-independent",
+  "remaining": "checker cannot see that the ORDER BY CASE is injective on the 5 possible bucket values"
+ },
+ "q288": {
+  "verdict": "PEDANTIC",
+  "pattern": "5",
+  "calendar_only": false,
+  "reason": "Only percentile findings. GROUP BY cd.month_label, ORDER BY cd.month_label (group key); percentile_cont depends only on the multiset of its group. Replacing percentile_cont(p) within group (order by e) with avg(e) clears every flag on SF1.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "percentile"
+  ],
+  "flagged_round2": true
+ },
+ "q295": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "One row per tenant, ordered by gap_in_points DESC, tenant_name. Tenant names are not unique. Two tenants with the same name and gap (e.g. both 0) tie with different cart counts.",
+  "tiebreaker": "t0.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per tenant ordered by gap_in_points DESC, tenant_name: tenant names are not unique",
+  "remaining": null
+ },
+ "q297": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY email_count DESC, template_code, and template_code = COALESCE(nt.code, ...), but notification_templates is unique only on (tenant_id, code): two tenants' 'cart_recovery' templates with equal email_count tie (name and channel may differ)",
+  "tiebreaker": "t2.template_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY email_count DESC, template_code, and template_code = COALESCE(nt.code, ...): notification_templates is unique only on (tenant_id, code), so two tenants' templates with the same code and equal counts tie (name and channel may differ)",
+  "remaining": null
+ },
+ "q300": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY total DESC, t.name FETCH 20: tenant names not unique; two same-named tenants with equal totals tie (h1/h2 differ).",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY total DESC, t.name: tenant names are not unique, so same-named tenants with equal totals tie (also at FETCH 20)",
+  "remaining": null
+ },
+ "q301": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "Grouped by coalesce(t.industry, '(none)'). ORDER BY ..., industry resolves to the output column (the group key), as in Postgres. The only non-determined output is pct_of_total_revenue = ... / sum(sum(...)) OVER (). A synthetic test confirms: without the window it is not flagged, with it it is.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q302": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY total_2025_revenue_eur DESC, tenant_name: tenants.name is not unique; e.g. two same-named tenants with zero 2025 revenue tie.",
+  "tiebreaker": "tenant_agg.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per tenant ordered by 2025 revenue DESC, tenant_name; tenant names are not unique (e.g. two same-named tenants with zero revenue tie)",
+  "remaining": null
+ },
+ "q303": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ties in SF1 result",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "UNION ALL of segments and cohorts ordered by member_count, tenant_name, name before FETCH 50: tenant names are not unique and a segment and a cohort can share a name; a UNION ORDER BY can only use output columns, so the remaining ones break the tie",
+  "remaining": null
+ },
+ "q304": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): groupjoin",
+  "calendar_only": false,
+  "reason": "t0 is DISTINCT kind, t1..t4 are grouped by kind (single-column joins), and ORDER BY ends with t0.kind.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q305": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "aggregate: string_agg(DISTINCT currency_code, ',') has no ORDER BY, so 'EUR,USD' or 'USD,EUR' are both possible. order: ORDER BY ds.deal_count DESC, t.name, and two tenants with the same name and equal deal count tie",
+  "tiebreaker": "string_agg(DISTINCT currency_code, ',' ORDER BY currency_code); ORDER BY ..., ds.tenant_id",
+  "source": "review",
+  "findings": [
+   "aggregate",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "string_agg(DISTINCT currency_code) has no order; ORDER BY deal_count DESC, t.name ties on same-named tenants",
+  "remaining": null
+ },
+ "q307": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY total_refunds_2025_eur DESC, t.name FETCH 15: tenant names not unique; equal totals and names tie (late refunds differ).",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY total_refunds_2025_eur DESC, t.name before FETCH FIRST 15: tenant names are not unique",
+  "remaining": null
+ },
+ "q308": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY total_2025_revenue_eur DESC, tt0.tenant_name: target_tenants is filtered by name, but tenants.name is not unique (only id, public_id, slug are). Two same-named tenants with equal revenue (for example 0) tie, with different currency and invoice figures.",
+  "tiebreaker": "tt0.tenant_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY revenue DESC, tenant_name: tenant names are not unique, so two same-named tenants with equal revenue tie",
+  "remaining": null
+ },
+ "q310": {
+  "verdict": "PEDANTIC",
+  "pattern": 1,
+  "calendar_only": false,
+  "reason": "GROUP BY aging_bucket; ORDER BY amount_due_eur (output column) DESC, aging_bucket covers the key. Only pct_of_total_amount_due (SUM() OVER ()) blocks it; verified that removing the window removes the flag.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q311": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): cast in an equi-join key (text = varchar(n))",
+  "calendar_only": false,
+  "reason": "entity_table is a distinct literal tag in every UNION ALL branch (now handled: without the audit join it is clean), audit_counts is keyed by entity_table. Casting audit_counts' entity_table to text clears the flag. The ablation verdict (pattern 3) was wrong.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q312": {
+  "verdict": "PEDANTIC",
+  "pattern": 2,
+  "calendar_only": false,
+  "reason": "UNION ALL of two scalar aggregates (one row each) tagged 'order cancellations' / 'invoice voids', ORDER BY entity_type: the tags are distinct, so entity_type is a key.",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q313": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY active_users DESC, tenant_name: two churned tenants with the same name and equal active-user count tie",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY active_users DESC, tenant_name: two churned tenants with the same name and active-user count tie",
+  "remaining": null
+ },
+ "q314": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY coverage_rate_pct, cancelled_orders DESC, tenant_name FETCH 50: tenant names not unique; ties change other columns and the cut.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per tenant ordered by coverage ASC, cancelled DESC, tenant_name FETCH 50; tenant names are not unique, so ties change other columns and the cut",
+  "remaining": null
+ },
+ "q319": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY age_days DESC, tenant_name, key_name, rl.id. tenants.name is not unique, and api_keys.name is not unique (api_keys is unique only on public_id and prefix). Two active keys with the same tenant name, key name and age and no rate limit (rl.id NULL) tie, with different last_used_at and tenant_status, in the order and at the FETCH 50 cut. The first-round label (patterns 1+3, ablation) was wrong.",
+  "tiebreaker": "ak.id (before rl.id)",
+  "source": "review round 2",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY age_days, tenant_name, key_name, rl.id before FETCH 50: tenant and key names are not unique and rl.id is NULL for keys without a rate limit",
+  "remaining": null
+ },
+ "q321": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): parallel CASE (label and sort key with the same WHEN conditions)",
+  "calendar_only": false,
+  "reason": "Same WHEN conditions, distinct literal results. ORDER BY bucket_order, bucket clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "one row per (bucket, bucket_order); both CASEs use identical WHEN conditions with distinct results, so bucket_order determines bucket",
+  "remaining": "checker cannot see that the parallel CASE sort key determines the label"
+ },
+ "q322": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY tenant_name, key_name, ak.id, rl.limit_scope: rate_limits has no unique constraint on (api_key_id, limit_scope), so one key with two rate_limits rows of the same scope and different max_requests ties.",
+  "tiebreaker": "rl.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY tenant_name, key_name, ak.id, rl.limit_scope: rate_limits has no unique constraint on (api_key_id, limit_scope), so one key's two rate limits of the same scope tie",
+  "remaining": null
+ },
+ "q325": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): cast in an equi-join key (text = varchar(n))",
+  "calendar_only": false,
+  "reason": "all_stats is four single-row aggregates with distinct literal tags, and policy is grouped by entity_table; ORDER BY ends with a.entity_table. Pattern 2 is fixed (no longer the cause).",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q328": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Two payments of the subject user updated at the same time tie, so latest_payment status/amount/currency can differ. Two active holds of the same tenant placed on the same day (different subject users) tie in the ORDER BY. The ablation verdict was wrong. With both tie-breakers the checker still flags the ORDER BY, because legal_hold_id becomes a key of latest_payment_top only through rn = 1 (round-1 pattern).",
+  "tiebreaker": "window: ORDER BY p.updated_at DESC, p.id DESC; top level: ..., h.legal_hold_id",
+  "source": "review round 2",
+  "findings": [
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "latest_payment row_number orders by p.updated_at only, so two payments updated at the same time pick status/amount arbitrarily; top level ORDER BY days_since_placed, tenant_name ties for two holds of same-named tenants placed on the same day",
+  "remaining": null
+ },
+ "q330": {
+  "verdict": "PEDANTIC",
+  "pattern": "3",
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ablation",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q331": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known, without a repro): row_number over columns made unique by an rn = 1 filter",
+  "calendar_only": false,
+  "reason": "After rn = 1, (tenant_id, user_id) is unique, so user_key is determined; also it is only used in COUNT(DISTINCT). The inner row_number orders by (occurred_at DESC, id DESC), which is unique.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "window"
+  ],
+  "flagged_round2": true
+ },
+ "q335": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY pending_or_retrying_rate_pct DESC NULLS LAST, t.name: two tenants with the same name and the same rate (or both NULL) tie (DENSE_RANK in the output also hits pattern 1)",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY pending_or_retrying_rate_pct DESC NULLS LAST, t.name: two tenants with the same name and the same rate (or both NULL) tie",
+  "remaining": null
+ },
+ "q337": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY jr.queued_at, t.name: two failed job runs of the same tenant queued at the same instant (or same-named tenants) tie with different started_at/error_message/attempt.",
+  "tiebreaker": "jr.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY jr.queued_at, t.name: two failed runs queued at the same instant for the same (or same-named) tenant tie with different started_at/error/attempt",
+  "remaining": null
+ },
+ "q343": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): VALUES list with distinct literals is not a key",
+  "calendar_only": false,
+  "reason": "The VALUES calendar_date literals are distinct, so calendar_date determines label. ORDER BY v.calendar_date, v.label clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q347": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ties in SF1 result",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per category of one tenant, ordered by counts and category_name: categories are unique only on (tenant_id, slug), not name",
+  "remaining": null
+ },
+ "q350": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY b.merchant_name, b.month_start: tenants.name is not unique (filter is by name), so two tenants named 'Fennel & Flint' tie per month; also months is DISTINCT (month_start, month_label) and month_label is not a function of month_start by schema.",
+  "tiebreaker": "b.tenant_id (and b.month_label)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "tenant names are not unique (filter by name), and calendar-only: month_start does not determine month_label by schema",
+  "remaining": null
+ },
+ "q352": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): groupjoin",
+  "calendar_only": false,
+  "reason": "ORDER BY ends with t.id, a key; every other join is a single-column left join on tenant_id.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q353": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY review_count DESC, avg_rating, p.name, and products are unique only on id, public_id and (tenant_id, slug): two products with the same name and equal review stats tie (category and units_sold may differ)",
+  "tiebreaker": "p.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY review_count DESC, avg_rating, p.name: product names are not unique (only id, public_id, (tenant_id, slug))",
+  "remaining": null
+ },
+ "q354": {
+  "verdict": "REAL",
+  "pattern": 3,
+  "calendar_only": false,
+  "reason": "ORDER BY t.name, y.year: names are filtered to two values but tenants.name is not unique; two tenants named 'Fennel & Flint' tie per year with different counts. (The LEFT JOINs on (tenant_id, yr) would also trip pattern 3.)",
+  "tiebreaker": "t.id (after t.name)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY t.name, y.year: the IN filter keeps tenant names, which are not unique, so two tenants with the same name tie per year with different counts",
+  "remaining": null
+ },
+ "q358": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": null,
+  "tiebreaker": null,
+  "source": "ties in SF1 result",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per product ordered by review_count DESC, avg_rating; products with equal count and rating tie with different names/units",
+  "remaining": null
+ },
+ "q360": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "calendar_days declares only calendar_date unique, so two days of one month_start could carry different month_labels; the two rows then tie in the ORDER BY and in the ROWS frame. Real only by the letter of the schema (inconsistent calendar). With month_label added to both, the checker reports nothing.",
+  "tiebreaker": "month_label, in the ORDER BY and in the running SUM's window ORDER BY",
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "months is DISTINCT (month_label, month_start); calendar_days only keys calendar_date, so two labels for one month_start tie in the ORDER BY and in the ROWS frame (calendar-only)",
+  "remaining": null
+ },
+ "q361": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY total_refund_eur DESC, category_name: t5 is DISTINCT (category_id, category_name), and category names are not unique (categories are unique on (tenant_id, slug); 1608 duplicate names at SF1). Also 'Uncategorized' could equal a real category name. Two same-named categories with the same refund total (for example 0) tie, with different items sold.",
+  "tiebreaker": "t5.category_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "t5 is DISTINCT (category_id, category_name); category names are not unique, so same-named categories with equal refund totals tie",
+  "remaining": null
+ },
+ "q363": {
+  "verdict": "PEDANTIC",
+  "pattern": "NEW (known): cast in an equi-join key (integer = bigint)",
+  "calendar_only": false,
+  "reason": "buckets are 5 distinct literals, and disc/nondisc are grouped by bucket_num and left-joined on it. ORDER BY buckets.bucket_num is total.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q364": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "tenants_list filters by name; two tenants named e.g. 'Kibblewick' give two rows per period with the same name and different counts. The ablation verdict was wrong. With the tie-breaker the checker reports nothing.",
+  "tiebreaker": "g.tenant_id (ORDER BY g.tenant_name, g.tenant_id, g.period)",
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "tenants_list filters tenants by name, and names are not unique: two tenants named e.g. 'Kibblewick' give two rows per period with the same name and different counts, tied under ORDER BY tenant_name, period",
+  "remaining": null
+ },
+ "q365": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "JOIN LATERAL (... ORDER BY sub.started_at DESC FETCH FIRST 1) picks the latest subscription per (user, tenant). subscriptions has no unique constraint on (tenant_id, user_id, started_at). Two subscriptions started at the same time with different status/ended_at make s.status = 'active' and the category arbitrary, so the counts per category change. The checker reports this as a rownumber window finding (the decorrelated LIMIT 1). The first-round note (SUM(COUNT(*)) OVER ()) no longer applies; pattern 1 is fixed. SF1 has no such tie.",
+  "tiebreaker": "sub.id DESC after sub.started_at DESC",
+  "source": "review round 2",
+  "findings": [
+   "window"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "the LATERAL latest subscription orders by sub.started_at DESC FETCH 1 only; two subscriptions of the user started at the same time make status/ended_at (and so the filter and category) arbitrary",
+  "remaining": null
+ },
+ "q371": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY cm.quarter_start, but cohort_members is grouped by (year_num, quarter_num, quarter_start), and the label is built from year_num/quarter_num, which the schema does not tie to quarter_start. Also the 3-column LEFT JOIN to cohort_transactions (pattern 3). Adding cm.year_num, cm.quarter_num alone is still flagged (pattern 3, and as an inner join, groupjoin). Grouping cohort_transactions by quarter_start only, joining on quarter_start, and ordering by quarter_start, year_num, quarter_num makes Umbra report nothing.",
+  "tiebreaker": "cm.year_num, cm.quarter_num",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: cohort_members is grouped by (year_num, quarter_num, quarter_start) and the label is built from year_num/quarter_num, but the ORDER BY has only quarter_start, which the schema does not tie to them",
+  "remaining": null
+ },
+ "q373": {
+  "verdict": "PEDANTIC",
+  "pattern": "known (round 1): joins with aggregates lose keys (groupjoin / join of aggregation blocks on their key)",
+  "calendar_only": false,
+  "reason": "ORDER BY CASE ..., oc.order_type ends with the key. Making both joins LEFT JOINs clears the flag; ordering by oc.order_type alone does not.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true
+ },
+ "q375": {
+  "verdict": "REAL",
+  "pattern": "after the tie-breaker, two pedantic flags remain: groupjoin (member_orders inner-joined to users on (tenant_id, id) = its group key) and NEW: ORDER BY MIN(quartile) over CASE groups",
+  "calendar_only": false,
+  "reason": "Members with equal lifetime_revenue_eur on both sides of the quartile-1 cut can go into either group, which changes every group average. For example, two members at the 25% boundary each with one order of the same EUR total. The first-round label (pattern 1, ablation) was wrong. ORDER BY MIN(quartile) is total once quartile is determined ('Top' has min 1, 'Rest' has min >= 2), but the checker cannot see that: see the repro.",
+  "tiebreaker": "tenant_id, user_id in the NTILE ORDER BY",
+  "source": "review round 2",
+  "findings": [
+   "window",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "NTILE(4) ORDER BY lifetime_revenue_eur DESC: members with equal revenue at the quartile cut can land in either group, which changes every group aggregate",
+  "remaining": "top-level ORDER BY MIN(quartile): once quartile is determined, the 'Top 25%' group has MIN 1 and the 'Remaining 75%' group MIN >= 2, so the two rows never tie; the checker cannot see this through the CASE group key"
+ },
+ "q383": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY closed_at, account_name: one account can have two closed opportunities with the same closed_at (different amounts or outcomes); nothing unique is in the ORDER BY",
+  "tiebreaker": "id (target_opportunities.id)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY closed_at, account_name: one account can have two closed opportunities with the same closed_at",
+  "remaining": null
+ },
+ "q385": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY m.month_start but months is DISTINCT (month_start, month_label); calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1).",
+  "tiebreaker": "m.month_label",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "calendar-only: months is DISTINCT (month_start, month_label); by schema month_start does not determine month_label",
+  "remaining": null
+ },
+ "q386": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY gap_pct_points DESC, rep_name: the grouping key is (owner_user_id, t.name), and users.full_name is not unique (and is nullable). Two reps with the same name, or one rep in two merchants, with the same gap tie, and merchant and amounts differ.",
+  "tiebreaker": "sub.owner_user_id, merchant",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY gap_pct_points DESC, rep_name: the grouping key is (owner_user_id, t.name), and users.full_name is not unique (and nullable); two reps with the same name, or one rep in two merchants, with equal gap tie with different merchant and amounts",
+  "remaining": null
+ },
+ "q389": {
+  "verdict": "PEDANTIC",
+  "pattern": 3,
+  "calendar_only": false,
+  "reason": "periods is DISTINCT (month_start, half); adj_agg and wh are grouped by (month_start, half) and joined on both columns; ORDER BY p.month_start, p.half covers the key, and period_label is a function of it (label variants alone are not flagged). The two-column LEFT JOINs are pattern 3; note that turning them into inner joins is still flagged (see the NEW inner join pattern).",
+  "tiebreaker": null,
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": false
+ },
+ "q390": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "Grouped by adjusted_by_user_id, u.full_name; ordered by theft_tagged_count DESC, total_adjustments_logged DESC, staff_name. full_name is not unique (2362 duplicate names at SF1), and a NULL user and a user named 'Unknown/unassigned' also collide. Equal counts and names tie with a different avg hour or category counts, and the FETCH FIRST 50 cut may pick either. COUNT(*) OVER () is deterministic (pattern 1).",
+  "tiebreaker": "sa.adjusted_by_user_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by adjusted_by_user_id, ordered by counts and staff_name with FETCH 50: full names are not unique (and NULL user vs a user named 'Unknown/unassigned' collide)",
+  "remaining": null
+ },
+ "q391": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY theft_tagged_count DESC, pct DESC, warehouse_name, and warehouse names are not unique: two warehouses with the same name and equal counts tie at the LIMIT 50 cut",
+  "tiebreaker": "warehouse_id",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY theft count DESC, pct DESC, warehouse_name: warehouse names are not unique (only (tenant_id, code) is), so two warehouses with the same name and figures tie, also at FETCH 50",
+  "remaining": null
+ },
+ "q392": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY dec31_correction_abs_units DESC, tenant_name: tenant names not unique; two same-named tenants in the list with equal units tie.",
+  "tiebreaker": "t.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per tenant ordered by dec31 units DESC, tenant_name; tenant names are not unique (the list is selected by name), so same-named tenants with equal units tie",
+  "remaining": null
+ },
+ "q394": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY adjustment_count DESC, warehouse_name, sku: the group key is (warehouse_name, product_name, sku, variant_name). sku is unique only per tenant, and warehouse names are not unique, so two tenants' 'Atlanta Fulfilment Centre' warehouses with the same sku but different product or variant names tie.",
+  "tiebreaker": "product_name, variant_name (complete the group key)",
+  "source": "review",
+  "findings": [
+   "limit",
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY adjustment_count DESC, warehouse_name, sku before FETCH 50: sku is unique only per tenant and warehouse names are not unique, so groups differing in product/variant name tie",
+  "remaining": null
+ },
+ "q396": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY total_stock_on_hand DESC, warehouse_name: warehouses.name is not unique (only (tenant_id, code)), so two same-named warehouses of the listed tenant with equal stock tie with different distinct_variants_stocked/pct.",
+  "tiebreaker": "w.id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "warehouse names are unique only per (tenant_id, code), so two same-named warehouses with equal stock tie",
+  "remaining": null
+ },
+ "q398": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "One row per target tenant, ordered by resolution_breach_rate DESC, tt.tenant_name. Tenant names are not unique (the filter is by name, so two tenants called 'Studio Vrij' would both qualify). Equal name and breach rate tie with different counts.",
+  "tiebreaker": "tt.tenant_id",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "one row per target tenant ordered by resolution_breach_rate DESC, tenant_name; the target tenants are picked by name and names are not unique, so two same-named tenants with equal breach rate tie with different counts",
+  "remaining": null
+ },
+ "q401": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "GROUP BY tf.name, tt.tag_name, tot.total_tickets, but ORDER BY tf.name, ticket_count DESC, tt.tag_name leaves out total_tickets. Two tenants both named 'Studio Vrij' (names are not unique) with different total_tickets, each with tag 'billing' on 5 tickets, give two rows with the same sort key and different pct_of_tenant_tickets",
+  "tiebreaker": "tot.total_tickets (better: group by tf.id)",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by (tf.name, tag_name, total_tickets) but ordered by tf.name, ticket_count, tag_name: two same-named tenants with different total_tickets give rows that tie with different pct_of_tenant_tickets",
+  "remaining": null
+ },
+ "q403": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": true,
+  "reason": "ORDER BY m.month_label but m is DISTINCT (month_label, month_start, month_end); calendar_days has only PK calendar_date; its derived columns (month_label, month_num, month_start, quarter_start, year_num, quarter_num) have no FDs among each other in the schema (consistent in practice/SF1), so one label can map to two month_starts with different counts. (Correlated subqueries on (month_start, month_end) also hit NEW correlated-multi-outer.)",
+  "tiebreaker": "m.month_start",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "ORDER BY m.month_label, but m is DISTINCT (month_label, month_start, month_end) and calendar_days has only calendar_date as key, so one label can come with two month_starts and different counts (calendar-only)",
+  "remaining": null
+ },
+ "q404": {
+  "verdict": "REAL",
+  "pattern": null,
+  "calendar_only": false,
+  "reason": "ORDER BY t.name, shipment_count DESC: grouped by (t.name, s.carrier). Two carriers of the same merchant with the same shipment count tie, and their delivery metrics differ.",
+  "tiebreaker": "s.carrier",
+  "source": "review",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "fixed",
+  "final_reason": "grouped by (t.name, s.carrier) but ordered by t.name, shipment_count DESC; two carriers of one merchant with the same count tie with different delivery metrics",
+  "remaining": null
+ },
+ "q405": {
+  "verdict": "PEDANTIC",
+  "pattern": "4",
+  "calendar_only": false,
+  "reason": "te.name is itself a group key (so same-named tenants are merged, no tie), and the label is injective in the month. ORDER BY te.name, date_trunc('month', tt.created_at) clears the flag.",
+  "tiebreaker": null,
+  "source": "review round 2",
+  "findings": [
+   "order"
+  ],
+  "flagged_round2": true,
+  "final": "deterministic",
+  "final_reason": "GROUP BY te.name and the month; ORDER BY te.name and the 'YYYY-MM' label of the month, which is one-to-one, so the sort key is the full group key",
+  "remaining": "checker cannot see that year_month(date_trunc('month', x)) is injective in the month"
+ },
+ "q053": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "grouped by a CASE with exactly two values ('discounted', 'full price'), and the ORDER BY CASE maps them to 0 and 1",
+  "remaining": "checker cannot see that the ORDER BY CASE is injective on the two possible group values"
+ },
+ "q299": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per age_bucket (grouped, LEFT JOINed on the group key), which takes only the 9 CASE literals, and the ORDER BY CASE maps the 8 named ones to 1..8 and the only remaining value '366+ days' to 9",
+  "remaining": "checker cannot see that the ORDER BY CASE is injective on the 9 possible bucket values"
+ },
+ "q380": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "final is grouped by (tenure_band, customer_group), which take only 4 and 3 CASE literals, and both ORDER BY CASEs are injective on those values",
+  "remaining": "checker cannot see that the ORDER BY CASEs are injective on the possible band and group values"
+ },
+ "q139": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "grouped by image_count_bucket, whose only possible values are the five CASE labels ('7+' is the ELSE branch, image_count is a non-NULL COUNT), and the ORDER BY CASE maps them to 1..5, so it is injective on the group key",
+  "remaining": "checker cannot see that the ORDER BY CASE is injective over the bucket domain (appending image_count_bucket silences it)"
+ },
+ "q291": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per price_tier, whose only possible values are the four CASE labels ('\u20ac200+' is the ELSE branch, also for NULL), and the ORDER BY CASE maps them to 1..4, so it is injective on the group key",
+  "remaining": "checker cannot see that the ORDER BY CASE is injective over the price_tier domain (appending ta.price_tier silences it)"
+ },
+ "q370": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "grouped by (tenure_band, segment); tenure_band can only be the four CASE labels ('over 24 months' is the ELSE branch) and segment only 'loyalty member' or 'non-member', and the two ORDER BY CASEs map them injectively, so the order covers the group key",
+  "remaining": "checker cannot see that the ORDER BY CASEs are injective over the tenure_band and segment domains (appending s.tenure_band, s.segment silences it)"
+ },
+ "q381": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "grouped by mb.bucket, whose only possible values are the three CASE labels ('over 180 days' is the ELSE branch, also for NULL), and the ORDER BY CASE maps them to 1..3, so it is injective on the group key",
+  "remaining": "checker cannot see that the ORDER BY CASE is injective over the bucket domain (appending mb.bucket silences it)"
+ },
+ "q057": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "at most two rows, one per segment literal ('loyalty member'/'non-member'); the ORDER BY CASE maps them to distinct values 0/1",
+  "remaining": "checker cannot see that the CASE over the two-valued segment is one-to-one"
+ },
+ "q277": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per outcome_bucket, which takes one of four literal values (never NULL), and the ORDER BY CASE maps those four to distinct 1..4",
+  "remaining": "checker cannot see that the CASE over the four-valued outcome_bucket is one-to-one"
+ },
+ "q293": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per group_name, which takes one of three literal values (never NULL), and the ORDER BY CASE maps those three to distinct 1..3",
+  "remaining": "checker cannot see that the CASE over the three-valued group_name is one-to-one"
+ },
+ "q382": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per lifecycle_quartile (the other group columns come from single-row cross joins), which takes one of five literal values, and the ORDER BY CASE maps them to distinct 1..5 ('outside window' via ELSE)",
+  "remaining": "checker cannot see that the CASE over the five-valued lifecycle_quartile is one-to-one"
+ },
+ "q059": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per segment, and segment only takes 'referred', 'referrer', 'neither', which the ORDER BY CASE maps to 1, 2, 3 (injective)",
+  "remaining": "checker cannot see that the CASE over the three possible segment values is one-to-one"
+ },
+ "q085": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "GROUP BY t.name, delivery_bucket; ORDER BY t.name and a CASE that maps the two bucket values 'on-time'/'late' to 0/1, so the sort key is the full group key",
+  "remaining": "checker cannot see that the CASE over the two possible delivery_bucket values is one-to-one"
+ },
+ "q207": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per bucket; bucket is always one of the five labels and the ORDER BY CASE maps them to 1..5",
+  "remaining": "checker cannot see that the CASE over the grouping key is injective on its five possible values"
+ },
+ "q296": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per (user_status, item_count_group); each is always one of two labels and the ORDER BY CASE maps the four combinations to 1..4",
+  "remaining": "checker cannot see that the CASE over the grouping keys is injective"
+ },
+ "q376": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per (tenure_band, customer_group); each is always one of its 4 resp. 3 labels and both ORDER BY CASEs map them one-to-one",
+  "remaining": "checker cannot see that the CASEs over the grouping keys are injective"
+ },
+ "q351": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "dim_bucket is DISTINCT image_count_bucket, whose values come only from the five CASE literals (never NULL), and the ORDER BY CASE maps those five labels to distinct numbers, so every row has its own sort key",
+  "remaining": "checker does not see that the ORDER BY CASE is injective on the label's domain (the five literals of the CASE that produces it)"
+ },
+ "q379": {
+  "verdict": null,
+  "findings": [],
+  "final": "deterministic",
+  "final_reason": "one row per (customer_group, period); customer_group takes only three literal values and period only two (never NULL), and the two ORDER BY CASEs map them to distinct numbers, so the sort keys are unique",
+  "remaining": "checker does not see that the ORDER BY CASEs are injective on the domains of customer_group and period (the literals of the CASEs that produce them)"
+ }
+}

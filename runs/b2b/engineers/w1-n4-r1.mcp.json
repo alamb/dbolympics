@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business) — Corrected",
+    "--question",
+    "Among reps who own B2B wholesale new-business opportunities, are a few reps clearly underperforming on win rate or cycle time, or is performance broadly similar?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Omar\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per sales rep (opportunities.owner_user_id)\", \"columns_requested\": [\"rep_name\", \"merchant\", \"opportunities_closed\", \"closed_won\", \"closed_lost\", \"win_rate_pct\", \"avg_days_open\", \"avg_amount_eur\"], \"details\": \"Last night's attempt at this exact report returned 0 rows; the engineer's note said it filtered tenants with an exact match (industry IN ('industrial supplies','office equipment')) rather than the ILIKE pattern used successfully in earlier reports, which likely matched zero tenants. To remove all ambiguity, please filter explicitly by tenant name instead: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging') \\u2014 these are the 5 wholesale merchants confirmed present in every prior report this week. Filter opportunities to pipeline_id = that tenant's 'New business' pipeline (join pipelines on name = 'New business'), is_closed = true, grouped by owner_user_id (join users for full_name as rep_name, tenants for merchant name). Exclude reps with fewer than 3 closed opportunities in scope (note the excluded rep count in the report notes). avg_days_open = avg(closed_at - created_at) in days. For avg_amount_eur: if the opportunity's currency_code = 'EUR', amount_eur = amount directly (do not rely on a self-referential EUR/EUR row in exchange_rates, which may not exist and produced NULLs in a prior report); otherwise amount_eur = amount / rate where rate is from exchange_rates with base_code = 'EUR', quote_code = opportunity.currency_code, as_of = the nearest date on or before closed_at. Order by win_rate_pct ascending (worst first), tie-break by opportunities_closed descending, then rep_name ascending.\", \"builds_on\": [\"B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

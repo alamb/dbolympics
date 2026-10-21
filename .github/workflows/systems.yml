@@ -1,0 +1,51 @@
+# Pull requests: which systems they change, whether the benchmark bot may run them, that the bot's results commit is
+# the last one and of the systems' code as it is (tools/bot/check_pr.py, docs/BOT.md), and that the changed systems
+# render. The check comes from main, so that a pull request does not change its own check.
+name: Systems
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    container: rust:1.90-trixie
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          path: pr
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: main
+      - name: Tools
+        run: |
+          apt-get update -qq
+          DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends python3 > /dev/null
+          git config --global --add safe.directory '*'
+      - id: check
+        name: Pull request
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: python3 main/tools/bot/check_pr.py --repo-dir pr --main "$BASE" --head HEAD
+      - uses: actions/cache@v4
+        if: steps.check.outputs.systems != ''
+        with:
+          path: |
+            /usr/local/cargo/registry
+            pr/target
+          key: cargo-${{ hashFiles('pr/Cargo.lock') }}
+          restore-keys: cargo-
+      - name: Render
+        if: steps.check.outputs.systems != ''
+        env:
+          SYSTEMS: ${{ steps.check.outputs.systems }}
+        working-directory: pr
+        run: |
+          cargo build --release --locked -p dbo-bench
+          for s in $SYSTEMS; do ./target/release/dbo-bench render --system "$s" --out "rendered/$s"; done

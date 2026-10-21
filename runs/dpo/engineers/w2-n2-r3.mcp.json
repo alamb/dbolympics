@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Evidence check on the 3 legal-hold-linked chargeback disputes",
+    "--question",
+    "For the 3 accounts under a payment-dispute legal hold, what internal evidence (payment status, support ticket activity) suggests whether the underlying dispute is still active or has gone stale?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Ines\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per legal hold (3 rows: Marrowby & Vane, Rue Lafayette Studio, Cragsley Outfitters)\", \"columns_requested\": [\"tenant name\", \"subject_user_id\", \"hold placed_at (date)\", \"days since placed (2026-01-05 minus placed_at)\", \"latest payment status for this user (most recent by updated_at, via orders.user_id = subject_user_id joined to payments)\", \"latest payment updated_at (date)\", \"latest payment amount and currency\", \"open ticket count for this user (tickets.requester_user_id, status not in solved/closed)\", \"most recent ticket last_message_at for this user (date)\", \"days since that last ticket activity\"], \"details\": \"Source: legal_holds (the 3 active rows identified last week) joined by subject_user_id to orders -> payments (most recent payment by updated_at for that user) and to tickets (requester_user_id = subject_user_id). legal_holds has no populated entity_schema/entity_table/entity_id for these rows, so there's no direct link to a specific disputed payment \\u2014 this report approximates by looking at the user's most recent payment activity and most recent support ticket activity as indirect evidence of whether the case is still live or has gone quiet. Use literal date 2026-01-05 for age math. Order by days since placed, descending.\", \"builds_on\": [\"Legal holds: active scope, coverage, and staleness\", \"Linking rejected erasure requests to active legal holds\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

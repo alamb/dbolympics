@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Returns and refunds: volume and time-to-resolve trend",
+    "--question",
+    "How often do shoppers end up requesting a return/refund, and how long does that process take to resolve, and is it changing over time?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one calendar month, platform-wide\", \"columns_requested\": [\"month (YYYY-MM)\", \"orders placed\", \"returns requested\", \"return rate (%)\", \"returns refunded (count)\", \"avg days requested-to-refunded\", \"median days requested-to-refunded\", \"returns rejected (%)\"], \"details\": \"Source: order_returns (for request/approval/refund lifecycle) and orders (for volume denominator). Grain the month on order_returns.requested_at for return-side columns, and on orders.placed_at for 'orders placed'. Return rate = returns requested that month / orders placed that same month, as a percentage rounded to 1 decimal -- note in the report that this is an approximation since a return in month M may relate to an order placed in an earlier month, not necessarily the same month's orders. 'avg/median days requested-to-refunded' = extract(epoch from refunded_at - requested_at)/86400, averaged/median over returns in that month with status='refunded' and refunded_at not null. 'returns rejected (%)' = count of order_returns with status='rejected' that month / total returns requested that month, as a percentage rounded to 1 decimal. Window: 2023-01-01 through 2025-12-31 (36 months). Round day figures to 1 decimal. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Repeat purchase rate and time-to-repeat by first-order cohort month",
+    "--question",
+    "Of shoppers who place a first order, how many come back and how long does it take?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Ines\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per first-order cohort month (calendar month of each user's first paid order)\", \"columns_requested\": [\"cohort month\", \"first-time buyers\", \"repeat within 30 days (%)\", \"repeat within 60 days (%)\", \"repeat within 90 days (%)\", \"repeat buyers (any time, count)\", \"median days to second order (repeat buyers only)\"], \"details\": \"Table: orders (user_id, tenant_id, placed_at, status). Define a 'paid order' as status not in ('pending','cancelled'). For each user, their first-order date is the min placed_at among their paid orders; the cohort month is that date's calendar month. A user's second order is their next paid order (by placed_at) after the first. Compute, per cohort month: count of first-time buyers; the % of those whose second order occurred within 30/60/90 days of their first; the count who ever placed a second order; and the median (days between first and second order) among those who did. Restrict to cohort months from 2023-01 through 2025-10 inclusive, so every cohort has at least a 90-day observation window against data complete through 2025-12-31. Round percentages to 1 decimal and the median to a whole number of days. Order by cohort month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Delivery speed and return rate by merchant, Q4 2025",
+    "--question",
+    "Do merchants whose deliveries run slower/later also see higher return rates — an early read on whether delivery experience is eroding trust?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Viktor\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per tenant (the same 10 tenants as the original Q4 funnel report)\", \"columns_requested\": [\"tenant name\", \"shipments delivered in window (count)\", \"median delivery days (delivered_at minus shipped_at)\", \"pct of shipments over 7 days to deliver\", \"pct of Q4 orders with at least one return\"], \"details\": \"Tenants: Brennquell Kaffee, Spice Route Box, Grind Collective, Honeycomb Larder, Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik (look up tenant_id by name in tenants). Shipments: from shipments joined through fulfillments to orders for tenant_id, where shipments.shipped_at is in 2025-10-01 to 2025-12-31 and delivered_at is not null. delivery_days = delivered_at - shipped_at, in days. median_delivery_days = median across those shipments, rounded 1 decimal. pct_over_7_days = share of those shipments with delivery_days > 7, rounded 1 decimal (this is a generic proxy for 'late' since there's no promised-delivery-date field in the schema \\u2014 flag this assumption in the report notes). Returns: among orders with placed_at in 2025-10-01 to 2025-12-31 for that tenant, the % that have at least one row in order_returns (order_returns.order_id = orders.id), rounded 1 decimal. Order rows by pct_over_7_days descending, tie-break by tenant name.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

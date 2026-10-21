@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t.id AS tenant_id,\n  t.name AS tenant_name,\n  t.status AS tenant_status,\n  COUNT(ak.id) AS total_api_keys,\n  SUM(CASE WHEN ak.status = 'active' THEN 1 ELSE 0 END) AS active_api_keys,\n  SUM(CASE WHEN ak.status IN ('revoked','expired') THEN 1 ELSE 0 END) AS revoked_or_expired_keys,\n  SUM(CASE WHEN ak.status = 'active' AND ak.last_used_at IS NULL THEN 1 ELSE 0 END) AS active_never_used,\n  SUM(CASE WHEN ak.status = 'active' AND ak.last_used_at < TIMESTAMP '2025-10-05 00:00:00' THEN 1 ELSE 0 END) AS active_unused_90d,\n  MAX(CASE WHEN ak.status = 'active' THEN DATE '2026-01-05' - CAST(ak.created_at AS DATE) ELSE NULL END) AS oldest_active_key_age_days,\n  COALESCE(sa.service_account_count, 0) AS service_accounts_count\nFROM api_keys ak\nJOIN tenants t ON t.id = ak.tenant_id\nLEFT JOIN (\n  SELECT tenant_id, COUNT(*) AS service_account_count\n  FROM service_accounts\n  GROUP BY tenant_id\n) sa ON sa.tenant_id = t.id\nGROUP BY t.id, t.name, t.status, sa.service_account_count\nORDER BY active_never_used DESC, active_unused_90d DESC, t.name ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_id, tenant_name, tenant_status, total_api_keys, active_api_keys, revoked_or_expired_keys, active_never_used, active_unused_90d, oldest_active_key_age_days, service_accounts_count"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t.name AS tenant_name,\n  t.status AS tenant_status,\n  COUNT(ak.id) AS total_api_keys,\n  SUM(CASE WHEN ak.status = 'active' THEN 1 ELSE 0 END) AS active_api_keys,\n  SUM(CASE WHEN ak.status IN ('revoked','expired') THEN 1 ELSE 0 END) AS revoked_or_expired_keys,\n  SUM(CASE WHEN ak.status = 'active' AND ak.last_used_at IS NULL THEN 1 ELSE 0 END) AS active_never_used,\n  SUM(CASE WHEN ak.status = 'active' AND ak.last_used_at < TIMESTAMP '2025-10-05 00:00:00' THEN 1 ELSE 0 END) AS active_unused_90d,\n  MAX(CASE WHEN ak.status = 'active' THEN DATE '2026-01-05' - CAST(ak.created_at AS DATE) ELSE NULL END) AS oldest_active_key_age_days,\n  COALESCE(sa.service_account_count, 0) AS service_accounts_count\nFROM api_keys ak\nJOIN tenants t ON t.id = ak.tenant_id\nLEFT JOIN (\n  SELECT tenant_id, COUNT(*) AS service_account_count\n  FROM service_accounts\n  GROUP BY tenant_id\n) sa ON sa.tenant_id = t.id\nGROUP BY t.id, t.name, t.status, sa.service_account_count\nORDER BY active_never_used DESC, active_unused_90d DESC, t.name ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, tenant_status, total_api_keys, active_api_keys, revoked_or_expired_keys, active_never_used, active_unused_90d, oldest_active_key_age_days, service_accounts_count"
+ },
+ {
+  "kind": "text",
+  "text": "This compiles with exactly the 9 requested columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t.name AS tenant_name,\n  t.status AS tenant_status,\n  COUNT(ak.id) AS total_api_keys,\n  SUM(CASE WHEN ak.status = 'active' THEN 1 ELSE 0 END) AS active_api_keys,\n  SUM(CASE WHEN ak.status IN ('revoked','expired') THEN 1 ELSE 0 END) AS revoked_or_expired_keys,\n  SUM(CASE WHEN ak.status = 'active' AND ak.last_used_at IS NULL THEN 1 ELSE 0 END) AS active_never_used,\n  SUM(CASE WHEN ak.status = 'active' AND ak.last_used_at < TIMESTAMP '2025-10-05 00:00:00' THEN 1 ELSE 0 END) AS active_unused_90d,\n  MAX(CASE WHEN ak.status = 'active' THEN DATE '2026-01-05' - CAST(ak.created_at AS DATE) ELSE NULL END) AS oldest_active_key_age_days,\n  COALESCE(sa.service_account_count, 0) AS service_accounts_count\nFROM api_keys ak\nJOIN tenants t ON t.id = ak.tenant_id\nLEFT JOIN (\n  SELECT tenant_id, COUNT(*) AS service_account_count\n  FROM service_accounts\n  GROUP BY tenant_id\n) sa ON sa.tenant_id = t.id\nGROUP BY t.id, t.name, t.status, sa.service_account_count\nORDER BY active_never_used DESC, active_unused_90d DESC, t.name ASC\nLIMIT 50",
+  "note": "Grain is one row per tenant (grouped internally by t.id for correctness even though not printed). \"Active keys unused 90+ days\" excludes never-used keys (NULL last_used_at doesn't satisfy the < comparison), so the two abandonment buckets are mutually exclusive. Report prints up to 50 of the tenants that have at least one api_keys row; total row count is shown on the printed report per house standard.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per tenant with the nine requested columns, ordered to surface the most abandoned-looking merchants first (most active-never-used keys, then most active-unused-90+-days, then tenant name), capped at 50 rows."
+ }
+]

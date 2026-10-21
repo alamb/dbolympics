@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  to_status,\n  count(*) as total_transitions,\n  count(*) filter (where changed_by_user_id is not null) as transitions_with_actor,\n  round(100.0 * count(*) filter (where changed_by_user_id is not null) / nullif(count(*), 0), 1) as share_with_actor_pct,\n  count(distinct tenant_id) as distinct_tenants\nfrom order_status_history\nwhere created_at >= date '2023-01-01' and created_at < date '2026-01-01'\ngroup by to_status\norder by total_transitions desc, to_status",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: to_status, total_transitions, transitions_with_actor, share_with_actor_pct, distinct_tenants"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "select\n  to_status,\n  count(*) as total_transitions,\n  count(*) filter (where changed_by_user_id is not null) as transitions_with_actor,\n  round(100.0 * count(*) filter (where changed_by_user_id is not null) / nullif(count(*), 0), 1) as share_with_actor_pct,\n  count(distinct tenant_id) as distinct_tenants\nfrom order_status_history\nwhere created_at >= date '2023-01-01' and created_at < date '2026-01-01'\ngroup by to_status\norder by total_transitions desc, to_status",
+  "note": "Grain is one row per to_status, covering all transitions from 2023-01-01 through 2025-12-31 (created_at < 2026-01-01). Expect 7 rows, one per order status.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `order_status_history` by `to_status` across the full 2023-01-01–2025-12-31 window, showing total transitions, transitions with a non-null `changed_by_user_id`, the actor-recorded share (%), and distinct tenant count — which will directly show whether the actor gap is isolated to `cancelled` or systemic across all 7 status values."
+ }
+]

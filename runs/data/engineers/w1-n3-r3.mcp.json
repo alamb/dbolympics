@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Customer headcount by definition",
+    "--question",
+    "Do different reasonable definitions of 'how many customers we have' or 'how many are active' give meaningfully different headcounts?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Felix\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"customer count definition\", \"columns_requested\": [\"definition\", \"user_count\", \"pct_of_all_customers\"], \"details\": \"Scope: all tenants combined, non-staff users only (users.is_staff = false). As-of date for all 'current state' columns: the data cutoff 2025-12-31. Rows (definitions), each counting distinct users.id: (1) 'All customers (ever created)' - all non-staff users with created_at <= 2025-12-31; this is the denominator for pct_of_all_customers. (2) 'Status = active' - users.status = 'active'. (3) 'Placed at least one order, ever' - distinct users.id appearing in orders (any status) with placed_at <= 2025-12-31. (4) 'Placed at least one order in trailing 12 months' - distinct users.id with an order placed_at between 2025-01-01 and 2025-12-31. (5) 'Has an active or trialing subscription' - distinct users.id with a subscriptions row where status in ('active','trialing'). (6) 'Logged in within last 90 days of data' - users.last_login_at >= 2025-10-03. pct_of_all_customers = user_count / (count from definition 1) * 100, rounded to 1 decimal. Tables: users, orders, subscriptions. Order by user_count descending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

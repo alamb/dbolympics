@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant risk signals snapshot: receivables, traffic and revenue trend",
+    "--question",
+    "Which merchants look at risk right now, based on unpaid invoices, traffic decline, and revenue trend — our 'accounts to watch' list?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Omar\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"vertical\", \"unpaid invoice balance (EUR, open+past_due invoices)\", \"web traffic change Q4 vs Q3 2025 (%, session count)\", \"fee revenue change Q4 vs Q3 2025 (%)\", \"days since last order placed (as of 2026-01-05)\", \"tenant status\"], \"details\": \"Source: invoices (status in 'open','past_due', amount_due summed per tenant, converted to EUR using the most recent available exchange_rates as_of date on or before 2025-12-31) for unpaid balance; web_sessions (started_at in Q3 2025 vs Q4 2025, count per tenant) for traffic change; payouts (status='paid', paid_at in Q3 2025 vs Q4 2025, fee_amount converted to EUR) for revenue change; orders (max placed_at per tenant, any status) for recency; tenants for name/vertical/status (exclude deleted_at not null). Traffic and revenue change = 100*(Q4-Q3)/Q3, null if Q3 value is zero. Order by unpaid invoice balance EUR descending, tie-break by traffic change ascending (most negative first), then merchant name. Print top 50 rows and note total merchant count with any non-zero unpaid balance or traffic/revenue decline.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

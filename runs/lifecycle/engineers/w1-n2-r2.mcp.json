@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Loyalty member order behavior before vs after enrollment",
+    "--question",
+    "For the same loyalty members, does their own order frequency, spend and refund rate actually change after they enroll, compared to their behavior before they joined - or is the elevated refund rate already present pre-enrollment?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Bea\", \"situation\": \"loyalty-programme-review\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per relative period: 'pre-enrollment' vs 'post-enrollment', aggregated across all loyalty members' own orders\", \"columns_requested\": [\"period\", \"distinct_customers\", \"total_orders\", \"avg_order_value_eur\", \"orders_per_customer_per_year\", \"refund_rate_pct\"], \"details\": \"Population: users with a row in loyalty_accounts; use the earliest enrolled_at per user if they have multiple program enrollments. For each such user, split their orders (any status, placed_at not null) into 'pre-enrollment' (placed_at before enrolled_at) and 'post-enrollment' (placed_at on or after enrolled_at). total_orders and distinct_customers are simple counts within each period. avg_order_value_eur uses non-cancelled orders, grand_total converted to EUR via exchange_rates (as_of placed_at). refund_rate_pct = share of orders in that period with payments.amount_refunded greater than 0 OR an order_returns row. orders_per_customer_per_year = total_orders in the period divided by (sum across customers of their exposed days in that period divided by 365); exposed days pre-enrollment = enrolled_at minus the customer's first order placed_at (or users.created_at if no earlier order) for that customer; exposed days post-enrollment = (customer's last order placed_at, or 2025-12-31 if still active) minus enrolled_at; floor exposed days at 1 to avoid division by zero. Order rows: 'pre-enrollment' first, then 'post-enrollment'.\", \"builds_on\": [\"Loyalty member vs non-member customer behavior\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

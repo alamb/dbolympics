@@ -1,0 +1,59 @@
+{
+ "notes": "Reading night 1 critically, two things jump out before I trust the headline numbers, plus one new question worth opening.\n\n(1) Suspicious invariant: in report 1, abs_units_variance equals cycle_count_events exactly in every single month (e.g. Jan 764=764), and avg_abs_units_per_event is 1.0 in all 12 months. Report 3 shows the same identity for every one of 105 categories (Bikes 102=102, Tops 1086=1086, etc). That means every recorded cycle-count discrepancy is off by exactly one unit, with zero variation — never 2, never 5. That's either a real and important finding (our \"size of discrepancy\" story is really a \"frequency of single-unit misses\" story, which changes the materiality narrative for Tobias) or a sign that stock_movements.quantity isn't what I think it is for this kind. I want to verify this against other movement kinds before I put it in the memo as fact.\n\n(2) Report 2's top 50 rows (ranked by value) are *all* location_kind='pick' — not one bulk/overflow/other row appears. That's a strong concentration signal for Tomasz's \"particular kinds of storage locations\" question, but I need a company-wide total by location_kind (not filtered to top-50-by-warehouse) to confirm it isn't just pick locations dominating the value ranking while other kinds still carry meaningful event counts further down the list.\n\n(3) Tomasz's Q4 (reservation reliability) hasn't been touched yet. With two slots going to validate/sharpen findings 1 and 2 above, I have a free slot to open Q4 tonight rather than wait, since nights 3-4 will still be needed for deeper drill-down and the trend view (Q5).\n\nTonight's three requests: (A) movement-magnitude distribution by kind, to sanity-check the ±1 pattern and see if 'adjustment'-kind movements (a different, less formal correction path) carry larger swings; (B) a clean location-kind-only rollup (not crossed with warehouse) so kinds with little/no cycle-count activity are visible as explicit zero/low rows; (C) a first read on stock reservation reliability — how often holds are released normally vs. left stuck past their expiry, which overstates sellable availability.",
+ "requests": [
+  {
+   "title": "Stock movement magnitude by kind, 2025",
+   "question": "Is the finding that every recorded cycle-count discrepancy is exactly 1 unit (not a range of sizes) real, or does it only show up because other movement kinds behave differently — i.e., is quantity magnitude on stock_movements generally variable, or is ±1 specific to cycle_count?",
+   "grain": "stock_movements.kind (one row per kind: receipt, shipment, adjustment, transfer, return, cycle_count)",
+   "columns": [
+    "kind",
+    "event_count (rows in 2025)",
+    "min_abs_qty",
+    "max_abs_qty",
+    "avg_abs_qty (rounded 2dp)",
+    "median_abs_qty",
+    "pct_abs_qty_eq_1 (% of rows where abs(quantity)=1, rounded 1dp)",
+    "total_abs_qty (sum of abs(quantity) for the kind)"
+   ],
+   "details": "Source: stock_movements, occurred_at between 2025-01-01 and 2025-12-31 inclusive, across all tenants. Group by kind. abs_qty = abs(quantity). Compute min, max, average, median and the total sum of abs(quantity), plus the percentage of rows per kind where abs(quantity) equals exactly 1. No joins needed beyond stock_movements itself. Order by kind alphabetically for determinism.",
+   "builds_on": [
+    "Scale of stock count discrepancies by month",
+    "Stock discrepancies by product category: handling vs tracking-method issue"
+   ]
+  },
+  {
+   "title": "Stock-count discrepancies by storage-location kind, company-wide",
+   "question": "Across the whole company (not just the top warehouses by value), does the cycle-count mismatch concentrate in pick locations specifically, or do other location kinds (bulk, overflow, etc.) also carry meaningful discrepancy volume?",
+   "grain": "stock_locations.kind",
+   "columns": [
+    "location_kind",
+    "distinct_locations_with_activity (count of distinct stock_location_id with >=1 cycle_count event in the window)",
+    "total_locations_of_this_kind (count of distinct stock_location_id of this kind that exist at all, active or not)",
+    "cycle_count_events",
+    "abs_units_variance",
+    "net_units_variance (signed; negative = net shrinkage)",
+    "estimated_value_eur (same costing/FX method as night 1: preferred-then-cheapest supplier_products.unit_cost, converted to EUR via exchange_rates on the movement's occurred_at date)",
+    "share_of_total_value_pct"
+   ],
+   "details": "Start from the full set of distinct stock_locations.kind values across all tenants (so a kind with zero cycle_count activity still appears as a row with 0s, via LEFT JOIN — do not just omit kinds with no matches). Then LEFT JOIN stock_movements where kind='cycle_count' and occurred_at between 2025-01-01 and 2025-12-31 on stock_location_id, aggregating per stock_locations.kind. total_locations_of_this_kind should count all stock_locations rows of that kind regardless of activity, to show how much of the location base is even generating cycle counts. Order by estimated_value_eur descending, tie-break by location_kind.",
+   "builds_on": [
+    "Stock discrepancies by warehouse and location type"
+   ]
+  },
+  {
+   "title": "Stock reservation outcomes: are soft holds reliable?",
+   "question": "When stock is reserved for an order, does the reservation get released normally (order fulfilled/cancelled in time), or do we see reservations left stuck past their expiry — quietly overstating what's actually available to sell?",
+   "grain": "reservation outcome category",
+   "columns": [
+    "outcome_category",
+    "reservation_count",
+    "pct_of_total (rounded 1dp)",
+    "total_quantity_units (sum of quantity across reservations in this category)",
+    "avg_quantity_per_reservation (rounded 1dp)",
+    "avg_hold_duration_days (for released rows: released_at minus created_at; for still-open rows: 2025-12-31 minus created_at; rounded 1dp)"
+   ],
+   "details": "Source: stock_reservations where created_at is between 2025-01-01 and 2025-12-31. Define four mutually exclusive outcome categories, evaluated with 2025-12-31 as the fixed 'as of' reference date (the last date the warehouse has complete data for — do not use CURRENT_DATE): (1) 'released_on_time' = released_at is not null and (expires_at is null or released_at <= expires_at); (2) 'released_late' = released_at is not null and expires_at is not null and released_at > expires_at; (3) 'stuck_past_expiry' = released_at is null and expires_at is not null and expires_at < 2025-12-31 (an expired hold that was never released — the 'zombie' case that overstates unavailable stock); (4) 'still_open_active' = released_at is null and (expires_at is null or expires_at >= 2025-12-31). Order rows in that fixed category order (released_on_time, released_late, stuck_past_expiry, still_open_active) rather than alphabetically, so the report reads as a funnel.",
+   "builds_on": []
+  }
+ ]
+}

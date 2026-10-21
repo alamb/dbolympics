@@ -1,0 +1,59 @@
+{
+ "notes": "The pieces from the last three nights line up almost too neatly to leave unverified: the 3 'rejected' DSARs (night 3, report 1) never get completed_at stamped — which inflated my earlier backlog numbers — and their received_at dates (2023-05-26, 2024-07-09, 2025-03-21) sit exactly one day before the 3 active legal holds' placed_at dates (2023-05-27, 2024-07-10, 2025-03-22) for the same three tenants (chargeback disputes). This looks like 'erasure correctly rejected pending an active legal hold,' which would completely reframe item 1 from 'overdue backlog' to 'holds that are now 1-2.5 years stale' — feeding directly into item 5. I want a direct join to confirm the same subject_user_id is involved before I write that into the memo, rather than relying on date coincidence. Separately, night 3's retention landscape report (report 2) surfaced the clearest answer yet to item 4: email_log has a 730-day/delete policy configured for all 120 tenants, but it is active=0 and never_run=120 for every single one — meaning it's pure paperwork, never enforced. I want to size that gap in actual months of retained email data. As a contrast, audit_log looks 'healthy' on paper (active, last_run_at=2025-12-31, action=archive) — I want to check whether old rows are actually leaving the live table, since 'archive' could just as easily mean nothing is really being purged in practice. This is my last night, so I'm spending all 3 slots on the highest-value remaining checks rather than broad new territory.",
+ "requests": [
+  {
+   "title": "Linking rejected erasure requests to active legal holds",
+   "question": "Do the 3 long-open 'rejected' data subject requests correspond to the same shopper and tenant as the 3 active legal holds for payment disputes?",
+   "grain": "one row per data_subject_requests record with status = 'rejected', left-joined to legal_holds on matching tenant_id and subject_user_id = legal_holds.subject_user_id",
+   "columns": [
+    "dsar public_id",
+    "tenant name",
+    "dsar subject_user_id",
+    "dsar request type",
+    "dsar received_at (date)",
+    "matched legal hold name (null if no match)",
+    "legal hold subject_user_id (null if no match)",
+    "legal hold reason (truncated, null if no match)",
+    "legal hold is_active",
+    "legal hold placed_at (date)",
+    "days between dsar received_at and hold placed_at"
+   ],
+   "details": "Source: data_subject_requests filtered to status = 'rejected' (expect exactly 3 rows, from Marrowby & Vane, Rue Lafayette Studio, Cragsley Outfitters per night 3). LEFT JOIN legal_holds ON legal_holds.tenant_id = data_subject_requests.tenant_id AND legal_holds.subject_user_id = data_subject_requests.subject_user_id. If subject_user_id isn't populated on data_subject_requests for these rows, fall back to matching on tenant_id only and show legal_holds rows placed within 3 days of received_at as candidate matches, noting which join strategy was used. Order by dsar received_at ascending.",
+   "builds_on": [
+    "Currently open data subject requests: age and overdue detail",
+    "Data subject request status audit: does completed_at reflect true closure?",
+    "Legal holds: active scope, coverage, and staleness"
+   ]
+  },
+  {
+   "title": "email_log actual retention vs. the stated 730-day delete policy",
+   "question": "Since email_log's retention policy is configured but inactive and has never run for any tenant, how much email data are we actually still holding well past the stated 730-day window?",
+   "grain": "one row per calendar month, based on email_log.created_at",
+   "columns": [
+    "month (YYYY-MM)",
+    "emails logged in month (count)",
+    "days old as of 2026-01-05 (measured from month start)",
+    "exceeds 730-day retention (Y/N)"
+   ],
+   "details": "Source: email_log, platform-wide (all tenants), grouped by date_trunc('month', created_at) or joined to calendar_days. Span the full 2023-01 through 2025-12 history so we can see the total volume of retained email data and how far past the 730-day policy threshold the oldest months are, using the literal date 2026-01-05 (not CURRENT_DATE) for the age calculation. This directly sizes the gap identified last night: retention_policies shows a 730-day/delete rule for email_log configured for all 120 tenants but with active_count = 0 and never_run_count = 120. Order by month ascending.",
+   "builds_on": [
+    "Retention policy landscape: distinct rules by entity table"
+   ]
+  },
+  {
+   "title": "audit_log actual archiving vs. the stated 730-day archive policy",
+   "question": "audit_log's retention policy looks healthy on paper (active, last run 2025-12-31) — but are rows older than 730 days actually leaving the live table as the 'archive' action implies?",
+   "grain": "one row per calendar month, based on audit_log.occurred_at",
+   "columns": [
+    "month (YYYY-MM)",
+    "audit_log rows still present in month (count)",
+    "days old as of 2026-01-05 (measured from month start)",
+    "exceeds 730-day retention (Y/N)"
+   ],
+   "details": "Source: audit_log (the live table, not audit_log_archive), platform-wide, grouped by date_trunc('month', occurred_at) or joined to calendar_days, spanning 2023-01 through 2025-12. Use literal date 2026-01-05 for age math. The policy says rows older than 730 days should be archived (moved out of audit_log into audit_log_archive) and most tenants show the job as active with last_run_at = 2025-12-31, so if months older than 730 days (roughly before 2024-01) still show substantial row counts here, that means the archive step isn't actually clearing the live table in practice despite looking healthy on the policy/run-log level. Order by month ascending.",
+   "builds_on": [
+    "Retention policy landscape: distinct rules by entity table"
+   ]
+  }
+ ]
+}

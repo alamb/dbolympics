@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH base AS (\n  SELECT\n    COALESCE(a.touch_point, '(none)') AS touch_point,\n    a.order_id,\n    a.attributed_revenue,\n    a.currency_code,\n    a.weight,\n    a.occurred_at\n  FROM attributions a\n  WHERE a.campaign_id IS NULL\n    AND a.order_id IS NOT NULL\n    AND a.occurred_at >= DATE '2025-01-01'\n    AND a.occurred_at < DATE '2026-01-01'\n),\nconverted AS (\n  SELECT\n    b.touch_point,\n    b.order_id,\n    b.weight,\n    CASE WHEN b.currency_code = 'EUR' THEN b.attributed_revenue\n         ELSE b.attributed_revenue / er.rate END AS revenue_eur\n  FROM base b\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n    AND er.quote_code = b.currency_code\n    AND er.as_of = CAST(b.occurred_at AS date)\n),\ntotals AS (\n  SELECT COUNT(DISTINCT order_id) AS total_orders FROM base\n)\nSELECT\n  c.touch_point,\n  COUNT(DISTINCT c.order_id) AS distinct_orders_count,\n  ROUND(COUNT(DISTINCT c.order_id) * 100.0 / t.total_orders, 1) AS share_of_no_campaign_orders_pct,\n  ROUND(SUM(c.revenue_eur), 0) AS attributed_revenue_eur,\n  ROUND(AVG(c.weight), 2) AS avg_weight\nFROM converted c\nCROSS JOIN totals t\nGROUP BY c.touch_point, t.total_orders\nORDER BY distinct_orders_count DESC, touch_point ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: touch_point, distinct_orders_count, share_of_no_campaign_orders_pct, attributed_revenue_eur, avg_weight"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH base AS (\n  SELECT\n    COALESCE(a.touch_point, '(none)') AS touch_point,\n    a.order_id,\n    a.attributed_revenue,\n    a.currency_code,\n    a.weight,\n    a.occurred_at\n  FROM attributions a\n  WHERE a.campaign_id IS NULL\n    AND a.order_id IS NOT NULL\n    AND a.occurred_at >= DATE '2025-01-01'\n    AND a.occurred_at < DATE '2026-01-01'\n),\nconverted AS (\n  SELECT\n    b.touch_point,\n    b.order_id,\n    b.weight,\n    CASE WHEN b.currency_code = 'EUR' THEN b.attributed_revenue\n         ELSE b.attributed_revenue / er.rate END AS revenue_eur\n  FROM base b\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n    AND er.quote_code = b.currency_code\n    AND er.as_of = CAST(b.occurred_at AS date)\n),\ntotals AS (\n  SELECT COUNT(DISTINCT order_id) AS total_orders FROM base\n)\nSELECT\n  c.touch_point,\n  COUNT(DISTINCT c.order_id) AS distinct_orders_count,\n  ROUND(COUNT(DISTINCT c.order_id) * 100.0 / t.total_orders, 1) AS share_of_no_campaign_orders_pct,\n  ROUND(SUM(c.revenue_eur), 0) AS attributed_revenue_eur,\n  ROUND(AVG(c.weight), 2) AS avg_weight\nFROM converted c\nCROSS JOIN totals t\nGROUP BY c.touch_point, t.total_orders\nORDER BY distinct_orders_count DESC, touch_point ASC",
+  "note": "EUR conversion assumes exchange_rates always has an EUR->currency row for each occurred_at date (including weekends carrying forward); if a currency/date pair is ever missing, that row's revenue_eur will be null rather than silently wrong.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups 2025 no-campaign attribution rows (with an order) by `touch_point`, showing distinct order counts, their share of the no-campaign population, EUR-converted attributed revenue, and average weight — ordered by order volume descending — which should let Sofie see directly whether the no-campaign bucket is dominated by organic/direct/referral touch points or something messier."
+ }
+]

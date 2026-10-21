@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Active API keys on churned tenants: scope and recent use",
+    "--question",
+    "The 2 churned tenants found earlier with a still-active API key (Dewdrop Studio, Aurum & Ash) — do those specific keys carry elevated (admin_api) scope, and how recently were they actually used?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per active api_keys row belonging to a tenant with tenants.status = 'churned'\", \"columns_requested\": [\"tenant name\", \"key name\", \"age in days (2026-01-05 minus created_at)\", \"last_used_at\", \"days since last use\", \"associated rate_limits.limit_scope, if any\", \"associated rate_limits.max_requests, if any\"], \"details\": \"Source: api_keys where status = 'active', joined to tenants where tenants.status = 'churned', left-joined to rate_limits on api_key_id. Expect a small result (2 rows based on the 'Access still open on churned tenants' report from two nights ago, which found 1 active key each for Dewdrop Studio and Aurum & Ash). Order by tenant name, then key name.\", \"builds_on\": [\"Access still open on churned tenants, by surface\", \"Detail list of the oldest active API keys (4+ years), by tenant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

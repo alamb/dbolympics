@@ -1,0 +1,55 @@
+{
+ "requests": [
+  {
+   "title": "Lost B2B Wholesale Deals: When Does Activity Happen Relative to the Deal's Life",
+   "question": "For deals that eventually get lost, does sales activity cluster early, stay steady throughout, or come in a late flurry right before the deal is given up on — or does it go quiet before the end (stalled and forgotten)?",
+   "grain": "one row per lifecycle quartile (relative position within each lost opportunity's own created_at-to-closed_at window)",
+   "columns": [
+    "lifecycle_quartile (Q1 0-25%, Q2 25-50%, Q3 50-75%, Q4 75-100% of the deal's own duration)",
+    "total_activities_in_bucket",
+    "pct_of_total_activities",
+    "opportunities_with_at_least_one_activity_in_bucket",
+    "pct_of_lost_opportunities_with_activity_in_bucket"
+   ],
+   "details": "Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, opportunities where is_closed = true and is_won = false. For each such opportunity, join activities where activities.opportunity_id = opportunity.id. For each activity compute relative_position = (activity.occurred_at - opportunity.created_at) / NULLIF(opportunity.closed_at - opportunity.created_at, 0), expressed as a fraction of the deal's own lifespan. Bucket into quartiles: Q1 [0, 0.25), Q2 [0.25, 0.5), Q3 [0.5, 0.75), Q4 [0.75, 1.0] inclusive of activities right at closed_at. If any activity falls outside [0,1] (e.g. logged after closed_at, or the opportunity has zero duration), put it in a 5th 'outside window' bucket rather than discarding it, and flag how many rows that affects. total_activities_in_bucket = count of activities in that bucket; pct_of_total_activities = that count / total activities across all lost opportunities in scope; opportunities_with_at_least_one_activity_in_bucket = distinct opportunity count; pct_of_lost_opportunities_with_activity_in_bucket = that count / total lost opportunities in scope (a fixed denominator across rows). Order Q1 through Q4, then 'outside window' last if present.",
+   "builds_on": [
+    "New Business Only: Won vs Lost Opportunity Characteristics"
+   ]
+  },
+  {
+   "title": "Youssef Meijer: Individual New-Business Opportunities",
+   "question": "Looking at Youssef Meijer's own deals one by one — which accounts, what sizes, how long open — does his low win rate look like a few bad accounts/territory, or a pattern across all his work?",
+   "grain": "one row per opportunity owned by Youssef Meijer",
+   "columns": [
+    "account_name",
+    "outcome (won / lost)",
+    "amount_eur",
+    "currency_code",
+    "days_open (closed_at - created_at)",
+    "created_at",
+    "closed_at"
+   ],
+   "details": "Filter to opportunities where owner_user_id matches the user named 'Youssef Meijer' at Polder Packaging (join users on full_name = 'Youssef Meijer' and tenant_id = Polder Packaging's tenant_id, to avoid any name collision at another tenant), pipeline_id = Polder Packaging's 'New business' pipeline, is_closed = true (we've confirmed all his opportunities are closed; this report should return all of them, won and lost, expected around 7 rows per last week's rep-level report). Join accounts for account_name via opportunities.account_id. Convert amount to EUR: if currency_code = 'EUR', amount_eur = amount directly; otherwise amount_eur = amount / rate from exchange_rates (base_code='EUR', quote_code=currency_code, as_of nearest date on or before closed_at). Order by closed_at ascending, tie-break by account_name ascending, so the report reads as a chronological case file.",
+   "builds_on": [
+    "B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business) — Corrected"
+   ]
+  },
+  {
+   "title": "Did B2B Wholesale New-Business Pipeline Ever Carry an Open Balance at Month-End?",
+   "question": "Is the current complete absence of open new-business pipeline a constant feature of the last three years, or did merchants used to carry live open deals and that's changed recently?",
+   "grain": "one row per calendar month-end snapshot, 2023-01 through 2025-12",
+   "columns": [
+    "month_end_date",
+    "opportunities_open_at_month_end",
+    "avg_age_days_of_open_opportunities_at_month_end",
+    "oldest_age_days_of_open_opportunity_at_month_end"
+   ],
+   "details": "Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), opportunities where pipeline_id = each tenant's 'New business' pipeline. For each calendar month from 2023-01 through 2025-12, take the last calendar day of that month as the snapshot date (derive from calendar_days, e.g. max(calendar_date) grouped by year_num, month_num). Count opportunities where created_at <= end of that snapshot date AND (closed_at IS NULL OR closed_at > end of that snapshot date) — i.e. opportunities that were genuinely open and straddling that month boundary. For those, compute avg and max age in days (snapshot_date - created_at::date). If a month has zero qualifying opportunities, still include the row with 0 / NULL / NULL. Order by month_end_date ascending.",
+   "builds_on": [
+    "B2B Wholesale Pipeline: Opportunities by Merchant and Stage",
+    "B2B Wholesale: Age Profile of Currently Open New-Business Pipeline"
+   ]
+  }
+ ],
+ "notes": "Patrick wants Q1 (shape of activity on lost deals) and Q3 (Youssef Meijer deep-dive) prioritized, with Q2 (is zero open pipeline a constant or recent change) and Q4 (seasonality of when deals die) able to slip. I'm using all 3 slots tonight on Q1, Q3, and Q2 since Q2 is a cheap, decisive check (one grouped query against a 36-month calendar spine) that directly answers whether 'no open pipeline' is a real 3-year pattern or a recent artifact — worth confirming before Patrick takes it to Samuel. Q4 (quarter/seasonal timing of when lost deals die) is the one I'm holding back this week since it's explicitly lower priority and I'd rather see tonight's three answers first — if Q1's activity-timing report shows a seasonal clustering on its own, that might already partially answer Q4 for free. The Youssef Meijer report deliberately keeps scope to his own New-business opportunities only, matching how we found him (via last week's corrected rep-level report), and converts to EUR using the same formula we fixed last week to avoid repeating the earlier NULL bug."
+}

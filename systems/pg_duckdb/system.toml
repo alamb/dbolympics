@@ -1,0 +1,44 @@
+# PostgreSQL 18 with the pg_duckdb extension, from its image: the tables are ordinary
+# PostgreSQL tables, and DuckDB runs the queries on them (duckdb.force_execution).
+# The load is the same as for plain PostgreSQL (../postgres).
+name = "pg_duckdb"
+# the version, kept with the results (by hand)
+version = "1.1.1 (PostgreSQL 18.1)"
+# arrays as PostgreSQL literals, which COPY parses
+arrays = "text"
+
+
+[load]
+statement = "COPY (SELECT * FROM read_parquet('{file}')) TO '/tmp/dbo_stage.csv' (FORMAT csv, HEADER false); COPY {table} FROM '/tmp/dbo_stage.csv' (FORMAT csv)"
+
+[dialect]
+# for the whole session: DuckDB also runs the load's staging COPY (so it says HEADER false)
+settings = ["SET duckdb.force_execution = true"]
+
+[dialect.types]
+json = "jsonb"
+
+[dialect.functions]
+# no DISTINCT in window aggregates: the distinct non-NULL values from two dense ranks
+"count_distinct_over(x, window)" = "(DENSE_RANK() OVER ({window} ORDER BY {x} ASC NULLS FIRST) + DENSE_RANK() OVER ({window} ORDER BY {x} DESC NULLS LAST) - 1 - MAX(CASE WHEN {x} IS NULL THEN 1 ELSE 0 END) OVER ({window}))"
+
+[[container]]
+name = "db"
+image = "docker.io/pgduckdb/pgduckdb:18-v1.1.1"
+# sized as in ClickBench: a quarter of the memory for shared buffers, one worker per core
+command = [
+    "postgres",
+    "-c", "unix_socket_directories=/var/run/postgresql,/run/dbo",
+    "-c", "shared_buffers={memory_mb%25}MB",
+    "-c", "effective_cache_size={memory_mb%75}MB",
+    "-c", "max_worker_processes={threads%300}",
+    "-c", "max_parallel_workers={threads}",
+    "-c", "max_parallel_workers_per_gather={threads%50}",
+    "-c", "max_parallel_maintenance_workers={threads%50}",
+    "-c", "work_mem=64MB",
+    "-c", "max_wal_size=32GB",
+    "-c", "duckdb.max_memory={memory_mb%25}MB",
+    "-c", "duckdb.max_workers_per_postgres_scan={threads%50}",
+]
+# byte order for text, as the other systems sort (the image's default locale sorts "&" differently)
+env = { POSTGRES_PASSWORD = "Dbolympics-Bench-2026!", POSTGRES_INITDB_ARGS = "--locale=C --encoding=UTF8" }

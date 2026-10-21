@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  t.name as tenant_name,\n  count(*) as never_revoked_sessions,\n  count(*) filter (where s.expires_at > timestamp '2026-01-05 00:00:00') as still_within_expiry,\n  count(*) filter (where s.expires_at <= timestamp '2026-01-05 00:00:00') as already_expired,\n  max(s.expires_at) as latest_expires_at,\n  max(s.last_seen_at) as latest_last_seen_at\nfrom sessions s\njoin tenants t on t.id = s.tenant_id\nwhere t.status = 'churned'\n  and s.revoked_at is null\ngroup by t.name\norder by still_within_expiry desc, tenant_name asc",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, never_revoked_sessions, still_within_expiry, already_expired, latest_expires_at, latest_last_seen_at"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the right grain and columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "select\n  t.name as tenant_name,\n  count(*) as never_revoked_sessions,\n  count(*) filter (where s.expires_at > timestamp '2026-01-05 00:00:00') as still_within_expiry,\n  count(*) filter (where s.expires_at <= timestamp '2026-01-05 00:00:00') as already_expired,\n  max(s.expires_at) as latest_expires_at,\n  max(s.last_seen_at) as latest_last_seen_at\nfrom sessions s\njoin tenants t on t.id = s.tenant_id\nwhere t.status = 'churned'\n  and s.revoked_at is null\ngroup by t.name\norder by still_within_expiry desc, tenant_name asc",
+  "note": "One row per churned tenant, counting never-revoked sessions split into still-valid (expires_at > 2026-01-05) vs naturally expired, plus the latest expiry and latest real use (last_seen_at) among them.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives, per churned tenant: total never-revoked sessions, how many are still within their expiry window (the live risk) versus already expired on their own, plus the latest `expires_at` and `last_seen_at` among them — directly answering whether this is an exploitable risk or just stale bookkeeping."
+ }
+]

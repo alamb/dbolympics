@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Audit log volume and actor identification by month",
+    "--question",
+    "Is our audit trail continuous over time with no unexplained gaps, and are logged actions reliably tied to an identifiable actor rather than null/system placeholders?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Ines\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per calendar month (based on occurred_at), combining live audit_log and audit_log_archive, from 2023-01 through 2025-12\", \"columns_requested\": [\"month (YYYY-MM)\", \"audit_log_live_events (count from audit_log with occurred_at in month)\", \"audit_log_archived_events (count from audit_log_archive with occurred_at in month)\", \"total_audit_events (sum of the two)\", \"pct_actor_user_id_null (share of combined rows where actor_user_id is null)\", \"distinct_actor_type_values (count distinct actor_type across combined rows in month)\", \"pct_actor_type_system_or_api (share where actor_type in ('system','api_key','service_account') rather than 'user')\", \"access_log_events (count from access_log with occurred_at in month, as a separate sensitive-data-read signal)\"], \"details\": \"Sources: audit_log, audit_log_archive (same shape, union on occurred_at month), access_log (separate, not unioned \\u2014 just a parallel count). Purpose is purely diagnostic: look for months with suspiciously low total_audit_events (possible logging gaps) and for high/rising pct_actor_user_id_null or pct_actor_type_system_or_api (possible actor-identity weakness, relevant before we cite audit evidence in the questionnaire). Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

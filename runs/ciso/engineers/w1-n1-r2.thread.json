@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT t.id AS tenant_id,\n       t.name AS tenant_name,\n       t.status AS tenant_status,\n       COUNT(CASE WHEN u.is_staff THEN u.id END) AS staff_user_count,\n       COUNT(CASE WHEN u.is_staff AND um.has_mfa THEN u.id END) AS staff_users_with_mfa,\n       ROUND(100.0 * COUNT(CASE WHEN u.is_staff AND um.has_mfa THEN u.id END)\n             / NULLIF(COUNT(CASE WHEN u.is_staff THEN u.id END), 0), 1) AS staff_mfa_rate_pct,\n       COUNT(CASE WHEN NOT u.is_staff THEN u.id END) AS shopper_user_count,\n       COUNT(CASE WHEN NOT u.is_staff AND um.has_mfa THEN u.id END) AS shopper_users_with_mfa,\n       ROUND(100.0 * COUNT(CASE WHEN NOT u.is_staff AND um.has_mfa THEN u.id END)\n             / NULLIF(COUNT(CASE WHEN NOT u.is_staff THEN u.id END), 0), 1) AS shopper_mfa_rate_pct,\n       COUNT(u.id) AS total_users\nFROM tenants t\nJOIN users u\n  ON u.tenant_id = t.id\n AND u.deleted_at IS NULL\nLEFT JOIN (\n    SELECT tenant_id, user_id, true AS has_mfa\n    FROM mfa_devices\n    WHERE confirmed_at IS NOT NULL\n    GROUP BY tenant_id, user_id\n) um\n  ON um.tenant_id = u.tenant_id\n AND um.user_id = u.id\nGROUP BY t.id, t.name, t.status\nORDER BY staff_mfa_rate_pct ASC NULLS LAST, tenant_name ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_id, tenant_name, tenant_status, staff_user_count, staff_users_with_mfa, staff_mfa_rate_pct, shopper_user_count, shopper_users_with_mfa, shopper_mfa_rate_pct, total_users"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT t.id AS tenant_id,\n       t.name AS tenant_name,\n       t.status AS tenant_status,\n       COUNT(CASE WHEN u.is_staff THEN u.id END) AS staff_user_count,\n       COUNT(CASE WHEN u.is_staff AND um.has_mfa THEN u.id END) AS staff_users_with_mfa,\n       ROUND(100.0 * COUNT(CASE WHEN u.is_staff AND um.has_mfa THEN u.id END)\n             / NULLIF(COUNT(CASE WHEN u.is_staff THEN u.id END), 0), 1) AS staff_mfa_rate_pct,\n       COUNT(CASE WHEN NOT u.is_staff THEN u.id END) AS shopper_user_count,\n       COUNT(CASE WHEN NOT u.is_staff AND um.has_mfa THEN u.id END) AS shopper_users_with_mfa,\n       ROUND(100.0 * COUNT(CASE WHEN NOT u.is_staff AND um.has_mfa THEN u.id END)\n             / NULLIF(COUNT(CASE WHEN NOT u.is_staff THEN u.id END), 0), 1) AS shopper_mfa_rate_pct,\n       COUNT(u.id) AS total_users\nFROM tenants t\nJOIN users u\n  ON u.tenant_id = t.id\n AND u.deleted_at IS NULL\nLEFT JOIN (\n    SELECT tenant_id, user_id, true AS has_mfa\n    FROM mfa_devices\n    WHERE confirmed_at IS NOT NULL\n    GROUP BY tenant_id, user_id\n) um\n  ON um.tenant_id = u.tenant_id\n AND um.user_id = u.id\nGROUP BY t.id, t.name, t.status\nORDER BY staff_mfa_rate_pct ASC NULLS LAST, tenant_name ASC\nLIMIT 50",
+  "note": "Tenants are grouped and ordered by staff MFA rate ascending (worst coverage first), tenant name as tie-break. The underlying query returns one row per tenant with at least one active user (expected up to ~120); only the first 50 (lowest staff MFA rate) are printed per the page cap, so the weakest-coverage merchants are the ones shown.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns one row per tenant (staff vs. shopper MFA adoption, rates, and totals), ordered by staff MFA rate ascending so the weakest merchants surface first, capped at the 50-row page limit as noted to the analyst."
+ }
+]

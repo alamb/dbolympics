@@ -1,0 +1,43 @@
+=== Report 1: Reconciled 2025 orphan population by tenant and subscription status (single pass) (written by Ines) ===
+Engineer's note: Built as one pass: base_orders filters 2025 non-cancelled orders carrying a 'Subscription delivery (prepaid)' discount; row_per_order computes, per order_id via correlated scalar subqueries (no duplicating joins), the summed discount amount, an orphan flag (no subscriptions row with status in trialing/active/past_due whose started_at/ended_at window covers placed_at), and the most-recent subscription status by started_at; categorized maps that status to canceled/active/other-or-no-subscription-record and converts the discount to EUR via exchange_rates(EUR->currency_code, as_of=placed_at date), dividing by the rate (EUR rows pass through unconverted). The final aggregation groups orphan-only rows by tenant and status category. Note: I cannot execute this against real data myself (dry_run only validates against an empty schema, and I have no other read access), so I could not pre-check the per-tenant totals against last week's reference figures (167/127/100/49/17/1, 461 orders, €22,318.18) — please have the batch run confirm reconciliation; if a tenant's summed orphan count across its status rows doesn't match its reference figure, the likely causes are either multiple order_discounts rows per order for other discount names being miscounted (unlikely, since we filter by exact discount name) or orders whose user_id had no rows in `subscriptions` at all previously being excluded/included differently than last week's method.
+REPORT: Reconciled 2025 orphan population by tenant and subscription status (single pass)
+QUESTION: In one single query, does the 2025 orphan subscription-delivery population split by tenant reproduce last week's known-good totals (Grind Collective 167, Honeycomb Larder 127, Kibblewick 100, Feather & Fin 49, Saffron & Sage 17, The Balm Room 1 — 461 orders, €22,318.18 total), and how does each tenant's orphan pool split by the customer's most-recent subscription status?
+tenant_name           | status_category | orphan_order_count | distinct_customers | total_discount_amount_eur
+----------------------+-----------------+--------------------+--------------------+--------------------------
+Brennquell Kaffee     | active          |                165 |                 35 |                   6644.97
+Brennquell Kaffee     | canceled        |                726 |                127 |                   30086.8
+Chocolaterie Mireille | canceled        |                 14 |                  2 |                     74.22
+Feather & Fin         | active          |                 10 |                  3 |                    745.13
+Feather & Fin         | canceled        |                 39 |                  7 |                    1051.5
+Grind Collective      | active          |                 41 |                  8 |                   1094.27
+Grind Collective      | canceled        |                126 |                 20 |                   8213.85
+Honeycomb Larder      | active          |                 24 |                  5 |                    933.19
+Honeycomb Larder      | canceled        |                103 |                 19 |                   5045.72
+Kibblewick            | active          |                 13 |                  3 |                    591.12
+Kibblewick            | canceled        |                 87 |                 18 |                    2489.6
+Mirelle               | canceled        |                 14 |                  3 |                   1365.36
+Pfotenglück           | canceled        |                 18 |                  4 |                    609.38
+Saffron & Sage        | canceled        |                 17 |                  5 |                   1974.96
+Spice Route Box       | active          |                 33 |                  5 |                    1501.9
+Spice Route Box       | canceled        |                172 |                 30 |                   5924.43
+The Balm Room         | canceled        |                  1 |                  1 |                    178.84
+Whisker Works         | active          |                  5 |                  1 |                    235.81
+Whisker Works         | canceled        |                  5 |                  2 |                    153.03
+(19 rows)
+
+=== Report 2: Reconciled full-history (2023-2025) orphan population by tenant and subscription status (single pass) (written by Omar) ===
+Engineer's note: Two caveats: (1) I don't have the text of the earlier "2025-only" request in this session, so I had to reconstruct the "orphan" definition from context: an order with a non-zero discount_total but no matching row in order_discounts (a one-row-per-order_id subquery using NOT EXISTS, so no fan-out), bucketed by the status of the most recent subscription linked via invoices (canceled / active / other-or-no-subscription-record), discounts converted to EUR via exchange_rates. If the prior report used a different orphan definition, this won't reconcile and should be re-aligned. (2) As the data engineer I only submit the query to the overnight batch and never see its output (dry_run runs against an empty schema), so I cannot personally confirm the ~1,188 orders / ~€57,658.66 canceled-bucket figures or state the grand totals - please have the analyst read those off the printed report and flag back if it diverges, e.g. due to a different orphan definition, FX edge cases, or EUR-currency orders being excluded by the exchange_rates join.
+REPORT: Reconciled full-history (2023-2025) orphan population by tenant and subscription status (single pass)
+QUESTION: Using the same single-pass, fan-out-safe construction, does the full-history orphan population by tenant and status reproduce the monthly trend's cumulative canceled-bucket total (~€57,658.66, roughly 1,188 orders by hand-summing last week's monthly report)?
+tenant_name | status_category | orphan_order_count | distinct_customers | total_discount_eur
+------------+-----------------+--------------------+--------------------+-------------------
+(0 rows)
+
+=== Report 3: Fan-out-safe date classification of the 2025 active-bucket orphan orders (written by Ines) ===
+Engineer's note: I don't have the prior "orphan order" / tenant-level reconciliation report in hand, so I defined "orphan order" as a 2025 order whose customer has no subscription (of any status) with started_at<=placed_at<=ended_at (or open-ended), i.e. no subscription period covered the order at placement time - please confirm this matches the earlier report's flag logic. "Most-recent subscription" is the one with the latest started_at (ties broken by higher id) per customer. Each row already comes from one order-grain CTE before the GROUP BY, so order_count/customers/EUR total are from an identical order set per category; sum the three rows to get the active-bucket grand total to check against the reconciliation report.
+REPORT: Fan-out-safe date classification of the 2025 active-bucket orphan orders
+QUESTION: Rebuilt carefully so the category counts and the discount total come from the same population: of the 2025 orphan orders whose customer's most-recent subscription is 'active', how many had that subscription start after the order, how many show active status despite an already-past end date, and how many have dates that should have overlapped (a bug)?
+category                              | order_count | pct_of_active_bucket | distinct_customers | total_discount_eur
+--------------------------------------+-------------+----------------------+--------------------+-------------------
+subscription started after this order |         560 |                100.0 |                213 |             730.14
+(1 rows)

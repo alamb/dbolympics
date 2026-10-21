@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant-Level Quarterly Refund Rate, 2025 (excluding Apparel & Footwear)",
+    "--question",
+    "Which specific non-Apparel merchant(s) caused the refund-rate spike in 2025-Q2/Q3?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one tenant (merchant), for 2025, with quarterly refund rates as columns\", \"columns_requested\": [\"merchant_name\", \"vertical\", \"gross_captured_eur_fy2025\", \"refund_rate_q1_pct\", \"refund_rate_q2_pct\", \"refund_rate_q3_pct\", \"refund_rate_q4_pct\", \"refund_rate_fy2025_pct\"], \"details\": \"Source: payments joined to tenants, excluding tenants.industry = 'Apparel & Footwear', filtered to status reflecting captured/refunded/partially_refunded with captured_at in calendar year 2025. Convert amount and amount_refunded to EUR via exchange_rates as in the vertical-quarter report. For each tenant, compute refund_rate_pct (amount_refunded_eur / gross_captured_eur * 100) separately for each of Q1-Q4 2025 and for the full year, pivoted into one row per tenant. Restrict to tenants with at least 20 qualifying payments in 2025 total, to avoid single-payment noise (note in the report how many tenants were excluded by this threshold). Order by refund_rate_q3_pct descending, tie-break merchant_name ascending; print the top 30 rows.\", \"builds_on\": [\"Refund Rate by Vertical and Quarter, 2025\", \"Merchant Refund Rate Outliers, 2025 (merchants with 50+ captured payments)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

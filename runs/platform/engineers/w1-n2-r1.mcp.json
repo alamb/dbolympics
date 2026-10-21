@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Q4 Weekly Job Reliability and Lateness",
+    "--question",
+    "Within the window job_runs actually covers (Oct-Dec 2025), how did failure rates and job lateness (queue delay, not just run duration) trend week by week?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Bea\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per ISO week (week_start date), Oct 1 - Dec 31 2025\", \"columns_requested\": [\"week_start\", \"total_job_runs\", \"failed_runs\", \"failure_rate_pct\", \"avg_queue_delay_seconds\", \"p95_queue_delay_seconds\", \"pct_jobs_queue_delay_over_5min\", \"avg_duration_seconds\"], \"details\": \"Table job_runs. Filter queued_at >= 2025-10-01 and < 2026-01-01 (the full range the table holds, per night-1 Report 1). Group by ISO week of queued_at (use calendar_days.week_start joined on date(queued_at)). queue_delay = started_at - queued_at in seconds, only where both non-null; avg rounded 1dp, p95 via percentile_cont(0.95) rounded to whole seconds. pct_jobs_queue_delay_over_5min = share of runs (with both timestamps set) where queue_delay > 300 seconds, rounded 1dp - this is the 'ran late' measure Diego asked about, distinct from execution duration. avg_duration_seconds as in the prior report (finished_at - started_at, both set). Platform-wide, all tenants. Order by week_start ascending.\", \"builds_on\": [\"2025 Background Job Reliability by Month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

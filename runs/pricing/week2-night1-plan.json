@@ -1,0 +1,57 @@
+{
+ "notes": "Marco wants the €57k lapsed-subscriber number airtight before it goes to Tobias, wants Welcome10's refund pattern explained one layer deeper, wants an honest size-matched incrementality attempt, and wants the leakage trend over time — four questions, three slots tonight, so I'm sequencing by what's blocking the Wednesday sync.\n\nPriority tonight is the subscription-leakage story since Marco explicitly wants it checked before taking it upstairs, so two of three slots go there:\n1. A methodology check on the 18%/€11.7k \"active\" bucket from last week — I suspect this isn't a real gap but an artifact of how I categorized customers by their *single most-recent* subscription record: if their current subscription started after the free order, there may well have been an older (now-superseded) subscription that actually covered the order date, which would mean it belongs with the \"canceled/lapsed\" leakage story rather than being unexplained. I want this resolved before stating a number to Tobias.\n2. A monthly trend (full 2023-2025 history) on the confirmed \"canceled-subscriber\" leakage bucket, to tell Marco whether this is a slow-burning historical gap or getting worse — directly answers his accelerating-or-steady question.\n\nThird slot goes to digging one layer into Welcome10's refund pattern (which category of products it clusters in, and whether return timing looks like fit/expectation mismatch vs. quick-flip behavior) — the one piece Marco called out as worth a deeper look before any capping conversation. I'm holding the harder, size-matched incrementality re-cut for night 2, since it needs more careful design and isn't needed before Wednesday's sync, whereas the subscription-leakage number is.\n\nAlso noting for context (not acting on tonight): Growth Marketing's company-wide finding that discounted orders return 5-7pts more with no basket-size boost in apparel/electronics lines up with our Welcome10 finding — useful external corroboration, not a new data pull.",
+ "requests": [
+  {
+   "title": "Is the 'active' 18% of orphan subscription-delivery orders a categorization artifact or a real gap?",
+   "question": "For the ~291 orphan free-delivery orders where the customer's most-recent subscription record shows status 'active', did that order actually fall in a gap between an earlier (now-superseded) subscription and the current one, which would mean it belongs with the confirmed 'canceled' leakage group rather than being a separate unexplained case?",
+   "grain": "one row per explanation category",
+   "columns": [
+    "category: 'order preceded customer's first-ever subscription' / 'order fell between two subscription stints (an older subscription record exists with started_at <= order date)' / 'unexplained - active subscription dates should already have overlapped'",
+    "order count",
+    "% of the 291 active-bucket orphan orders",
+    "distinct customers",
+    "total discount amount (EUR)"
+   ],
+   "details": "Source: start from the exact orphan-order population used in last week's reports (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at in 2025, status != 'cancelled', no overlapping subscription with status in trialing/active/past_due for that user+tenant), restricted to the subset whose most-recent subscription (by started_at) has status = 'active' (the 291-order/60-customer group from last week, ~€11,746). For each such order, check: (a) does the customer have any OTHER subscription row for that tenant (any status) with started_at <= order.placed_at? If yes and that older subscription's own coverage (started_at to ended_at, or started_at to current date if still open) does not include placed_at, classify as 'fell between two subscription stints'. If no such older row exists at all, classify as 'preceded first-ever subscription'. Otherwise ('unexplained') flag for manual review. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by order count descending. Print all categories (expect 3 rows).",
+   "builds_on": [
+    "Subscription status distribution behind orphan comped-delivery orders"
+   ]
+  },
+  {
+   "title": "Monthly trend of confirmed lapsed-subscriber free-delivery leakage, 2023-2025",
+   "question": "Is the confirmed leakage (free deliveries going to customers whose subscription had already been canceled) a slow-burning historical gap, steady, or accelerating?",
+   "grain": "one row per calendar month, 2023-01 through 2025-12",
+   "columns": [
+    "month (YYYY-MM)",
+    "orphan orders where most-recent subscription status = 'canceled' (count)",
+    "distinct customers",
+    "total discount amount (EUR)",
+    "cumulative total discount amount, running sum since 2023-01 (EUR)"
+   ],
+   "details": "Source: order_discounts + discounts (name='Subscription delivery (prepaid)') + orders (placed_at across full history 2023-01-01 to 2025-12-31, status != 'cancelled', user_id, tenant_id) restricted to orders with no overlapping subscription (status in trialing/active/past_due, same overlap definition as before) AND whose customer's most-recent subscription (by started_at) has status = 'canceled' (the confirmed-leakage group, ~82% of orphans, ~€57k in 2025 alone). Join to calendar_days (or extract month from placed_at) to get month_label. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Order by month ascending. Print all 36 months.",
+   "builds_on": [
+    "Subscription-delivery discount orders with no overlapping active subscription",
+    "Subscription status distribution behind orphan comped-delivery orders"
+   ]
+  },
+  {
+   "title": "What's driving Welcome10's elevated refund pattern: category concentration and return timing",
+   "question": "Is the Welcome10 instance's outsized refund total concentrated in particular product categories, and does the time between order and return look like a fit/expectation-mismatch problem (fast returns) or something else?",
+   "grain": "one row per product category, restricted to the single Welcome10 discount instance with 260 orders (coupon_code='WELCOME10') identified in last week's report",
+   "columns": [
+    "category name (products.primary_category_id -> categories.name)",
+    "order_item count sold under this discount instance",
+    "distinct orders",
+    "items returned (return_items count)",
+    "return rate (% of items sold that were returned)",
+    "total refund amount for this category (EUR)",
+    "this category's share of the instance's total refund amount (%)",
+    "avg days between order placed_at and the return's requested_at (for returned items)"
+   ],
+   "details": "Source: re-identify the same discount_id as last week by discounts.name='Welcome 10% off' whose 2025 non-cancelled order count via order_discounts equals exactly 260. For those 260 orders, join order_items (quantity, product_variant_id) -> product_variants -> products (primary_category_id) -> categories (name); join return_items (via order_item_id) -> order_returns (status, requested_at, refund_amount or order_returns.refund_total apportioned) for returns tied to those order_items. Convert refund amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=order_returns.requested_at or refunded_at). Order by total refund amount (EUR) descending, category name as tie-break. Print all categories.",
+   "builds_on": [
+    "Concentration of refund cost on the two highest refund-to-discount-ratio instances"
+   ]
+  }
+ ]
+}

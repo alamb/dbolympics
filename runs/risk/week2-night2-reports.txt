@@ -1,0 +1,34 @@
+=== Report 1: February 2025 repeat-failure accounts: did they succeed afterward? (corrected) (written by Ines) ===
+Engineer's note: Cohort is built per (tenant_id, email) as requested. avg_failed_attempts_before_success equals the pair's total Feb-2025 failed-attempt count, since by construction the qualifying success always occurs after that pair's last failure, so all its Feb failures precede it. All four buckets are always printed (zero-filled if empty) so counts and percentages are exhaustive.
+REPORT: February 2025 repeat-failure accounts: did they succeed afterward? (corrected)
+QUESTION: Among the accounts with 5+ failed logins in February 2025, how many went on to log in successfully afterward, and how soon — i.e. was this a near-miss or just noise?
+outcome_bucket           | pair_count | pct_of_cohort | avg_failed_attempts_before_success | distinct_tenants_affected
+-------------------------+------------+---------------+------------------------------------+--------------------------
+succeeded_within_1h      |          6 |           6.1 |                                5.5 |                         3
+succeeded_within_24h     |          2 |           2.0 |                                5.0 |                         2
+succeeded_later_in_month |         12 |          12.2 |                                5.5 |                         2
+never_succeeded_in_month |         78 |          79.6 |                               NULL |                         3
+(4 rows)
+
+=== Report 2: Flagged compliance/security incidents: volume, severity and resolution time (written by Omar) ===
+Engineer's note: One row per severity across all tenants/types, 2023-01-01 through 2025-12-31 (occurred_at). Age and resolve-time figures are in days; median uses percentile_cont. Severities with zero resolved events will show NULL for avg/median days to resolve.
+REPORT: Flagged compliance/security incidents: volume, severity and resolution time
+QUESTION: How many compliance/security incidents have been flagged, how severe are they, how long do they typically take to resolve, and is anything still sitting open a long time?
+severity | total_events | resolved_count | unresolved_count | pct_resolved | avg_days_to_resolve | median_days_to_resolve | oldest_unresolved_age_days | distinct_event_types
+---------+--------------+----------------+------------------+--------------+---------------------+------------------------+----------------------------+---------------------
+high     |            4 |              4 |                0 |        100.0 |                 7.2 |                    9.6 |                       NULL |                    2
+medium   |            4 |              4 |                0 |        100.0 |                17.9 |                   19.4 |                       NULL |                    1
+(2 rows)
+
+=== Report 3: How far back does data go in tables without a retention policy? (written by Felix) ===
+Engineer's note: One row per table as requested, each sourced from a single table (no tenant filter, since the question is platform-wide). pct_older_than_730_days is rounded to 2 decimals; NULLIF guards against divide-by-zero if a table is empty.
+REPORT: How far back does data go in tables without a retention policy?
+QUESTION: For the five tables that currently have no configured retention policy, how far back does the oldest data actually go, and how much of it is already older than our one known retention benchmark (audit_log's 730-day policy)?
+table_name            | earliest_record_date | days_since_earliest_record | total_row_count | row_count_older_than_730_days | pct_older_than_730_days
+----------------------+----------------------+----------------------------+-----------------+-------------------------------+------------------------
+access_log            | 2023-01-02           |                       1094 |            8502 |                          2157 |                   25.37
+change_history        | 2021-11-10           |                       1512 |           31099 |                          5537 |                    17.8
+compliance_events     | 2021-10-23           |                       1530 |               9 |                             3 |                   33.33
+data_subject_requests | 2020-04-24           |                       2077 |              60 |                            22 |                   36.67
+login_attempts        | 2023-01-01           |                       1095 |          186320 |                         45321 |                   24.32
+(5 rows)

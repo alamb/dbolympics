@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Consent trend by purpose and month: grants, withdrawals, and net opt-in rate",
+    "--question",
+    "How has the mix of granted vs. withdrawn vs. never-given consent changed over time, by purpose?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per consent purpose and calendar month (based on consent_records.occurred_at for the month's new events; net opt-in figures are evaluated as of that month's last day)\", \"columns_requested\": [\"purpose\", \"month (YYYY-MM)\", \"grants recorded in month (status='granted' events occurring in month)\", \"withdrawals recorded in month (status='withdrawn' events occurring in month)\", \"expirations recorded in month (status='expired' events occurring in month)\", \"users with any consent record for this purpose as of month end (distinct user_id across consent_records with occurred_at <= month end)\", \"net active opt-ins at month end (distinct users whose most recent consent_records row for this purpose, as of month end, has status='granted')\", \"active opt-in rate at month end (net active opt-ins / users with any consent record for this purpose as of month end, rounded to 1 decimal percent)\"], \"details\": \"Source: consent_records. 'Most recent row per user per purpose as of month end' should use a window function (ROW_NUMBER partition by tenant_id, user_id, purpose order by occurred_at desc, restricted to occurred_at <= month end) to find the effective status. Build the month series from calendar_days (month_start) so months with zero events still appear, spanning 2023-01 through 2025-12. List each distinct purpose value found in consent_records as its own set of rows (do not assume specific purpose strings in advance \\u2014 group by whatever purpose values exist in the data). Platform-wide, all tenants. Order by purpose, then month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

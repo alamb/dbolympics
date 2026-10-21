@@ -1,0 +1,19 @@
+# the query program (query.rs), built by install
+[package]
+name = "query"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[[bin]]
+name = "query"
+path = "query.rs"
+
+[dependencies]
+# the runner's protocol, shared by every query program
+dbo = { path = "../dbo", features = ["pg"] }
+# plain HTTP
+ureq = { version = "=3.4.2", default-features = false }
+
+# not a member of the repository's workspace
+[workspace]

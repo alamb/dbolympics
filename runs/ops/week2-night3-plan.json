@@ -1,0 +1,56 @@
+{
+ "notes": "I can already answer most of priorities #2-#4 by hand from data I have: (a) the full-year carrier table lets me compute that today's overall transit on-time rate (pct within 3 days) is ~78%, and if the three weak carriers matched the ~88% weighted average of the other 11 carriers, overall on-time would rise to ~88% -- i.e. roughly 45% of our current unreliability sits with these three carriers, the rest is baseline slop even among good carriers. (b) the non-censored PO report fully resolves #3: pct_matured_still_open is ~0% in every quarter including the mature Oct-only slice of Q4 -- there is no real backlog, the 418 \"open\" POs were purely a right-censoring artifact. The late-delivery rate itself (47-59%) is real and chronic, but it's a persistent promise-miss rate, not a growing queue -- worth flagging as its own issue. (c) the vertical report resolves #4: Beauty and Apparel & Footwear have the highest fulfillment-shortfall rates (4.5-4.7% of orders), but Apparel is actually the *fastest* and most reliable vertical once an order fully delivers (3.84 avg days, 82.4% within 5) -- so the picking-discrepancy issue looks like a separate, real completeness problem (customers getting short quantities), not a delivery-speed problem. Tonight I want to re-express the carrier \"ceiling\" story in the exact metric Priya already quotes (order-level pct-within-5-days, not shipment transit), and isolate how much of the Nov-Dec dip is specifically attributable to Albion vs. everything else, plus quantify the Lowlands lane-fix opportunity -- these three numbers should make the carrier narrative airtight and actionable.",
+ "requests": [
+  {
+   "title": "Order-level delivery reliability: weak carriers vs rest, 2025",
+   "question": "In the same order-level metric I've already reported to Priya (pct within 5 days), how much better would our overall delivery reliability be if the three weak carriers matched everyone else?",
+   "grain": "one row per carrier_group: 'Weak three' (Albion Parcel, Landfall Freight, Lowlands Express) vs 'All other carriers'",
+   "columns": [
+    "carrier_group",
+    "orders_fully_delivered",
+    "avg_delivery_days (placed_at to delivered_at)",
+    "pct_within_5_days",
+    "share_of_orders_pct"
+   ],
+   "details": "Scope: orders with placed_at in 2025-01-01 through 2025-12-31, status='fulfilled', restricted to orders with exactly one row in fulfillments and that fulfillment linked to exactly one row in shipments, with that shipment's delivered_at not null (clean single-carrier attribution). delivery_days = DATEDIFF(day, orders.placed_at, shipments.delivered_at). carrier_group = 'Weak three' if shipments.carrier in ('Albion Parcel','Landfall Freight','Lowlands Express'), else 'All other carriers'. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order by carrier_group ascending. Expect 2 rows.",
+   "builds_on": [
+    "Carrier performance, full year 2025 (complete)",
+    "Delivery time trend, monthly (2024-2025)"
+   ]
+  },
+  {
+   "title": "Order-level delivery reliability: Albion Parcel vs rest, baseline vs collapse, 2025",
+   "question": "How much of the November-December delivery slowdown is specifically attributable to Albion Parcel, versus everything else?",
+   "grain": "one row per carrier_group ('Albion Parcel' vs 'All other carriers') and period ('baseline': placed_at Jan-Oct 2025; 'collapse': placed_at Nov-Dec 2025)",
+   "columns": [
+    "carrier_group",
+    "period",
+    "orders_fully_delivered",
+    "avg_delivery_days",
+    "pct_within_5_days",
+    "share_of_period_orders_pct"
+   ],
+   "details": "Same scoping and single-carrier attribution rule as the weak-carriers-vs-rest report (orders placed_at in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null). period is based on orders.placed_at (baseline = 2025-01-01 to 2025-10-31; collapse = 2025-11-01 to 2025-12-31). carrier_group = 'Albion Parcel' if shipments.carrier = 'Albion Parcel', else 'All other carriers'. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order by period ascending, then carrier_group ascending. Expect 4 rows.",
+   "builds_on": [
+    "Albion Parcel performance by destination country, baseline vs collapse",
+    "Albion Parcel performance by origin warehouse, baseline vs collapse"
+   ]
+  },
+  {
+   "title": "Order-level delivery reliability: Lowlands Express by destination lane, 2025",
+   "question": "How much better would Lowlands Express's orders perform, and how much would that help overall, if we only used it on its strong home lanes (Netherlands, Belgium, France) and moved everything else off it?",
+   "grain": "one row per lane_group: 'Lowlands core (NL/BE/FR)', 'Lowlands non-core (other countries)', 'All other carriers'",
+   "columns": [
+    "lane_group",
+    "orders_fully_delivered",
+    "avg_delivery_days",
+    "pct_within_5_days",
+    "share_of_orders_pct"
+   ],
+   "details": "Same scoping and single-carrier attribution rule as the other two reports in this set (orders placed_at in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null). For orders where shipments.carrier = 'Lowlands Express', further split by the order's destination country (orders.shipping_address_id -> addresses -> countries): 'Lowlands core' if country in ('Netherlands','Belgium','France'), else 'Lowlands non-core'. All other orders (any other carrier) go to 'All other carriers'. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order: 'Lowlands core' first, then 'Lowlands non-core', then 'All other carriers'. Expect 3 rows.",
+   "builds_on": [
+    "Landfall Freight & Lowlands Express performance by destination country, full year 2025"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH q AS (\n  SELECT 1 AS q_num, date '2025-01-01' AS q_start, date '2025-04-01' AS q_end\n  UNION ALL SELECT 2, date '2025-04-01', date '2025-07-01'\n  UNION ALL SELECT 3, date '2025-07-01', date '2025-10-01'\n  UNION ALL SELECT 4, date '2025-10-01', date '2026-01-01'\n),\nm AS (\n  SELECT id, name FROM tenants WHERE name IN ('Cragsley Outfitters','Marrowby & Vane','Studio Vrij','Grind Collective')\n)\nSELECT\n  m.name AS merchant_name,\n  '2025-Q' || q.q_num AS quarter,\n  count(tk.id) AS urgent_tickets_evaluated,\n  round(\n    100.0 * sum(\n      case when tk.id is not null\n             and (tk.resolved_at is null or tk.resolved_at > tk.created_at + (sp.resolution_target_minutes || ' minutes')::interval)\n           then 1 else 0 end\n    )::numeric / nullif(count(tk.id), 0)\n  , 1) AS urgent_miss_rate_pct,\n  round(\n    avg(case when tk.resolved_at is not null then extract(epoch from tk.resolved_at - tk.created_at) / 3600.0 end)::numeric\n  , 1) AS avg_actual_resolution_hours,\n  round(\n    percentile_cont(0.5) within group (\n      order by case when tk.resolved_at is not null then extract(epoch from tk.resolved_at - tk.created_at) / 3600.0 end\n    )::numeric\n  , 1) AS median_actual_resolution_hours\nFROM m\nCROSS JOIN q\nLEFT JOIN tickets tk\n  ON tk.tenant_id = m.id\n  AND tk.priority = 'urgent'\n  AND tk.sla_policy_id IS NOT NULL\n  AND tk.created_at >= q.q_start AND tk.created_at < q.q_end\nLEFT JOIN sla_policies sp ON sp.id = tk.sla_policy_id\nGROUP BY m.name, q.q_num\nORDER BY m.name ASC, q.q_num ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: merchant_name, quarter, urgent_tickets_evaluated, urgent_miss_rate_pct, avg_actual_resolution_hours, median_actual_resolution_hours"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH q AS (\n  SELECT 1 AS q_num, date '2025-01-01' AS q_start, date '2025-04-01' AS q_end\n  UNION ALL SELECT 2, date '2025-04-01', date '2025-07-01'\n  UNION ALL SELECT 3, date '2025-07-01', date '2025-10-01'\n  UNION ALL SELECT 4, date '2025-10-01', date '2026-01-01'\n),\nm AS (\n  SELECT id, name FROM tenants WHERE name IN ('Cragsley Outfitters','Marrowby & Vane','Studio Vrij','Grind Collective')\n)\nSELECT\n  m.name AS merchant_name,\n  '2025-Q' || q.q_num AS quarter,\n  count(tk.id) AS urgent_tickets_evaluated,\n  round(\n    100.0 * sum(\n      case when tk.id is not null\n             and (tk.resolved_at is null or tk.resolved_at > tk.created_at + (sp.resolution_target_minutes || ' minutes')::interval)\n           then 1 else 0 end\n    )::numeric / nullif(count(tk.id), 0)\n  , 1) AS urgent_miss_rate_pct,\n  round(\n    avg(case when tk.resolved_at is not null then extract(epoch from tk.resolved_at - tk.created_at) / 3600.0 end)::numeric\n  , 1) AS avg_actual_resolution_hours,\n  round(\n    percentile_cont(0.5) within group (\n      order by case when tk.resolved_at is not null then extract(epoch from tk.resolved_at - tk.created_at) / 3600.0 end\n    )::numeric\n  , 1) AS median_actual_resolution_hours\nFROM m\nCROSS JOIN q\nLEFT JOIN tickets tk\n  ON tk.tenant_id = m.id\n  AND tk.priority = 'urgent'\n  AND tk.sla_policy_id IS NOT NULL\n  AND tk.created_at >= q.q_start AND tk.created_at < q.q_end\nLEFT JOIN sla_policies sp ON sp.id = tk.sla_policy_id\nGROUP BY m.name, q.q_num\nORDER BY m.name ASC, q.q_num ASC",
+  "note": "Built a full 4-tenant x 4-quarter grid with LEFT JOIN so quarters with zero evaluable urgent tickets still print a row (count 0, miss rate/avg/median NULL) instead of silently vanishing. Miss rate denominator and avg/median are strictly over tickets with sla_policy_id not null, per the 'evaluable' definition; resolved_at null is treated as a miss since data ends 2025-12-31.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report builds a complete 4-tenant × 4-quarter (2025-Q1..Q4) grid via a cross join, left-joining urgent/evaluable tickets so quarters with zero evaluable urgent tickets still appear with explicit zero/NULL values rather than being dropped — satisfying the \"expect 16 rows, note zero-ticket quarters\" requirement directly in the data rather than as a caveat."
+ }
+]

@@ -1,0 +1,54 @@
+{
+ "notes": "Reading the three reports critically:\n\nReport 1 (funnel): several tenants show visit→cart conversion ABOVE 100% (up to 191.5%), which is impossible for a real per-visitor funnel. The engineer's note explains why: stages are counted independently with no row-level join, so this isn't \"% of visitors who added to cart\" — it's just cart_count/visit_count. The merchants with the worst over-100% ratios (Brennquell Kaffee, Spice Route Box, Grind Collective, Honeycomb Larder) read like subscription/recurring-box businesses, while the merchants with ratios close to 100-150% and a big cart→order drop (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik) read like regular one-off retail. My hypothesis: subscription merchants generate many carts/orders from recurring billing that never involve a fresh tracked web session, which would make \"visits\" structurally incomparable across merchant types. I want to test that before telling Jonas where the \"biggest leak\" is, otherwise I'd be mixing a tracking-coverage artifact with real shopper drop-off.\n\nFor the real retail merchants, the consistent, trustworthy signal across stages is: cart→order is the dominant drop (27-61% conversion) while order→paid is consistently high (94-99%). That's the leak worth roadmapping — but I want one more clean (schema-safe) cut at *where* in that drop it happens, since Report 2's device/channel attempt failed.\n\nReport 2 (checkout by device/channel): 16,987 of ~17,158 carts (99%) landed in device=unknown/channel=unknown — the engineer flagged exactly this risk. This means the user_id-based same-day join to web_sessions essentially didn't work (most carts are likely guest/anonymous, with no user_id to match on). I'm treating device/channel-by-cart as not reliably answerable with the current schema and pivoting to schema-clean alternatives (order_status_history for stall location; cart timestamps for cliff-vs-bleed shape) rather than re-trying the same fragile join.\n\nReport 3 (repeat purchase): looks internally consistent — no red flags. Repeat-within-90-days sits in a 40-62% band, median days-to-second-order 32-78 days, with the two most recent cohorts showing lower medians as expected from a shorter observation window. I consider priority 5 answered; no follow-up planned tonight.\n\nTonight's 3 requests: (A) test the subscription-vs-session-tracking-gap hypothesis from Report 1, (B) find exactly which status the post-checkout order stalls at using the clean orders/order_status_history join (no fragile session join needed), (C) check whether cart abandonment is a quick cliff or a slow lingering bleed using carts' own timestamps, restricted to the real-retail tenants so we're not mixing in the subscription pattern.",
+ "requests": [
+  {
+   "title": "Session-tracking coverage vs order volume for top merchants, 2025",
+   "question": "Does the >100% visit-to-cart ratio in the Q4 funnel reflect real shopper behavior, or is web-session tracking sparse relative to order volume for certain merchants (e.g. subscription sellers), making 'visits' an unreliable denominator for them?",
+   "grain": "one row per tenant, for the same 10 tenants as the Q4 2025 funnel report",
+   "columns": [
+    "tenant name",
+    "industry",
+    "visits in 2025 (web_sessions count)",
+    "orders placed in 2025",
+    "visits per order",
+    "subscription-linked orders % (orders with a matching invoice whose subscription_id is not null)",
+    "active subscriptions (current count, status = active)"
+   ],
+   "details": "Tenants: Brennquell Kaffee, Spice Route Box, Grind Collective, Honeycomb Larder, Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik (look up tenant_id by name in tenants; also pull tenants.industry). Visits = count of web_sessions where started_at is in 2025-01-01 to 2025-12-31. Orders = count of orders where placed_at is in 2025-01-01 to 2025-12-31. Visits per order = visits / orders, rounded to 2 decimals. Subscription-linked orders % = among those 2025 orders, the % that have a matching row in invoices (invoices.order_id = orders.id) where invoices.subscription_id is not null, rounded to 1 decimal. Active subscriptions = count of rows in subscriptions for that tenant_id with status = 'active' (current snapshot, no date filter). Order rows by visits_per_order ascending (most session-sparse first), tie-break by tenant name.",
+   "builds_on": [
+    "Storefront-to-order funnel for top merchants, Q4 2025"
+   ]
+  },
+  {
+   "title": "Where orders stall after checkout: status-transition funnel, Q4 2025",
+   "question": "Within the post-checkout order lifecycle, is the drop-off to a paid order a single cliff at one status or a slow bleed spread across several, and which status is it?",
+   "grain": "one row per order status",
+   "columns": [
+    "status",
+    "orders reaching this status (count)",
+    "pct of total orders in window",
+    "median hours from order creation to reaching this status"
+   ],
+   "details": "Base population: orders with created_at in 2025-10-01 to 2025-12-31, restricted to the same 10 tenants as the Q4 funnel report (tenant_id lookup by name as in the companion request). total_orders = count of distinct such orders. For each status in (pending, confirmed, paid, partially_fulfilled, fulfilled, cancelled, refunded), 'orders reaching this status' = count of distinct orders that have at least one row in order_status_history with to_status = that status (occurred within the same order's lifetime, no extra date filter beyond the order being in the base population). Median hours = median of (first order_status_history.created_at with that to_status for the order) minus orders.created_at, in hours, rounded to 1 decimal. pct of total orders = orders_reaching_status / total_orders * 100, rounded to 1 decimal. Order rows by pct of total orders descending, tie-break by status name.",
+   "builds_on": [
+    "Storefront-to-order funnel for top merchants, Q4 2025"
+   ]
+  },
+  {
+   "title": "Cart abandonment: cliff or slow bleed, Q4 2025 (non-subscription merchants)",
+   "question": "When a cart doesn't convert, does the shopper give up quickly within the same visit, or does the cart linger for days before being abandoned or expiring?",
+   "grain": "one row per time-to-resolution bucket",
+   "columns": [
+    "duration bucket",
+    "cart count",
+    "pct of carts",
+    "converted pct (share of carts in this bucket that ended status = converted)"
+   ],
+   "details": "Base population: carts with created_at in 2025-10-01 to 2025-12-31, restricted to tenant_id for Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik (the non-subscription-looking merchants from the Q4 funnel report; look up tenant_id by name in tenants). For each cart compute resolution_time = coalesce(converted_at, abandoned_at, expires_at) minus created_at, in hours; carts where all three are null are 'unresolved/still active' (no time computed). Bucket resolution_time into: '<1 hour', '1-24 hours', '1-7 days', '>7 days', plus a separate 'unresolved/still active' bucket for carts with no resolution timestamp. cart_count = carts in the bucket; pct_of_carts = bucket count / total carts in the base population * 100 (1 decimal); converted_pct = % of carts in that bucket with status = 'converted' (1 decimal). Order rows in this fixed sequence: '<1 hour', '1-24 hours', '1-7 days', '>7 days', 'unresolved/still active' (not alphabetical).",
+   "builds_on": [
+    "Storefront-to-order funnel for top merchants, Q4 2025",
+    "Checkout funnel by device type and arrival channel"
+   ]
+  }
+ ]
+}

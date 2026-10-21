@@ -1,0 +1,52 @@
+=== Report 1: Carrier performance, full year 2025 (complete) (written by Ines) ===
+Engineer's note: transit_days computed as delivered_at::date - shipped_at::date (whole calendar days); avg/median/pct_within_3_days are based only on the delivered subset per carrier, while shipments_shipped and share_of_total_shipments_pct cover all shipped shipments regardless of delivery status.
+REPORT: Carrier performance, full year 2025 (complete)
+QUESTION: What is each carrier's full-year transit reliability and volume share, so I can estimate how much overall unreliability would disappear if the weak carriers matched the good ones?
+carrier              | shipments_shipped | shipments_delivered | avg_transit_days | median_transit_days | pct_within_3_days | share_of_total_shipments_pct
+---------------------+-------------------+---------------------+------------------+---------------------+-------------------+-----------------------------
+Strombogen Kurier    |              2972 |                2944 |             2.14 |                2.00 |              93.8 |                         13.9
+Albion Parcel        |              2676 |                2661 |             3.46 |                2.00 |              80.7 |                         12.5
+Lowlands Express     |              2561 |                2524 |             3.56 |                3.00 |              57.9 |                         11.9
+Liberty Ground       |              2343 |                2319 |             2.23 |                2.00 |              90.1 |                         10.9
+Alpenpaket           |              2022 |                2014 |             2.17 |                2.00 |              92.5 |                          9.4
+Landfall Freight     |              1906 |                1878 |             4.89 |                5.00 |              25.7 |                          8.9
+Trailhead Express    |              1879 |                1860 |             2.46 |                2.00 |              83.7 |                          8.8
+Skerrylane Logistics |              1124 |                1116 |             2.50 |                2.00 |              81.0 |                          5.2
+Kennet Freight       |               909 |                 898 |             2.31 |                2.00 |              88.1 |                          4.2
+Polder Post          |               902 |                 892 |             2.57 |                2.00 |              79.0 |                          4.2
+Regent Parcels       |               798 |                 789 |             2.30 |                2.00 |              88.7 |                          3.7
+Prairie Line Express |               748 |                 741 |             2.54 |                2.00 |              81.5 |                          3.5
+Liffey Couriers      |               323 |                 322 |             2.71 |                2.00 |              76.1 |                          1.5
+Gallia Colis         |               284 |                 280 |             2.82 |                2.00 |              74.6 |                          1.3
+(14 rows)
+
+=== Report 2: Purchase order replenishment performance by quarter, 2025 (mature POs only, non-censored) (written by Felix) ===
+Engineer's note: Aggregated across all tenants/POs platform-wide (no merchant filter requested). As noted in the request, Q4's matured subset only covers POs ordered in October since Nov/Dec POs aren't yet 60 days old as of the 2025-12-31 cutoff - this is expected, not a data gap.
+REPORT: Purchase order replenishment performance by quarter, 2025 (mature POs only, non-censored)
+QUESTION: Once we only look at purchase orders old enough to have fully played out, are we genuinely behind on restocking, or was the Q4 backlog just a year-end timing artifact?
+quarter | pos_ordered_total | pos_matured | pos_matured_received | pct_matured_still_open | avg_actual_lead_days | pct_received_late | avg_days_late
+--------+-------------------+-------------+----------------------+------------------------+----------------------+-------------------+--------------
+2025-Q1 |              1183 |        1183 |                 1183 |                    0.0 |                 22.4 |              52.9 |           6.1
+2025-Q2 |              1209 |        1209 |                 1209 |                    0.0 |                 20.0 |              47.4 |           3.8
+2025-Q3 |              1238 |        1238 |                 1238 |                    0.0 |                 20.8 |              54.0 |           4.8
+2025-Q4 |              1588 |         464 |                  460 |                    0.9 |                 20.7 |              59.3 |           4.5
+(4 rows)
+
+=== Report 3: Fulfillment shortfall and delivery speed by merchant vertical, 2025 (written by Bea) ===
+Engineer's note: "Fully delivered" requires the order to have at least one linked shipment (via fulfillments) and none of them null delivered_at; orders with status='fulfilled' but no shipment rows at all are excluded from that subset rather than counted as delivered. Tenants with a null industry are excluded since the grain is per-vertical.
+REPORT: Fulfillment shortfall and delivery speed by merchant vertical, 2025
+QUESTION: Do apparel/footwear merchants, where picking discrepancies are concentrated, actually see more orders go unfulfilled or delivered slowly -- or is that purely an inventory/accounting issue with no customer-facing effect?
+industry                  | orders_placed_2025 | pct_orders_with_fulfillment_shortfall | orders_fully_delivered | avg_delivery_days | pct_within_5_days
+--------------------------+--------------------+---------------------------------------+------------------------+-------------------+------------------
+Beauty                    |               1561 |                                   4.7 |                   1451 |              4.55 |              73.8
+Apparel & Footwear        |               7149 |                                   4.5 |                   6264 |              3.84 |              82.4
+Sports & Outdoor          |               1014 |                                   4.2 |                    916 |              4.05 |              77.8
+Home & Living             |               1658 |                                   4.0 |                   1519 |              4.43 |              73.7
+Jewelry & Accessories     |                 50 |                                   4.0 |                     46 |              4.23 |              73.9
+Consumer Electronics      |                575 |                                   3.7 |                    534 |              4.08 |              76.2
+Books & Stationery        |                159 |                                   3.1 |                    151 |              4.16 |              80.1
+Pet Supplies              |               1448 |                                   3.0 |                   1385 |              4.28 |              77.8
+Office Supplies (B2B)     |                526 |                                   1.9 |                    512 |              3.95 |              77.3
+Food & Coffee             |               7210 |                                   1.7 |                   6997 |              3.93 |              80.5
+Industrial Supplies (B2B) |                773 |                                   1.6 |                    758 |              4.26 |              72.2
+(11 rows)

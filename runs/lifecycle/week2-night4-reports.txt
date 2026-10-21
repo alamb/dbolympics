@@ -1,0 +1,43 @@
+=== Report 1: Order frequency deceleration by customer group: first half vs second half of tenure (written by Omar) ===
+Engineer's note: Grain is customer group x lifetime period (6 rows total), as requested. Note: loyalty_accounts/loyalty_transactions and orders are joined on (tenant_id, user_id) since user_id is only unique per tenant; refund flag combines payments.amount_refunded>0 and presence of any order_returns row for the order, amounts are not currency-converted since this report counts orders/customers/rates rather than summing money.
+REPORT: Order frequency deceleration by customer group: first half vs second half of tenure
+QUESTION: Does order frequency drop off after a member's first redemption because redeeming specifically reduces engagement, or do non-members and never-redeemed members show the same kind of natural slowdown over their lifetime?
+group                 | period      | customer_count | total_orders | orders_per_customer_per_year | refund_rate_pct
+----------------------+-------------+----------------+--------------+------------------------------+----------------
+non-member            | first half  |           5960 |        21208 |                         7.96 |           15.51
+non-member            | second half |           5960 |        22540 |                         8.46 |           14.64
+never-redeemed member | first half  |            679 |         1253 |                         5.65 |           33.92
+never-redeemed member | second half |            679 |         1329 |                         6.00 |           29.65
+ever-redeemed member  | first half  |            221 |          910 |                         6.40 |           34.18
+ever-redeemed member  | second half |            221 |         1019 |                         7.17 |           32.39
+(6 rows)
+
+=== Report 2: Platform-wide: never-redeemed vs ever-redeemed members vs non-members, by tenure (written by Grace) ===
+Engineer's note: Same methodology as the Apparel report (tenure band from users.created_at, non-member/never-redeemed/ever-redeemed groups via loyalty_accounts + 'burn' loyalty_transactions, revenue/AOV from non-cancelled orders converted to EUR via exchange_rates on placed_at, refund = amount_refunded>0 or an order_returns row), just without the industry filter. avg_order_value_eur and refund_rate_pct are computed as group-level totals (sum revenue / sum orders, sum refunded / sum orders) rather than an average of per-customer ratios, to avoid division-by-zero for customers with zero non-cancelled orders.
+REPORT: Platform-wide: never-redeemed vs ever-redeemed members vs non-members, by tenure
+QUESTION: Does the Apparel finding - that engaged (ever-redeemed) members beat tenure-matched non-members while never-redeemed members lag behind - hold up across the whole platform, or was it specific to Apparel?
+tenure_band     | group                 | customer_count | avg_lifetime_orders | avg_lifetime_revenue_eur | avg_order_value_eur | refund_rate_pct
+----------------+-----------------------+----------------+---------------------+--------------------------+---------------------+----------------
+under 6 months  | non-member            |           1480 |                1.91 |                   364.74 |              135.45 |           20.52
+under 6 months  | never-redeemed member |            259 |                1.75 |                   337.46 |              140.02 |           27.15
+under 6 months  | ever-redeemed member  |              7 |                3.14 |                  1585.53 |              554.94 |           27.27
+6 to 12 months  | non-member            |           1099 |                3.54 |                   729.83 |              140.18 |           16.81
+6 to 12 months  | never-redeemed member |            200 |                2.27 |                   425.27 |              129.17 |           29.96
+6 to 12 months  | ever-redeemed member  |             12 |                 4.5 |                  1924.62 |              290.51 |            50.0
+12 to 24 months | non-member            |           2482 |                5.55 |                   856.12 |              111.81 |           16.38
+12 to 24 months | never-redeemed member |            298 |                3.21 |                   462.42 |              109.68 |            33.3
+12 to 24 months | ever-redeemed member  |             78 |                7.82 |                  1825.16 |              186.88 |           29.02
+over 24 months  | non-member            |           3249 |                7.88 |                   1543.8 |              136.67 |           14.36
+over 24 months  | never-redeemed member |            348 |                3.28 |                   510.63 |              115.35 |           33.25
+over 24 months  | ever-redeemed member  |            128 |                9.74 |                  1843.77 |              143.95 |           34.56
+(12 rows)
+
+=== Report 3: Post-redemption drop-off by how quickly members first redeemed (written by Bea) ===
+Engineer's note: Population is deduplicated by user_id across all tenants (a user's enrollment date is the earliest across any loyalty_accounts row, and 'first redemption' is their earliest burn transaction); revenue excludes cancelled orders and is converted to EUR via same-day exchange_rates, with EUR orders passed through unconverted.
+REPORT: Post-redemption drop-off by how quickly members first redeemed
+QUESTION: Are members who redeem points very soon after enrolling - likely signup-bonus hunters - disproportionately the ones who never place another order, which would be the clearest sign of rewards given without real repeat purchase behind them?
+time_to_first_redemption_bucket | member_count | pct_with_no_orders_after_redemption | avg_orders_after_per_customer | avg_revenue_after_eur
+--------------------------------+--------------+-------------------------------------+-------------------------------+----------------------
+31 to 180 days                  |           61 |                                29.5 |                          3.89 |                879.05
+over 180 days                   |          164 |                                29.9 |                          2.85 |                588.34
+(2 rows)

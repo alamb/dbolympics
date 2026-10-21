@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 payout fee revenue and volume by currency",
+    "--question",
+    "Does our 2025 fee-revenue total hold up when broken down by currency, and which currencies carry our FX exposure?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Omar\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per payout currency_code\", \"columns_requested\": [\"currency_code\", \"payout count\", \"total gross amount (native currency, unconverted)\", \"total fee amount (native currency, unconverted)\", \"total gross volume (EUR)\", \"total fee revenue (EUR)\", \"implied average rate (native currency per EUR, = total fee native / total fee EUR)\", \"share of total EUR fee revenue (%)\"], \"details\": \"Source: payouts only, filtered to status='paid' and paid_at >= 2025-01-01 and paid_at < 2026-01-01 (the validated definition of settled payouts from last week's reconciliation). Convert each payout row to EUR individually via exchange_rates (base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at)) before summing, exactly as in the validated merchant/vertical reports \\u2014 no fan-out joins (aggregate at the payout row level first, do not join to any one-to-many table like payout_items, ledger_entries, or tenants before this aggregation). I want this to double-check against a competing figure from Finance (\\u20ac93,583 fee revenue vs my \\u20ac53,186 for the same 2025 window) \\u2014 please confirm in the report notes that summing total_fee_revenue_eur across all currency rows reproduces \\u20ac53,186 (if not, flag immediately, something changed). Order by fee revenue EUR descending, tie-break by currency_code ascending.\", \"builds_on\": [\"Payout status & date-field reconciliation\", \"Revenue by vertical, trailing 12 months (corrected)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

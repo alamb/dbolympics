@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Q4 Weekly Job Failures vs Health Check Alerts",
+    "--question",
+    "In the window where we have both job_runs and system_health_checks data, did weeks with more unhealthy health checks line up with weeks of more job failures?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Ines\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per ISO week (week_start date), Nov 1 - Dec 31 2025 (the overlap window both tables cover)\", \"columns_requested\": [\"week_start\", \"total_job_runs\", \"failed_job_runs\", \"job_failure_rate_pct\", \"total_health_checks\", \"unhealthy_health_checks\", \"health_check_unhealthy_rate_pct\"], \"details\": \"Two sources aggregated to the same week grain and joined: job_runs (queued_at) and system_health_checks (checked_at), both filtered to >= 2025-11-01 and < 2026-01-01, the window confirmed present in both tables from night-1 Reports 1 and 3. Group each by ISO week (calendar_days.week_start) then join on week_start; platform-wide (all tenants/components combined), no tenant filter. job_failure_rate_pct and health_check_unhealthy_rate_pct rounded to 2 decimals. Order by week_start ascending.\", \"builds_on\": [\"2025 Background Job Reliability by Month\", \"2025 Internal Health Check Reliability by Month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT t.name AS merchant_name, y.year,\n  COALESCE(r.dec_review_count,0) AS dec_review_count,\n  r.dec_avg_rating,\n  r.dec_pct_1_2_star,\n  COALESCE(o.dec_orders_count,0) AS dec_orders_count\nFROM tenants t\nCROSS JOIN (VALUES (2023),(2024),(2025)) AS y(year)\nLEFT JOIN (\n  SELECT tenant_id,\n    EXTRACT(YEAR FROM created_at)::int AS yr,\n    COUNT(*) AS dec_review_count,\n    ROUND(AVG(rating)::numeric,2) AS dec_avg_rating,\n    ROUND(100.0*SUM(CASE WHEN rating<=2 THEN 1 ELSE 0 END)/COUNT(*),1) AS dec_pct_1_2_star\n  FROM product_reviews\n  WHERE is_approved = true AND EXTRACT(MONTH FROM created_at) = 12\n  GROUP BY tenant_id, EXTRACT(YEAR FROM created_at)\n) r ON r.tenant_id = t.id AND r.yr = y.year\nLEFT JOIN (\n  SELECT tenant_id,\n    EXTRACT(YEAR FROM placed_at)::int AS yr,\n    COUNT(*) AS dec_orders_count\n  FROM orders\n  WHERE status <> 'cancelled' AND EXTRACT(MONTH FROM placed_at) = 12\n  GROUP BY tenant_id, EXTRACT(YEAR FROM placed_at)\n) o ON o.tenant_id = t.id AND o.yr = y.year\nWHERE t.name IN ('Fennel & Flint','Wiesgrund Wohnen')\nORDER BY t.name, y.year",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: merchant_name, year, dec_review_count, dec_avg_rating, dec_pct_1_2_star, dec_orders_count"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected 6 columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT t.name AS merchant_name, y.year,\n  COALESCE(r.dec_review_count,0) AS dec_review_count,\n  r.dec_avg_rating,\n  r.dec_pct_1_2_star,\n  COALESCE(o.dec_orders_count,0) AS dec_orders_count\nFROM tenants t\nCROSS JOIN (VALUES (2023),(2024),(2025)) AS y(year)\nLEFT JOIN (\n  SELECT tenant_id,\n    EXTRACT(YEAR FROM created_at)::int AS yr,\n    COUNT(*) AS dec_review_count,\n    ROUND(AVG(rating)::numeric,2) AS dec_avg_rating,\n    ROUND(100.0*SUM(CASE WHEN rating<=2 THEN 1 ELSE 0 END)/COUNT(*),1) AS dec_pct_1_2_star\n  FROM product_reviews\n  WHERE is_approved = true AND EXTRACT(MONTH FROM created_at) = 12\n  GROUP BY tenant_id, EXTRACT(YEAR FROM created_at)\n) r ON r.tenant_id = t.id AND r.yr = y.year\nLEFT JOIN (\n  SELECT tenant_id,\n    EXTRACT(YEAR FROM placed_at)::int AS yr,\n    COUNT(*) AS dec_orders_count\n  FROM orders\n  WHERE status <> 'cancelled' AND EXTRACT(MONTH FROM placed_at) = 12\n  GROUP BY tenant_id, EXTRACT(YEAR FROM placed_at)\n) o ON o.tenant_id = t.id AND o.yr = y.year\nWHERE t.name IN ('Fennel & Flint','Wiesgrund Wohnen')\nORDER BY t.name, y.year",
+  "note": "Grain is merchant x year (Dec only, 2023-2025), one row per combination even if no reviews/orders occurred that December (counts show as 0, rating/pct as null). Review metrics use is_approved=true and created_at in December; orders use placed_at in December excluding cancelled status.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per merchant per December (2023–2025) with review count, average rating, % of 1–2 star reviews, and order volume for context — exactly as requested, so Zara can compare each year's December dip across Fennel & Flint and Wiesgrund Wohnen against the Cragsley pattern."
+ }
+]

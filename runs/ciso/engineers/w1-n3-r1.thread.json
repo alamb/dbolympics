@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  t.name AS tenant_name,\n  t.status AS tenant_status,\n  r.name AS role_name,\n  u.email AS user_email,\n  u.status AS user_status,\n  CASE WHEN u.last_login_at IS NULL THEN 'never' ELSE CAST(u.last_login_at AS varchar) END AS last_login,\n  CASE WHEN u.last_login_at IS NULL THEN NULL ELSE (DATE '2026-01-05' - CAST(u.last_login_at AS date)) END AS days_since_last_login,\n  (DATE '2026-01-05' - CAST(u.created_at AS date)) AS account_age_days,\n  COUNT(*) OVER() AS total_qualifying_rows\nFROM user_roles ur\nJOIN roles r ON r.id = ur.role_id\nJOIN users u ON u.id = ur.user_id\nJOIN tenants t ON t.id = u.tenant_id\nWHERE r.name IN ('Owner','Administrator')\n  AND u.deleted_at IS NULL\n  AND u.status = 'active'\n  AND (u.last_login_at IS NULL OR u.last_login_at < TIMESTAMP '2025-10-05')\nORDER BY u.last_login_at ASC NULLS FIRST, t.name ASC, u.email ASC, r.name ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, tenant_status, role_name, user_email, user_status, last_login, days_since_last_login, account_age_days, total_qualifying_rows"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  t.name AS tenant_name,\n  t.status AS tenant_status,\n  r.name AS role_name,\n  u.email AS user_email,\n  u.status AS user_status,\n  CASE WHEN u.last_login_at IS NULL THEN 'never' ELSE CAST(u.last_login_at AS varchar) END AS last_login,\n  CASE WHEN u.last_login_at IS NULL THEN NULL ELSE (DATE '2026-01-05' - CAST(u.last_login_at AS date)) END AS days_since_last_login,\n  (DATE '2026-01-05' - CAST(u.created_at AS date)) AS account_age_days,\n  COUNT(*) OVER() AS total_qualifying_rows\nFROM user_roles ur\nJOIN roles r ON r.id = ur.role_id\nJOIN users u ON u.id = ur.user_id\nJOIN tenants t ON t.id = u.tenant_id\nWHERE r.name IN ('Owner','Administrator')\n  AND u.deleted_at IS NULL\n  AND u.status = 'active'\n  AND (u.last_login_at IS NULL OR u.last_login_at < TIMESTAMP '2025-10-05')\nORDER BY u.last_login_at ASC NULLS FIRST, t.name ASC, u.email ASC, r.name ASC\nLIMIT 50",
+  "note": "Grain is one row per (user, role) since a user can hold both Owner and Administrator and role_name is a report column; days_since_last_login is left NULL for 'never' rather than a sentinel number, with never-logged-in users sorted first via last_login_at ASC NULLS FIRST (most stale). total_qualifying_rows is a window-count column showing how many rows matched in total, since more than 50 may qualify.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. Summary of what the report delivers:\n\n- **Grain:** one row per (user, role) — Owner/Administrator, active, dormant (never logged in or last login before 2025-10-05), excluding soft-deleted users.\n- **Columns:** tenant name/status, role name, user email/status, last login (or 'never'), days since last login, account age in days, plus a total-matching-rows count.\n- **Ordering:** never-logged-in users first, then oldest last-login dates first (most stale first), tie-broken by tenant name, email, role.\n- **Cap:** 50 rows printed; `total_qualifying_rows` shows the full count if more qualify."
+ }
+]

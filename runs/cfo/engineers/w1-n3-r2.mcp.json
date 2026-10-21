@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Company-Wide Refund Rate Trend by Quarter, 2024-2025",
+    "--question",
+    "Is Tidewick's overall refund rate rising, falling, or flat over the last two years, and does it spike around the Nov/Dec peak-volume period?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one calendar quarter (2024-Q1 through 2025-Q4)\", \"columns_requested\": [\"quarter (e.g. 2025-Q4)\", \"payment_count\", \"gross_captured_eur\", \"amount_refunded_eur\", \"refund_rate_pct\", \"refund_rate_same_quarter_prior_year_pct\"], \"details\": \"Source: payments, filtered to status reflecting a captured/refunded/partially_refunded state with captured_at between 2024-01-01 and 2025-12-31. Convert amount and amount_refunded to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=date(captured_at)), using the same division method validated for payouts. Group by calendar quarter of captured_at across all tenants combined (company-wide, not split by vertical). refund_rate_pct = amount_refunded_eur / gross_captured_eur * 100. The prior-year column repeats the same calculation for the matching quarter one year earlier (null for 2024 rows). Order chronologically 2024-Q1 to 2025-Q4 (8 rows).\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cart abandonment timing by tenant, Q4 2025 (retail merchants)",
+    "--question",
+    "Is the 'slow bleed' pattern in cart abandonment (most unresolved carts linger 1 hour to 7 days rather than dying instantly) consistent across retail merchants, or is it driven by one or two tenants' cart-expiry settings?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Viktor\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per tenant and duration bucket\", \"columns_requested\": [\"tenant name\", \"duration bucket\", \"cart count\", \"pct of that tenant's carts\", \"converted pct (share of carts in this bucket with status = converted)\"], \"details\": \"Same tenant list, time window, and bucket definitions as the earlier 'Cart abandonment: cliff or slow bleed' report: carts with created_at in 2025-10-01 to 2025-12-31 for Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik. resolution_time = coalesce(converted_at, abandoned_at, expires_at) - created_at in hours; carts with all three null go in 'unresolved/still active'. Buckets: '<1 hour', '1-24 hours', '1-7 days', '>7 days', 'unresolved/still active'. pct_of_tenant_carts is computed within each tenant (so the 5 buckets sum to ~100% per tenant), not across the whole population. converted_pct = % of carts in that tenant/bucket cell with status = 'converted', rounded 1 decimal. Order rows by tenant_name, then bucket in the fixed sequence above (not alphabetical).\", \"builds_on\": [\"Cart abandonment: cliff or slow bleed, Q4 2025 (non-subscription merchants)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

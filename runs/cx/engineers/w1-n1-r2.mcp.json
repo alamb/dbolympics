@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Response & resolution times by merchant, 2025",
+    "--question",
+    "How much does support speed vary across merchants, and who is fastest/slowest?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per tenant (merchant), for tickets created in 2025\", \"columns_requested\": [\"merchant name\", \"tickets created\", \"avg first response hours\", \"median first response hours\", \"avg resolution hours\", \"median resolution hours\", \"SLA breach rate (%)\"], \"details\": \"Source: tickets joined to tenants (for name) and sla_breaches (for breach rate). Filter tickets.created_at in 2025-01-01 through 2025-12-31. Same hour definitions as the monthly trend report (first_response_at - created_at, resolved_at - created_at, both in hours, only over tickets where that timestamp is not null). SLA breach rate = tenant's distinct tickets with >=1 sla_breaches row / tenant's tickets created in 2025, as a percentage. Only include tenants with at least 20 tickets created in 2025 to avoid noisy small-sample rows. Order by tickets created descending, tie-break by merchant name ascending; report will show at most 50 rows so note total tenant count meeting the threshold and how many are printed.\", \"builds_on\": [\"Support response & resolution time trend, monthly\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

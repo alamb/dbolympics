@@ -1,0 +1,31 @@
+# Firebolt Core, from its image, in a container next to the system's own.
+# The query program talks to it over HTTP.
+name = "firebolt"
+# the version, kept with the results (by hand)
+version = "5.0.0-pre.0.20261013125703"
+
+
+[load]
+statement = "INSERT INTO {table} SELECT * FROM read_parquet(URL => 'file://{file}')"
+
+[dialect.types]
+uuid = "text"
+smallint = "integer"
+"varchar(length)" = "text"
+"array(element)" = "array({element})"
+
+[dialect.functions]
+# PERCENTILE_CONT takes no NUMERIC; it computes in double precision anyway (the standard's result type)
+"percentile_cont(p, x)" = "PERCENTILE_CONT({p}) WITHIN GROUP (ORDER BY CAST({x} AS DOUBLE PRECISION))"
+"percentile_cont_filter(p, x, condition)" = "PERCENTILE_CONT({p}) WITHIN GROUP (ORDER BY CAST({x} AS DOUBLE PRECISION)) FILTER (WHERE {condition})"
+# no ORDER BY inside an aggregate: the sorted array, joined; NULL without a non-NULL value, as STRING_AGG
+"string_agg_sorted(x, sep)" = "CASE WHEN COUNT({x}) = 0 THEN NULL ELSE ARRAY_TO_STRING(ARRAY_SORT(ARRAY_AGG({x})), {sep}) END"
+"string_agg_distinct_sorted(x, sep)" = "CASE WHEN COUNT({x}) = 0 THEN NULL ELSE ARRAY_TO_STRING(ARRAY_SORT(ARRAY_DISTINCT(ARRAY_AGG({x}))), {sep}) END"
+# no DISTINCT in window aggregates: the distinct non-NULL values from two dense ranks
+"count_distinct_over(x, window)" = "(DENSE_RANK() OVER ({window} ORDER BY {x} ASC NULLS FIRST) + DENSE_RANK() OVER ({window} ORDER BY {x} DESC NULLS LAST) - 1 - MAX(CASE WHEN {x} IS NULL THEN 1 ELSE 0 END) OVER ({window}))"
+
+[[container]]
+name = "db"
+# Firebolt publishes Core under a moving tag only (dev): pinned to the image of the results by its digest,
+# the build of `version` above
+image = "ghcr.io/firebolt-db/engine@sha256:15c9ca7b584885cff8b9dd67a0b56cbea75b24855d4c1c00453a4828e712ccab"

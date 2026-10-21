@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Did B2B Wholesale New-Business Pipeline Ever Carry an Open Balance at Month-End?",
+    "--question",
+    "Is the current complete absence of open new-business pipeline a constant feature of the last three years, or did merchants used to carry live open deals and that's changed recently?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Grace\", \"situation\": \"b2b-pipeline-review\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per calendar month-end snapshot, 2023-01 through 2025-12\", \"columns_requested\": [\"month_end_date\", \"opportunities_open_at_month_end\", \"avg_age_days_of_open_opportunities_at_month_end\", \"oldest_age_days_of_open_opportunity_at_month_end\"], \"details\": \"Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), opportunities where pipeline_id = each tenant's 'New business' pipeline. For each calendar month from 2023-01 through 2025-12, take the last calendar day of that month as the snapshot date (derive from calendar_days, e.g. max(calendar_date) grouped by year_num, month_num). Count opportunities where created_at <= end of that snapshot date AND (closed_at IS NULL OR closed_at > end of that snapshot date) \\u2014 i.e. opportunities that were genuinely open and straddling that month boundary. For those, compute avg and max age in days (snapshot_date - created_at::date). If a month has zero qualifying opportunities, still include the row with 0 / NULL / NULL. Order by month_end_date ascending.\", \"builds_on\": [\"B2B Wholesale Pipeline: Opportunities by Merchant and Stage\", \"B2B Wholesale: Age Profile of Currently Open New-Business Pipeline\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

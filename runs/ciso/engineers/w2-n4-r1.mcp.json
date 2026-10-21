@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Scope tally across all 76 long-lived (4+ year) active API keys",
+    "--question",
+    "Of all 76 active API keys that are 4+ years old, how many actually carry the broad 'admin_api' rate-limit scope versus no scope recorded at all — the full count, not just the 50 printed last night?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per distinct limit_scope value (including a 'no scope recorded' category for keys with no matching rate_limits row)\", \"columns_requested\": [\"scope category ('admin_api', any other distinct limit_scope values found, or 'no scope recorded')\", \"distinct key count (count distinct api_keys.id, not rate_limits rows)\", \"share of the 76 keys (%)\", \"distinct tenants represented\"], \"details\": \"Source: api_keys where status = 'active' and created_at < (2026-01-05 minus 4 years) \\u2014 the same 76-key population as last night's detail report \\u2014 left-joined to rate_limits on api_key_id. Group by rate_limits.limit_scope (treat null, i.e. no matching rate_limits row, as its own category 'no scope recorded'). Count DISTINCT api_keys.id per group so a key is not double-counted if it somehow has more than one rate_limits row. Order by distinct key count descending, scope category as tie-break.\", \"builds_on\": [\"Detail list of the oldest active API keys (4+ years), by tenant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

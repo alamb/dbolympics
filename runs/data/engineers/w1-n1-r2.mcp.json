@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Orders traced into captured payments",
+    "--question",
+    "Is there a clean, traceable link from an order to the money actually collected for it, or do orders vanish (no captured payment) or multiply (captured payments exceeding order value) along the way?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Ines\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"calendar month, 2023-01 through 2025-12, based on order placed_at month\", \"columns_requested\": [\"month\", \"orders_count\", \"orders_grand_total_eur\", \"orders_with_captured_payment_count\", \"captured_payment_total_eur\", \"orders_without_captured_payment_count\", \"gap_eur\", \"gap_pct\"], \"details\": \"Scope: all tenants combined. Base population: orders with status not 'cancelled', grouped by the month of placed_at. orders_count = count of such orders. orders_grand_total_eur = sum of their grand_total, converted to EUR. Join to payments on payments.order_id = orders.id and payments.status='captured' to find linked captured payments (an order can have 0, 1, or multiple captured payments). orders_with_captured_payment_count = count of distinct orders with at least one linked captured payment. captured_payment_total_eur = sum of all captured payments.amount linked to orders in that month's cohort, converted to EUR. orders_without_captured_payment_count = orders_count minus orders_with_captured_payment_count. gap_eur = orders_grand_total_eur minus captured_payment_total_eur. gap_pct = gap_eur divided by orders_grand_total_eur times 100, rounded to 1 decimal. Convert orders.grand_total using orders.currency_code and payments.amount using payments.currency_code, both via exchange_rates (EUR amount = local / rate) using the relevant event date. Tables: orders, payments, exchange_rates. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

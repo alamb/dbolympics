@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH converted AS (\n  SELECT\n    p.status,\n    p.paid_at,\n    p.arrival_date,\n    p.currency_code,\n    p.gross_amount,\n    p.fee_amount,\n    er.rate\n  FROM payouts p\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n    AND er.quote_code = p.currency_code\n    AND er.as_of = CAST(p.paid_at AS date)\n)\nSELECT\n  status,\n  COUNT(*) AS total_payout_count,\n  COUNT(*) FILTER (WHERE paid_at >= DATE '2025-01-01' AND paid_at < DATE '2026-01-01') AS count_paid_in_window,\n  COUNT(*) FILTER (WHERE paid_at IS NULL) AS count_paid_at_null,\n  ROUND(SUM(CASE WHEN paid_at >= DATE '2025-01-01' AND paid_at < DATE '2026-01-01' THEN fee_amount / rate END), 2) AS fee_revenue_eur,\n  ROUND(SUM(CASE WHEN paid_at >= DATE '2025-01-01' AND paid_at < DATE '2026-01-01' THEN gross_amount / rate END), 2) AS gross_volume_eur,\n  MIN(paid_at) AS earliest_paid_at,\n  MAX(paid_at) AS latest_paid_at,\n  MIN(arrival_date) AS earliest_arrival_date,\n  MAX(arrival_date) AS latest_arrival_date\nFROM converted\nGROUP BY status\nORDER BY total_payout_count DESC, status",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: status, total_payout_count, count_paid_in_window, count_paid_at_null, fee_revenue_eur, gross_volume_eur, earliest_paid_at, latest_paid_at, earliest_arrival_date, latest_arrival_date"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and matches the requested grain and columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH converted AS (\n  SELECT\n    p.status,\n    p.paid_at,\n    p.arrival_date,\n    p.currency_code,\n    p.gross_amount,\n    p.fee_amount,\n    er.rate\n  FROM payouts p\n  LEFT JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n    AND er.quote_code = p.currency_code\n    AND er.as_of = CAST(p.paid_at AS date)\n)\nSELECT\n  status,\n  COUNT(*) AS total_payout_count,\n  COUNT(*) FILTER (WHERE paid_at >= DATE '2025-01-01' AND paid_at < DATE '2026-01-01') AS count_paid_in_window,\n  COUNT(*) FILTER (WHERE paid_at IS NULL) AS count_paid_at_null,\n  ROUND(SUM(CASE WHEN paid_at >= DATE '2025-01-01' AND paid_at < DATE '2026-01-01' THEN fee_amount / rate END), 2) AS fee_revenue_eur,\n  ROUND(SUM(CASE WHEN paid_at >= DATE '2025-01-01' AND paid_at < DATE '2026-01-01' THEN gross_amount / rate END), 2) AS gross_volume_eur,\n  MIN(paid_at) AS earliest_paid_at,\n  MAX(paid_at) AS latest_paid_at,\n  MIN(arrival_date) AS earliest_arrival_date,\n  MAX(arrival_date) AS latest_arrival_date\nFROM converted\nGROUP BY status\nORDER BY total_payout_count DESC, status",
+  "note": "EUR conversion join (base_code='EUR', quote_code=currency_code, as_of=date(paid_at)) only applies to rows with non-null paid_at, so null-paid_at rows are counted but excluded from the fee/gross EUR sums as requested; the 2025 window is treated as paid_at in [2025-01-01, 2026-01-01) to include all of Dec 31 correctly.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report will show, per payout status, total counts, the 2025 paid_at-window counts and null-paid_at counts, EUR-converted fee/gross sums for that window, and the min/max of both paid_at and arrival_date — which should directly expose whether paid_at is sparsely populated outside \"settled\" statuses and how far arrival_date's span diverges from paid_at's, explaining the 1.76x discrepancy between the two prior reports."
+ }
+]

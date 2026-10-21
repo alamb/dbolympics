@@ -1,0 +1,60 @@
+=== Report 1: 2025 Payout Reconciliation by Currency (Local vs EUR-Converted) (written by Felix) ===
+Engineer's note: exchange_rates gives EUR->currency rates (base_code=EUR), so local-to-EUR conversion divides by the matched rate; EUR rows are treated as rate=1 and always counted as matched, per the request. gross_volume_eur/fee_revenue_eur sum only matched rows (unmatched rows contribute 0), so the gap vs. matched-rate coverage is directly visible via payout_count_missing_fx_rate.
+REPORT: 2025 Payout Reconciliation by Currency (Local vs EUR-Converted)
+QUESTION: Is the 2025 monthly fee-revenue trend understating totals because some currencies/dates fail to match an exchange rate, causing payouts to be dropped from the EUR-converted total?
+currency_code | payout_count | gross_volume_local_sum |   gross_volume_eur |    fee_revenue_eur | payout_count_with_matched_fx_rate | payout_count_missing_fx_rate | avg_eur_rate_used
+--------------+--------------+------------------------+--------------------+--------------------+-----------------------------------+------------------------------+------------------
+EUR           |         5169 |           1981538.9100 | 1981538.9099999547 | 40397.349999999984 |                              5169 |                            0 |               1.0
+GBP           |         3165 |            576156.8200 |  669712.4031839605 | 13707.647149318931 |                              3165 |                            0 |          0.860772
+USD           |         1802 |           1175910.6900 |  1021107.726817953 |  32522.97257591372 |                              1802 |                            0 |          1.150943
+SEK           |          567 |            874215.7600 |  79451.65101996991 | 1292.3859172680086 |                               567 |                            0 |         10.987477
+DKK           |          345 |            595621.2100 |  79924.92689831926 |  1413.800634631733 |                               345 |                            0 |          7.451982
+NOK           |          238 |           1617567.2600 | 141252.37557324008 |  4249.040729682132 |                               238 |                            0 |         11.500274
+(6 rows)
+
+=== Report 2: Refund Rate by Merchant Vertical, 2025 (written by Viktor) ===
+Engineer's note: Vertical is taken from tenants.industry (free-text field, not a fixed enum); tenants with a null industry are grouped under 'Unknown'. Both refund-rate measures and the EUR conversion are computed from captured payments only, using the exchange rate as of each payment's captured_at date.
+REPORT: Refund Rate by Merchant Vertical, 2025
+QUESTION: Do refund rates differ meaningfully across merchant verticals, and which verticals look like outliers?
+vertical                  | merchant_count | payment_count | gross_captured_eur | amount_refunded_eur | refund_rate_pct | avg_refund_rate_per_merchant_pct
+--------------------------+----------------+---------------+--------------------+---------------------+-----------------+---------------------------------
+Apparel & Footwear        |             12 |          5829 | 1078095.0931260681 |  223899.98025102273 |           20.77 |                            20.17
+Consumer Electronics      |              3 |            45 | 32704.557149522407 |   4536.256832012029 |           13.87 |                            12.09
+Sports & Outdoor          |              5 |           542 | 208642.66525501793 |   27615.81190173126 |           13.24 |                            12.67
+Home & Living             |              9 |           826 | 130876.13832331166 |   9636.863087465277 |            7.36 |                             7.69
+Beauty                    |              8 |          1251 |  125299.2177342255 |    7778.69901928958 |            6.21 |                             4.19
+Office Supplies (B2B)     |              2 |           239 |   707746.699374597 |  30565.586683472724 |            4.32 |                             3.64
+Books & Stationery        |              4 |           115 | 5631.0311708235095 |   186.7947706139839 |            3.32 |                             2.27
+Pet Supplies              |              7 |          1095 |  55275.88436275425 |   877.5520952376191 |            1.59 |                             1.53
+Food & Coffee             |              5 |          1530 |  77195.58403267068 |   881.7447615475771 |            1.14 |                             0.48
+Industrial Supplies (B2B) |              1 |           154 |  386487.6248121912 |  1547.2102448206222 |             0.4 |                              0.4
+Jewelry & Accessories     |              1 |            14 | 3001.8742620116054 |                 0.0 |             0.0 |                              0.0
+(11 rows)
+
+=== Report 3: Merchant Refund Rate Outliers, 2025 (merchants with 50+ captured payments) (written by Felix) ===
+Engineer's note: Vertical avg refund rate is volume-weighted over ALL tenants in that vertical with qualifying 2025 payments (not just the 50+ group), so it reflects the true vertical norm; the 50+ filter only restricts which tenants are listed/ranked. The report prints the top 20 of the qualifying (50+) tenant set by refund rate descending; the printed row-count footer will show how many tenants qualified in total, but computing the count of tenants excluded by the 50+ threshold would require a second, differently-grained query (merchant count), so that figure isn't included in this report.
+REPORT: Merchant Refund Rate Outliers, 2025 (merchants with 50+ captured payments)
+QUESTION: Which individual merchants have refund rates well above or below their peers, net of vertical effects?
+merchant_name          | vertical              | tenant_status | payment_count | gross_captured_eur | amount_refunded_eur | refund_rate_pct | vertical_avg_refund_rate_pct | refund_rate_vs_vertical_avg_pp
+-----------------------+-----------------------+---------------+---------------+--------------------+---------------------+-----------------+------------------------------+-------------------------------
+Fjordline Wear         | Apparel & Footwear    | active        |            56 |            8355.44 |              2230.4 |           26.69 |                        20.77 |                           5.93
+Cragsley Outfitters    | Apparel & Footwear    | active        |          3566 |          705509.13 |           151132.11 |           21.42 |                        20.77 |                           0.65
+Marrowby & Vane        | Apparel & Footwear    | active        |          1719 |           280593.3 |            57112.04 |           20.35 |                        20.77 |                          -0.41
+Thistlecombe           | Apparel & Footwear    | active        |            89 |           12014.74 |              2086.3 |           17.36 |                        20.77 |                           -3.4
+Velvet Ash             | Apparel & Footwear    | active        |           132 |           23921.88 |             3919.87 |           16.39 |                        20.77 |                          -4.38
+Fell & Fjell           | Sports & Outdoor      | active        |            83 |           36116.68 |             5852.66 |            16.2 |                        13.24 |                           2.97
+Oakhurst Tailoring     | Apparel & Footwear    | active        |           162 |           25015.43 |             3422.42 |           13.68 |                        20.77 |                          -7.09
+Cinder Peak Sports Co. | Sports & Outdoor      | active        |           332 |          123713.44 |            16713.38 |           13.51 |                        13.24 |                           0.27
+Willow & Wren          | Home & Living         | active        |            95 |           18796.06 |             2402.98 |           12.78 |                         7.36 |                           5.42
+Lamplight Living       | Home & Living         | active        |            50 |            6705.35 |              804.15 |           11.99 |                         7.36 |                           4.63
+Kayak Corner           | Sports & Outdoor      | active        |           106 |           39742.21 |             3380.64 |            8.51 |                        13.24 |                          -4.73
+Nordic Bloom Cosmetics | Beauty                | active        |           141 |           17564.54 |             1395.02 |            7.94 |                         6.21 |                           1.73
+Saffron & Sage         | Beauty                | past_due      |           117 |            9866.32 |              737.69 |            7.48 |                         6.21 |                           1.27
+OfficeHub Nordic       | Office Supplies (B2B) | active        |           167 |          426010.27 |            29648.53 |            6.96 |                         4.32 |                           2.64
+Petalcourt Beauty      | Beauty                | active        |           692 |           61911.92 |             4035.58 |            6.52 |                         6.21 |                           0.31
+Coastline Interiors    | Home & Living         | active        |           153 |            20804.3 |             1329.22 |            6.39 |                         7.36 |                          -0.97
+Fennel & Flint         | Home & Living         | active        |           383 |           64363.83 |             3756.55 |            5.84 |                         7.36 |                          -1.53
+The Balm Room          | Beauty                | active        |           104 |           13879.18 |              733.08 |            5.28 |                         6.21 |                          -0.93
+Juniper Apothecary     | Beauty                | active        |           154 |           17551.04 |              833.22 |            4.75 |                         6.21 |                          -1.46
+Feather & Fin          | Pet Supplies          | active        |           216 |           10162.91 |              415.22 |            4.09 |                         1.59 |                            2.5
+(20 rows)

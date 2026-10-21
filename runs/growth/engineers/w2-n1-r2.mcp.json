@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Which coupon codes cost more than they're worth",
+    "--question",
+    "Ranking individual coupon codes by discount-plus-refund cost, which specific codes are the worst offenders (like Welcome10), and which are clean?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per coupon code\", \"columns_requested\": [\"code - coupons.code\", \"times_redeemed - count of coupon_redemptions rows for that code with redeemed_at in 2025\", \"orders_count - count of distinct order_id among those redemptions\", \"discount_given_eur - sum of coupon_redemptions.discount_amount converted to EUR, rounded to 0 decimals\", \"refund_amount_eur - sum of order_returns.refund_total for those same orders, converted to EUR, rounded to 0 decimals\", \"net_cost_eur - discount_given_eur + refund_amount_eur, rounded to 0 decimals\", \"refund_rate_pct - share of those orders with at least one linked order_returns row, *100, rounded to 1 decimal\", \"avg_order_value_eur - average grand_total (EUR) of those orders, rounded to 0 decimals\"], \"details\": \"Source: coupon_redemptions (redeemed_at in 2025, all tenants) joined to coupons for the code, and to order_returns on order_id for refund amounts. Convert coupon_redemptions.discount_amount to EUR using exchange_rates as of redeemed_at date; convert order_returns.refund_total to EUR using exchange_rates as of order_returns.refunded_at date; convert orders.grand_total to EUR as of orders.placed_at date (all base_code='EUR', EUR=rate 1). Order by net_cost_eur descending, tie-break code ascending, limit to the top 20 codes by net_cost_eur.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

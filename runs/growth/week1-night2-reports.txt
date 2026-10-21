@@ -1,0 +1,55 @@
+=== Report 1: Direct traffic concentration by merchant (written by Bea) ===
+Engineer's note: Grain is one row per tenant, top 15 by direct_sessions_2025 descending as requested; the 2025 date filter is implemented as started_at >= 2025-01-01 and < 2026-01-01 to include all of Dec 31 2025.
+REPORT: Direct traffic concentration by merchant
+QUESTION: Is the dominant 'direct/none' traffic channel spread evenly across merchants, or concentrated in a handful of them?
+tenant_name            | total_sessions_2025 | direct_sessions_2025 | direct_share_of_tenant_pct | pct_of_platform_direct_sessions
+-----------------------+---------------------+----------------------+----------------------------+--------------------------------
+Cragsley Outfitters    |                8134 |                 4345 |                       53.4 |                            21.0
+Marrowby & Vane        |                3699 |                 2057 |                       55.6 |                            10.0
+Brennquell Kaffee      |                2206 |                 1329 |                       60.2 |                             6.4
+Ampfeld Elektronik     |                1483 |                 1188 |                       80.1 |                             5.8
+Studio Vrij            |                1404 |                  803 |                       57.2 |                             3.9
+Petalcourt Beauty      |                1221 |                  648 |                       53.1 |                             3.1
+Fennel & Flint         |                1138 |                  577 |                       50.7 |                             2.8
+Cinder Peak Sports Co. |                 842 |                  487 |                       57.8 |                             2.4
+Grind Collective       |                 697 |                  406 |                       58.2 |                             2.0
+Gratlinie Outdoor      |                 739 |                  397 |                       53.7 |                             1.9
+Linden & Loom          |                 699 |                  368 |                       52.6 |                             1.8
+Wiesgrund Wohnen       |                 678 |                  359 |                       52.9 |                             1.7
+Kibblewick             |                 667 |                  296 |                       44.4 |                             1.4
+Honeycomb Larder       |                 455 |                  272 |                       59.8 |                             1.3
+Spice Route Box        |                 465 |                  260 |                       55.9 |                             1.3
+(15 rows)
+
+=== Report 2: Do discounted orders look healthy, or just cheaper? (written by Felix) ===
+Engineer's note: Orders with no order_items rows are counted with 0 items in the basket-size average (rather than being excluded), and orders with no exact-currency exchange rate (should not occur per the nightly rate feed) would be dropped from the EUR average via the inner join to exchange_rates for non-EUR currencies.
+REPORT: Do discounted orders look healthy, or just cheaper?
+QUESTION: Compared to full-price orders, do discounted orders in 2025 have a healthy order value, basket size, and return/cancellation rate, or do they look worse on the metrics that matter?
+order_group | orders_count | avg_order_value_eur | avg_items_per_order | return_rate_pct | cancelled_rate_pct
+------------+--------------+---------------------+---------------------+-----------------+-------------------
+discounted  |         8208 |                 410 |                 6.5 |             8.5 |                1.5
+full price  |        13985 |                 192 |                 2.6 |            18.6 |                4.3
+(2 rows)
+
+=== Report 3: Which merchants drove the January and July discount-rate spikes (written by Bea) ===
+Engineer's note: Discount rate is defined on raw (unconverted) discount_total > 0 per the request's "Source: orders table" instruction, so no currency conversion was applied since the measure is a boolean share, not a summed amount. Tenants with fewer than 20 orders in the Jan/Jul 2025 bucket are excluded per spec; the report does not separately print the excluded count.
+REPORT: Which merchants drove the January and July discount-rate spikes
+QUESTION: The platform-wide discount rate jumped from a ~35% baseline to 53-59% in January and July 2025 with no increase in average discount size — was that driven by a handful of merchants running sitewide promotions in those two months?
+tenant_name            | industry                  | orders_jan_jul_2025 | discount_rate_jan_jul_pct | orders_other_months_2025 | discount_rate_other_months_pct |   delta_pct_points
+-----------------------+---------------------------+---------------------+---------------------------+--------------------------+--------------------------------+-------------------
+Marrowby & Vane        | Apparel & Footwear        |                 313 |                      72.5 |                     1445 |                            8.2 |               64.3
+Cinder Peak Sports Co. | Sports & Outdoor          |                  67 |                      70.1 |                      271 |                           17.3 |               52.8
+Ridgeback Gear         | Sports & Outdoor          |                  23 |                      60.9 |                       85 |                           12.9 |               48.0
+Nordic Bloom Cosmetics | Beauty                    |                  20 |                      55.0 |                      131 |                           16.0 |               39.0
+Sourdough Club         | Food & Coffee             |                  58 |                      43.1 |                      262 |                            6.9 |               36.2
+Kayak Corner           | Sports & Outdoor          |                  21 |                      42.9 |                       88 |                            6.8 |               36.1
+Linden & Loom          | Home & Living             |                  58 |                      48.3 |                      205 |                           13.7 | 34.599999999999994
+Wohnglück              | Home & Living             |                  26 |                      46.2 |                      125 |                           14.4 | 31.800000000000004
+Ampfeld Elektronik     | Consumer Electronics      |                  79 |                      50.6 |                      370 |                           20.8 |               29.8
+Rue Lafayette Studio   | Apparel & Footwear        |                  37 |                      40.5 |                      150 |                           12.0 |               28.5
+Cragsley Outfitters    | Apparel & Footwear        |                 556 |                      34.0 |                     3079 |                            7.7 |               26.3
+Brennquell Kaffee      | Food & Coffee             |                 705 |                      82.6 |                     3490 |                           59.3 | 23.299999999999997
+Castell Fasteners      | Industrial Supplies (B2B) |                  22 |                      95.5 |                      137 |                           77.4 | 18.099999999999994
+Oakhurst Tailoring     | Apparel & Footwear        |                  24 |                      37.5 |                      141 |                           19.9 |               17.6
+OfficeHub Nordic       | Office Supplies (B2B)     |                  24 |                      83.3 |                      146 |                           65.8 |               17.5
+(15 rows)

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Scale of stock count discrepancies by month",
+    "--question",
+    "How often do physical cycle counts come back different from the stock quantity we had on record, and how large are those differences in units and estimated value, across 2025?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Omar\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"calendar month (Jan 2025 - Dec 2025)\", \"columns_requested\": [\"month (YYYY-MM)\", \"cycle_count_events (count of stock_movements rows with kind='cycle_count')\", \"warehouses_affected (distinct warehouses with at least one cycle_count event that month)\", \"units_short (sum of abs(quantity) where quantity<0, i.e. counted less than recorded)\", \"units_over (sum of quantity where quantity>0, i.e. counted more than recorded)\", \"net_units_variance (sum of signed quantity; negative = net shrinkage)\", \"abs_units_variance (sum of abs(quantity), total magnitude of mismatch)\", \"estimated_value_eur (sum of abs(quantity) * unit cost, converted to EUR)\", \"avg_abs_units_per_event (abs_units_variance / cycle_count_events, rounded 1dp)\"], \"details\": \"Source: stock_movements where kind='cycle_count', occurred_at between 2025-01-01 and 2025-12-31 inclusive, across all tenants/warehouses. Join stock_locations on stock_location_id to get warehouse_id for the distinct-warehouse count. Cost basis: join supplier_products on variant_id, preferring is_preferred=true; if no preferred row exists for a variant, use the lowest unit_cost among active (is_active=true) supplier_products rows for that variant; if a variant has no supplier_products row, exclude it from estimated_value_eur but still count it in unit/event columns (note the gap in the report notes). Convert supplier_products.currency_code amounts to EUR using exchange_rates (base_code='EUR', quote_code=that currency, as_of = date of stock_movements.occurred_at): value_eur = value_in_currency / rate. Round estimated_value_eur to whole EUR. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

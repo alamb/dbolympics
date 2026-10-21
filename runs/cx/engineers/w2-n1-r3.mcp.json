@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Urgent-priority ticket resolution failure, by merchant",
+    "--question",
+    "Is the urgent-ticket resolution failure (missing resolution about half the time, company-wide) concentrated in Cragsley, Marrowby, and Studio Vrij, or is it a broad pattern across the book?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per tenant (merchant), among tenants with at least 5 urgent-priority tickets created in 2025\", \"columns_requested\": [\"merchant name\", \"urgent tickets created, 2025\", \"urgent tickets missing resolution target (count)\", \"urgent resolution miss rate (%)\", \"all-priority resolution miss rate (%), 2025, for comparison\"], \"details\": \"Source: tickets (priority='urgent' for the main cut, all priorities for the comparison column) joined to sla_policies (via tickets.sla_policy_id, for resolution_target_minutes) and tenants (name). Window: tickets.created_at 2025-01-01 through 2025-12-31. Define a ticket as 'missing resolution target' if: resolved_at is null as of 2025-12-31 (i.e. still unresolved), OR extract(epoch from resolved_at - created_at)/60 > sla_policies.resolution_target_minutes. Exclude tickets with a null sla_policy_id from both numerator and denominator (can't be evaluated) and note how many were excluded. 'Urgent resolution miss rate' = urgent tickets missing target \\u00f7 evaluable urgent tickets, percentage rounded to 1 decimal. 'All-priority resolution miss rate' = same calculation across all priorities for that tenant, for comparison within the same merchant. Only include tenants with >=5 evaluable urgent tickets in 2025. Order by urgent resolution miss rate descending, tie-break merchant name ascending. Cap at 50 rows; note total qualifying tenant count.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

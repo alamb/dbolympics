@@ -1,0 +1,18 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  tm.title AS macro_title,\n  tm.usage_count AS current_usage_count,\n  COALESCE(ch.event_count, 0) AS logged_update_event_count,\n  ch.sum_increment AS sum_of_logged_increments,\n  ch.first_update_at AS first_logged_update_at,\n  ch.last_update_at AS last_logged_update_at,\n  tm.created_at AS macro_created_at\nFROM (\n  SELECT id, title, usage_count, created_at\n  FROM macros\n  ORDER BY usage_count DESC, id\n  LIMIT 5\n) tm\nLEFT JOIN (\n  SELECT\n    entity_id,\n    COUNT(*) AS event_count,\n    SUM((after_data->>'usage_count')::numeric - (before_data->>'usage_count')::numeric) AS sum_increment,\n    MIN(occurred_at) AS first_update_at,\n    MAX(occurred_at) AS last_update_at\n  FROM change_history\n  WHERE entity_table = 'macros'\n    AND 'usage_count' = ANY(changed_columns)\n  GROUP BY entity_id\n) ch ON ch.entity_id = tm.id\nORDER BY tm.usage_count DESC, tm.id",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: macro_title, current_usage_count, logged_update_event_count, sum_of_logged_increments, first_logged_update_at, last_logged_update_at, macro_created_at"
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  tm.title AS macro_title,\n  tm.usage_count AS current_usage_count,\n  COALESCE(ch.event_count, 0) AS logged_update_event_count,\n  ch.sum_increment AS sum_of_logged_increments,\n  ch.first_update_at AS first_logged_update_at,\n  ch.last_update_at AS last_logged_update_at,\n  tm.created_at AS macro_created_at\nFROM (\n  SELECT id, title, usage_count, created_at\n  FROM macros\n  ORDER BY usage_count DESC, id\n  LIMIT 5\n) tm\nLEFT JOIN (\n  SELECT\n    entity_id,\n    COUNT(*) AS event_count,\n    SUM((after_data->>'usage_count')::numeric - (before_data->>'usage_count')::numeric) AS sum_increment,\n    MIN(occurred_at) AS first_update_at,\n    MAX(occurred_at) AS last_update_at\n  FROM change_history\n  WHERE entity_table = 'macros'\n    AND 'usage_count' = ANY(changed_columns)\n  GROUP BY entity_id\n) ch ON ch.entity_id = tm.id\nORDER BY tm.usage_count DESC, tm.id",
+  "note": "We don't have last week's report output stored to match macro ids against, so the 5 macros here are today's top 5 by macros.usage_count (tie-broken by id) rather than a literal re-identification of last week's rows — flag if that set needs to match exactly, we'd need the prior report's macro ids. Also note change_history is only filtered by entity_table='macros' and changed_columns containing 'usage_count' (no entity_schema filter was specified/available), and per-macro figures are null for logged_update_event_count fields if no matching change_history rows exist.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. Summary of what the report does and the one deviation flagged to Ben:\n\n- **Grain:** one row per macro, for the 5 macros with the highest current `usage_count`.\n- Since the warehouse has no stored copy of last week's report output, I couldn't match by macro id against it — I used today's top 5 by `usage_count` as the closest available proxy and flagged this in the note so Ben can confirm it's the same set, or supply the prior report's macro ids if not.\n- For each macro: `current_usage_count` straight from `macros`, plus `logged_update_event_count`, `sum_of_logged_increments` (sum of `after_data.usage_count - before_data.usage_count`), and first/last logged update timestamps from `change_history` (filtered to `entity_table = 'macros'` and `changed_columns` containing `'usage_count'`), alongside `macro_created_at` — exactly as requested, so the gap between logged increments and the actual counter will be visible per macro."
+ }
+]

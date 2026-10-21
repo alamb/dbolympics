@@ -1,0 +1,135 @@
+=== Report 1: Scale of stock count discrepancies by month (written by Omar) ===
+Engineer's note: Note: supplier_products has no is_active column itself, so "active supplier_products rows" was interpreted as rows sourced from an active supplier (suppliers.is_active=true); variants with no supplier_products row are excluded only from estimated_value_eur, as requested, but still counted in the unit/event columns.
+REPORT: Scale of stock count discrepancies by month
+QUESTION: How often do physical cycle counts come back different from the stock quantity we had on record, and how large are those differences in units and estimated value, across 2025?
+month   | cycle_count_events | warehouses_affected | units_short | units_over | net_units_variance | abs_units_variance | estimated_value_eur | avg_abs_units_per_event
+--------+--------------------+---------------------+-------------+------------+--------------------+--------------------+---------------------+------------------------
+2025-01 |                764 |                  85 |         510 |        254 |               -256 |                764 |             20348.0 |                     1.0
+2025-02 |                760 |                  90 |         515 |        245 |               -270 |                760 |             19274.0 |                     1.0
+2025-03 |                822 |                  90 |         579 |        243 |               -336 |                822 |             21343.0 |                     1.0
+2025-04 |                783 |                  93 |         521 |        262 |               -259 |                783 |             20197.0 |                     1.0
+2025-05 |                853 |                  94 |         605 |        248 |               -357 |                853 |             25375.0 |                     1.0
+2025-06 |                818 |                  98 |         542 |        276 |               -266 |                818 |             19756.0 |                     1.0
+2025-07 |                849 |                 101 |         580 |        269 |               -311 |                849 |             23154.0 |                     1.0
+2025-08 |                865 |                 102 |         588 |        277 |               -311 |                865 |             21544.0 |                     1.0
+2025-09 |                875 |                 110 |         608 |        267 |               -341 |                875 |             22525.0 |                     1.0
+2025-10 |                941 |                 105 |         667 |        274 |               -393 |                941 |             25539.0 |                     1.0
+2025-11 |                917 |                 111 |         650 |        267 |               -383 |                917 |             21766.0 |                     1.0
+2025-12 |                946 |                 108 |         671 |        275 |               -396 |                946 |             21636.0 |                     1.0
+(12 rows)
+
+=== Report 2: Stock discrepancies by warehouse and location type (written by Viktor) ===
+Engineer's note: Costing uses each variant's preferred supplier_products.unit_cost, falling back to the cheapest supplier if no preferred row exists, converted to EUR via exchange_rates (EUR→currency rate on the movement's calendar date; EUR rows pass through at 1:1), matching report 1's method. The printed report header will show the true total row count if it exceeds the 50 printed here.
+REPORT: Stock discrepancies by warehouse and location type
+QUESTION: Does the stock-count mismatch concentrate in particular warehouses, particular storage-location kinds (e.g. bulk shelving vs pick bins), or particular merchants, in a way that signals valuation/write-off exposure?
+tenant_name                   | warehouse_name                         | location_kind | cycle_count_events | net_units_variance | abs_units_variance | estimated_value_eur | share_of_total_value_pct
+------------------------------+----------------------------------------+---------------+--------------------+--------------------+--------------------+---------------------+-------------------------
+Cragsley Outfitters           | Atlanta Fulfilment Centre              | pick          |               1506 |               -594 |               1506 |            51341.72 |                     10.2
+Marrowby & Vane               | Reading Fulfilment Centre              | pick          |               1058 |               -384 |               1058 |            39560.31 |                      7.9
+Cinder Peak Sports Co.        | San Francisco Fulfilment Centre        | pick          |                262 |                -78 |                262 |            31083.95 |                      6.2
+Ampfeld Elektronik            | Hamburg Fulfilment Centre              | pick          |                145 |                -45 |                145 |            30033.34 |                      6.0
+Studio Vrij                   | Den Haag Fulfilment Centre             | pick          |                622 |               -214 |                622 |            22628.95 |                      4.5
+Velo Noord                    | Groningen Fulfilment Centre            | pick          |                134 |                -46 |                134 |            20713.85 |                      4.1
+Kayak Corner                  | Exeter Fulfilment Centre               | pick          |                173 |                -71 |                173 |            20530.12 |                      4.1
+Gratlinie Outdoor             | Dortmund Fulfilment Centre             | pick          |                219 |               -105 |                219 |            20038.79 |                      4.0
+Seilschaft                    | Hamburg Fulfilment Centre              | pick          |                 86 |                -26 |                 86 |            14131.49 |                      2.8
+Fell & Fjell                  | Odense Fulfilment Centre               | pick          |                135 |                -59 |                135 |             13020.8 |                      2.6
+Basecamp Nord                 | Dublin Fulfilment Centre               | pick          |                 59 |                -43 |                 59 |             9666.78 |                      1.9
+Velvet Ash                    | Uppsala Fulfilment Centre              | pick          |                304 |               -112 |                304 |             9533.83 |                      1.9
+Thistlecombe                  | Cambridge Fulfilment Centre            | pick          |                253 |                -97 |                253 |             9412.01 |                      1.9
+Rue Lafayette Studio          | Paris Fulfilment Centre                | pick          |                286 |               -104 |                286 |             9139.13 |                      1.8
+Trailmark                     | Amsterdam Fulfilment Centre            | pick          |                 65 |                -25 |                 65 |             8949.46 |                      1.8
+Ridgeback Gear                | Rotterdam Fulfilment Centre            | pick          |                 87 |                -29 |                 87 |             8827.55 |                      1.8
+Ostwind Mode                  | München Fulfilment Centre              | pick          |                244 |                -76 |                244 |             8528.03 |                      1.7
+Atelier Nouveau               | Boulogne-Billancourt Fulfilment Centre | pick          |                209 |                -65 |                209 |             8326.39 |                      1.7
+Bytefield                     | Coventry Fulfilment Centre             | pick          |                 27 |                 -7 |                 27 |              7711.6 |                      1.5
+Oakhurst Tailoring            | København Fulfilment Centre            | pick          |                216 |                -82 |                216 |             7067.59 |                      1.4
+Fjordline Wear                | Trondheim Fulfilment Centre            | pick          |                209 |                -93 |                209 |             6551.59 |                      1.3
+Noordzee Surfwear             | Arnhem Fulfilment Centre               | pick          |                199 |                -63 |                199 |             5737.64 |                      1.1
+Lumen Collective              | Delft Fulfilment Centre                | pick          |                153 |                -73 |                153 |             5421.88 |                      1.1
+Meadow Row                    | Seattle Fulfilment Centre              | pick          |                138 |                -62 |                138 |             5251.38 |                      1.0
+Circuit Harbor                | Exeter Fulfilment Centre               | pick          |                 22 |                -12 |                 22 |             5234.48 |                      1.0
+Brick & Bobbin                | Oslo Fulfilment Centre                 | pick          |                151 |                -57 |                151 |             5207.82 |                      1.0
+OfficeHub Nordic              | Oslo Fulfilment Centre                 | pick          |                 48 |                -20 |                 48 |             5092.26 |                      1.0
+Saltmarsh Knitwear            | Utrecht Fulfilment Centre              | pick          |                125 |                -55 |                125 |             4726.87 |                      0.9
+Kontor24 Bürobedarf           | Berlin Fulfilment Centre               | pick          |                 28 |                 -8 |                 28 |             4492.79 |                      0.9
+Maison Clair                  | Nice Fulfilment Centre                 | pick          |                157 |                -59 |                157 |             4098.29 |                      0.8
+Paddock & Pine                | København Fulfilment Centre            | pick          |                102 |                -58 |                102 |             3742.79 |                      0.7
+Courtside Collective          | Trondheim Fulfilment Centre            | pick          |                 58 |                -38 |                 58 |             3672.54 |                      0.7
+Linden & Loom                 | Amsterdam Fulfilment Centre            | pick          |                 76 |                -26 |                 76 |              3564.6 |                      0.7
+Lumio Tech                    | Amsterdam Fulfilment Centre            | pick          |                 22 |                 -8 |                 22 |             3494.53 |                      0.7
+Ampere & Co.                  | Amsterdam Fulfilment Centre            | pick          |                 30 |                 -4 |                 30 |             3484.32 |                      0.7
+Silverthread                  | Philadelphia Fulfilment Centre         | pick          |                 59 |                -21 |                 59 |             3375.11 |                      0.7
+Fennel & Flint                | Liverpool Fulfilment Centre            | pick          |                 80 |                -36 |                 80 |              3303.2 |                      0.7
+Kiezkind                      | Wiesbaden Fulfilment Centre            | pick          |                 87 |                -23 |                 87 |             3001.93 |                      0.6
+Halden Boots                  | Stockholm Fulfilment Centre            | pick          |                 85 |                -23 |                 85 |             2909.01 |                      0.6
+Strandgut                     | Berlin Fulfilment Centre               | pick          |                 95 |                -55 |                 95 |             2904.94 |                      0.6
+Little Larch Kids             | Manchester Fulfilment Centre           | pick          |                113 |                -37 |                113 |             2826.94 |                      0.6
+Northstar Watches             | Leiden Fulfilment Centre               | pick          |                 46 |                -10 |                 46 |             2699.35 |                      0.5
+Northwire Audio               | London Fulfilment Centre               | pick          |                 19 |                 -7 |                 19 |             2630.94 |                      0.5
+Pedal & Pine                  | Rotterdam Fulfilment Centre            | pick          |                 43 |                -23 |                 43 |             2568.37 |                      0.5
+Deskline Supplies             | Newcastle upon Tyne Fulfilment Centre  | pick          |                 14 |                 -6 |                 14 |             2511.98 |                      0.5
+Greyfriars Supply             | Buffalo Fulfilment Centre              | pick          |                123 |                -47 |                123 |             2469.55 |                      0.5
+Bijoux Lune                   | Paris Fulfilment Centre                | pick          |                 45 |                -17 |                 45 |             2326.03 |                      0.5
+Wiesgrund Wohnen              | Berlin Fulfilment Centre               | pick          |                 71 |                -35 |                 71 |             2289.67 |                      0.5
+Ballycorran Industrial Supply | Galway Fulfilment Centre               | pick          |                 57 |                -27 |                 57 |             2066.52 |                      0.4
+Signalbox                     | York Fulfilment Centre                 | pick          |                  9 |                  1 |                  9 |             1999.39 |                      0.4
+(50 rows)
+
+=== Report 3: Stock discrepancies by product category: handling vs tracking-method issue (written by Ines) ===
+Engineer's note: I didn't have "report 1" in context, so for costing/FX I used: unit cost from each variant's preferred supplier_products row (fallback to lowest id if none marked preferred), converted to EUR via exchange_rates on the cycle-count's occurred_at date; movements with no supplier cost on file contribute 0 to estimated_value_eur. Also, since categories are tenant-scoped and grouping by category_id across ~120 tenants would yield far more than 50 rows, I grouped by category_name (merging same-named categories across tenants) to match the expected row count and grain.
+REPORT: Stock discrepancies by product category: handling vs tracking-method issue
+QUESTION: Are stock-count discrepancies spread evenly across product categories, or concentrated in certain categories, lot/serial-tracked items, or high-velocity items — pointing to a handling problem vs a tracking-method problem?
+category_name  | cycle_count_events | abs_units_variance | net_units_variance | estimated_value_eur | pct_events_lot_or_serial_tracked | avg_monthly_units_sold | variance_per_1000_units_sold
+---------------+--------------------+--------------------+--------------------+---------------------+----------------------------------+------------------------+-----------------------------
+Bikes          |                102 |                102 |                -42 |            86602.95 |                              0.0 |                    7.7 |                       1108.7
+Outerwear      |                742 |                742 |               -302 |            66693.65 |                              0.0 |                  124.7 |                        496.0
+Boots          |                393 |                393 |               -139 |            27731.66 |                              0.0 |                   68.4 |                        478.7
+Trousers       |                885 |                885 |               -363 |            26371.32 |                              0.0 |                  173.6 |                        424.9
+Dresses        |                463 |                463 |               -155 |            19003.38 |                              0.0 |                   74.2 |                        520.2
+Sneakers       |                412 |                412 |               -166 |            17439.45 |                              0.0 |                   90.7 |                        378.7
+Tents          |                105 |                105 |                -51 |            16185.04 |                              0.0 |                   11.4 |                        766.4
+Scarves & Hats |                718 |                718 |               -264 |            12578.24 |                              0.0 |                  205.8 |                        290.8
+Tops           |               1086 |               1086 |               -384 |            12499.82 |                              0.0 |                  332.7 |                        272.0
+Laptops        |                 14 |                 14 |                 -6 |            12422.82 |                              0.0 |                    3.5 |                        333.3
+Appliances     |                 79 |                 79 |                -19 |            12329.67 |                             75.9 |                   28.2 |                        233.7
+Smartphones    |                 30 |                 30 |                  0 |            11772.03 |                              0.0 |                    4.5 |                        555.6
+Loungewear     |                417 |                417 |               -159 |            11394.85 |                              0.0 |                   83.7 |                        415.3
+Knitwear       |                324 |                324 |               -126 |             11100.5 |                              0.0 |                   84.5 |                        319.5
+Sandals        |                424 |                424 |               -166 |            10849.47 |                              0.0 |                   72.6 |                        486.8
+Shoes          |                133 |                133 |                -47 |             7921.41 |                              0.0 |                   15.0 |                        738.9
+Monitors       |                 31 |                 31 |                -15 |             7883.55 |                              0.0 |                    7.4 |                        348.3
+Desks          |                 21 |                 21 |                -13 |              7739.5 |                              0.0 |                  113.1 |                         15.5
+Apparel        |                187 |                187 |                -69 |             7636.13 |                              0.0 |                   23.1 |                        675.1
+Helmets        |                139 |                139 |                -57 |             7331.05 |                              0.0 |                   18.3 |                        634.7
+Footwear       |                 88 |                 88 |                -46 |             6853.48 |                              0.0 |                   12.3 |                        594.6
+Packs          |                110 |                110 |                -48 |             6578.37 |                              0.0 |                   11.7 |                        785.7
+Sleep          |                 78 |                 78 |                  0 |             5634.79 |                              0.0 |                   11.4 |                        569.3
+Smartwatches   |                 29 |                 29 |                -17 |             5419.84 |                              0.0 |                    6.0 |                        402.8
+Weights        |                 69 |                 69 |                -31 |             4748.89 |                              0.0 |                   12.0 |                        479.2
+Cookware       |                109 |                109 |                -53 |             4695.09 |                              0.0 |                   49.9 |                        182.0
+Tablets        |                 14 |                 14 |                 -2 |             4538.34 |                              0.0 |                    2.4 |                        482.8
+Shirts         |                191 |                191 |                -67 |             4345.58 |                              0.0 |                   40.7 |                        391.4
+Grinders       |                 51 |                 51 |                -13 |             3905.54 |                             64.7 |                  170.8 |                         24.9
+Watches        |                 32 |                 32 |                  6 |             3598.43 |                              0.0 |                    1.0 |                       2666.7
+Headphones     |                 31 |                 31 |                -13 |             3519.25 |                              0.0 |                    7.9 |                        326.3
+Seating        |                 16 |                 16 |                 -8 |             3289.31 |                              0.0 |                  120.9 |                         11.0
+Yoga           |                123 |                123 |                -63 |             3234.79 |                              0.0 |                   17.2 |                        597.1
+Furniture      |                 37 |                 37 |                 -9 |             3176.96 |                              0.0 |                   12.3 |                        250.0
+Drills         |                 21 |                 21 |                 -9 |             2922.69 |                              0.0 |                  275.3 |                          6.4
+Socks          |                448 |                448 |               -180 |             2613.39 |                              0.0 |                  173.6 |                        215.1
+Bedding        |                 68 |                 68 |                -34 |             2459.12 |                              0.0 |                   32.3 |                        175.7
+Lighting       |                 54 |                 54 |                -20 |             2401.89 |                              0.0 |                   31.4 |                        143.2
+Eyewear        |                 36 |                 36 |                -26 |             1803.83 |                              0.0 |                    1.7 |                       1800.0
+Speakers       |                 21 |                 21 |                 -5 |             1772.52 |                              0.0 |                    6.3 |                        280.0
+Textiles       |                 76 |                 76 |                -28 |             1675.73 |                              0.0 |                   47.0 |                        134.8
+Rings          |                 27 |                 27 |                 -9 |             1587.23 |                              0.0 |                    0.9 |                       2454.5
+Bracelets      |                 38 |                 38 |                -16 |             1585.17 |                              0.0 |                    1.1 |                       2923.1
+Storage        |                 14 |                 14 |                -10 |             1575.26 |                              0.0 |                  133.0 |                          8.8
+Accessories    |                114 |                114 |                -50 |             1505.01 |                              0.0 |                   21.3 |                        447.1
+Decor          |                 81 |                 81 |                -37 |             1450.07 |                              0.0 |                   56.3 |                        120.0
+Food           |                 96 |                 96 |                -40 |             1091.43 |                            100.0 |                   83.9 |                         95.3
+Security       |                 16 |                 16 |                 -8 |             1072.45 |                              0.0 |                    7.2 |                        186.0
+Tableware      |                 36 |                 36 |                 -4 |             1007.24 |                              0.0 |                   18.8 |                        159.3
+Gifts          |                 46 |                 46 |                -14 |              1002.0 |                             69.6 |                   96.2 |                         39.9
+(105 rows, first 50 printed)

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket spike in May-June 2025: which merchants drove it",
+    "--question",
+    "Was the May-June 2025 jump in ticket volume and resolution time concentrated in a few merchants, or broad-based across the platform?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per tenant (merchant), among tenants with at least 5 tickets created in 2025\", \"columns_requested\": [\"merchant name\", \"tickets created, May-Jun 2025 (combined)\", \"avg monthly tickets, other 2025 months (Jan-Apr, Jul-Dec, per-month average)\", \"spike ratio (May-Jun monthly rate \\u00f7 other-months monthly average)\", \"share of May-Jun 2025 tickets tagged delivery or where-is-my-order (%)\"], \"details\": \"Source: tickets joined to tenants (for name), and ticket_tags_map/support_tags for the delivery-tag share. 'Tickets created, May-Jun 2025' = count of tickets with created_at between 2025-05-01 and 2025-06-30 inclusive, per tenant. 'avg monthly tickets, other 2025 months' = count of that tenant's tickets with created_at in 2025 but outside May-Jun, divided by 10 (the 10 other months). Spike ratio = (May-Jun combined count / 2) divided by the other-months monthly average; if the other-months average is 0, show NULL rather than erroring. Delivery-tag share uses the same ticket-level classification as the companion report (tag name 'delivery' or 'where-is-my-order', case-insensitive, counted once per distinct ticket). Only include tenants with >=5 tickets created in 2025 total. Order by 'tickets created, May-Jun 2025' descending, tie-break by merchant name ascending. Report will cap at 50 printed rows per house standard; note total qualifying tenant count in the footer.\", \"builds_on\": [\"Support response & resolution time trend, monthly\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

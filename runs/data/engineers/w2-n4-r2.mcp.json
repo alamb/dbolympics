@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Scope of the EUR exchange-rate join bug on 2025 revenue",
+    "--question",
+    "If a query naively joins exchange_rates for EUR the same way it does for every other currency, how much revenue silently vanishes, and is EUR the only currency affected?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Omar\", \"situation\": \"metric-certification\", \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"currency code\", \"columns_requested\": [\"currency_code\", \"total_2025_revenue_naive_eur\", \"total_2025_revenue_correct_eur\", \"shortfall_eur\", \"shortfall_pct\"], \"details\": \"Population: all payments with status in ('captured','refunded','partially_refunded') and captured_at in 2025, grouped by payments.currency_code. total_2025_revenue_naive_eur = sum of payments.amount converted to EUR using a plain INNER JOIN to exchange_rates on base_code='EUR', quote_code=payments.currency_code, as_of=captured_at date, with NO special-casing for EUR (i.e. if currency_code='EUR' and no matching exchange_rates row exists for base_code='EUR' and quote_code='EUR', those rows are simply excluded from the sum by the inner join, exactly as a careless query would behave). total_2025_revenue_correct_eur = the same sum but computed correctly (EUR amounts passed through unconverted at rate 1.0; other currencies converted via exchange_rates as normal). shortfall_eur = total_2025_revenue_correct_eur minus total_2025_revenue_naive_eur. shortfall_pct = shortfall_eur / total_2025_revenue_correct_eur * 100, rounded to 1 decimal. Tables: payments, exchange_rates. Order by total_2025_revenue_correct_eur descending.\", \"builds_on\": [\"Corrected 2025 revenue and receivables by B2B tenant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

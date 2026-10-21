@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Support agent staffing vs ticket volume, by merchant",
+    "--question",
+    "Are Cragsley, Marrowby, and Studio Vrij understaffed relative to their ticket volume compared to the rest of the book?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per tenant (merchant), among tenants with at least 20 tickets created in 2025\", \"columns_requested\": [\"merchant name\", \"tickets created, 2025\", \"registered support agents (support_agents rows for tenant)\", \"distinct agents who handled a ticket in 2025 (count distinct assignee_agent_id, excluding null)\", \"tickets per active agent (tickets \\u00f7 distinct agents who handled a ticket)\", \"% tickets unassigned (assignee_agent_id null)\"], \"details\": \"Source: tickets joined to tenants (name) and support_agents (tenant's registered agent headcount, regardless of whether they handled a ticket in 2025). Window: tickets.created_at 2025-01-01 through 2025-12-31. 'Registered support agents' = count of support_agents rows for that tenant_id (current roster, not time-sliced). 'Distinct agents who handled a ticket' = count distinct tickets.assignee_agent_id for that tenant in 2025, excluding nulls. 'Tickets per active agent' = tickets created 2025 \\u00f7 distinct agents who handled a ticket (NULL if zero agents handled any ticket). '% unassigned' = tickets with assignee_agent_id null \\u00f7 tickets created 2025, percentage rounded to 1 decimal. Only include tenants with >=20 tickets created in 2025. Order by tickets per active agent descending (highest ratio = most loaded), tie-break merchant name ascending. Cap at 50 rows per house standard; note total qualifying tenant count.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

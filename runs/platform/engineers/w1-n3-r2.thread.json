@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH affected AS (\n  SELECT DISTINCT jr.tenant_id\n  FROM job_runs jr\n  JOIN jobs j ON j.id = jr.job_id\n  WHERE j.handler = 'carts.remind'\n    AND jr.status = 'failed'\n    AND jr.queued_at >= TIMESTAMP '2025-11-01'\n    AND jr.queued_at < TIMESTAMP '2025-12-01'\n),\ntenant_counts AS (\n  SELECT COUNT(*) AS total_tenants\n  FROM tenants\n  WHERE status IN ('trial','active','past_due','suspended','churned')\n),\nticket_weeks AS (\n  SELECT cd.week_start,\n         t.tenant_id,\n         CASE WHEN t.tenant_id IN (SELECT tenant_id FROM affected) THEN 1 ELSE 0 END AS is_affected\n  FROM tickets t\n  JOIN calendar_days cd ON cd.calendar_date = CAST(t.created_at AS DATE)\n  WHERE t.created_at >= TIMESTAMP '2025-11-01' AND t.created_at < TIMESTAMP '2026-01-01'\n)\nSELECT\n  week_start,\n  COUNT(*) FILTER (WHERE is_affected = 1) AS tickets_affected_tenants,\n  ROUND(COUNT(*) FILTER (WHERE is_affected = 1) / 10.0, 2) AS avg_tickets_per_affected_tenant,\n  COUNT(*) FILTER (WHERE is_affected = 0) AS tickets_other_tenants,\n  ROUND(COUNT(*) FILTER (WHERE is_affected = 0) / (SELECT (total_tenants - 10) FROM tenant_counts), 2) AS avg_tickets_per_other_tenant\nFROM ticket_weeks\nGROUP BY week_start\nORDER BY week_start",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: week_start, tickets_affected_tenants, avg_tickets_per_affected_tenant, tickets_other_tenants, avg_tickets_per_other_tenant"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles with the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH affected AS (\n  SELECT DISTINCT jr.tenant_id\n  FROM job_runs jr\n  JOIN jobs j ON j.id = jr.job_id\n  WHERE j.handler = 'carts.remind'\n    AND jr.status = 'failed'\n    AND jr.queued_at >= TIMESTAMP '2025-11-01'\n    AND jr.queued_at < TIMESTAMP '2025-12-01'\n),\ntenant_counts AS (\n  SELECT COUNT(*) AS total_tenants\n  FROM tenants\n  WHERE status IN ('trial','active','past_due','suspended','churned')\n),\nticket_weeks AS (\n  SELECT cd.week_start,\n         t.tenant_id,\n         CASE WHEN t.tenant_id IN (SELECT tenant_id FROM affected) THEN 1 ELSE 0 END AS is_affected\n  FROM tickets t\n  JOIN calendar_days cd ON cd.calendar_date = CAST(t.created_at AS DATE)\n  WHERE t.created_at >= TIMESTAMP '2025-11-01' AND t.created_at < TIMESTAMP '2026-01-01'\n)\nSELECT\n  week_start,\n  COUNT(*) FILTER (WHERE is_affected = 1) AS tickets_affected_tenants,\n  ROUND(COUNT(*) FILTER (WHERE is_affected = 1) / 10.0, 2) AS avg_tickets_per_affected_tenant,\n  COUNT(*) FILTER (WHERE is_affected = 0) AS tickets_other_tenants,\n  ROUND(COUNT(*) FILTER (WHERE is_affected = 0) / (SELECT (total_tenants - 10) FROM tenant_counts), 2) AS avg_tickets_per_other_tenant\nFROM ticket_weeks\nGROUP BY week_start\nORDER BY week_start",
+  "note": "Affected tenants = the 10 distinct tenant_ids with a failed job_runs row for jobs.handler='carts.remind' queued in Nov 2025, matching the prior request's definition. 'Other' tenant count uses all tenants with a valid status (which covers the whole tenants table) minus the 10 affected.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups ticket counts by ISO week (Nov 1 – Dec 31, 2025) split into the 10 tenants affected by the `carts.remind` job failures versus all other tenants, with per-tenant averages as requested."
+ }
+]

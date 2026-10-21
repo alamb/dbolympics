@@ -1,0 +1,101 @@
+=== Report 1: Ticket volume and SLA performance by merchant (written by Felix) ===
+Engineer's note: Printed to the top 30 tenants by 2025 ticket volume, ordered desc with cumulative share computed over all tenants before truncation. Added a `total_tenants_with_tickets` column (constant across rows) so the analyst has the total merchant count with ≥1 ticket in 2025 without a separate query; agent_count uses support_agents.tenant_id directly per the "simpler" option noted in the request.
+REPORT: Ticket volume and SLA performance by merchant
+QUESTION: Is ticket volume and SLA breach pain concentrated in a handful of merchants, and do any merchants stand out as outliers?
+tenant_name                   | ticket_count | pct_of_total_tickets | cumulative_pct_of_total_tickets | first_response_breach_rate | resolution_breach_rate | avg_resolution_minutes | agent_count | total_tenants_with_tickets
+------------------------------+--------------+----------------------+---------------------------------+----------------------------+------------------------+------------------------+-------------+---------------------------
+Cragsley Outfitters           |          400 |                 17.2 |                            17.2 |                       57.0 |                   29.8 |                 2348.3 |           8 |                         94
+Marrowby & Vane               |          231 |                 10.0 |                            27.2 |                       59.7 |                   39.4 |                 5096.0 |           5 |                         94
+Studio Vrij                   |          166 |                  7.2 |                            34.4 |                       55.4 |                   38.6 |                 7503.6 |           4 |                         94
+Brennquell Kaffee             |          137 |                  5.9 |                            40.3 |                       26.3 |                   11.7 |                  956.3 |           4 |                         94
+Grind Collective              |          122 |                  5.3 |                            45.5 |                       44.3 |                   33.6 |                 3865.3 |           3 |                         94
+Petalcourt Beauty             |          119 |                  5.1 |                            50.6 |                       54.6 |                   32.8 |                 2922.5 |           4 |                         94
+Kibblewick                    |           72 |                  3.1 |                            53.8 |                       44.4 |                   33.3 |                 2446.2 |           4 |                         94
+Spice Route Box               |           71 |                  3.1 |                            56.8 |                       28.2 |                   11.3 |                 1014.9 |           3 |                         94
+Fennel & Flint                |           67 |                  2.9 |                            59.7 |                       35.8 |                   17.9 |                 2112.0 |           4 |                         94
+Honeycomb Larder              |           58 |                  2.5 |                            62.2 |                       24.1 |                   10.3 |                 1968.2 |           3 |                         94
+Ampfeld Elektronik            |           56 |                  2.4 |                            64.6 |                       23.2 |                   14.3 |                 1203.4 |           5 |                         94
+Sourdough Club                |           47 |                  2.0 |                            66.6 |                       29.8 |                    8.5 |                 1958.7 |           3 |                         94
+Ballycorran Industrial Supply |           44 |                  1.9 |                            68.5 |                       31.8 |                    6.8 |                 1470.2 |           3 |                         94
+Cinder Peak Sports Co.        |           43 |                  1.9 |                            70.4 |                       30.2 |                    9.3 |                 1036.6 |           4 |                         94
+Wiesgrund Wohnen              |           32 |                  1.4 |                            71.8 |                       15.6 |                    6.3 |                  654.6 |           3 |                         94
+Linden & Loom                 |           29 |                  1.3 |                            73.0 |                       24.1 |                   13.8 |                  809.4 |           3 |                         94
+Gratlinie Outdoor             |           27 |                  1.2 |                            74.2 |                       11.1 |                    3.7 |                  650.6 |           4 |                         94
+Oakhurst Tailoring            |           27 |                  1.2 |                            75.3 |                       11.1 |                    0.0 |                 2000.0 |           3 |                         94
+Rue Lafayette Studio          |           27 |                  1.2 |                            76.5 |                       18.5 |                    0.0 |                  732.5 |           3 |                         94
+Coastline Interiors           |           21 |                  0.9 |                            77.4 |                        4.8 |                    4.8 |                 1014.0 |           3 |                         94
+Thistlecombe                  |           21 |                  0.9 |                            78.3 |                        9.5 |                    0.0 |                 1075.7 |           3 |                         94
+Kayak Corner                  |           20 |                  0.9 |                            79.2 |                       20.0 |                    0.0 |                 2255.2 |           3 |                         94
+Velvet Ash                    |           19 |                  0.8 |                            80.0 |                        5.3 |                    0.0 |                 1347.4 |           3 |                         94
+Willow & Wren                 |           19 |                  0.8 |                            80.8 |                       15.8 |                    5.3 |                 1967.8 |           3 |                         94
+Juniper Apothecary            |           17 |                  0.7 |                            81.6 |                       17.6 |                    0.0 |                 1896.9 |           3 |                         94
+OfficeHub Nordic              |           15 |                  0.6 |                            82.2 |                       13.3 |                   20.0 |                 1313.0 |           3 |                         94
+The Balm Room                 |           15 |                  0.6 |                            82.8 |                        6.7 |                    0.0 |                 2050.4 |           3 |                         94
+Wohnglück                     |           15 |                  0.6 |                            83.5 |                        6.7 |                   13.3 |                  877.1 |           3 |                         94
+Feather & Fin                 |           14 |                  0.6 |                            84.1 |                       35.7 |                    7.1 |                 2795.8 |           3 |                         94
+Fjordline Wear                |           14 |                  0.6 |                            84.7 |                       42.9 |                    7.1 |                 2071.0 |           3 |                         94
+(30 rows)
+
+=== Report 2: Highest-volume merchant + agent-group units (written by Omar) ===
+Engineer's note: Resolution-breach rate assumes sla_breaches.breach_kind uses the value 'resolution' (the catalog doesn't enumerate this free-text column's allowed values, so please confirm against a sample row). The report shows the top 20 (tenant, agent_group) rows by ticket_count; ask me for a quick count query if you need the total number of combinations in 2025 as a separate figure.
+REPORT: Highest-volume merchant + agent-group units
+QUESTION: At the real operational unit (one merchant's one agent group), where is ticket load heaviest, and does staffing (agent count) look right for that load?
+tenant_name                   | agent_group_name  | ticket_count | agent_count | tickets_per_agent | pct_unassigned | avg_first_response_minutes | avg_resolution_minutes | resolution_breach_rate
+------------------------------+-------------------+--------------+-------------+-------------------+----------------+----------------------------+------------------------+-----------------------
+Cragsley Outfitters           | Customer Care     |          149 |           3 |              49.7 |            0.7 |                     1010.0 |                 2034.4 |                   26.8
+Cragsley Outfitters           | Returns & Refunds |          144 |           3 |              48.0 |            0.7 |                     1458.0 |                 2629.5 |                   32.6
+Cragsley Outfitters           | Delivery Issues   |          107 |           2 |              53.5 |            0.0 |                     1326.7 |                 2413.2 |                   29.9
+Marrowby & Vane               | Customer Care     |          106 |           2 |              53.0 |            2.8 |                     2463.5 |                 4264.2 |                   35.8
+Marrowby & Vane               | Returns & Refunds |           82 |           2 |              41.0 |            3.7 |                     3733.1 |                 6162.4 |                   48.8
+Studio Vrij                   | Customer Care     |           81 |           2 |              40.5 |            0.0 |                     4162.9 |                 7811.4 |                   40.7
+Brennquell Kaffee             | Customer Care     |           74 |           2 |              37.0 |            0.0 |                      374.4 |                 1082.6 |                   16.2
+Petalcourt Beauty             | Customer Care     |           50 |           2 |              25.0 |            0.0 |                     1693.3 |                 2261.6 |                   26.0
+Grind Collective              | Returns & Refunds |           47 |           1 |              47.0 |            0.0 |                     1785.7 |                 3234.1 |                   31.9
+Grind Collective              | Customer Care     |           45 |           1 |              45.0 |            0.0 |                     2727.1 |                 4935.8 |                   40.0
+Studio Vrij                   | Delivery Issues   |           44 |           1 |              44.0 |            0.0 |                     2989.4 |                 8746.0 |                   36.4
+Marrowby & Vane               | Delivery Issues   |           43 |           1 |              43.0 |            0.0 |                     2070.5 |                 5152.5 |                   30.2
+Studio Vrij                   | Returns & Refunds |           41 |           1 |              41.0 |            0.0 |                     3212.3 |                 5592.4 |                   36.6
+Petalcourt Beauty             | Returns & Refunds |           38 |           1 |              38.0 |            0.0 |                     1630.7 |                 2138.2 |                   34.2
+Kibblewick                    | Customer Care     |           36 |           2 |              18.0 |            0.0 |                     1180.5 |                 2661.5 |                   27.8
+Brennquell Kaffee             | Delivery Issues   |           34 |           1 |              34.0 |            0.0 |                      353.2 |                  874.6 |                    5.9
+Ballycorran Industrial Supply | Customer Service  |           31 |           1 |              31.0 |            0.0 |                      534.6 |                 1517.9 |                    6.5
+Petalcourt Beauty             | Delivery Issues   |           31 |           1 |              31.0 |            0.0 |                     2496.0 |                 4943.1 |                   41.9
+Grind Collective              | Delivery Issues   |           30 |           1 |              30.0 |            0.0 |                     1943.3 |                 3161.7 |                   26.7
+Brennquell Kaffee             | Returns & Refunds |           29 |           1 |              29.0 |            3.4 |                      214.3 |                  721.7 |                    6.9
+(20 rows)
+
+=== Report 3: SLA breach rates by day of week and time of day (written by Ines) ===
+Engineer's note: Breach rates are computed by matching sla_breaches.breach_kind against the literal values 'first_response' and 'resolution' (the catalog does not enumerate allowed codes for this column, so this assumes the naming matches tickets.first_response_at/resolved_at conventions); please flag if the warehouse uses different breach_kind labels so we can correct it.
+REPORT: SLA breach rates by day of week and time of day
+QUESTION: Is there a time-of-day or day-of-week pattern to when we breach first-response and resolution SLA targets?
+day_of_week | time_of_day_bucket | ticket_count | first_response_breach_rate | resolution_breach_rate | avg_first_response_minutes
+------------+--------------------+--------------+----------------------------+------------------------+---------------------------
+Monday      | Night (00-06)      |           75 |                       30.7 |                   20.0 |                     1180.0
+Monday      | Morning (06-12)    |           93 |                       41.9 |                   17.2 |                     1381.0
+Monday      | Afternoon (12-18)  |          115 |                       33.9 |                   14.8 |                     1062.0
+Monday      | Evening (18-24)    |           95 |                       35.8 |                   18.9 |                     1524.0
+Tuesday     | Night (00-06)      |           75 |                       32.0 |                   16.0 |                     1414.0
+Tuesday     | Morning (06-12)    |           87 |                       36.8 |                   21.8 |                     1149.0
+Tuesday     | Afternoon (12-18)  |           95 |                       38.9 |                   16.8 |                     1226.0
+Tuesday     | Evening (18-24)    |           95 |                       36.8 |                   28.4 |                     1305.0
+Wednesday   | Night (00-06)      |           81 |                       38.3 |                   22.2 |                     1085.0
+Wednesday   | Morning (06-12)    |          101 |                       35.6 |                   12.9 |                     1178.0
+Wednesday   | Afternoon (12-18)  |          125 |                       39.2 |                   16.8 |                     1328.0
+Wednesday   | Evening (18-24)    |           71 |                       38.0 |                   15.5 |                     1888.0
+Thursday    | Night (00-06)      |           71 |                       35.2 |                   26.8 |                     2155.0
+Thursday    | Morning (06-12)    |           76 |                       35.5 |                   19.7 |                     1610.0
+Thursday    | Afternoon (12-18)  |           75 |                       41.3 |                   26.7 |                     1683.0
+Thursday    | Evening (18-24)    |           75 |                       36.0 |                   17.3 |                     1406.0
+Friday      | Night (00-06)      |           43 |                       48.8 |                   27.9 |                     1797.0
+Friday      | Morning (06-12)    |           68 |                       33.8 |                   22.1 |                     1327.0
+Friday      | Afternoon (12-18)  |           86 |                       37.2 |                   16.3 |                     1507.0
+Friday      | Evening (18-24)    |           75 |                       33.3 |                   22.7 |                     1868.0
+Saturday    | Night (00-06)      |           61 |                       45.9 |                   29.5 |                     2124.0
+Saturday    | Morning (06-12)    |           54 |                       37.0 |                   31.5 |                     1718.0
+Saturday    | Afternoon (12-18)  |           84 |                       35.7 |                   19.0 |                     2088.0
+Saturday    | Evening (18-24)    |           91 |                       42.9 |                   25.3 |                     1954.0
+Sunday      | Night (00-06)      |           81 |                       37.0 |                   22.2 |                     1804.0
+Sunday      | Morning (06-12)    |           75 |                       38.7 |                   18.7 |                      996.0
+Sunday      | Afternoon (12-18)  |          104 |                       47.1 |                   22.1 |                     1734.0
+Sunday      | Evening (18-24)    |           93 |                       35.5 |                   14.0 |                     1309.0
+(28 rows)

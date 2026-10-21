@@ -1,0 +1,9 @@
+{
+ "id": "board-unit-economics",
+ "lead": "ceo",
+ "with": [
+  "cfo"
+ ],
+ "text": "The board meets at the end of January and wants a clear view of unit economics: per merchant, vertical and country, what Tidewick earns and what it costs us to serve them. Which merchants are worth growing, and which cost more than they bring?",
+ "week": 2
+}

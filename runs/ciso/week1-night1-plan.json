@@ -1,0 +1,58 @@
+{
+ "notes": "Henrik flagged 5 areas but asked us to pick the 3 that give the most defensible starting picture this week, saving the rest for next week. I'm starting with his top 3 stated priorities (sign-in security baseline, MFA posture, privileged access hygiene) and deliberately deferring API-key/service-account hygiene and audit-trail completeness to night 2+, since those depend on first understanding how identity and access actually work here (systems view: authentication -> MFA -> authorization all feed each other; keys/audit are downstream concerns I'll size up once I see how messy or clean the core picture is).\n\nReport 1 establishes a platform-wide time baseline for login behavior so any later \"spike\" claims have something to compare against. Report 2 gives a per-merchant MFA adoption view, ordered to surface the worst gaps first since that's the actionable finding for a security head walking into enterprise reviews. Report 3 looks at role/permission grants per merchant to see how concentrated and stale (\"dormant\") privileged access is — the classic access-governance audit question. All three are single-grain, independent, and should each stand on their own without needing follow-up queries to simply read.",
+ "requests": [
+  {
+   "title": "Weekly sign-in attempt volume and failure pattern",
+   "question": "Over the last 26 weeks, how many login attempts are we seeing platform-wide, what share fail, and are there signs of credential-stuffing-style behavior (many attempts concentrated on few IPs)?",
+   "grain": "one row per ISO week (week_start), platform-wide across all tenants",
+   "columns": [
+    "week_start (Monday of the ISO week)",
+    "total login attempts",
+    "successful logins",
+    "failed logins",
+    "failure rate (failed / total, %)",
+    "distinct emails/users attempted",
+    "distinct IP addresses used",
+    "average attempts per distinct IP (total attempts / distinct IPs)",
+    "max attempts from a single IP in the week"
+   ],
+   "details": "Source: login_attempts (occurred_at, succeeded, email, user_id, ip_address). Bucket occurred_at::date into ISO weeks via calendar_days.week_start. Window: the 26 ISO weeks ending with the week containing 2025-12-31 (i.e. roughly 2025-07 through 2025-12, last available data). Aggregate across all tenants (no currency conversion needed, no money involved). failure rate = failed_logins / total_attempts, rounded to 1 decimal. 'max attempts from a single IP in the week' = the highest per-IP attempt count within that week (compute per-IP counts, then take the max per week). Order by week_start ascending, which is already unique so no further tie-break needed.",
+   "builds_on": []
+  },
+  {
+   "title": "MFA adoption rate by merchant, staff vs. shoppers",
+   "question": "For each merchant, what share of staff users and what share of shopper (non-staff) users have a confirmed, active MFA device, versus relying on password only?",
+   "grain": "one row per tenant (merchant)",
+   "columns": [
+    "tenant name",
+    "tenant status",
+    "staff user count",
+    "staff users with confirmed MFA",
+    "staff MFA rate (%)",
+    "shopper user count",
+    "shopper users with confirmed MFA",
+    "shopper MFA rate (%)",
+    "total users"
+   ],
+   "details": "Source: users (tenant_id, is_staff, deleted_at) joined to tenants for name/status, and to mfa_devices (tenant_id, user_id, confirmed_at) to determine MFA status. A user counts as having 'confirmed MFA' if they have at least one mfa_devices row with confirmed_at not null. Exclude soft-deleted users (deleted_at is null). Split counts by is_staff = true (staff) vs is_staff = false (shopper/end-user). Compute staff_mfa_rate = staff_with_mfa / staff_count (null-safe if staff_count = 0), same for shopper rate, rounded to 1 decimal percent. Include all 120 tenants that have at least one user; order by staff MFA rate ascending (worst coverage first) with tenant name as tie-break, so the report surfaces the weakest merchants first. Note total tenant count returned vs. the 50-row cap.",
+   "builds_on": []
+  },
+  {
+   "title": "Privileged roles per merchant: grant size and dormancy",
+   "question": "Which roles across our merchants carry the most permissions, how many users currently hold each role, and how many of those users look dormant (no recent login) — a first read on access-governance hygiene?",
+   "grain": "one row per tenant and role",
+   "columns": [
+    "tenant name",
+    "role name",
+    "is_system role (built-in vs custom)",
+    "permission count granted to role",
+    "users currently assigned this role (via user_roles)",
+    "of those, users with status = active",
+    "of those, users dormant (status = active but last_login_at is null or before 2025-10-05, i.e. no login in the trailing ~90 days)",
+    "most recent last_login_at among assigned users"
+   ],
+   "details": "Source: roles joined to tenants; role_permissions grouped by role_id for permission count; user_roles joined to users for assignment counts and last_login_at. Exclude soft-deleted users (users.deleted_at is null). 'Dormant' = users.status = 'active' and (last_login_at is null or last_login_at < 2025-10-05, i.e. no login in the 90 days before the data cutoff 2025-12-31). Only include roles that have at least 1 permission and at least 1 assigned user (skip empty/unused roles for this first pass). Order by permission count descending, then users assigned descending, then tenant name, then role name as the final tie-break, capped at 50 rows — note how many qualifying role rows exist in total.",
+   "builds_on": []
+  }
+ ]
+}

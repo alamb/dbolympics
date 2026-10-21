@@ -1,0 +1,43 @@
+=== Report 1: Other-Mismatch Payments: Characterization by Payment Method, 2025 (written by Bea) ===
+Engineer's note: Re-derived the 'other mismatch' set exactly as specified (2025 captured/refunded/partially_refunded payments, EUR-converted ledger credit totals vs. net/gross expected, excluding 'no ledger entries' payments), then grouped by payment_methods.kind (missing/null -> 'unknown'). avg_abs_diff_eur uses the smaller of the net- and gross-expected deviations, as requested.
+REPORT: Other-Mismatch Payments: Characterization by Payment Method, 2025
+QUESTION: Is the 2.1%-of-payments 'other mismatch' ledger bucket explained by a specific payment method (e.g. bank transfer/wire rather than card/gateway), or is it unexplained?
+payment_method_kind | payment_count | pct_of_mismatch_count | total_payment_amount_eur | pct_of_mismatch_amount | avg_abs_diff_eur
+--------------------+---------------+-----------------------+--------------------------+------------------------+-----------------
+card                |           174 |                 69.88 |                  37280.8 |                  44.15 |            18.57
+wallet              |            53 |                 21.29 |                 12417.77 |                  14.71 |            17.74
+bank_transfer       |            19 |                  7.63 |                 34135.23 |                  40.42 |           897.95
+credit              |             3 |                   1.2 |                   609.63 |                   0.72 |            33.08
+(4 rows)
+
+=== Report 2: 2025 Revenue Reconciliation via Correct Ledger Accounts, by Quarter (written by Viktor) ===
+Engineer's note: EUR conversion treats same-currency rows (currency_code='EUR') as rate 1 and otherwise divides by the EUR-base exchange_rates.rate for that day (ledger: occurred_at date; payments: captured_at date), per the handbook's EUR-base convention. Quarters are calendar quarters of 2025 built from EXTRACT(YEAR/QUARTER), inner-joined so a quarter only appears if both sides have rows (expected for all 4 of 2025).
+REPORT: 2025 Revenue Reconciliation via Correct Ledger Accounts, by Quarter
+QUESTION: Using the right ledger accounts (revenue credits net of refund contra-revenue debits), does the ledger's net revenue tie to the payments table's net captured amount each quarter?
+quarter | ledger_revenue_credit_eur | ledger_contra_revenue_debit_eur | ledger_net_revenue_eur | payments_net_amount_eur |   diff_eur | diff_pct
+--------+---------------------------+---------------------------------+------------------------+-------------------------+------------+---------
+2025-Q1 |                1153838.92 |                       102694.04 |             1051144.88 |              1249571.12 | -198426.24 |   -15.88
+2025-Q2 |                1210594.71 |                       107349.94 |             1103244.77 |              1279430.77 |  -176186.0 |   -13.77
+2025-Q3 |                1007488.29 |                        88413.91 |              919074.38 |              1065326.23 | -146251.85 |   -13.73
+2025-Q4 |                1744185.92 |                       194388.87 |             1549797.05 |              1824173.25 |  -274376.2 |   -15.04
+(4 rows)
+
+=== Report 3: No-Ledger-Entries Gap Trend by Month, 2025 (written by Grace) ===
+Engineer's note: Converted payment amounts to EUR by dividing by the EUR→payment-currency exchange_rates.rate on the capture date (rate is EUR-per-1-quote-currency... actually rate is quote units per 1 EUR, so amount/rate = EUR); months with no matching payments simply won't appear (all 12 months are expected to have data in 2025).
+REPORT: No-Ledger-Entries Gap Trend by Month, 2025
+QUESTION: Is the small 'payment with zero ledger entries' gap an ongoing issue in current operations, or was it confined to earlier in the year and since resolved?
+month   | total_payments | payments_without_ledger_entries | pct_without_ledger_entries | amount_at_risk_eur
+--------+----------------+---------------------------------+----------------------------+-------------------
+2025-01 |           1749 |                              38 |                       2.17 |             1241.0
+2025-02 |           1324 |                              17 |                       1.28 |             606.08
+2025-03 |           1545 |                               6 |                       0.39 |             129.83
+2025-04 |           1487 |                               7 |                       0.47 |             323.67
+2025-05 |           1595 |                               7 |                       0.44 |             290.08
+2025-06 |           1435 |                               3 |                       0.21 |              97.52
+2025-07 |           1554 |                               2 |                       0.13 |             149.21
+2025-08 |           1455 |                               1 |                       0.07 |              52.47
+2025-09 |           1607 |                               4 |                       0.25 |              72.45
+2025-10 |           1766 |                               1 |                       0.06 |                0.0
+2025-11 |           2525 |                               3 |                       0.12 |              119.8
+2025-12 |           3011 |                              11 |                       0.37 |              298.5
+(12 rows)

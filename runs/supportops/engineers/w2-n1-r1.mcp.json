@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Staffing load vs. ticket complexity, top merchants benchmark",
+    "--question",
+    "For Marrowby & Vane and Studio Vrij, does their high breach rate look like a staffing shortfall (high tickets-per-agent) or inherently harder tickets (more back-and-forth, higher-priority mix), compared to other top merchants like Cragsley Outfitters?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Grace\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per merchant, limited to the 6 highest-volume merchants from last week's by-merchant report (Cragsley Outfitters, Marrowby & Vane, Studio Vrij, Brennquell Kaffee, Grind Collective, Petalcourt Beauty)\", \"columns_requested\": [\"tenant_name\", \"ticket_count (2025)\", \"agent_count (distinct support_agents for that tenant)\", \"tickets_per_agent\", \"avg_messages_per_ticket (count of ticket_messages per ticket, both directions, as a back-and-forth / effort proxy)\", \"pct_high_or_urgent_priority (share of the tenant's tickets with priority in (high, urgent))\", \"avg_resolution_minutes\", \"resolution_breach_rate\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets, ticket_messages, support_agents, sla_breaches (breach_kind = 'resolution', confirmed codes from last week's audit), tenants. agent_count via support_agents.tenant_id (as used in last week's by-merchant report, for consistency). avg_messages_per_ticket = total ticket_messages rows for that tenant's 2025 tickets / ticket_count. Order by resolution_breach_rate descending so the two flagged merchants' position relative to the others (especially Cragsley, which has a similar or higher tickets-per-agent ratio per last week's group-level data) is clear. Round tickets_per_agent and avg_messages_per_ticket to 1 decimal, rates to 1 decimal percent.\", \"builds_on\": [\"Ticket volume and SLA performance by merchant\", \"Highest-volume merchant + agent-group units\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

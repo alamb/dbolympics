@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Quarterly all-priority ticket performance vs load, hotspot merchants",
+    "--question",
+    "Does the load-correlation pattern found for urgent tickets (worse performance in the quarter each merchant's ticket-per-agent ratio spiked) also hold across all tickets, not just urgent ones?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cx\", \"analyst\": \"Mateo Ruiz\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per tenant and calendar quarter in 2025, for Cragsley Outfitters, Marrowby & Vane, Studio Vrij, and Grind Collective, all priorities\", \"columns_requested\": [\"merchant name\", \"quarter (2025-Q1..Q4)\", \"tickets created\", \"avg resolution hours (all priorities)\", \"median resolution hours (all priorities)\", \"SLA breach rate (%)\"], \"details\": \"Source: tickets joined to sla_breaches (for breach rate) and tenants, filtered to the four named tenants. Grain the quarter on tickets.created_at within 2025, all priorities included. avg/median resolution hours = extract(epoch from resolved_at - created_at)/3600 over tickets with resolved_at not null that quarter. SLA breach rate = distinct tickets that quarter with >=1 row in sla_breaches \\u00f7 tickets created that quarter, percentage rounded to 1 decimal (same definition used in the original monthly trend report from two weeks ago). Round resolution hours to 1 decimal. Order by merchant name ascending, then quarter ascending. Expect 16 rows; this is meant to sit alongside the already-collected quarterly tickets-per-agent figures (from 'Ticket load per agent over 2025') for comparison, so no need to repeat that column here.\", \"builds_on\": [\"Ticket load per agent over 2025, hotspot merchants vs a comparable peer\", \"Quarterly urgent-ticket performance, hotspot merchants vs comparison peer\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cx/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

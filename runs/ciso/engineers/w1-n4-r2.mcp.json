@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Active API key age distribution (rotation hygiene)",
+    "--question",
+    "Platform-wide, how old are our currently active API keys — do we have a meaningful population of long-lived, apparently never-rotated credentials, even though usage patterns look healthy?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per age bucket of currently active api_keys\", \"columns_requested\": [\"age bucket (fixed labels: 'under 90 days', '90 days-1 year', '1-2 years', '2-4 years', '4+ years', based on 2026-01-05 minus created_at)\", \"active key count in bucket\", \"share of all active keys (%)\", \"distinct tenants represented in bucket\", \"oldest key age in days within bucket\", \"count with last_used_at is null (never used) in bucket\", \"count with last_used_at before 2025-10-05 (unused 90+ days) in bucket\"], \"details\": \"Source: api_keys where status = 'active'. Compute age_days = 2026-01-05 minus created_at (fixed reference date per house standards, no CURRENT_DATE). Bucket into the 5 fixed ranges above. Share of all active keys = bucket count / total active keys across all buckets, rounded to 1 decimal percent. Order rows by bucket from youngest to oldest in the fixed sequence listed (not alphabetical) so the trend from new to old is readable top to bottom.\", \"builds_on\": [\"API key hygiene by merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

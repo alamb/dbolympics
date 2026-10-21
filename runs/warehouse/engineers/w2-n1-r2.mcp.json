@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Who logs 'Missing - suspected theft' stock adjustments: concentrated among specific staff?",
+    "--question",
+    "Is the 'Missing - suspected theft' reason spread roughly proportionally across everyone who logs stock adjustments, or does it concentrate in a handful of specific staff members — and do their theft entries cluster at a particular time of day (suggesting end-of-shift batch logging rather than individually investigated incidents)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Ines\", \"situation\": \"inventory-accuracy\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"staff user (adjusted_by_user_id) with at least one stock_adjustments row in 2025\", \"columns_requested\": [\"staff_name (users.full_name; 'Unknown/unassigned' if adjusted_by_user_id is null)\", \"total_adjustments_logged\", \"theft_tagged_count (reason = 'Missing - suspected theft')\", \"pct_theft_of_own_adjustments (theft_tagged_count / total_adjustments_logged * 100, rounded 1dp)\", \"damage_tagged_count (reason = 'Damaged in warehouse')\", \"expired_tagged_count (reason = 'Expired')\", \"cycle_count_variance_count (reason = 'Cycle count variance')\", \"avg_hour_of_day_for_theft_entries (average hour 0-23 extracted from created_at, computed only over this user's theft-tagged rows; null if they have none, rounded 1dp)\"], \"details\": \"Source: stock_adjustments, created_at between 2025-01-01 and 2025-12-31 (half-open bound). Left join users on adjusted_by_user_id for staff_name. Group by adjusted_by_user_id (treat null as its own 'Unknown/unassigned' group). Order by theft_tagged_count descending, tie-break by total_adjustments_logged descending, then staff_name ascending. Cap at 50 rows (top 50 by theft_tagged_count) and note the total distinct staff count with >=1 adjustment in 2025 even if it exceeds 50.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

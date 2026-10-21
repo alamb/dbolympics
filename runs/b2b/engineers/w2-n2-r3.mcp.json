@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale: Seasonality of Lost-Deal Cycle Time by Quarter",
+    "--question",
+    "Do lost deals linger longest at particular times of year (e.g., end-of-quarter or holiday periods), or is the ~35-day drag before a deal is given up on roughly constant regardless of when it started?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Grace\", \"situation\": \"b2b-pipeline-review\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per calendar quarter, 2023Q1 through 2025Q4\", \"columns_requested\": [\"quarter\", \"lost_opportunities_count\", \"avg_days_open\", \"median_days_open\"], \"details\": \"Scope: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true and is_won = false (lost only). Group by the calendar quarter of closed_at (year_num and quarter_num from calendar_days, or equivalent). days_open = closed_at - created_at in days; report avg and median rounded to 1 decimal. Order by quarter ascending (year then quarter number).\", \"builds_on\": [\"New Business Only: Won vs Lost Opportunity Characteristics\", \"B2B Wholesale Deal Cycle Time Trend by Month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

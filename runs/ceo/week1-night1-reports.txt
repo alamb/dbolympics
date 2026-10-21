@@ -1,0 +1,92 @@
+=== Report 1: Merchant revenue concentration, trailing 12 months (written by Omar) ===
+Engineer's note: payouts.status has no documented enum in the catalog, so "completed/settled" was interpreted as paid_at not null AND status not in ('failed','reversed','cancelled','void') — please flag if the actual status codes differ. The total number of tenants with any payout in the window will show as the report's total-row count (handled by the print process), since the grain is one row per such tenant.
+REPORT: Merchant revenue concentration, trailing 12 months
+QUESTION: Which merchants account for the bulk of Tidewick's processing volume and fee revenue over the last 12 months, and how concentrated is it?
+merchant_name          | vertical                  | gross_payment_volume_eur | fee_revenue_eur | net_paid_eur | fee_share_pct | cumulative_fee_share_pct
+-----------------------+---------------------------+--------------------------+-----------------+--------------+---------------+-------------------------
+Cragsley Outfitters    | Apparel & Footwear        |                702797.52 |        22263.37 |    511098.93 |         41.86 |                    41.86
+Marrowby & Vane        | Apparel & Footwear        |                276394.66 |         4858.84 |     208627.8 |          9.14 |                     51.0
+Cinder Peak Sports Co. | Sports & Outdoor          |                126336.27 |         3877.43 |    107738.48 |          7.29 |                    58.29
+OfficeHub Nordic       | Office Supplies (B2B)     |                111821.72 |         3618.19 |     97806.72 |           6.8 |                    65.09
+Castell Fasteners      | Industrial Supplies (B2B) |                107753.57 |         3499.84 |     103182.9 |          6.58 |                    71.67
+Fennel & Flint         | Home & Living             |                 62508.63 |         1739.27 |     57058.41 |          3.27 |                    74.94
+Grind Collective       | Food & Coffee             |                 39682.45 |         1265.15 |     37849.06 |          2.38 |                    77.32
+Petalcourt Beauty      | Beauty                    |                 61865.09 |         1225.61 |     56218.48 |           2.3 |                    79.62
+Kayak Corner           | Sports & Outdoor          |                  39521.7 |         1174.45 |     34230.43 |          2.21 |                    81.83
+Honeycomb Larder       | Food & Coffee             |                 31808.64 |         1145.98 |     30283.55 |          2.15 |                    83.98
+Deskline Supplies      | Office Supplies (B2B)     |                 64727.75 |          974.76 |     62828.33 |          1.83 |                    85.82
+Kibblewick             | Pet Supplies              |                 31741.18 |           732.3 |     30710.33 |          1.38 |                    87.19
+Oakhurst Tailoring     | Apparel & Footwear        |                  24619.8 |          628.93 |     20413.77 |          1.18 |                    88.38
+Fell & Fjell           | Sports & Outdoor          |                 33288.47 |          468.76 |      28547.3 |          0.88 |                    89.26
+Feather & Fin          | Pet Supplies              |                 10139.41 |          372.04 |       9349.3 |           0.7 |                    89.96
+Willow & Wren          | Home & Living             |                  18982.3 |          342.49 |     16327.05 |          0.64 |                     90.6
+Circuit Harbor         | Consumer Electronics      |                 18807.88 |          334.27 |     18209.09 |          0.63 |                    91.23
+Velvet Ash             | Apparel & Footwear        |                  23605.9 |          333.41 |     17623.77 |          0.63 |                    91.86
+Meadow Row             | Apparel & Footwear        |                  9818.42 |          295.05 |       7504.8 |          0.55 |                    92.41
+Coastline Interiors    | Home & Living             |                 20388.42 |          288.84 |     18861.63 |          0.54 |                    92.96
+Saffron & Sage         | Beauty                    |                  9926.89 |          273.59 |      8916.84 |          0.51 |                    93.47
+Juniper Apothecary     | Beauty                    |                 17593.14 |          263.63 |     16466.44 |           0.5 |                    93.97
+Nordic Bloom Cosmetics | Beauty                    |                 17854.38 |          254.63 |     16204.82 |          0.48 |                    94.44
+The Balm Room          | Beauty                    |                 13689.99 |          236.93 |     12684.75 |          0.45 |                    94.89
+Lamplight Living       | Home & Living             |                  6698.07 |          213.13 |      5746.22 |           0.4 |                    95.29
+Thistlecombe           | Apparel & Footwear        |                  12005.3 |          211.45 |      9885.67 |           0.4 |                    95.69
+Courtside Collective   | Sports & Outdoor          |                  8315.44 |          204.76 |      6437.38 |          0.38 |                    96.07
+Tail Wag Supply        | Pet Supplies              |                  5731.52 |          202.59 |      5453.54 |          0.38 |                    96.45
+Roast Republic         | Food & Coffee             |                  5482.47 |          181.96 |      5240.72 |          0.34 |                     96.8
+Bytefield              | Consumer Electronics      |                 11463.28 |          173.72 |     11032.53 |          0.33 |                    97.12
+Fjordline Wear         | Apparel & Footwear        |                  8365.21 |          137.74 |      5952.68 |          0.26 |                    97.38
+Hus & Hem              | Home & Living             |                  5470.82 |          134.88 |      5005.34 |          0.25 |                    97.64
+Haven Linen            | Home & Living             |                  4180.92 |          115.02 |       3708.5 |          0.22 |                    97.85
+Tiny Atelier           | Home & Living             |                   3814.5 |          105.32 |      3477.04 |           0.2 |                    98.05
+Greyfriars Supply      | Apparel & Footwear        |                   2985.1 |          103.41 |      2575.36 |          0.19 |                    98.24
+Silverthread           | Jewelry & Accessories     |                  2982.02 |           94.56 |      2758.72 |          0.18 |                    98.42
+Stoneware Studio       | Home & Living             |                  2671.61 |           85.13 |      2379.92 |          0.16 |                    98.58
+Brick & Bobbin         | Apparel & Footwear        |                  3692.51 |            79.8 |      2108.72 |          0.15 |                    98.73
+Purrfect Pantry        | Pet Supplies              |                  3586.68 |           73.67 |      3446.09 |          0.14 |                    98.87
+Alpine Loft            | Sports & Outdoor          |                  2431.86 |           71.05 |      2360.81 |          0.13 |                     99.0
+Folio & Fern           | Books & Stationery        |                  1970.05 |           62.98 |      1836.57 |          0.12 |                    99.12
+Driftwood Home         | Home & Living             |                  4162.28 |           61.47 |      3789.54 |          0.12 |                    99.24
+Paperplane Press       | Books & Stationery        |                  2796.01 |           58.47 |      2580.04 |          0.11 |                    99.35
+Little Larch Kids      | Apparel & Footwear        |                  2843.59 |            47.6 |      2127.25 |          0.09 |                    99.44
+Rosehip Lab            | Beauty                    |                  2594.96 |           44.22 |      2506.25 |          0.08 |                    99.52
+Glasshouse Grooming    | Beauty                    |                  1395.67 |           42.81 |      1352.86 |          0.08 |                     99.6
+Barkley & Co.          | Pet Supplies              |                  2785.18 |           39.84 |      2693.21 |          0.07 |                    99.68
+Kibble Crate           | Pet Supplies              |                   958.46 |           35.86 |       922.59 |          0.07 |                    99.74
+Copper Lane            | Apparel & Footwear        |                   999.23 |           35.08 |       964.15 |          0.07 |                    99.81
+Halden Boots           | Apparel & Footwear        |                  2277.21 |            33.4 |      1667.07 |          0.06 |                    99.87
+(50 rows)
+
+=== Report 2: Revenue concentration trend by quarter (written by Grace) ===
+Engineer's note: Qualifying payouts = rows with a non-null paid_at (i.e. settled payouts) in 2024-2025; fee_amount converted to EUR via exchange_rates (EUR->payout currency, as_of = paid_at date), matching the stated conversion method. 8 rows, one per quarter.
+REPORT: Revenue concentration trend by quarter
+QUESTION: Has Tidewick's revenue become more or less concentrated among its largest merchants over the last two years?
+quarter | active_merchants | total_fee_revenue_eur | top5_fee_revenue_eur | top5_share_pct | top10_fee_revenue_eur | top10_share_pct
+--------+------------------+-----------------------+----------------------+----------------+-----------------------+----------------
+2024-Q1 |               41 |               9224.35 |              7376.14 |           80.0 |               8325.44 |            90.3
+2024-Q2 |               40 |               9506.65 |              7062.46 |           74.3 |               8360.34 |            87.9
+2024-Q3 |               44 |               8562.88 |              6064.75 |           70.8 |               7289.39 |            85.1
+2024-Q4 |               47 |              15633.97 |             11734.94 |           75.1 |              13312.84 |            85.2
+2025-Q1 |               47 |               11429.2 |              7646.48 |           66.9 |               9485.42 |            83.0
+2025-Q2 |               49 |              11612.46 |              8416.79 |           72.5 |              10001.83 |            86.1
+2025-Q3 |               52 |              11047.02 |              8002.07 |           72.4 |               9260.04 |            83.8
+2025-Q4 |               55 |              19097.17 |              14476.7 |           75.8 |              16429.07 |            86.0
+(8 rows)
+
+=== Report 3: Revenue by vertical, trailing 12 months (written by Bea) ===
+Engineer's note: Payouts table has no documented status enum, so "completed/settled" was implemented as status = 'paid' (matching the paid_at-driven window); please flag if the other two reports in this batch use a different status code so all three stay consistent. EUR conversion uses exchange_rates (base_code=EUR) matched on the payout's currency and paid_at date, treating EUR-currency payouts as rate 1.0.
+REPORT: Revenue by vertical, trailing 12 months
+QUESTION: Which merchant verticals (industries) generate the bulk of Tidewick's processing volume and fee revenue today?
+vertical                  | merchant_count | gross_payment_volume_eur | fee_revenue_eur | avg_fee_revenue_per_merchant_eur | pct_of_total_fee_revenue
+--------------------------+----------------+--------------------------+-----------------+----------------------------------+-------------------------
+Apparel & Footwear        |             22 |               1271676.54 |         32881.2 |                           1494.6 |                    35.14
+Industrial Supplies (B2B) |              5 |                529299.94 |        12722.73 |                          2544.55 |                     13.6
+Consumer Electronics      |              8 |                576268.07 |        10116.22 |                          1264.53 |                    10.81
+Food & Coffee             |             11 |                317109.32 |          9692.1 |                            881.1 |                    10.36
+Sports & Outdoor          |             13 |                366001.45 |         9262.09 |                           712.47 |                      9.9
+Office Supplies (B2B)     |              4 |                435677.49 |         8633.49 |                          2158.37 |                     9.23
+Home & Living             |             16 |                238114.65 |         5173.66 |                           323.35 |                     5.53
+Beauty                    |             14 |                152224.28 |         2887.84 |                           206.27 |                     3.09
+Pet Supplies              |             10 |                 68004.17 |         1771.11 |                           177.11 |                     1.89
+Jewelry & Accessories     |              4 |                 10530.25 |          250.26 |                            62.57 |                     0.27
+Books & Stationery        |              6 |                  8081.84 |          192.51 |                            32.08 |                     0.21
+(11 rows)

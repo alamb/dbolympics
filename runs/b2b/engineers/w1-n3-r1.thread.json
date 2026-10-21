@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT t.name AS merchant,\n  COUNT(*) AS opportunities_closed,\n  SUM(CASE WHEN o.is_won THEN 1 ELSE 0 END) AS closed_won,\n  SUM(CASE WHEN NOT o.is_won THEN 1 ELSE 0 END) AS closed_lost,\n  ROUND(100.0 * SUM(CASE WHEN o.is_won THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0), 1) AS win_rate_pct,\n  ROUND(AVG(EXTRACT(EPOCH FROM (o.closed_at - o.created_at)) / 86400.0), 1) AS avg_days_open,\n  ROUND(AVG(o.amount / (SELECT er.rate\n                         FROM exchange_rates er\n                         WHERE er.base_code = 'EUR'\n                           AND er.quote_code = o.currency_code\n                           AND er.as_of <= o.closed_at::date\n                         ORDER BY er.as_of DESC\n                         LIMIT 1)), 2) AS avg_amount_eur\nFROM opportunities o\nJOIN tenants t ON t.id = o.tenant_id\nJOIN pipelines p ON p.id = o.pipeline_id AND p.tenant_id = o.tenant_id\nWHERE o.is_closed = true\n  AND p.name = 'New business'\n  AND (t.industry ILIKE '%industrial%' OR t.industry ILIKE '%office equipment%' OR t.industry ILIKE '%wholesal%')\nGROUP BY t.id, t.name\nORDER BY win_rate_pct ASC, opportunities_closed DESC, t.name ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: merchant, opportunities_closed, closed_won, closed_lost, win_rate_pct, avg_days_open, avg_amount_eur"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns at the tenant grain."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT t.name AS merchant,\n  COUNT(*) AS opportunities_closed,\n  SUM(CASE WHEN o.is_won THEN 1 ELSE 0 END) AS closed_won,\n  SUM(CASE WHEN NOT o.is_won THEN 1 ELSE 0 END) AS closed_lost,\n  ROUND(100.0 * SUM(CASE WHEN o.is_won THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0), 1) AS win_rate_pct,\n  ROUND(AVG(EXTRACT(EPOCH FROM (o.closed_at - o.created_at)) / 86400.0), 1) AS avg_days_open,\n  ROUND(AVG(o.amount / (SELECT er.rate\n                         FROM exchange_rates er\n                         WHERE er.base_code = 'EUR'\n                           AND er.quote_code = o.currency_code\n                           AND er.as_of <= o.closed_at::date\n                         ORDER BY er.as_of DESC\n                         LIMIT 1)), 2) AS avg_amount_eur\nFROM opportunities o\nJOIN tenants t ON t.id = o.tenant_id\nJOIN pipelines p ON p.id = o.pipeline_id AND p.tenant_id = o.tenant_id\nWHERE o.is_closed = true\n  AND p.name = 'New business'\n  AND (t.industry ILIKE '%industrial%' OR t.industry ILIKE '%office equipment%' OR t.industry ILIKE '%wholesal%')\nGROUP BY t.id, t.name\nORDER BY win_rate_pct ASC, opportunities_closed DESC, t.name ASC",
+  "note": "EUR conversion uses the nearest prior exchange_rates.as_of on or before closed_at's date (per currency); avg_days_open and avg_amount_eur are rounded to 1 and 2 decimals respectively.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per wholesale tenant with closed New-business opportunities, ranked worst win-rate first so Daniel can see whether the struggle is concentrated in a few accounts."
+ }
+]

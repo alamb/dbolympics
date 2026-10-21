@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Post-redemption drop-off by how quickly members first redeemed",
+    "--question",
+    "Are members who redeem points very soon after enrolling - likely signup-bonus hunters - disproportionately the ones who never place another order, which would be the clearest sign of rewards given without real repeat purchase behind them?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Bea\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per time-to-first-redemption bucket, among members who have redeemed at least once\", \"columns_requested\": [\"time_to_first_redemption_bucket\", \"member_count\", \"pct_with_no_orders_after_redemption\", \"avg_orders_after_per_customer\", \"avg_revenue_after_eur\"], \"details\": \"Population: users with a loyalty_accounts row who have at least one 'burn'-direction loyalty_transactions row. For each such user, compute days between loyalty_accounts.enrolled_at and the occurred_at of their first 'burn' transaction; bucket into 'within 30 days of enrollment', '31 to 180 days', 'over 180 days'. pct_with_no_orders_after_redemption = share of members in the bucket with zero orders placed on or after their first redemption's occurred_at. avg_orders_after_per_customer = average count of orders (any status) placed on or after the first redemption, per member in the bucket (including zeros). avg_revenue_after_eur = average EUR revenue (non-cancelled orders, grand_total converted via exchange_rates as_of placed_at) from orders placed on or after the first redemption, per member in the bucket (including zeros). Order rows by time_to_first_redemption_bucket in the order listed above.\", \"builds_on\": [\"Member order behavior before vs after their first points redemption\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

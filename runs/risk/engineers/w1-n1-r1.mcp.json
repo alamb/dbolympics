@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "DSAR volume and timeliness by month",
+    "--question",
+    "How many data subject requests do we receive each month, how quickly are they resolved relative to their due date, and how many are currently open — on time or overdue?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Bea\", \"situation\": \"security-questionnaire\", \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per calendar month, based on the month of data_subject_requests.received_at, across all tenants combined, from 2023-01 through 2025-12\", \"columns_requested\": [\"month (YYYY-MM)\", \"requests_received (count with received_at in month)\", \"completed_on_time (count with completed_at not null and completed_at <= due_at)\", \"completed_late (count with completed_at not null and completed_at > due_at, or due_at is null)\", \"still_open_not_due (not yet completed, due_at is null or due_at >= 2025-12-31)\", \"still_open_overdue (not yet completed, due_at < 2025-12-31)\", \"avg_days_to_complete (avg of completed_at - received_at in days, completed requests only)\", \"median_days_to_complete (median of the same)\", \"pct_on_time (completed_on_time / (completed_on_time + completed_late), rounded)\"], \"details\": \"Source: data_subject_requests. Use 2025-12-31 as the fixed 'as of' reference date for open/overdue logic (do not use CURRENT_DATE). The catalog doesn't enumerate this table's status codes \\u2014 please inspect distinct status values and treat whichever represent a finished/closed request (e.g. completed_at populated) as 'completed'; note in the report which status strings/logic you used. All tenants combined (this is a platform-wide compliance metric, not per-merchant). Order by month ascending. If total rows exceed 50 they won't here (36 months expected).\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

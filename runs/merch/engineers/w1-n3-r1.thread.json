@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT t.name AS merchant_name,\n       d.review_count AS dec2025_review_count,\n       d.avg_rating AS dec2025_avg_rating,\n       d.pct_1_2_star AS dec2025_pct_1_2_star,\n       j.avg_rating AS jan_to_nov_2025_avg_rating,\n       ROUND(d.avg_rating - j.avg_rating, 2) AS rating_change_pts\nFROM tenants t\nJOIN (\n  SELECT p.tenant_id,\n         COUNT(*) AS review_count,\n         ROUND(AVG(pr.rating), 2) AS avg_rating,\n         ROUND(100.0 * SUM(CASE WHEN pr.rating <= 2 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_1_2_star\n  FROM product_reviews pr\n  JOIN products p ON pr.product_id = p.id\n  WHERE pr.is_approved = true\n    AND pr.created_at >= DATE '2025-12-01'\n    AND pr.created_at < DATE '2026-01-01'\n  GROUP BY p.tenant_id\n) d ON d.tenant_id = t.id\nJOIN (\n  SELECT p.tenant_id,\n         ROUND(AVG(pr.rating), 2) AS avg_rating\n  FROM product_reviews pr\n  JOIN products p ON pr.product_id = p.id\n  WHERE pr.is_approved = true\n    AND pr.created_at >= DATE '2025-01-01'\n    AND pr.created_at < DATE '2025-12-01'\n  GROUP BY p.tenant_id\n) j ON j.tenant_id = t.id\nWHERE t.industry = 'Home & Living'\nORDER BY rating_change_pts ASC, d.review_count DESC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: merchant_name, dec2025_review_count, dec2025_avg_rating, dec2025_pct_1_2_star, jan_to_nov_2025_avg_rating, rating_change_pts"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles correctly. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT t.name AS merchant_name,\n       d.review_count AS dec2025_review_count,\n       d.avg_rating AS dec2025_avg_rating,\n       d.pct_1_2_star AS dec2025_pct_1_2_star,\n       j.avg_rating AS jan_to_nov_2025_avg_rating,\n       ROUND(d.avg_rating - j.avg_rating, 2) AS rating_change_pts\nFROM tenants t\nJOIN (\n  SELECT p.tenant_id,\n         COUNT(*) AS review_count,\n         ROUND(AVG(pr.rating), 2) AS avg_rating,\n         ROUND(100.0 * SUM(CASE WHEN pr.rating <= 2 THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_1_2_star\n  FROM product_reviews pr\n  JOIN products p ON pr.product_id = p.id\n  WHERE pr.is_approved = true\n    AND pr.created_at >= DATE '2025-12-01'\n    AND pr.created_at < DATE '2026-01-01'\n  GROUP BY p.tenant_id\n) d ON d.tenant_id = t.id\nJOIN (\n  SELECT p.tenant_id,\n         ROUND(AVG(pr.rating), 2) AS avg_rating\n  FROM product_reviews pr\n  JOIN products p ON pr.product_id = p.id\n  WHERE pr.is_approved = true\n    AND pr.created_at >= DATE '2025-01-01'\n    AND pr.created_at < DATE '2025-12-01'\n  GROUP BY p.tenant_id\n) j ON j.tenant_id = t.id\nWHERE t.industry = 'Home & Living'\nORDER BY rating_change_pts ASC, d.review_count DESC",
+  "note": "Both dec2025_avg_rating and jan_to_nov_2025_avg_rating are rounded to 2 decimals before computing rating_change_pts, since the report is meant to show the rounded values a reader would compare on the page; merchants with 0 reviews in Jan-Nov 2025 are excluded via the inner join since no baseline exists for them.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report joins `product_reviews` → `products` → `tenants`, scoped to approved reviews in the Home & Living industry, with separate December 2025 and January–November 2025 aggregates per merchant, ordered by biggest rating decline first."
+ }
+]

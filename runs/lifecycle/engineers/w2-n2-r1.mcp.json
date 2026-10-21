@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Refund rate on orders with a same-day points redemption",
+    "--question",
+    "Using date-proximity matching instead of the unusable order_id link, do loyalty members' orders that coincide with a points redemption on the same calendar day show a different refund rate than their other orders?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Grace\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per order type among loyalty members' orders: 'same-day points redemption' vs 'no same-day points redemption'\", \"columns_requested\": [\"order_type\", \"order_count\", \"distinct_customers\", \"refund_rate_pct\", \"avg_order_value_eur\", \"avg_points_redeemed_that_day\"], \"details\": \"Population: all orders (any status, placed_at between 2023-01-01 and 2025-12-31) placed by users who have a loyalty_accounts row. For each such order, classify as 'same-day points redemption' if there exists a loyalty_transactions row for the same user_id with direction = 'burn' whose occurred_at falls on the same calendar date as the order's placed_at; otherwise 'no same-day points redemption'. refund_rate_pct = share of orders in the group with payments.amount_refunded greater than 0 OR an order_returns row, same definition used throughout. avg_order_value_eur = average grand_total of non-cancelled orders in the group, converted to EUR via exchange_rates (as_of placed_at). avg_points_redeemed_that_day = average absolute points value of the matching same-day burn transaction(s) for the 'same-day' group (0 for the other group). Order rows: 'same-day points redemption' first.\", \"builds_on\": [\"Loyalty transaction order-linkage diagnostic by direction\", \"Refund rate on points-redeeming orders vs other member orders\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

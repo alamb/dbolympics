@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "February 2025 failed-login pattern diagnostics for the 3 affected merchants",
+    "--question",
+    "At the 3 merchants that drove the February 2025 spike, do the failed logins look automated/bot-like (concentrated in a narrow time window, few user agents) or more like a broad client-side bug (spread across the month, many different user agents)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Grace\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per tenant, for the 3 merchants identified last week (Cragsley Outfitters, Marrowby & Vane, Studio Vrij), restricted to their failed login_attempts in February 2025\", \"columns_requested\": [\"tenant_name\", \"distinct_user_agents\", \"top_user_agent_share_pct (share of this tenant's Feb failed attempts from the single most common user_agent string)\", \"distinct_calendar_days_with_failures (out of 28)\", \"max_failed_attempts_single_day\", \"pct_failed_attempts_in_top_3_days\"], \"details\": \"Source: login_attempts, filtered to these 3 tenants and succeeded=false, occurred_at in February 2025. Purpose: distinguish a likely automated/attack pattern (few user agents, failures clustered in a short burst of days) from a likely broad technical/client bug (many distinct user agents similar to normal traffic, failures spread fairly evenly across most of the month) \\u2014 directly feeds Aylin's read on whether this was a near-miss security event or an internal issue. Order by tenant_name.\", \"builds_on\": [\"February 2025 failed login concentration by merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "notes": "Night 1 results need a careful read before I pass anything to Aylin:\n\nReport 1 (concentration by merchant) is clean and striking: 3 merchants — Cragsley Outfitters (4,407 failed, 88.1% fail rate), Marrowby & Vane (1,978 failed, 86.1%), Studio Vrij (783 failed, 84.2%) — account for ~7,168 of the ~7,429 failed attempts we found last week (96.5%), while the next-highest merchant had just 17 failed attempts. These are the exact same three merchants Support Ops called out last week as having both the heaviest ticket volume and worst response times. But the pattern doesn't look like a credential-stuffing attack: distinct_emails_with_any_failed_attempt is nearly as high as total failed attempts (e.g. Cragsley: 2,786 distinct emails for 4,407 fails, max 8 fails on any single email, max 9 from any single IP, spread across 1,903 distinct IPs). That's wide, shallow failure across many accounts and many sources at once — much more consistent with a broken login flow/client bug affecting those 3 merchants specifically than with an external attack.\n\nReport 2 (near-miss outcomes) is internally broken and I will not pass these numbers on: percentages are computed against a fixed denominator of 102, but the bucket counts (42+12+89+452=595) don't come close to summing to 102, and the engineer's note confirms email was matched globally rather than scoped per tenant (login_attempts.email is only unique per tenant) — so the \"cohort\" silently grew across tenants mid-query while the percentage base didn't update. This is exactly the kind of actor/identity mismatch Rosa flagged in week 1, now showing up in a different table. I'm retrying tonight with tenant-scoped (tenant_id, email) pairs and mutually-exclusive buckets that must sum to the true cohort size.\n\nReport 3 (DSAR via updated_at) looks solid and resolves Aylin's question #2: all 3 rejected DSARs show updated_at well inside their 30-day due_at window (8.7, 3.8, and 23.7 days after receipt respectively) — plausibly within deadline, with the usual caveat that updated_at isn't a verified \"decision\" timestamp.\n\nTonight (3 slots): (1) retry the near-miss report correctly; (2) incidents/compliance_events volume, severity, and resolution time (question #3, deferred from last week); (3) how far back the five retention-policy-less tables actually go, to size the exposure for question #4.",
+ "requests": [
+  {
+   "title": "February 2025 repeat-failure accounts: did they succeed afterward? (corrected)",
+   "question": "Among the accounts with 5+ failed logins in February 2025, how many went on to log in successfully afterward, and how soon — i.e. was this a near-miss or just noise?",
+   "grain": "one row per outcome bucket, computed over the cohort of distinct (tenant_id, email) pairs with >=5 failed login_attempts rows in February 2025",
+   "columns": [
+    "outcome_bucket (succeeded_within_1h / succeeded_within_24h / succeeded_later_in_month / never_succeeded_in_month)",
+    "pair_count",
+    "pct_of_cohort",
+    "avg_failed_attempts_before_success (blank for never_succeeded)",
+    "distinct_tenants_affected"
+   ],
+   "details": "Fix for last night's broken version: scope the cohort to (tenant_id, email) pairs, not email alone, since login_attempts.email is only unique per tenant and matching on email alone silently conflated unrelated users across merchants. For each pair in the cohort, find the first succeeded=true login_attempts row for that same (tenant_id, email) occurring after that pair's last Feb-2025 failed attempt, within February 2025 only. Classify each pair into exactly one bucket using this precedence: succeeded_within_1h, else succeeded_within_24h, else succeeded_later_in_month, else never_succeeded_in_month. Buckets must be mutually exclusive and exhaustive: pair_count across all 4 rows must sum exactly to the cohort size, and pct_of_cohort must sum to 100%. Do not print individual emails. Order buckets in the sequence listed above.",
+   "builds_on": [
+    "February 2025 repeat-failure accounts: did they succeed afterward?"
+   ]
+  },
+  {
+   "title": "Flagged compliance/security incidents: volume, severity and resolution time",
+   "question": "How many compliance/security incidents have been flagged, how severe are they, how long do they typically take to resolve, and is anything still sitting open a long time?",
+   "grain": "one row per compliance_events.severity value, across all tenants, all occurred_at dates from 2023-01-01 through 2025-12-31",
+   "columns": [
+    "severity",
+    "total_events",
+    "resolved_count",
+    "unresolved_count",
+    "pct_resolved",
+    "avg_days_to_resolve (resolved_at - occurred_at, resolved events only)",
+    "median_days_to_resolve",
+    "oldest_unresolved_age_days (2025-12-31 minus occurred_at, for the oldest unresolved event in this severity)",
+    "distinct_event_types"
+   ],
+   "details": "Source: compliance_events. Use 2025-12-31 as the fixed reference date for age calculations (not CURRENT_DATE). This is the deferred 'incidents' question from last week — want a clear read on total volume, how severity breaks down, typical time-to-close, and whether any severity tier has old unresolved events that would look bad to a security reviewer. Order by total_events descending.",
+   "builds_on": []
+  },
+  {
+   "title": "How far back does data go in tables without a retention policy?",
+   "question": "For the five tables that currently have no configured retention policy, how far back does the oldest data actually go, and how much of it is already older than our one known retention benchmark (audit_log's 730-day policy)?",
+   "grain": "one row per table, for access_log, change_history, data_subject_requests, compliance_events, and login_attempts, across all tenants",
+   "columns": [
+    "table_name",
+    "earliest_record_date (min of the relevant timestamp column: occurred_at for access_log/change_history/compliance_events/login_attempts, received_at for data_subject_requests)",
+    "days_since_earliest_record (as of 2025-12-31)",
+    "total_row_count",
+    "row_count_older_than_730_days",
+    "pct_older_than_730_days"
+   ],
+   "details": "Sources: access_log, change_history, data_subject_requests, compliance_events, login_attempts (one SELECT per table, unioned into a single result keyed by table_name). Use 2025-12-31 as the fixed reference date. Purpose: size how exposed we are before escalating the 'no retention policy' finding to Rosa — if these tables only go back a few months this is minor, if they go back close to our full 3-year history (like audit_log's archive) it's a bigger conversation. Order by table_name.",
+   "builds_on": [
+    "Retention policy coverage for audit and compliance-relevant tables"
+   ]
+  }
+ ]
+}

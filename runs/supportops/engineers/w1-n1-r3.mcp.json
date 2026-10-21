@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "SLA breach rates by priority, with overall headline rate",
+    "--question",
+    "What is our overall SLA breach rate for 2025, and which priority levels drive the misses?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Omar\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per ticket priority (low, normal, high, urgent) plus one summary row labeled 'All priorities' totaling across all of them\", \"columns_requested\": [\"priority (or 'All priorities' for the total row)\", \"ticket_count_with_sla\", \"typical_first_response_target_minutes (from sla_policies for that priority, blank on the All row)\", \"typical_resolution_target_minutes (from sla_policies for that priority, blank on the All row)\", \"first_response_breach_rate\", \"resolution_breach_rate\", \"avg_minutes_over_first_response\", \"avg_minutes_over_resolution\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31 inclusive, restricted to tickets with sla_policy_id not null. Source tables: tickets, sla_breaches, sla_policies. Compute breach rates per priority as % of that priority's tickets with a matching sla_breaches row (split by breach_kind = first_response / resolution); the 'All priorities' row aggregates across every priority (this is the headline number for the leadership review). Order: 'All priorities' row first, then the four priorities sorted by resolution_breach_rate descending. Round rates to 1 decimal percent, minutes to whole numbers.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

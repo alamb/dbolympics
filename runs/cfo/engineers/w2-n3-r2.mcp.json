@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Revenue Reconciliation via Correct Ledger Accounts, by Quarter",
+    "--question",
+    "Using the right ledger accounts (revenue credits net of refund contra-revenue debits), does the ledger's net revenue tie to the payments table's net captured amount each quarter?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Viktor\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one calendar quarter, 2025\", \"columns_requested\": [\"quarter\", \"ledger_revenue_credit_eur (sum of ledger_entries.amount, direction='credit', for ledger_accounts.account_type='revenue', occurred_at in the quarter)\", \"ledger_contra_revenue_debit_eur (same but account_type='contra_revenue', direction='debit')\", \"ledger_net_revenue_eur (credit minus debit)\", \"payments_net_amount_eur (sum of payments.amount - payments.amount_refunded for payments captured_at in the quarter, status captured/refunded/partially_refunded)\", \"diff_eur\", \"diff_pct\"], \"details\": \"Source: ledger_entries joined to ledger_accounts for account_type, filtered to occurred_at in calendar year 2025, converting each ledger_entries.amount to EUR via exchange_rates (base_code='EUR', quote_code=ledger_entries.currency_code, as_of=date(occurred_at)). Separately, payments filtered to captured_at in 2025 with the usual status filter, converting amount and amount_refunded to EUR via exchange_rates on captured_at. Group both sides by calendar quarter and join on quarter. diff_eur = ledger_net_revenue_eur - payments_net_amount_eur; diff_pct = diff_eur / payments_net_amount_eur * 100. Order chronologically 2025-Q1 to 2025-Q4 (4 rows).\", \"builds_on\": [\"Ledger Line-Item Detail for Flagged Sample Payments, 2025\", \"Ledger-to-Payment Reconciliation Pattern at Scale, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

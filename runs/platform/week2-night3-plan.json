@@ -1,0 +1,52 @@
+{
+ "notes": "Report 2 from last night changes the scale of this story substantially: at the 14:00 UTC hour check on Nov 28 2025, BOTH 'checkout' and 'storefront' components were 100% unhealthy (111/111 checks failing, latency pegged at a 10,000ms timeout ceiling) - a full, unambiguous outage, not the mild 2.44% weekly blip I reported last week (that number was just this severe hour diluted across a whole week of otherwise-healthy checks). And critically, Nov 28 2025 is Black Friday - so if checkout itself was down for part of the busiest shopping day of the year, that's a much bigger finding than '10 merchants' cart-reminder emails failed,' and it would affect every merchant trying to check out then, not just the 10 using carts.remind. I didn't request a 15:00 bucket so I can't see the second (15:40) failure's health-check status yet, and my hourly buckets are too coarse to know exactly when the outage started/ended. Report 3 (ticket subject search) came back empty - no evidence in ticket subjects that shoppers flagged cart/reminder problems before Nov 24, so I can't support the 'support was an early warning sign' theory from this angle; I'm treating that as a genuine (if limited - subjects only, not message bodies) negative result rather than spending more budget on it, since the checkout-outage/Black-Friday angle is now clearly the more important thread with one night left. Tonight's 3 slots: (1) pin down the exact start/end of the checkout outage at finer time resolution; (2) measure the actual order-volume impact hour-by-hour on Nov 28 itself; (3) put Nov 28 in context against surrounding Fridays and Black Friday 2024 so Diego has a real 'how much did this cost us' number for leadership.",
+ "requests": [
+  {
+   "title": "Checkout/Storefront Outage Timeline, Nov 28 2025",
+   "question": "Exactly when did the checkout/storefront outage start and end on Nov 28 2025?",
+   "grain": "one row per 30-minute interval and component, for checkout and storefront only, 13:00-17:00 UTC on 2025-11-28",
+   "columns": [
+    "interval_start",
+    "component",
+    "total_checks",
+    "unhealthy_checks",
+    "unhealthy_rate_pct",
+    "avg_latency_ms"
+   ],
+   "details": "Table system_health_checks. Filter checked_at >= 2025-11-28 13:00:00 and < 2025-11-28 17:00:00, component in ('checkout','storefront'). Group by 30-minute interval (floor checked_at to the nearest 30 minutes) and component. unhealthy_rate_pct = is_healthy=false count / total_checks * 100, rounded 2dp. avg_latency_ms over non-null latency_ms, rounded to whole number. Order by interval_start ascending, component ascending.",
+   "builds_on": [
+    "Internal Health Check Signal Around the Nov 28 2025 Storefront API Outage"
+   ]
+  },
+  {
+   "title": "Order Volume by Hour on Black Friday 2025 (Nov 28)",
+   "question": "Did order placement actually drop during the checkout outage window on Nov 28 2025, compared to the rest of that same (peak traffic) day?",
+   "grain": "one row per hour of the day, for 2025-11-28 (UTC)",
+   "columns": [
+    "hour",
+    "total_orders_placed",
+    "distinct_tenants_with_orders",
+    "total_revenue_eur"
+   ],
+   "details": "Table orders, filtered to placed_at on 2025-11-28 (all 24 hours UTC). Group by hour of placed_at. total_revenue_eur = sum of grand_total converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=2025-11-28), rounded to whole number. distinct_tenants_with_orders = count distinct tenant_id. Order by hour ascending (0-23).",
+   "builds_on": [
+    "Checkout/Storefront Outage Timeline, Nov 28 2025"
+   ]
+  },
+  {
+   "title": "Black Friday 2025 Sales vs Surrounding Fridays and Black Friday 2024",
+   "question": "Despite the checkout outage, how did total Black Friday 2025 sales compare to the Fridays immediately before/after it and to Black Friday 2024 - was the day's performance meaningfully dented?",
+   "grain": "one row per named reference day",
+   "columns": [
+    "date",
+    "label",
+    "total_orders",
+    "total_revenue_eur"
+   ],
+   "details": "Table orders, filtered to placed_at on each of these four specific dates (full day, UTC): 2025-11-21 (label 'Prior Friday'), 2025-11-28 (label 'Black Friday 2025'), 2025-12-05 (label 'Following Friday'), 2024-11-29 (label 'Black Friday 2024'). total_revenue_eur = sum of grand_total converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=that date), rounded to whole number. Platform-wide, all tenants. Order by date ascending.",
+   "builds_on": [
+    "Order Volume by Hour on Black Friday 2025 (Nov 28)"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Return and Damage Rates for Fragile vs Other Home & Living Categories",
+    "--question",
+    "Do fragile homeware categories (cookware, glassware, tableware, decor) see more damage-related returns than other Home & Living categories, supporting the in-transit-breakage theory for the December dip?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 2, \"grain\": \"one row per product category within tenants in the Home & Living industry\", \"columns_requested\": [\"category_name\", \"units_sold_last_12mo\", \"return_count\", \"return_rate_pct\", \"pct_returns_damage_related\"], \"details\": \"Scope to products whose tenant has industry = 'Home & Living'. units_sold_last_12mo = sum of order_items.quantity for that category's products from orders placed 2025-01-01 to 2025-12-31, status not cancelled. return_count = count of return_items (joined via order_items to the category's products) whose parent order_returns.requested_at falls in the same 2025-01-01 to 2025-12-31 window. return_rate_pct = return_count / units_sold_last_12mo * 100, rounded to 1 decimal. pct_returns_damage_related = share of those return_items whose order_returns.reason (case-insensitive) contains any of 'damage', 'broken', 'crack', 'chip', or 'shattered', rounded to 1 decimal. Order by return_rate_pct descending, tie-break by category_name.\", \"builds_on\": [\"Wiesgrund Wohnen December 2025: Product-Level Review Breakdown\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n4-r2.submit.json"
+   ]
+  }
+ }
+}

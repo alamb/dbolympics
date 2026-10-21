@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH base_carts AS (\n  SELECT c.tenant_id, c.user_id, c.status, c.created_at, c.converted_at,\n    EXISTS (\n      SELECT 1 FROM email_log e\n      WHERE e.tenant_id = c.tenant_id\n        AND e.user_id = c.user_id\n        AND e.sent_at >= c.created_at + INTERVAL '1 hour'\n        AND e.sent_at <= c.created_at + INTERVAL '48 hour'\n    ) AS has_email\n  FROM carts c\n  JOIN tenants t ON t.id = c.tenant_id\n  WHERE t.name IN ('Kibblewick','Studio Vrij','Petalcourt Beauty','Marrowby & Vane','Cragsley Outfitters','Ampfeld Elektronik')\n    AND c.created_at >= DATE '2025-01-01'\n    AND c.created_at < DATE '2025-12-01'\n    AND NOT (c.status = 'converted' AND c.converted_at IS NOT NULL AND c.converted_at <= c.created_at + INTERVAL '1 hour')\n),\ngrouped AS (\n  SELECT\n    CASE\n      WHEN user_id IS NULL THEN 'guest'\n      WHEN has_email THEN 'received_email'\n      ELSE 'logged_in_no_email'\n    END AS group_name,\n    status,\n    converted_at,\n    created_at\n  FROM base_carts\n)\nSELECT\n  group_name AS \"group\",\n  COUNT(*) AS cart_count,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE status = 'converted') / COUNT(*), 1) AS pct_eventually_converted,\n  ROUND(\n    PERCENTILE_CONT(0.5) WITHIN GROUP (\n      ORDER BY EXTRACT(EPOCH FROM (converted_at - created_at)) / 86400.0\n    ) FILTER (WHERE status = 'converted')\n  , 1) AS median_days_to_convert\nFROM grouped\nGROUP BY group_name\nORDER BY CASE group_name WHEN 'received_email' THEN 1 WHEN 'logged_in_no_email' THEN 2 WHEN 'guest' THEN 3 END",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: group, cart_count, pct_eventually_converted, median_days_to_convert"
+ },
+ {
+  "kind": "text",
+  "text": "The query compiles correctly with all expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH base_carts AS (\n  SELECT c.tenant_id, c.user_id, c.status, c.created_at, c.converted_at,\n    EXISTS (\n      SELECT 1 FROM email_log e\n      WHERE e.tenant_id = c.tenant_id\n        AND e.user_id = c.user_id\n        AND e.sent_at >= c.created_at + INTERVAL '1 hour'\n        AND e.sent_at <= c.created_at + INTERVAL '48 hour'\n    ) AS has_email\n  FROM carts c\n  JOIN tenants t ON t.id = c.tenant_id\n  WHERE t.name IN ('Kibblewick','Studio Vrij','Petalcourt Beauty','Marrowby & Vane','Cragsley Outfitters','Ampfeld Elektronik')\n    AND c.created_at >= DATE '2025-01-01'\n    AND c.created_at < DATE '2025-12-01'\n    AND NOT (c.status = 'converted' AND c.converted_at IS NOT NULL AND c.converted_at <= c.created_at + INTERVAL '1 hour')\n),\ngrouped AS (\n  SELECT\n    CASE\n      WHEN user_id IS NULL THEN 'guest'\n      WHEN has_email THEN 'received_email'\n      ELSE 'logged_in_no_email'\n    END AS group_name,\n    status,\n    converted_at,\n    created_at\n  FROM base_carts\n)\nSELECT\n  group_name AS \"group\",\n  COUNT(*) AS cart_count,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE status = 'converted') / COUNT(*), 1) AS pct_eventually_converted,\n  ROUND(\n    PERCENTILE_CONT(0.5) WITHIN GROUP (\n      ORDER BY EXTRACT(EPOCH FROM (converted_at - created_at)) / 86400.0\n    ) FILTER (WHERE status = 'converted')\n  , 1) AS median_days_to_convert\nFROM grouped\nGROUP BY group_name\nORDER BY CASE group_name WHEN 'received_email' THEN 1 WHEN 'logged_in_no_email' THEN 2 WHEN 'guest' THEN 3 END",
+  "note": "Used the same cart population/exclusion and 'eventually converted' (cart.status='converted', any time) and median-days-to-convert (converted_at - created_at) definitions as the prior stalled-carts report; 'received_email' requires a matching email_log row (same tenant_id/user_id) with sent_at in (created_at+1h, created_at+48h).",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups the 6-retailer stalled-cart population (2025-01-01 to 2025-11-30, excluding carts converted within the first hour) into received_email / logged_in_no_email / guest, using the same \"eventually converted\" and \"median days to convert\" definitions as the prior report, so the VP Product can see whether the email effect holds once guests are separated out from un-emailed logged-in users."
+ }
+]

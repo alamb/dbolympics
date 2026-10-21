@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Directional unit economics by vertical, 2025 (first pass)",
+    "--question",
+    "Using only the revenue and cost signals we currently trust, which verticals look directionally profitable to grow versus costly to serve?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Bea\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per merchant vertical (tenants.industry)\", \"columns_requested\": [\"vertical\", \"merchant count\", \"fee revenue (EUR, 2025, our validated processing-fee figure)\", \"shipping cost (EUR, 2025)\", \"refund amount (EUR, 2025)\", \"support ticket count (2025)\", \"rough net contribution (EUR, = fee revenue \\u2212 shipping cost \\u2212 refund amount)\", \"net contribution as % of fee revenue\"], \"details\": \"Source: aggregate the same underlying data as the validated 'Revenue by vertical' report (payouts, status='paid', paid_at in 2025, EUR via exchange_rates) and the 'Cost-driver volume inventory by merchant' report (shipments, order_returns-linked payment_refunds, tickets), rolled up from merchant to tenants.industry. This is explicitly a first-pass, directional view, not a final cost-to-serve model: 'rough net contribution' nets only the cost signals we have EUR amounts for (shipping, refunds) against fee revenue, and deliberately excludes support cost, carrier-performance penalties, engineering-reliability cost, and the still-missing platform-plan revenue line \\u2014 please label it as such in the report notes. Group null/blank industry into 'Unspecified'. Order by rough net contribution EUR descending, tie-break by vertical name ascending.\", \"builds_on\": [\"Revenue by vertical, trailing 12 months (corrected)\", \"Cost-driver volume inventory by merchant, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Pre-2023 data subject requests: backfill or data quality issue?",
+    "--question",
+    "Are the data subject requests received before 2023-01-01 legitimate historical/backfilled compliance records, or a data quality artifact?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Bea\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per data_subject_requests record with received_at before 2023-01-01\", \"columns_requested\": [\"public_id\", \"tenant name\", \"request_type\", \"status\", \"received_at (timestamp)\", \"completed_at (timestamp, blank if none)\", \"created_at (when this row was written into our system)\", \"days between received_at and created_at\", \"notes (truncated to 200 chars)\"], \"details\": \"Source: data_subject_requests filtered to received_at < '2023-01-01', platform-wide, full history. The key diagnostic is the gap between received_at and created_at: a large gap (row created well after 2023, e.g. during a migration) supports 'legitimate backfill with original historical date preserved'; a near-zero gap would be suspicious since the new platform/warehouse history is stated to start 2023-01-01. Order by received_at ascending.\", \"builds_on\": [\"Privacy request volume reconciliation: counts by type and status\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

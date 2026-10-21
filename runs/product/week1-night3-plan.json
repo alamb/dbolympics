@@ -1,0 +1,50 @@
+{
+ "notes": "Reading night 2 critically:\n\nReport 1 (tracking coverage) confirms the Report-1/night-1 puzzle, but not quite the way I expected: the four Food & Coffee merchants have visits_per_order well under 1 (0.53-0.73) — far more orders than visits — while the retail merchants (Pet Supplies, Beauty, Apparel, Electronics) sit at a believable 1.0-3.3 visits per order. BUT subscription_linked_orders_pct is 0.0% everywhere, so the orders aren't literally tied to subscription invoices via orders.id — meaning subscription billing in this schema doesn't create a browsing/checkout event at all, it just produces order rows directly (automated renewal), with zero session footprint. That's the real explanation: for subscription merchants, \"order\" ≠ \"someone browsed and checked out,\" so the storefront funnel simply doesn't apply to most of their volume. I'll segment subscription vs. retail merchants in the memo and scope the \"where do we leak\" funnel conclusion to the retail segment, where the numbers are coherent.\n\nReport 2 (status-transition funnel) has a methodology problem I caused: I told the engineer \"same 10 tenants as the Q4 funnel report\" without giving the explicit list, so they substituted a top-order-count proxy — which is almost certainly dominated by the high-volume subscription merchants (confirmed status never appears, pending→paid is ~98% instant at 0.0 median hours, consistent with automated billing that has no checkout UI to abandon). This result doesn't answer the retail checkout question I actually need — I have to rerun it with the explicit 6 retail tenant_ids.\n\nReport 3 (cart duration) is clean and tenant-matched correctly, and it's a real finding: only 29% of carts resolve within an hour (and those are ~100% converted — fast successful checkouts, not failures); the bulk, 67.7% combined, linger 1 hour to 7 days before mostly failing (1.8%-15.3% conversion). That's a genuine slow bleed, not a single cliff. I want to check this isn't an artifact of one tenant's cart-expiry policy before I put it in the memo as a general pattern.\n\nTonight (night 3 of 4): fix the contaminated status-transition report with the explicit retail tenant list, check whether the cart-bleed pattern holds per-tenant or is driven by an outlier, and — since priorities 1/2/5 are now in good shape — spend the third slot starting priority 3 (delivery lateness vs. returns) so there's something to work with next week even if we run out of nights.",
+ "requests": [
+  {
+   "title": "Where orders stall after checkout, Q4 2025 — retail merchants only (corrected)",
+   "question": "For the real one-off retail merchants (excluding subscription-box sellers), is the drop-off between order creation and payment a single cliff or a slow bleed, and at which status does it happen?",
+   "grain": "one row per order status",
+   "columns": [
+    "status",
+    "orders reaching this status (count)",
+    "pct of total orders in window",
+    "median hours from order creation to reaching this status"
+   ],
+   "details": "This repeats the night-2 'status-transition funnel' request but with the explicit tenant list I should have given the first time (the earlier run substituted a top-order-count proxy that was dominated by automated subscription merchants and isn't usable). Restrict to tenant_id for exactly: Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik (look up by name in tenants). Base population: orders with created_at in 2025-10-01 to 2025-12-31 for these tenants only. total_orders = count of distinct such orders. For each status in (pending, confirmed, paid, partially_fulfilled, fulfilled, cancelled, refunded): orders_reaching_status = count of distinct orders with at least one order_status_history row where to_status = that status; pct_of_total_orders = that count / total_orders * 100, rounded 1 decimal; median_hours_from_order_creation = median of (first order_status_history.created_at with that to_status) minus orders.created_at, in hours, rounded 1 decimal (NULL if no order ever reached it). Include all 7 statuses even if zero. Order rows by pct_of_total_orders descending, tie-break by status name.",
+   "builds_on": [
+    "Where orders stall after checkout: status-transition funnel, Q4 2025"
+   ]
+  },
+  {
+   "title": "Cart abandonment timing by tenant, Q4 2025 (retail merchants)",
+   "question": "Is the 'slow bleed' pattern in cart abandonment (most unresolved carts linger 1 hour to 7 days rather than dying instantly) consistent across retail merchants, or is it driven by one or two tenants' cart-expiry settings?",
+   "grain": "one row per tenant and duration bucket",
+   "columns": [
+    "tenant name",
+    "duration bucket",
+    "cart count",
+    "pct of that tenant's carts",
+    "converted pct (share of carts in this bucket with status = converted)"
+   ],
+   "details": "Same tenant list, time window, and bucket definitions as the earlier 'Cart abandonment: cliff or slow bleed' report: carts with created_at in 2025-10-01 to 2025-12-31 for Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik. resolution_time = coalesce(converted_at, abandoned_at, expires_at) - created_at in hours; carts with all three null go in 'unresolved/still active'. Buckets: '<1 hour', '1-24 hours', '1-7 days', '>7 days', 'unresolved/still active'. pct_of_tenant_carts is computed within each tenant (so the 5 buckets sum to ~100% per tenant), not across the whole population. converted_pct = % of carts in that tenant/bucket cell with status = 'converted', rounded 1 decimal. Order rows by tenant_name, then bucket in the fixed sequence above (not alphabetical).",
+   "builds_on": [
+    "Cart abandonment: cliff or slow bleed, Q4 2025 (non-subscription merchants)"
+   ]
+  },
+  {
+   "title": "Delivery speed and return rate by merchant, Q4 2025",
+   "question": "Do merchants whose deliveries run slower/later also see higher return rates — an early read on whether delivery experience is eroding trust?",
+   "grain": "one row per tenant (the same 10 tenants as the original Q4 funnel report)",
+   "columns": [
+    "tenant name",
+    "shipments delivered in window (count)",
+    "median delivery days (delivered_at minus shipped_at)",
+    "pct of shipments over 7 days to deliver",
+    "pct of Q4 orders with at least one return"
+   ],
+   "details": "Tenants: Brennquell Kaffee, Spice Route Box, Grind Collective, Honeycomb Larder, Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik (look up tenant_id by name in tenants). Shipments: from shipments joined through fulfillments to orders for tenant_id, where shipments.shipped_at is in 2025-10-01 to 2025-12-31 and delivered_at is not null. delivery_days = delivered_at - shipped_at, in days. median_delivery_days = median across those shipments, rounded 1 decimal. pct_over_7_days = share of those shipments with delivery_days > 7, rounded 1 decimal (this is a generic proxy for 'late' since there's no promised-delivery-date field in the schema — flag this assumption in the report notes). Returns: among orders with placed_at in 2025-10-01 to 2025-12-31 for that tenant, the % that have at least one row in order_returns (order_returns.order_id = orders.id), rounded 1 decimal. Order rows by pct_over_7_days descending, tie-break by tenant name.",
+   "builds_on": []
+  }
+ ]
+}

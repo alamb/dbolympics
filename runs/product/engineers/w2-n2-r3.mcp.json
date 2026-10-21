@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Do stalled carts that receive an email convert more often?",
+    "--question",
+    "Among carts that don't convert within the first hour, is there already an organic recovery nudge happening (an email reaching the shopper), and does it correlate with eventually converting?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Omar\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per group: carts whose user received an email in the 1-48 hour window after cart creation, vs. carts whose user did not\", \"columns_requested\": [\"group (received email / no email)\", \"cart count\", \"pct eventually converted\", \"median days to convert (converted carts only)\"], \"details\": \"Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-11-30 (leaves at least a month of follow-up before the 2025-12-31 cutoff), restricted to carts NOT already converted within the first hour of creation (i.e., still open at the 1-hour mark \\u2014 these are the ones that would actually need a nudge). For each such cart with a non-null user_id, check email_log for any row with the same tenant_id and user_id where sent_at falls between (cart's created_at + 1 hour) and (cart's created_at + 48 hours); group = 'received_email' if at least one such row exists, else 'no_email' (carts with a null user_id, i.e. guest carts with no way to match an email recipient, also fall into 'no_email' \\u2014 flag in the report notes what share of the population that is, since it affects how to read the comparison). pct_eventually_converted = % of carts in the group with status='converted' (any time). median_days_to_convert = median of (converted_at - created_at) in days among the converted carts in that group. Order rows with 'received_email' first, then 'no_email'.\", \"builds_on\": [\"Cart abandonment timing by tenant, Q4 2025 (retail merchants)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

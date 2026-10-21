@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cost-driver volume inventory by merchant, 2025",
+    "--question",
+    "What operational cost-driver volumes do we actually have per merchant today, to serve as the measurable building blocks for a cost-to-serve model?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Grace\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per merchant (tenant)\", \"columns_requested\": [\"merchant name\", \"vertical\", \"shipment count (2025)\", \"total shipping cost (EUR, sum of shipments.shipping_cost)\", \"return count (2025, order_returns)\", \"refund amount (EUR, 2025, succeeded payment_refunds)\", \"support ticket count (2025)\", \"failed webhook delivery count (2025)\"], \"details\": \"Source, all for calendar year 2025 (occurred/created dates in [2025-01-01, 2026-01-01)): shipments (shipped_at in window, count and sum shipping_cost converted to EUR via exchange_rates as_of shipped_at date, joined to fulfillments->orders->tenant_id); order_returns (requested_at in window, count, joined via orders->tenant_id); payment_refunds (status='succeeded', processed_at in window, amount converted to EUR, via tenant_id directly); tickets (created_at in window, count, via tenant_id); webhook_deliveries (status='failed', created_at in window, count, joined via webhook_id->webhooks->tenant_id). This is purely a volume inventory (no dollar cost-per-unit assumptions yet) to see which cost signals exist and how they vary by merchant before Finance and I agree on how to price each driver. Order by merchant name ascending (no ranking implied yet \\u2014 this is a scoping baseline, not a risk list). Print top 50 rows ordered by total shipping cost EUR descending instead if that's easier for the engine to produce deterministically; note total merchant count.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

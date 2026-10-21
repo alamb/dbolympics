@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  d.ref_date AS date,\n  d.label AS label,\n  COALESCE(w.orders_cnt, 0) AS orders_14_to_16_utc,\n  ROUND(COALESCE(w.revenue_eur, 0), 0) AS revenue_eur_14_to_16_utc,\n  COALESCE(f.total_orders, 0) AS total_orders_full_day,\n  ROUND(COALESCE(w.orders_cnt, 0) * 100.0 / NULLIF(f.total_orders, 0), 1) AS pct_of_day_in_window\nFROM (VALUES\n  (DATE '2025-11-21', 'Prior Friday'),\n  (DATE '2025-11-28', 'Black Friday 2025'),\n  (DATE '2025-12-05', 'Following Friday'),\n  (DATE '2024-11-29', 'Black Friday 2024')\n) AS d(ref_date, label)\nLEFT JOIN (\n  SELECT\n    CAST(o.placed_at AS date) AS d,\n    COUNT(*) AS orders_cnt,\n    SUM(o.grand_total / er.rate) AS revenue_eur\n  FROM orders o\n  JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE CAST(o.placed_at AS date) IN (DATE '2025-11-21', DATE '2025-11-28', DATE '2025-12-05', DATE '2024-11-29')\n    AND CAST(o.placed_at AS time) >= TIME '14:00:00'\n    AND CAST(o.placed_at AS time) < TIME '16:00:00'\n  GROUP BY CAST(o.placed_at AS date)\n) AS w\n  ON w.d = d.ref_date\nLEFT JOIN (\n  SELECT\n    CAST(o.placed_at AS date) AS d,\n    COUNT(*) AS total_orders\n  FROM orders o\n  WHERE CAST(o.placed_at AS date) IN (DATE '2025-11-21', DATE '2025-11-28', DATE '2025-12-05', DATE '2024-11-29')\n  GROUP BY CAST(o.placed_at AS date)\n) AS f\n  ON f.d = d.ref_date\nORDER BY d.ref_date ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: date, label, orders_14_to_16_utc, revenue_eur_14_to_16_utc, total_orders_full_day, pct_of_day_in_window"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  d.ref_date AS date,\n  d.label AS label,\n  COALESCE(w.orders_cnt, 0) AS orders_14_to_16_utc,\n  ROUND(COALESCE(w.revenue_eur, 0), 0) AS revenue_eur_14_to_16_utc,\n  COALESCE(f.total_orders, 0) AS total_orders_full_day,\n  ROUND(COALESCE(w.orders_cnt, 0) * 100.0 / NULLIF(f.total_orders, 0), 1) AS pct_of_day_in_window\nFROM (VALUES\n  (DATE '2025-11-21', 'Prior Friday'),\n  (DATE '2025-11-28', 'Black Friday 2025'),\n  (DATE '2025-12-05', 'Following Friday'),\n  (DATE '2024-11-29', 'Black Friday 2024')\n) AS d(ref_date, label)\nLEFT JOIN (\n  SELECT\n    CAST(o.placed_at AS date) AS d,\n    COUNT(*) AS orders_cnt,\n    SUM(o.grand_total / er.rate) AS revenue_eur\n  FROM orders o\n  JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE CAST(o.placed_at AS date) IN (DATE '2025-11-21', DATE '2025-11-28', DATE '2025-12-05', DATE '2024-11-29')\n    AND CAST(o.placed_at AS time) >= TIME '14:00:00'\n    AND CAST(o.placed_at AS time) < TIME '16:00:00'\n  GROUP BY CAST(o.placed_at AS date)\n) AS w\n  ON w.d = d.ref_date\nLEFT JOIN (\n  SELECT\n    CAST(o.placed_at AS date) AS d,\n    COUNT(*) AS total_orders\n  FROM orders o\n  WHERE CAST(o.placed_at AS date) IN (DATE '2025-11-21', DATE '2025-11-28', DATE '2025-12-05', DATE '2024-11-29')\n  GROUP BY CAST(o.placed_at AS date)\n) AS f\n  ON f.d = d.ref_date\nORDER BY d.ref_date ASC",
+  "note": "This aggregates across all tenants/merchants combined (no tenant filter was specified); revenue is converted to EUR per-order using that order's own currency and the exchange rate as_of its placed date. If the VP wants this broken out per merchant or filtered to specific tenants, let me know and I'll rerun.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. Summary of what the report does:\n\n- **Grain:** one row per reference date (the 4 dates requested).\n- **orders_14_to_16_utc / revenue_eur_14_to_16_utc:** counts and EUR-converted revenue (via `exchange_rates`, EUR→order currency, rate as of that calendar date) for orders placed strictly within 14:00–16:00 UTC.\n- **total_orders_full_day:** all orders placed that UTC day, for context.\n- **pct_of_day_in_window:** share of the day's orders that fell in the 2-hour window, rounded to 1 decimal.\n- Dates with zero orders in a bucket show as 0 via `COALESCE`, and percentage safely returns null if a day had zero total orders (`NULLIF`).\n\nNote included in the submission: the query aggregates across all merchants since no tenant filter was specified — flagged in case the VP wants it scoped to specific tenants."
+ }
+]

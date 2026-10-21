@@ -1,0 +1,9 @@
+{
+ "id": "regulator-inquiry",
+ "lead": "dpo",
+ "with": [
+  "ciso"
+ ],
+ "text": "A data protection authority asked how we handle privacy: how many privacy requests we receive and how fast we complete them, how consent is recorded, and what remains after an account is deleted.",
+ "week": 2
+}

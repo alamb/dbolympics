@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Revenue by vertical, trailing 12 months (corrected)",
+    "--question",
+    "Which merchant verticals generate the bulk of Tidewick's processing volume and fee revenue today? (redo of night-1 report, which disagreed with the merchant-level total by ~1.76x)",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per merchant vertical (tenants.industry)\", \"columns_requested\": [\"vertical (industry)\", \"merchant count (distinct tenants with a qualifying payout)\", \"gross payment volume (EUR)\", \"fee revenue (EUR)\", \"average fee revenue per merchant (EUR)\", \"share of total fee revenue (%)\"], \"details\": \"Source: payouts only, filtered to status='paid' and paid_at >= 2025-01-01 and paid_at < 2026-01-01 (matches the window validated in last night's reconciliation report, which found total fee revenue of EUR 53,185.85 for this exact filter). To avoid the fan-out bug suspected in the prior version: first aggregate payouts per tenant_id (sum gross_amount and fee_amount, converting each payout row to EUR individually via exchange_rates where base_code='EUR', quote_code=payouts.currency_code, as_of = date(payouts.paid_at) \\u2014 this should be a 1-row match per payout given the (base_code,quote_code,as_of) unique constraint), and only THEN join that per-tenant aggregate to tenants to pick up industry and group by industry. Please confirm in the report notes that the grand total fee revenue across all vertical rows sums to approximately EUR 53,186 (if it doesn't, something is still wrong and should be flagged rather than printed). Group any tenant with null/blank industry into a single 'Unspecified' row. Order by fee revenue EUR descending, tie-break by vertical name ascending.\", \"builds_on\": [\"Revenue by vertical, trailing 12 months\", \"Payout status & date-field reconciliation\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

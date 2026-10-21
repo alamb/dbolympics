@@ -1,0 +1,28 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  to_char(t0.month_start, 'YYYY-MM') AS month,\n  t0.email_count AS emails_logged,\n  (DATE '2026-01-05' - t0.month_start) AS days_old_as_of_2026_01_05,\n  CASE WHEN (DATE '2026-01-05' - t0.month_start) > 730 THEN 'Y' ELSE 'N' END AS exceeds_730_day_retention\nFROM (\n  SELECT date_trunc('month', t1.created_at)::date AS month_start, COUNT(*) AS email_count\n  FROM email_log t1\n  WHERE t1.created_at >= DATE '2023-01-01' AND t1.created_at < DATE '2026-01-01'\n  GROUP BY date_trunc('month', t1.created_at)\n) t0\nORDER BY t0.month_start ASC",
+  "note": "",
+  "result": "STATUS: REJECTED\n  - does not compile: Catalog Error: Scalar Function with name to_char does not exist!"
+ },
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  strftime(t0.month_start, '%Y-%m') AS month,\n  t0.email_count AS emails_logged,\n  (DATE '2026-01-05' - t0.month_start) AS days_old_as_of_2026_01_05,\n  CASE WHEN (DATE '2026-01-05' - t0.month_start) > 730 THEN 'Y' ELSE 'N' END AS exceeds_730_day_retention\nFROM (\n  SELECT date_trunc('month', t1.created_at)::date AS month_start, COUNT(*) AS email_count\n  FROM email_log t1\n  WHERE t1.created_at >= DATE '2023-01-01' AND t1.created_at < DATE '2026-01-01'\n  GROUP BY date_trunc('month', t1.created_at)\n) t0\nORDER BY t0.month_start ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: month, emails_logged, days_old_as_of_2026_01_05, exceeds_730_day_retention"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the right columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  strftime(t0.month_start, '%Y-%m') AS month,\n  t0.email_count AS emails_logged,\n  (DATE '2026-01-05' - t0.month_start) AS days_old_as_of_2026_01_05,\n  CASE WHEN (DATE '2026-01-05' - t0.month_start) > 730 THEN 'Y' ELSE 'N' END AS exceeds_730_day_retention\nFROM (\n  SELECT date_trunc('month', t1.created_at)::date AS month_start, COUNT(*) AS email_count\n  FROM email_log t1\n  WHERE t1.created_at >= DATE '2023-01-01' AND t1.created_at < DATE '2026-01-01'\n  GROUP BY date_trunc('month', t1.created_at)\n) t0\nORDER BY t0.month_start ASC",
+  "note": "Platform-wide monthly counts from email_log.created_at, Jan 2023–Dec 2025 (36 rows). \"Days old\" is measured from each month's start to 2026-01-05 as requested, so the flag is conservative (actual oldest/newest rows within a month could differ by up to ~30 days).",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report gives one row per month (Jan 2023–Dec 2025) with the email count, days elapsed from that month's start to 2026-01-05, and a Y/N flag for exceeding the 730-day policy — directly sizing how much retained email data sits past the stated retention window across all 120 tenants."
+ }
+]

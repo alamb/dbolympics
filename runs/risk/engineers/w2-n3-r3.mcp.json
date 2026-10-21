@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Quarterly failed-login rate history for the 3 Feb-2025-affected merchants",
+    "--question",
+    "For the 3 merchants behind the February 2025 spike, was that an isolated one-quarter event, or do they show a recurring pattern of elevated login failures over the full history?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Bea\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per combination of tenant (the same 3 merchants) and calendar quarter, from 2023-Q1 through 2025-Q4\", \"columns_requested\": [\"tenant_name\", \"quarter (YYYY-Q#)\", \"total_attempts\", \"failed_attempts\", \"pct_failed\"], \"details\": \"Source: login_attempts, filtered to these 3 tenants (Cragsley Outfitters, Marrowby & Vane, Studio Vrij), all quarters 2023-2025 (12 quarters x 3 tenants = 36 rows, include quarters with zero activity as 0 rather than omitting). Purpose: context for whether Feb 2025 (Q1 2025) was a one-off anomaly or whether these merchants \\u2014 already flagged elsewhere for the heaviest support ticket load and worst response times \\u2014 show other elevated-failure quarters too. Order by tenant_name, then quarter ascending.\", \"builds_on\": [\"February 2025 failed login concentration by merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

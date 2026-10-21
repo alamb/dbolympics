@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methodology · DB Olympics</title>
+<meta name="description" content="How DB Olympics runs and measures analytical database systems.">
+<link rel="preload" href="fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+<!--HEAD-->
+<link rel="stylesheet" href="style.css">
+<style>
+.doc h1 { font-size: 40px; margin: 0 0 12px; }
+.doc .lead { font-size: 19px; color: var(--ink-2); margin: 0 0 8px; }
+.doc section { margin-top: 48px; }
+.doc p, .doc li { color: var(--ink-2); }
+.doc p { margin: 0 0 12px; }
+.doc ol, .doc ul { padding-left: 1.3em; margin: 0 0 12px; }
+.doc li { margin-bottom: 6px; }
+.doc li b, .doc p b { color: var(--ink); font-weight: 600; }
+.doc code { font-family: var(--mono); font-size: 0.82em; }
+.doc pre { font: 13px/1.6 var(--mono); background: var(--code-bg); padding: 12px 16px; border-radius: 3px; overflow-x: auto; margin: 0 0 12px; }
+.toc { font-size: 15px; color: var(--muted); margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.toc a { color: var(--ink-2); }
+table.spec { width: 100%; border-collapse: collapse; font-size: 15px; margin: 6px 0 12px; }
+.spec th { font-weight: 400; color: var(--muted); text-align: left; padding: 0 12px 6px 0; border-bottom: 1px solid var(--ink);
+  font-variant-caps: all-small-caps; letter-spacing: 0.06em; white-space: nowrap; }
+.spec td { padding: 7px 12px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
+.spec td:first-child { color: var(--ink); white-space: nowrap; }
+.spec tr:last-child td { border-bottom: 1px solid var(--ink); }
+.spec .r { text-align: right; font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+.spec .glyph { color: var(--ink-2); margin-right: 9px; vertical-align: -1px; }
+.spec small { color: var(--muted); font-size: 13px; }
+/* a note beneath a table, in the type of its column names */
+.doc .spec-note { color: var(--muted); font-size: 15px; text-align: right; margin: -6px 0 12px; }
+.points { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 36px; margin: 18px 0 12px; }
+.point { border-top: 1px solid var(--rule); padding-top: 8px; font-size: 15px; min-width: 0; }
+.point .sig { font-family: var(--mono); font-size: 13.5px; color: var(--ink); font-weight: 600; }
+.point p { margin: 4px 0 6px; }
+.point ul { list-style: none; margin: 0; padding: 0; }
+.point li, .point .std { margin: 3px 0; display: flex; gap: 10px; align-items: baseline; }
+.point .who { flex: none; width: 7.5em; color: var(--muted); font-size: 13.5px; }
+.point code { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); overflow-wrap: anywhere; }
+@media (max-width: 760px) { .points { grid-template-columns: 1fr; } }
+.formula { display: block; margin: 8px 0 8px 1.2em; font-style: italic; color: var(--ink); font-variant-numeric: lining-nums; }
+@media (max-width: 640px) { .doc h1 { font-size: 32px; } .spec .hide-s { display: none; } .spec th, .spec td { padding-right: 8px; } .spec th, .spec th.r { white-space: normal; vertical-align: bottom; } }
+</style>
+</head>
+<body>
+<div class="page doc">
+
+<!--TOPBAR-->
+
+<h1>Methodology</h1>
+<p class="lead measure">How a database system is run, what is measured, and how the numbers on the start page are
+  computed.</p>
+<nav class="toc" aria-label="Contents">
+  <a href="#workload">Workload</a><a href="#machines">Machines</a><a href="#systems">Systems</a><a href="#dialects">Dialects</a><a href="#procedure">Procedure</a>
+  <a href="#isolation">Isolation</a><a href="#measures">Measures</a><a href="#correctness">Correctness</a><a href="#ai">Use of AI</a><a href="#reproduce">Reproduce</a>
+</nav>
+
+<section id="workload" class="measure">
+  <h2>Workload</h2>
+  <p><b>The data</b> is a deterministic simulation of Tidewick Commerce, a multi-tenant e-commerce platform: shops,
+    orders, payments, shipping, support, marketing and more, in 251 tables. Shoppers, orders and events grow with the
+    scale factor; the 120 merchants, their catalogs and the reference tables do not.</p>
+  <table class="spec">
+    <thead><tr><th>Scale factor</th><th class="r">Rows</th><th class="r">Size as Parquet</th></tr></thead>
+    <tbody><tr><td>1</td><td class="r">6.1 million</td><td class="r">0.2 GB</td></tr>
+      <tr><td>10</td><td class="r">45.5 million</td><td class="r">1.7 GB</td></tr>
+      <tr><td>100</td><td class="r">411 million</td><td class="r">15.5 GB</td></tr>
+      <tr><td>1000</td><td class="r">4.1 billion</td><td class="r">151 GB</td></tr></tbody>
+  </table>
+  <p><b>The data arrives over time.</b> Every table is split into periods: everything through 2024 in one file, then
+    one file per quarter of 2025.</p>
+  <p><b>The 409 queries</b> were written by language-model agents role-playing Tidewick's managers, analysts and
+    engineers over two simulated weeks. Each query can be traced to <a href="queries/index.html">the conversation that led to it</a>. They are standard
+    SQL with a few placeholders where systems spell things differently (a year-month string, a difference of dates).
+    Every query returns the same rows in the same order on every system; where needed, a tie-breaker was added.</p>
+</section>
+
+<section id="machines" class="measure">
+  <h2>Machines</h2>
+  <!--MACHINES_TEXT-->
+</section>
+
+<section id="systems">
+  <h2>Systems</h2>
+  <p class="measure">Every system gets the same schema and the same queries. A system may change type names and the
+    spellings behind the placeholders, and use its own settings to follow the standard, nothing else; foreign keys
+    are never declared, and tables have no keys. <a href="add-a-system.html">How to add a system.</a></p>
+  <!--SYSTEMS-->
+</section>
+
+<section id="dialects">
+  <h2>Supporting different SQL dialects</h2>
+  <div class="measure">
+    <p>The agents were told to write standard SQL wherever possible. Some queries still use constructs outside the
+      standard, and many systems do not support every standard construct. Each query therefore exists in two forms:
+      the <i>benchmark query</i>, one text for all systems, and each <i>system's version</i> of it, in which the
+      placeholders of the benchmark query are spelled the way that system needs. The following criteria decide which
+      change goes where. The standard is SQL:2023; what is common is judged by the four most used relational
+      databases in the Stack Overflow Developer Survey 2026 (PostgreSQL, SQLite, MySQL and SQL Server), not by the
+      systems in the benchmark.</p>
+    <ul class="criteria">
+      <li><b>A query uses something the standard does not have</b>, or relies on what the standard leaves
+        implementation-defined.
+        <ul>
+          <li>If enough of the four support another way to write it, the benchmark query uses that: two of the four
+            for a standard equivalent, three for any other operation. Examples: <code>CAST(x AS DATE)</code> instead
+            of <code>DATE(x)</code>, <code>ROW_NUMBER()</code> instead of <code>DISTINCT ON</code>,
+            <code>JSON_VALUE</code> instead of <code>-&gt;&gt;</code>. What the standard leaves
+            implementation-defined is written out: where NULLs go in every sort, tie-breakers.</li>
+          <li>Otherwise the benchmark query has a placeholder (listed below), and each system's version spells
+            it.</li>
+        </ul></li>
+      <li><b>A system rejects standard SQL.</b>
+        <ul>
+          <li>If a simple equivalent exists in the system's dialect, the benchmark query marks the construct as a
+            placeholder, with the standard construct as its default, and that system's version uses the
+            equivalent. Simple means a fixed pattern at that place in the query that gives the standard's result
+            for every input and can be applied by a simple textual match, without semantic analysis. If the
+            equivalent costs nothing on any system, such as renaming an alias, the benchmark query uses it
+            instead.</li>
+          <li>Otherwise the error stays, even where a larger rewrite would work.</li>
+        </ul></li>
+      <li><b>A system runs standard SQL and returns something else.</b>
+        <ul>
+          <li>If two of the four return the standard's result, the system is wrong, and its result stays.</li>
+          <li>Otherwise the four mostly disagree with the standard as well, and the benchmark query says
+            explicitly what it means, as for the types and scales of numbers.</li>
+        </ul></li>
+    </ul>
+    <p>Systems may apply their own settings at startup to follow the standard more closely, such as DuckDB's
+      integer division mode.</p>
+    <p>Every change from the SQL the agents wrote to the benchmark query is recorded, query by query. Each query's
+      page shows these changes, and every system's version.</p>
+  </div>
+  <div class="points"><!--DIALECTS--></div>
+</section>
+
+<section id="procedure" class="measure">
+  <h2>Procedure</h2>
+  <p>For every machine and every system, starting from nothing:</p>
+  <ol>
+    <li><b>Start</b> the system and wait until it answers.</li>
+    <li><b>Create the schema</b>, all tables at once.</li>
+    <li><b>Load</b> everything through the end of 2024: every table's file, all tables at once.</li>
+    <li><b>Run all 409 queries {{REPS}}</b>, in order.</li>
+    <li><b>Load the next quarter</b> and run all queries again, until all of 2025 is loaded: five loads, five rounds of
+      queries.</li>
+    <li><b>Check</b> every result of the last round against the reference results.</li>
+    <li><b>Stop</b> the system and remove everything it wrote.</li>
+  </ol>
+  <p><b>The system is never restarted</b> during a run, so its caches stay warm, as they would in production.</p>
+  <p><b>A query over its timeout</b> ({{TIMEOUT}}) is aborted and recorded as a timeout; it is skipped for the rest of that round and
+    tried again after the next load. A query that fails is treated the same.</p>
+  <p><b>A run fails as a whole</b> when the system runs out of memory, crashes, stops answering, or cannot load a file.
+    The figures then show the run up to that point.</p>
+</section>
+
+<section id="isolation" class="measure">
+  <h2>Isolation</h2>
+  <ul>
+    <li><b>One container group per run</b> (a Podman pod): the system and anything it needs next to it, with no network
+      to the outside.</li>
+    <li><b>Cores:</b> every container is pinned to the machine's cores.</li>
+    <li><b>Memory:</b> one limit for the whole group, counting everything, the file cache included, with no swap. A
+      system that exceeds it is killed, and the run fails.</li>
+    <li><b>What the system sees:</b> the limits, also through <code>/proc</code>, so that a system sizing itself from
+      the hardware sizes itself to the limits.</li>
+    <li><b>The data</b> is provided read-only, as Parquet files, with the list columns of four tables also as text for
+      systems that need that. How a system loads it is up to the system; load time is measured, not prescribed.</li>
+  </ul>
+</section>
+
+<section id="measures" class="measure">
+  <h2>Measures</h2>
+  <p><b>Query time</b> is measured by the benchmark, not reported by the system: from sending the query to having its
+    whole result, over a connection that stays open for the run, so no client starts per query. {{REPS_COUNTS}}</p>
+  <p><b>Load time</b> is measured the same way: from sending a load, every table's file of the period at once, to the
+    system's answer that all of it is loaded. Creating the schema is timed apart and not counted.</p>
+  <p><b>Relative time</b> (Table 1) is the geometric mean, over all 409 queries, of a query's time relative to the
+    fastest correct system on that machine, both plus 10&#8202;ms so that the shortest queries do not dominate. A
+    timed-out query counts as taking the full timeout ({{TIMEOUT}}); a failed one, one with a wrong result or one not run
+    as taking twice the slowest correct time of that query on that machine (the timeout if no system answered it
+    correctly).</p>
+  <p><b>Queries per second</b> (Figure 1) is 409 over the time all queries take together after the last load (the median
+    of each). A timed-out query counts as taking the full timeout, a failed or wrong one as taking twice the slowest
+    correct time of that query.</p>
+  <p><b>Cost</b> (Figure 1) is that same time at the machine's price per hour: what it costs to run all 409 queries
+    once.</p>
+  <p id="efficiency"><b>Efficiency</b> (Figure 1) is queries per second (y-axis) divided by cost (x-axis). A system
+    is efficient when it answers quickly without needing an expensive machine to do it: a bigger machine is worth it
+    only if it makes the answers enough faster to justify its price. Looking at cost alone would favour a tiny machine
+    that takes all day; looking at speed alone would always favour the biggest machine, whatever its price.</p>
+  <p>We measure efficiency by dividing queries per second by cost. Since both depend on how long the run takes, for
+    ranking machines this comes down to one over price per hour × run time × run time. Chip designers use the same
+    idea: the <i>energy–delay product</i> (<a href="https://doi.org/10.1109/4.535411">Gonzalez and Horowitz,
+    1996</a>). A chip run at a lower voltage uses less energy but computes more slowly. Judged by energy alone, the best
+    chip would crawl at the lowest voltage; judged by speed alone, it would burn power at the highest. Multiplying
+    energy by time finds the balance. For a database, the size of the machine plays the part of voltage, and the cost
+    of the run the part of energy.</p>
+  <p>Another way to understand the metric is through Amdahl's law. No system scales perfectly with more resources,
+    because some of its work cannot be split up. Say a system does 90 seconds of work that splits up easily across
+    cores, and 10 seconds that does not, on machines priced by the core. On one core it takes 100 seconds, on 3 cores
+    40, on 9 cores 20. On 9 cores the split-up part takes 10 seconds, as long as the part that cannot be split, and
+    that is where efficiency peaks. Before that point, more cores still shorten the run a lot; beyond it, the run
+    mostly waits for the 10 seconds that no core can help with, and more cores add to the price far more than they
+    take off the time.</p>
+<!--SECTION:distribution-->
+  <p><b>Runtime distribution</b> (Figure {{SEC_DISTRIBUTION}}) is, per system, the density of the times of the correct results after the
+    last load (the median of each), on a log scale, estimated with a Gaussian kernel a tenth of a decade wide; its area
+    is their share of all queries. The shares between the guides count the queries by band of time.</p>
+<!--/SECTION:distribution-->
+</section>
+
+<section id="correctness" class="measure">
+  <h2>Correctness</h2>
+  <p>Results are compared by value with reference results, row by row in order. The reference results come from Umbra
+    with exact arithmetic, and at every scale factor match DuckDB on every query DuckDB answers.</p>
+  <ul>
+    <li><b>Integers</b> must match exactly.</li>
+    <li><b>Other numbers</b> may differ by a small relative and absolute amount:
+      <span class="formula">|actual&#8202;−&#8202;expected| ≤ 0.0001 + 0.0001 × |expected|</span>
+      The queries do not round; the tolerance absorbs what SQL leaves to each engine, such as the scale of a quotient
+      or the order in which floating-point numbers are added.</li>
+    <li><b>Timestamps</b> may differ in trailing zeros, <b>booleans</b> in spelling, <b>JSON</b> in key order and
+      spacing; <b>NULL</b> and the empty string count as equal.</li>
+  </ul>
+  <p>Only the last round is checked; in earlier rounds a result counts as correct when the query finishes.</p>
+</section>
+
+<section id="ai" class="measure">
+  <h2>Use of AI</h2>
+  <p><b>The queries were asked by language-model agents.</b> In the role play, {{AI_AGENTS}} played every manager,
+    analyst and engineer, and wrote the SQL. Every transcript is published with <a href="queries/index.html">the
+    queries</a>.</p>
+  <p><b>The benchmark was built with an AI coding assistant.</b> {{AI_WRITER}} designed the background story of
+    Tidewick Commerce, the events that happen in it, and the data generation with its built-in skew.</p>
+  <p><b>Running the benchmark involves no AI.</b> The data is generated deterministically, the 409 queries are
+    fixed SQL, and results are checked against reference results. Nothing in it depends on a model or a vendor: any
+    system that speaks SQL can run it.</p>
+</section>
+
+<section id="reproduce" class="measure">
+  <h2>Reproduce</h2>
+  <p>Everything is in the repository: the generator, the queries, the reference results, the runner and the scripts
+    for every system. On Linux with Podman:</p>
+  <pre>cargo build --release --workspace
+{{EXAMPLE_RUN}}</pre>
+  <p>Results go to <code>systems/&lt;system&gt;/&lt;date&gt;/&lt;config&gt;.csv</code>, one row per load and query.</p>
+</section>
+
+<footer>
+  <span>DB Olympics · <a href="https://db.in.tum.de/~birler/">Altan Birler</a> · <a href="https://db.in.tum.de/~schmidt/">Tobias Schmidt</a></span>
+  <span><a href="index.html">Results</a> · <a href="queries/index.html">Queries</a> · <a href="add-a-system.html">Add a system</a> · <a href="#">Source</a></span>
+</footer>
+</div>
+</body>
+</html>

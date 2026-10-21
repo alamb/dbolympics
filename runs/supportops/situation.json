@@ -1,0 +1,9 @@
+{
+ "id": "helpdesk-efficiency",
+ "lead": "supportops",
+ "with": [
+  "cx"
+ ],
+ "text": "Review how the helpdesk runs: queues and agent groups, use of macros and knowledge articles, SLA targets and breaches, and what makes tickets slow.",
+ "week": 1
+}

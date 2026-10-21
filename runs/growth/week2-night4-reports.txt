@@ -1,0 +1,34 @@
+=== Report 1: Why do last week's and this week's 'attributed orders' counts disagree so much? (written by Viktor) ===
+Engineer's note: Rows with a null currency_code are treated as already being in EUR (no conversion applied) since exchange_rates can't resolve a rate for a null quote_code; this affects only the attributed_revenue_eur figure, not the row/order counts you need to diagnose the coverage gap.
+REPORT: Why do last week's and this week's 'attributed orders' counts disagree so much?
+QUESTION: Last week's channel-revenue report (joined attributions to campaigns) found ~14% order coverage; this week's blind-spot report (just checking attributions.order_id) found ~75-83%. What's driving that gap — is it mostly attribution rows with no campaign_id?
+linkage_category                         | attribution_rows_count | distinct_orders_count | distinct_touch_point_values | distinct_model_values | attributed_revenue_eur
+-----------------------------------------+------------------------+-----------------------+-----------------------------+-----------------------+-----------------------
+campaign_id is null                      |                  16516 |                 14247 |                           6 |                     2 |              6113629.0
+campaign_id set and matches a campaigns  |                   3759 |                  3104 |                           4 |                     2 |               814924.0
+(2 rows)
+
+=== Report 2: What do the no-campaign attribution touches actually represent? (written by Omar) ===
+Engineer's note: EUR conversion assumes exchange_rates always has an EUR->currency row for each occurred_at date (including weekends carrying forward); if a currency/date pair is ever missing, that row's revenue_eur will be null rather than silently wrong.
+REPORT: What do the no-campaign attribution touches actually represent?
+QUESTION: For the attribution rows with no linked campaign, what do their touch_point values look like — is this organic/referral/direct traffic we can legitimately call 'known source', or something else?
+touch_point    | distinct_orders_count | share_of_no_campaign_orders_pct | attributed_revenue_eur | avg_weight
+---------------+-----------------------+---------------------------------+------------------------+-----------
+organic_search |                  6166 |                            43.3 |              2575380.0 |        1.0
+direct         |                  5475 |                            38.4 |              2519113.0 |        1.0
+social         |                  1696 |                            11.9 |               443992.0 |        1.0
+referral       |                  1218 |                             8.5 |               573766.0 |        1.0
+paid_social    |                     9 |                             0.1 |                 1368.0 |        1.0
+paid_search    |                     1 |                             0.0 |                   11.0 |        1.0
+(6 rows)
+
+=== Report 3: Why does loyalty member revenue read as €0 for three small verticals? (written by Viktor) ===
+Engineer's note: Added tenant_id (for unambiguous ordering/joins) and one extra diagnostic flag column (has_mixed_currency_orders) beyond the 8 requested, since the request itself suggested flagging mixed-currency tenants "if easier" and it directly supports the diagnostic question; still well under the 12-column limit. member_revenue_local_sum only sums orders whose currency_code matches default_currency_code, as requested, so any non-matching-currency orders are excluded from that column but still counted in member_orders_count_2025 and converted in member_revenue_eur_converted - comparing the two revenue columns plus orders_missing_exchange_rate_count should reveal whether the €0 is a currency mismatch or a missing-rate gap.
+REPORT: Why does loyalty member revenue read as €0 for three small verticals?
+QUESTION: Books & Stationery, Food & Coffee, and Pet Supplies show real loyalty members and orders in one report but €0 member revenue in another — is this a currency-conversion gap, and does it change the loyalty cost conclusion?
+tenant_id | tenant_name           | industry           | default_currency_code | members_count | member_orders_count_2025 | member_revenue_local_sum | member_revenue_eur_converted | orders_missing_exchange_rate_count | has_mixed_currency_orders
+----------+-----------------------+--------------------+-----------------------+---------------+--------------------------+--------------------------+------------------------------+------------------------------------+--------------------------
+       50 | Buchstabe             | Books & Stationery | EUR                   |             8 |                       25 |                1728.0000 |                          0.0 |                                 25 | false                    
+       91 | Chocolaterie Mireille | Food & Coffee      | EUR                   |             7 |                       54 |                3298.6700 |                          0.0 |                                 54 | false                    
+       31 | Hound Hamper          | Pet Supplies       | EUR                   |             4 |                       16 |                 777.0600 |                          0.0 |                                 16 | false                    
+(3 rows)

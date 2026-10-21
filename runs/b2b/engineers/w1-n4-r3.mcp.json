@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale: Win Rate and Cycle Time by Deal-Size Band (New Business)",
+    "--question",
+    "Does a bigger deal size correlate with a better or worse chance of closing, and does it drag out the cycle time?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Omar\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per deal-size band (based on EUR-converted opportunity amount)\", \"columns_requested\": [\"amount_band_eur\", \"opportunities_closed\", \"closed_won\", \"closed_lost\", \"win_rate_pct\", \"avg_days_open\"], \"details\": \"Prompted by an odd pattern in an earlier won-vs-lost comparison: lost New-business opportunities had a LOWER average amount (5628.59 EUR) than won ones (7097.90 EUR), but a HIGHER median amount (6520.14 vs 5880.52 EUR) \\u2014 suggesting the amount distribution isn't simply 'bigger deals win more' and deserves a direct bucket breakdown rather than just an average. Filter: tenants.name IN ('Ballycorran Industrial Supply','Castell Fasteners','Hanse Industriebedarf','Midland Safety Wear','Polder Packaging'), pipeline_id = each tenant's 'New business' pipeline, is_closed = true. Convert amount to EUR per opportunity: if currency_code = 'EUR', amount_eur = amount; otherwise amount_eur = amount / rate from exchange_rates (base_code='EUR', quote_code=currency_code, as_of nearest date on or before closed_at). Bucket amount_eur into: '<3000', '3000-5999', '6000-8999', '9000-11999', '12000+'. For each band: count of opportunities closed, closed won, closed lost, win_rate_pct, and avg_days_open (avg of closed_at - created_at in days). Order by band ascending (by lower bound).\", \"builds_on\": [\"New Business Only: Won vs Lost Opportunity Characteristics\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH macro_totals AS (\n  SELECT COUNT(*) AS total_macro_count, SUM(usage_count) AS total_macro_usage_sum\n  FROM macros\n  WHERE deleted_at IS NULL\n),\nagent_reply_totals AS (\n  SELECT COUNT(*) AS total_agent_reply_messages_2025\n  FROM ticket_messages\n  WHERE is_public = true\n    AND author_agent_id IS NOT NULL\n    AND created_at >= DATE '2025-01-01'\n    AND created_at < DATE '2026-01-01'\n)\nSELECT\n  m.title AS macro_title,\n  m.is_shared,\n  m.usage_count,\n  ROUND(100.0 * m.usage_count / NULLIF(mt.total_macro_usage_sum, 0), 2) AS pct_of_total_macro_usage,\n  mt.total_macro_count,\n  mt.total_macro_usage_sum,\n  art.total_agent_reply_messages_2025\nFROM macros m\nCROSS JOIN macro_totals mt\nCROSS JOIN agent_reply_totals art\nWHERE m.deleted_at IS NULL\nORDER BY m.usage_count DESC, m.title ASC\nLIMIT 20",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: macro_title, is_shared, usage_count, pct_of_total_macro_usage, total_macro_count, total_macro_usage_sum, total_agent_reply_messages_2025"
+ },
+ {
+  "kind": "text",
+  "text": "Compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH macro_totals AS (\n  SELECT COUNT(*) AS total_macro_count, SUM(usage_count) AS total_macro_usage_sum\n  FROM macros\n  WHERE deleted_at IS NULL\n),\nagent_reply_totals AS (\n  SELECT COUNT(*) AS total_agent_reply_messages_2025\n  FROM ticket_messages\n  WHERE is_public = true\n    AND author_agent_id IS NOT NULL\n    AND created_at >= DATE '2025-01-01'\n    AND created_at < DATE '2026-01-01'\n)\nSELECT\n  m.title AS macro_title,\n  m.is_shared,\n  m.usage_count,\n  ROUND(100.0 * m.usage_count / NULLIF(mt.total_macro_usage_sum, 0), 2) AS pct_of_total_macro_usage,\n  mt.total_macro_count,\n  mt.total_macro_usage_sum,\n  art.total_agent_reply_messages_2025\nFROM macros m\nCROSS JOIN macro_totals mt\nCROSS JOIN agent_reply_totals art\nWHERE m.deleted_at IS NULL\nORDER BY m.usage_count DESC, m.title ASC\nLIMIT 20",
+  "note": "Report is platform-wide (not tenant-filtered) since the question is about overall macro reliance across the library. usage_count is a lifetime counter with no date dimension, so pct_of_total_macro_usage and the constants are all-time, while total_agent_reply_messages_2025 is scoped to 2025 as a rough denominator only - the two are not directly comparable periods. total_macro_count reflects the full non-deleted library size so you can see concentration vs. the long tail beyond the top 20 shown.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. Summary of what the report does:\n\n- **Grain:** one row per macro, top 20 by `usage_count`.\n- **Columns:** macro title, is_shared flag, lifetime usage_count, its share of total usage, plus three constants repeated on every row — total non-deleted macros in the library, total lifetime usage across all macros, and 2025 agent reply message volume as a rough reliance denominator.\n- **Caveat flagged in the submit note:** `usage_count` is an all-time counter (no date filter exists on it), while the agent-reply denominator is 2025-only — so the ratio is a directional reliance signal, not an apples-to-apples rate. Also noted that this is platform-wide across all tenants, since the question was about overall concentration vs. spread in the macro library."
+ }
+]

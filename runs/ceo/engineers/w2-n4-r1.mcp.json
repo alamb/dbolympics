@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Vertical unit economics, rate-based view, 2025",
+    "--question",
+    "Which verticals look efficient versus costly to serve, measured as comparable rates against gross payment volume rather than misleading absolute euros against our thin fee take?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Grace\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per merchant vertical (tenants.industry)\", \"columns_requested\": [\"vertical\", \"merchant count\", \"gross payment volume (EUR, 2025)\", \"fee revenue (EUR, 2025)\", \"take rate (%, fee revenue / gross volume)\", \"refund rate (%, order_returns.refund_total / gross volume)\", \"shipping cost rate (%, shipments.shipping_cost / gross volume)\", \"order count (2025)\", \"tickets per 100 orders\"], \"details\": \"Source: payouts (status='paid', paid_at in [2025-01-01,2026-01-01), EUR via exchange_rates as_of paid_at) for gross volume and fee revenue, rolled up from tenant to tenants.industry. order_returns (status='refunded', dated by refunded_at falling back to requested_at, refund_total converted to EUR via exchange_rates as_of that date) for refund amount \\u2014 same source as last night's report, for consistency. shipments (shipped_at in 2025, shipping_cost converted to EUR as_of shipped_at) joined via fulfillments->orders->tenant_id for shipping cost. orders (status in 'paid','partially_fulfilled','fulfilled','refunded', placed_at in 2025) for order count. tickets (created_at in 2025) for ticket count, giving tickets per 100 orders = 100*tickets/orders. All three rate columns (refund rate, shipping cost rate, and implicitly ticket rate) should be expressed against gross payment volume or order count \\u2014 not against fee revenue \\u2014 so verticals are comparable on a like-for-like basis. Group null/blank industry into 'Unspecified'. Order by gross payment volume EUR descending, tie-break by vertical name ascending.\", \"builds_on\": [\"Directional unit economics by vertical, 2025 (first pass)\", \"Revenue by vertical, trailing 12 months (corrected)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "notes": "Tonight's diagnosis solved the B2B mystery and it's bigger than expected. The native-currency report shows all 6 \"zero\" tenants have real, substantial activity (e.g. Ballycorran Industrial Supply: EUR, 136 real deals worth EUR575,400, 344 orders, 329 captured payments in 2025) - and the one thing all 6 broken tenants share is currency_code = EUR, while the 3 tenants that worked fine two nights ago are NOK, USD and GBP. That is conclusive: the prior query's EUR conversion silently dropped these tenants entirely, almost certainly via a join to exchange_rates for an EUR/EUR identity row that doesn't exist (several other engineers' notes this month explicitly called out and guarded against this exact gap, so it's a known but inconsistently-handled edge case, not a one-off fluke). This means my \"B2B wholesale = 38.9% of revenue\" number from two nights ago is a real understatement, not just imprecise, since it's missing two-thirds of the B2B tenant list entirely. The Castell Fasteners invoice detail reconciles reasonably well with Merchant Success's figure once you separate \"total open AR\" (EUR14,481) from \"genuinely past due\" (EUR~3,450, matching my 23.8% overdue share) - the remaining gap to their EUR5,080 is most likely snapshot-timing, not a real inconsistency, and I don't think it's worth another slot. The refund-share report shows Cragsley Outfitters refunds late at 94.2% vs an 83.7% company average - elevated but in the same range as several other retail peers (Velvet Ash 94.3%, Cinder Peak 93.7%), so it reads as \"big merchant, slightly-above-average rate\" rather than a uniquely broken merchant - closing that question out. Tonight's three slots: (1) redo the B2B revenue/receivables numbers with EUR correctly treated as identity (rate=1.0, no join needed) to get the real materiality figure, (2) quantify how much company-wide revenue this exact bug class would silently drop if it recurred, as hard evidence for Rosa's currency-handling question, (3) produce the final, corrected B2B receivables aging table for the board pack.",
+ "requests": [
+  {
+   "title": "Corrected 2025 revenue and receivables by B2B tenant",
+   "question": "What is the real 2025 revenue and open receivables for all 9 verified B2B wholesale tenants, now that the EUR-conversion bug that zeroed out 6 of them is fixed?",
+   "grain": "tenant",
+   "columns": [
+    "tenant_name",
+    "currency_code",
+    "total_2025_revenue_eur",
+    "pct_of_total_2025_revenue",
+    "open_amount_due_eur",
+    "pct_amount_due_overdue"
+   ],
+   "details": "Population: the same 9 tenants with at least one deals row (Ballycorran Industrial Supply, Kontor24 Burobedarf, OfficeHub Nordic, Midland Safety Wear, Castell Fasteners, Hanse Industriebedarf, Polder Packaging, Deskline Supplies, Papeterie Grossiste). IMPORTANT currency handling to avoid repeating a prior bug: when converting an amount whose currency_code is 'EUR', do NOT join exchange_rates for quote_code='EUR' (no such self-referential identity row may exist) - instead treat the EUR rate as 1.0 directly (e.g. CASE WHEN currency_code = 'EUR' THEN amount ELSE amount / rate END, with the exchange_rates join being a LEFT JOIN only consulted for non-EUR currencies, so EUR rows are never dropped). total_2025_revenue_eur = sum of this tenant's payments.amount where status in ('captured','refunded','partially_refunded') and captured_at in 2025, converted per the above rule using payments.currency_code and captured_at date. pct_of_total_2025_revenue = total_2025_revenue_eur / (sum of total_2025_revenue_eur across ALL tenants company-wide, computed with the same correct EUR-handling rule) * 100, rounded to 1 decimal. open_amount_due_eur = sum of invoices.amount_due for this tenant where status in ('open','past_due') and amount_due > 0, as of snapshot 2025-12-31, converted per the same EUR rule using invoices.currency_code and as_of=2025-12-31. pct_amount_due_overdue = (sum of amount_due where due_at < 2025-12-31) / open_amount_due_eur * 100, rounded to 1 decimal (NULL if open_amount_due_eur is 0). Tables: deals, tenants, payments, invoices, exchange_rates. Order by total_2025_revenue_eur descending.",
+   "builds_on": [
+    "B2B wholesale tenants identified by CRM deal activity, with revenue and receivables",
+    "Diagnose zero-value B2B deal tenants in native currency"
+   ]
+  },
+  {
+   "title": "Scope of the EUR exchange-rate join bug on 2025 revenue",
+   "question": "If a query naively joins exchange_rates for EUR the same way it does for every other currency, how much revenue silently vanishes, and is EUR the only currency affected?",
+   "grain": "currency code",
+   "columns": [
+    "currency_code",
+    "total_2025_revenue_naive_eur",
+    "total_2025_revenue_correct_eur",
+    "shortfall_eur",
+    "shortfall_pct"
+   ],
+   "details": "Population: all payments with status in ('captured','refunded','partially_refunded') and captured_at in 2025, grouped by payments.currency_code. total_2025_revenue_naive_eur = sum of payments.amount converted to EUR using a plain INNER JOIN to exchange_rates on base_code='EUR', quote_code=payments.currency_code, as_of=captured_at date, with NO special-casing for EUR (i.e. if currency_code='EUR' and no matching exchange_rates row exists for base_code='EUR' and quote_code='EUR', those rows are simply excluded from the sum by the inner join, exactly as a careless query would behave). total_2025_revenue_correct_eur = the same sum but computed correctly (EUR amounts passed through unconverted at rate 1.0; other currencies converted via exchange_rates as normal). shortfall_eur = total_2025_revenue_correct_eur minus total_2025_revenue_naive_eur. shortfall_pct = shortfall_eur / total_2025_revenue_correct_eur * 100, rounded to 1 decimal. Tables: payments, exchange_rates. Order by total_2025_revenue_correct_eur descending.",
+   "builds_on": [
+    "Corrected 2025 revenue and receivables by B2B tenant"
+   ]
+  },
+  {
+   "title": "Final B2B wholesale receivables aging (corrected)",
+   "question": "With the full, verified 9-tenant B2B wholesale list and EUR handled correctly, what does the receivables aging actually look like for the board pack?",
+   "grain": "receivables aging bucket",
+   "columns": [
+    "aging_bucket",
+    "invoice_count",
+    "amount_due_eur",
+    "pct_of_total_amount_due",
+    "avg_days_past_due"
+   ],
+   "details": "Population: invoices belonging to the 9 verified B2B wholesale tenants (Ballycorran Industrial Supply, Kontor24 Burobedarf, OfficeHub Nordic, Midland Safety Wear, Castell Fasteners, Hanse Industriebedarf, Polder Packaging, Deskline Supplies, Papeterie Grossiste - the full list with at least one deals row), with status in ('open','past_due') and amount_due > 0, as of snapshot 2025-12-31. IMPORTANT: use correct EUR handling as in tonight's other requests - EUR amounts pass through at rate 1.0, never requiring a self-referential exchange_rates row. Bucket each invoice by days overdue (2025-12-31 minus due_at): 'Not yet due' (due_at is null or on/after 2025-12-31), '1-30 days overdue', '31-60 days overdue', '61-90 days overdue', '90+ days overdue'. invoice_count = count in bucket. amount_due_eur = sum of invoices.amount_due converted to EUR per the correct rule, using invoices.currency_code and as_of=2025-12-31. pct_of_total_amount_due = amount_due_eur / total across all buckets * 100, rounded to 1 decimal. avg_days_past_due = average (2025-12-31 minus due_at) in days for the bucket, rounded to 1 decimal, 0 for 'Not yet due'. Tables: invoices, tenants, exchange_rates. Order by amount_due_eur descending.",
+   "builds_on": [
+    "B2B wholesaler receivables aging",
+    "Corrected 2025 revenue and receivables by B2B tenant"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,93 @@
+=== Report 1: Albion Parcel performance by destination country, baseline vs collapse (written by Omar) ===
+Engineer's note: Countries qualify if they had >=15 Albion Parcel shipments in at least one of the two periods (baseline or collapse), per the request; both periods are then shown for every qualifying country. pct_within_3_days and avg_transit_days are computed over the delivered subset only, as specified.
+REPORT: Albion Parcel performance by destination country, baseline vs collapse
+QUESTION: Is Albion Parcel's November-December breakdown concentrated in specific destination countries, or did it hit all regions roughly equally?
+destination_country | period   | shipments_shipped | avg_transit_days | pct_within_3_days | share_of_period_shipments_pct
+--------------------+----------+-------------------+------------------+-------------------+------------------------------
+Ireland             | baseline |               147 |             2.30 |              91.8 |                           6.9
+Ireland             | collapse |                44 |             8.81 |              35.7 |                           8.0
+United Kingdom      | baseline |              1982 |             2.19 |              93.0 |                          93.1
+United Kingdom      | collapse |               503 |             8.46 |              31.4 |                          92.0
+(4 rows)
+
+=== Report 2: Albion Parcel performance by origin warehouse, baseline vs collapse (written by Omar) ===
+Engineer's note: avg_transit_days and pct_within_3_days are computed only over shipments with a non-null delivered_at (in-transit/undelivered shipments are excluded from those two measures but still count toward shipments_shipped and the share%); transit_days = delivered_at - shipped_at in days, matching the destination-country report's definition.
+REPORT: Albion Parcel performance by origin warehouse, baseline vs collapse
+QUESTION: Is Albion Parcel's November-December breakdown concentrated in a specific warehouse/hub (or the merchants it serves), or did it hit all origins roughly equally?
+warehouse_name                        | tenant_name                   | period   | shipments_shipped | avg_transit_days | pct_within_3_days | share_of_period_shipments_pct
+--------------------------------------+-------------------------------+----------+-------------------+------------------+-------------------+------------------------------
+Birmingham Fulfilment Centre          | Folio & Fern                  | baseline |                21 |             2.75 |              66.7 |                           1.0
+Birmingham Fulfilment Centre          | Folio & Fern                  | collapse |                 7 |             7.63 |              16.7 |                           1.3
+Bromley Fulfilment Centre             | Kibblewick                    | baseline |               240 |             2.28 |              77.1 |                          11.3
+Bromley Fulfilment Centre             | Petalcourt Beauty             | baseline |               226 |             2.26 |              79.6 |                          10.6
+Bromley Fulfilment Centre             | Kibblewick                    | collapse |                74 |             8.05 |              33.8 |                          13.5
+Bromley Fulfilment Centre             | Petalcourt Beauty             | collapse |                88 |            10.44 |              20.5 |                          16.1
+Cambridge Fulfilment Centre           | Thistlecombe                  | baseline |                18 |             2.15 |              83.3 |                           0.8
+Cambridge Fulfilment Centre           | Thistlecombe                  | collapse |                11 |            10.86 |              18.2 |                           2.0
+Dublin Fulfilment Centre              | Sourdough Club                | baseline |                59 |             2.26 |              76.3 |                           2.8
+Dublin Fulfilment Centre              | Sourdough Club                | collapse |                17 |             8.08 |              40.0 |                           3.1
+Exeter Fulfilment Centre              | Kayak Corner                  | baseline |                31 |             1.96 |              87.1 |                           1.5
+Exeter Fulfilment Centre              | Kayak Corner                  | collapse |                 7 |            17.48 |              14.3 |                           1.3
+Galway Fulfilment Centre              | Ballycorran Industrial Supply | baseline |                73 |             2.39 |              72.6 |                           3.4
+Galway Fulfilment Centre              | Ballycorran Industrial Supply | collapse |                19 |             9.04 |              26.3 |                           3.5
+Leeds Fulfilment Centre               | The Balm Room                 | baseline |                44 |             2.45 |              68.2 |                           2.1
+Leeds Fulfilment Centre               | The Balm Room                 | collapse |                14 |             8.95 |              21.4 |                           2.6
+Liverpool Fulfilment Centre           | Fennel & Flint                | baseline |               112 |             2.18 |              79.5 |                           5.3
+Liverpool Fulfilment Centre           | Fennel & Flint                | collapse |                56 |             9.16 |              30.9 |                          10.2
+Manchester Fulfilment Centre          | Willow & Wren                 | baseline |                30 |              2.0 |              83.3 |                           1.4
+Manchester Fulfilment Centre          | Haven Linen                   | baseline |                10 |             1.95 |              90.0 |                           0.5
+Manchester Fulfilment Centre          | Grind Collective              | baseline |               399 |             2.22 |              81.0 |                          18.7
+Manchester Fulfilment Centre          | Grind Collective              | collapse |               116 |             8.31 |              26.1 |                          21.2
+Manchester Fulfilment Centre          | Willow & Wren                 | collapse |                11 |             10.8 |              27.3 |                           2.0
+Manchester Fulfilment Centre          | Haven Linen                   | collapse |                 2 |            10.49 |               0.0 |                           0.4
+Newcastle upon Tyne Fulfilment Centre | Deskline Supplies             | baseline |                25 |             2.47 |              72.0 |                           1.2
+Newcastle upon Tyne Fulfilment Centre | Deskline Supplies             | collapse |                 5 |             8.32 |               0.0 |                           0.9
+Oxford Fulfilment Centre              | Tiny Atelier                  | baseline |                10 |             2.58 |              90.0 |                           0.5
+Oxford Fulfilment Centre              | Tiny Atelier                  | collapse |                 2 |             11.9 |              50.0 |                           0.4
+Preston Fulfilment Centre             | Rosehip Lab                   | baseline |                10 |             2.56 |              70.0 |                           0.5
+Preston Fulfilment Centre             | Rosehip Lab                   | collapse |                10 |             9.44 |              33.3 |                           1.8
+Reading Fulfilment Centre             | Marrowby & Vane               | baseline |               778 |             2.19 |              81.2 |                          36.5
+Reading Fulfilment Centre             | Marrowby & Vane               | collapse |                85 |              5.2 |              36.5 |                          15.5
+(32 rows)
+
+=== Report 3: Landfall Freight & Lowlands Express performance by destination country, full year 2025 (written by Omar) ===
+Engineer's note: pct_within_3_days is computed as (delivered shipments with transit_days<=3) / all shipments_shipped for that carrier+country (undelivered shipments count as not-within-3-days); avg_transit_days is averaged over delivered shipments only, per the given transit_days definition. share_of_carrier_shipments_pct uses the carrier's full-year total across all countries (not just those meeting the 15-shipment threshold) as the denominator.
+REPORT: Landfall Freight & Lowlands Express performance by destination country, full year 2025
+QUESTION: Are our two chronically weak carriers bad everywhere, or concentrated on specific lanes/countries?
+carrier          | destination_country | shipments_shipped | avg_transit_days | pct_within_3_days | share_of_carrier_shipments_pct
+-----------------+---------------------+-------------------+------------------+-------------------+-------------------------------
+Landfall Freight | Ireland             |               233 |             4.28 |              29.2 |                           12.2
+Landfall Freight | Belgium             |               187 |             4.34 |              26.7 |                            9.8
+Landfall Freight | Netherlands         |               182 |             5.94 |              19.8 |                            9.5
+Landfall Freight | Germany             |               177 |             6.15 |              14.1 |                            9.3
+Landfall Freight | Austria             |               161 |              4.3 |              29.2 |                            8.4
+Landfall Freight | United Kingdom      |               147 |             4.32 |              32.7 |                            7.7
+Landfall Freight | United States       |               141 |             4.79 |              24.8 |                            7.4
+Landfall Freight | Switzerland         |               139 |             4.42 |              25.9 |                            7.3
+Landfall Freight | France              |               120 |             6.37 |              17.5 |                            6.3
+Landfall Freight | Canada              |                85 |              4.2 |              37.6 |                            4.5
+Landfall Freight | Poland              |                62 |             4.18 |              35.5 |                            3.3
+Landfall Freight | Finland             |                56 |             6.04 |              19.6 |                            2.9
+Landfall Freight | Australia           |                45 |             4.73 |              20.0 |                            2.4
+Landfall Freight | Luxembourg          |                42 |             3.95 |              31.0 |                            2.2
+Landfall Freight | Norway              |                36 |             4.19 |              25.0 |                            1.9
+Landfall Freight | Sweden              |                29 |             5.54 |               6.9 |                            1.5
+Landfall Freight | Denmark             |                28 |             6.07 |              25.0 |                            1.5
+Landfall Freight | Italy               |                18 |             4.39 |              27.8 |                            0.9
+Lowlands Express | Netherlands         |              1002 |             2.73 |              79.9 |                           39.1
+Lowlands Express | Belgium             |               440 |             2.81 |              69.3 |                           17.2
+Lowlands Express | France              |               211 |             3.69 |              63.0 |                            8.2
+Lowlands Express | Ireland             |               154 |             4.42 |              27.3 |                            6.0
+Lowlands Express | Austria             |               130 |             4.29 |              26.2 |                            5.1
+Lowlands Express | Germany             |               124 |             6.15 |              16.9 |                            4.8
+Lowlands Express | Switzerland         |               108 |              4.4 |              25.0 |                            4.2
+Lowlands Express | United States       |                91 |             4.52 |              27.5 |                            3.6
+Lowlands Express | United Kingdom      |                84 |             4.39 |              32.1 |                            3.3
+Lowlands Express | Poland              |                42 |             4.56 |              23.8 |                            1.6
+Lowlands Express | Finland             |                36 |             6.31 |              16.7 |                            1.4
+Lowlands Express | Luxembourg          |                32 |             4.58 |              15.6 |                            1.2
+Lowlands Express | Denmark             |                25 |             5.54 |              20.0 |                            1.0
+Lowlands Express | Norway              |                22 |             4.32 |              36.4 |                            0.9
+Lowlands Express | Sweden              |                21 |             6.71 |              14.3 |                            0.8
+Lowlands Express | Australia           |                20 |             4.95 |              20.0 |                            0.8
+(34 rows)

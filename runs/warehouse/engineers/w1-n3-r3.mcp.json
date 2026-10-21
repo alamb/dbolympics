@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cross-check: stock_adjustments table vs stock_movements adjustment-kind ledger, 2025",
+    "--question",
+    "Does the stock_adjustments table (the human-entered correction record with a required reason) cover the same volume as the stock_movements kind='adjustment' ledger, or is one capturing materially more/less than the other — i.e., which is the authoritative source for 'a physical count or review found a quantity discrepancy'?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Viktor\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"data source (2 rows: 'stock_adjustments table' and 'stock_movements kind=adjustment ledger')\", \"columns_requested\": [\"source\", \"row_count\", \"total_abs_quantity (sum of abs(quantity_delta) for stock_adjustments, abs(quantity) for stock_movements)\", \"distinct_variants_affected\", \"earliest_date\", \"latest_date\"], \"details\": \"For 'stock_adjustments table': filter created_at (or occurred_at if present \\u2014 use whichever timestamp column represents when the adjustment was recorded) between 2025-01-01 and 2025-12-31, count rows, sum abs(quantity_delta), count distinct variant_id. For 'stock_movements kind=adjustment ledger': filter occurred_at in the same 2025 window, count rows, sum abs(quantity), count distinct variant_id. Report both rows side by side so I can see whether row counts and totals roughly reconcile (same universe) or diverge (two different things). No row-level join needed \\u2014 two independent aggregates is sufficient to answer the question. Order with 'stock_adjustments table' first, then the ledger row.\", \"builds_on\": [\"Scale of adjustment-kind stock movements by month, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

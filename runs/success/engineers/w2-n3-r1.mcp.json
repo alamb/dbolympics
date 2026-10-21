@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Silent-churn merchants: substantial accounts gone quiet without a churned flag",
+    "--question",
+    "Beyond the 9 formally churned merchants, which substantial merchants have gone quiet without yet being flagged as churned?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"success\", \"analyst\": \"Arjun Patel\", \"engineer\": \"Viktor\", \"situation\": \"churn-task-force\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one row per merchant (tenant), status not churned, no orders in 180+ days, lifetime orders at least 20\", \"columns_requested\": [\"merchant name\", \"industry\", \"status\", \"last order date\", \"days since last order\", \"lifetime orders\", \"lifetime revenue EUR\"], \"details\": \"Tenants with status not equal to churned. From orders (excluding cancelled): last order date is max placed_at; include only tenants whose last order date is before 2025-07-09 (180+ days before 2026-01-05) and whose lifetime order count is at least 20. lifetime revenue EUR is sum of grand_total converted to EUR via exchange_rates matched to placed_at. days since last order is 2026-01-05 minus last order date. Order by lifetime revenue EUR descending, tie-break tenant_id. Cap 50 rows, note total count.\", \"builds_on\": [\"Pre-churn warning signs across sales, repeat buying, refunds, and support tickets\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/success/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

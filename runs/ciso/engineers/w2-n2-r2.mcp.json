@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Invoice void and uncollectible traceability, with timestamp completeness check",
+    "--question",
+    "Has any invoice actually been voided or marked uncollectible on the platform, and if so, is the event dated and traceable in audit_log — or was last night's zero result just because voided_at is missing?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per terminal invoice status: 'void' and 'uncollectible'\", \"columns_requested\": [\"invoice status\", \"total invoices in this status (all-time, regardless of voided_at)\", \"of those, rows with a populated voided_at timestamp\", \"of those, rows with voided_at null (undated, can't tell when it happened)\", \"matching audit_log rows (any action, entity_table = 'invoices', entity_id = invoices.id)\", \"coverage rate among all invoices in this status (%)\", \"distinct tenants represented\"], \"details\": \"Source: invoices where status in ('void','uncollectible'), grouped by status. Do NOT filter out rows with null voided_at from the total count this time \\u2014 count all of them, then separately report how many have voided_at populated vs null, so we can tell whether last night's zero was 'no voids ever happened' or 'voids happened but aren't timestamped.' Coverage test is an EXISTS against audit_log by (entity_table='invoices', entity_id=invoices.id, same tenant_id), any action. Order by total invoices descending, status as tie-break (only 2 rows expected).\", \"builds_on\": [\"Audit traceability of order cancellations and invoice voids\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

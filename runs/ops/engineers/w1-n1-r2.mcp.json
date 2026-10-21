@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Delivery time by merchant, 2025",
+    "--question",
+    "Which merchants deliver reliably fast, and which are a coin toss, over the past year?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per tenant (merchant)\", \"columns_requested\": [\"tenant_name\", \"industry\", \"orders_delivered (count fully delivered in 2025)\", \"avg_delivery_days\", \"median_delivery_days (p50)\", \"p90_delivery_days\", \"pct_within_5_days (share of delivered orders where delivery_days <= 5)\"], \"details\": \"Grain: one row per tenants.id. Scope: orders with placed_at in 2025-01-01 through 2025-12-31, status = 'fulfilled'. Same delivery_days definition as the monthly trend report (placed_at to max linked shipment.delivered_at via fulfillments, only orders where all linked shipments are delivered). Join tenants for tenant_name and industry. Include only tenants with at least 50 delivered orders in the window (to exclude noise from tiny merchants). Order by orders_delivered descending, tie-break by tenant_name ascending. Cap at 50 rows (should be well under given ~120 tenants total).\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Is discount-related revenue leakage getting worse over 2025?",
+    "--question",
+    "Is the euro cost of discounting (discounts given plus refunds on those orders) trending up or down over the course of 2025, in step with the refund-rate creep other teams have flagged?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per calendar month (2025)\", \"columns_requested\": [\"month - YYYY-MM label from orders.placed_at\", \"orders_count - count of orders placed_at in that month, all tenants\", \"discount_given_eur - sum of orders.discount_total converted to EUR for that month's orders, rounded to 0 decimals\", \"refund_amount_eur - sum of order_returns.refund_total converted to EUR for returns tied to that month's orders, rounded to 0 decimals\", \"gmv_eur - sum of orders.subtotal converted to EUR for that month's orders, rounded to 0 decimals\", \"net_leakage_pct - (discount_given_eur + refund_amount_eur) / gmv_eur * 100, rounded to 1 decimal\"], \"details\": \"Source: orders (placed_at in 2025, all tenants) left joined to order_returns on order_id for refund_total (attributed to the month of the original order, not the return date, so leakage is tied to the order cohort). Same EUR conversion approach as the other two reports tonight (exchange_rates, as_of the relevant date, EUR=rate 1). Cover all 12 months of 2025 even if a month has no qualifying rows. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

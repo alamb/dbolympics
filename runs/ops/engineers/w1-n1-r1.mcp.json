@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Delivery time trend, monthly (2024-2025)",
+    "--question",
+    "Over the last two years, how long does it take from order placed to delivered, and how much does that vary month to month?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 1, \"grain\": \"one row per calendar month of order placement\", \"columns_requested\": [\"month (YYYY-MM)\", \"orders_delivered (count of orders fully delivered)\", \"avg_delivery_days (mean, placed_at to final delivered_at)\", \"median_delivery_days (p50)\", \"p90_delivery_days\", \"pct_within_5_days (share of delivered orders where delivery_days <= 5)\"], \"details\": \"Grain: one row per month_label (from calendar_days) of orders.placed_at. Scope: orders with placed_at between 2024-01-01 and 2025-12-31 inclusive, status = 'fulfilled'. For each such order, compute delivery_days = DATEDIFF(day, orders.placed_at, max(shipments.delivered_at) across all shipments reachable via fulfillments.order_id = orders.id and shipments.fulfillment_id = fulfillments.id), only including orders where every shipment linked to that order has a non-null delivered_at (i.e. fully delivered, no partial). Exclude orders with no linked shipments. Round avg/median/p90 to 1 decimal place; pct_within_5_days as a percentage rounded to 1 decimal. Order by month ascending. Expect 24 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n1-r1.submit.json"
+   ]
+  }
+ }
+}

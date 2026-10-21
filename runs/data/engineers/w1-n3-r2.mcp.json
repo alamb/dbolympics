@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Refund timing relative to payout settlement",
+    "--question",
+    "When a payment is refunded, does the refund happen before its payout settles (so it can cleanly reduce that payout) or after (so the clawback has no clean home in the payout data), and how much money is affected?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"data\", \"analyst\": \"Yuki Tanaka\", \"engineer\": \"Viktor\", \"situation\": \"metric-certification\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"timing bucket (before payout settled / after payout settled / payment not yet in any payout)\", \"columns_requested\": [\"timing_bucket\", \"refund_count\", \"refund_amount_eur\", \"pct_of_total_refund_amount\", \"avg_days_lag\"], \"details\": \"Population: all payment_refunds with status='succeeded' across full history (2023-01-01 to 2025-12-31). For each refund, find the payout (if any) that settled its payment via payout_items (payout_items.payment_id = payment_refunds.payment_id) joined to payouts (payout_items.payout_id = payouts.id). Bucket each refund as: 'refund before payout paid_at' when payment_refunds.processed_at <= payouts.paid_at; 'refund after payout paid_at' when payment_refunds.processed_at > payouts.paid_at; 'payment not yet settled in any payout' when no matching payout_items row exists for that payment_id. refund_count = count of refunds in the bucket. refund_amount_eur = sum of payment_refunds.amount converted to EUR via payment_refunds.currency_code and processed_at date. pct_of_total_refund_amount = refund_amount_eur / total refund_amount_eur across all buckets * 100, rounded to 1 decimal. avg_days_lag = average of (payment_refunds.processed_at - payouts.paid_at) in days for the 'after' bucket only (NULL for the other two buckets), rounded to 1 decimal. Tables: payment_refunds, payout_items, payouts, exchange_rates. Order by refund_amount_eur descending.\", \"builds_on\": [\"Payout net formula check via payment-linked refunds\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/data/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

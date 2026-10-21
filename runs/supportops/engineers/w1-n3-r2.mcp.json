@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ticket speed by channel and assignment status",
+    "--question",
+    "Does the channel a ticket comes in on, or whether it currently sits unassigned, separate fast-resolving tickets from slow ones?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Grace\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per combination of ticket channel (email, chat, phone, web, social, api) and assignment status (assigned vs unassigned, based on assignee_agent_id)\", \"columns_requested\": [\"channel\", \"assignment_status\", \"ticket_count (created 2025)\", \"avg_first_response_minutes\", \"avg_resolution_minutes\", \"first_response_breach_rate\", \"resolution_breach_rate\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31. Source tables: tickets, sla_breaches (breach_kind values per the audit in the companion request tonight \\u2014 if that comes back with different codes than 'first_response'/'resolution', please use the corrected codes). assignment_status = 'Unassigned' when assignee_agent_id is null, else 'Assigned'. 12 rows total (6 channels x 2 statuses). Order by avg_resolution_minutes descending. Round minutes to whole numbers, rates to 1 decimal percent.\", \"builds_on\": [\"Ticket volume and staffing by agent group\", \"SLA breach rates by agent group\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

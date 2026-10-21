@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Data subject request status audit: does completed_at reflect true closure?",
+    "--question",
+    "Across all data subject requests (not just currently open ones), which status values leave completed_at null, and is that a systemic pattern (e.g. all rejections) or isolated to a few records?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per distinct data_subject_requests.status value, across full history\", \"columns_requested\": [\"status\", \"total requests with this status\", \"count with completed_at not null\", \"count with completed_at null\", \"oldest received_at in this status\", \"newest received_at in this status\", \"avg age in days of the completed_at-null rows (2026-01-05 minus received_at, averaged, null if none)\"], \"details\": \"Source: data_subject_requests, no date filter (full history), platform-wide. Group by status. This is a diagnostic to check whether 'rejected' (and any other terminal-sounding status) systematically never gets a completed_at stamp, which would mean my earlier 'still open'/'overdue' counts (based on completed_at IS NULL) overstate the real backlog. Use literal date 2026-01-05 for age math. Order by total requests with this status descending.\", \"builds_on\": [\"Currently open data subject requests: age and overdue detail\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

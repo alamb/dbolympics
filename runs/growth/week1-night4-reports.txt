@@ -1,0 +1,37 @@
+=== Report 1: Is loyalty members' lower spend a within-industry effect or a merchant-mix effect? (written by Viktor) ===
+Engineer's note: Membership is defined as any loyalty_accounts row for that user+tenant (deduplicated so multi-program enrollees aren't double-counted), independent of whether that specific program is active; industry eligibility is still restricted to industries with at least one tenant having an active loyalty_programs row. EUR conversion uses exchange_rates as of the order's placed_at date, with EUR orders treated as rate 1.
+REPORT: Is loyalty members' lower spend a within-industry effect or a merchant-mix effect?
+QUESTION: Within the same industry, do loyalty-program members actually order more or spend more than non-members, or does the platform-wide 'members look worse' result just reflect which verticals have more loyalty members enrolled?
+industry              | members_count | nonmembers_count | avg_orders_per_member | avg_orders_per_nonmember | avg_order_value_member_eur | avg_order_value_nonmember_eur
+----------------------+---------------+------------------+-----------------------+--------------------------+----------------------------+------------------------------
+Apparel & Footwear    |           619 |             2140 |                  2.53 |                     2.62 |                      165.0 |                         189.0
+Beauty                |            45 |              447 |                  2.84 |                     3.22 |                      102.0 |                          96.0
+Books & Stationery    |             8 |               47 |                  3.13 |                     2.85 |                       69.0 |                          48.0
+Consumer Electronics  |            25 |              250 |                  2.28 |                     2.08 |                      446.0 |                        1114.0
+Food & Coffee         |             7 |              831 |                  7.71 |                     8.64 |                       61.0 |                          30.0
+Home & Living         |            26 |              710 |                  2.23 |                     2.26 |                      144.0 |                         149.0
+Jewelry & Accessories |             0 |               29 |                  NULL |                     1.72 |                       NULL |                         217.0
+Pet Supplies          |             4 |              229 |                   4.0 |                     6.28 |                       49.0 |                          37.0
+Sports & Outdoor      |           128 |              330 |                  2.55 |                     2.09 |                      355.0 |                         372.0
+(9 rows)
+
+=== Report 2: Do referred or referring shoppers spend differently than everyone else? (written by Ines) ===
+Engineer's note: Classified by user_id scoped to tenant_id (same user_id can repeat across tenants, so users are counted as tenant+user_id pairs). EUR conversion divides each order's grand_total by that day's EUR→currency rate from exchange_rates (rate=1 implied for orders already in EUR).
+REPORT: Do referred or referring shoppers spend differently than everyone else?
+QUESTION: Among shoppers who place orders, do people who were referred in, or who refer others, show different order frequency or spend than everyone else?
+segment  | users_count | orders_count_2025 | avg_orders_per_user | avg_order_value_eur | total_revenue_eur
+---------+-------------+-------------------+---------------------+---------------------+------------------
+referred |          53 |               202 |                3.81 |                 272 |             55004
+referrer |         418 |              3352 |                8.02 |                 286 |            957230
+neither  |        5688 |             18639 |                3.28 |                 270 |           5032914
+(3 rows)
+
+=== Report 3: Do we run A/B tests, and do we act on the results? (written by Felix) ===
+Engineer's note: One row per ab_tests.status across all tenants, all-time, per spec. avg_variants_per_test averages the per-test count of linked ab_variants rows (0 for tests with none, via LEFT JOIN); avg_duration_days only considers tests with both started_at and ended_at set.
+REPORT: Do we run A/B tests, and do we act on the results?
+QUESTION: How many A/B tests has the platform run, in what state are they, and how often does a test actually end with a declared winner?
+status    | tests_count | share_of_tests_pct | tests_with_winner_declared_count | avg_variants_per_test | avg_duration_days
+----------+-------------+--------------------+----------------------------------+-----------------------+------------------
+completed |        1036 |               99.6 |                              646 |                   2.0 |               3.0
+running   |           4 |                0.4 |                                0 |                   2.0 |              NULL
+(2 rows)

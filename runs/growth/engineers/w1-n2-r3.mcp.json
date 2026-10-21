@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Which merchants drove the January and July discount-rate spikes",
+    "--question",
+    "The platform-wide discount rate jumped from a ~35% baseline to 53-59% in January and July 2025 with no increase in average discount size — was that driven by a handful of merchants running sitewide promotions in those two months?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per tenant\", \"columns_requested\": [\"tenant_name - tenants.name\", \"industry - tenants.industry\", \"orders_jan_jul_2025 - count of that tenant's orders placed_at in Jan or Jul 2025\", \"discount_rate_jan_jul_pct - share of those orders with discount_total > 0, *100, rounded to 1 decimal\", \"orders_other_months_2025 - count of that tenant's orders placed_at in the other 10 months of 2025\", \"discount_rate_other_months_pct - share of those orders with discount_total > 0, *100, rounded to 1 decimal\", \"delta_pct_points - discount_rate_jan_jul_pct minus discount_rate_other_months_pct, rounded to 1 decimal\"], \"details\": \"Source: orders table, all tenants, placed_at in 2025. Split each tenant's orders into two buckets by month(placed_at) in (1,7) vs not, compute discount rate (discount_total > 0) in each bucket. Only include tenants with at least 20 orders in the Jan/Jul bucket (to avoid noise from tiny samples) \\u2014 note the excluded count in a comment if easy, otherwise just apply the filter. Order by delta_pct_points descending, tie-break by orders_jan_jul_2025 descending, limit to top 15 tenants.\", \"builds_on\": [\"Discounting baseline: monthly coupon usage and discount rate\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

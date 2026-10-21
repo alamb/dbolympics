@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Late delivery and returns within apparel merchants, Q4 2025",
+    "--question",
+    "Within a single high-return vertical (apparel), do late-delivered orders actually have a higher return rate than on-time ones — controlling for the vertical effect that swamped the merchant-level comparison?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Felix\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per tenant and delivery-speed bucket (on-time vs late)\", \"columns_requested\": [\"tenant name\", \"delivery bucket (on-time / late)\", \"shipments count\", \"pct of orders with at least one return\"], \"details\": \"Tenants: Marrowby & Vane, Studio Vrij, Cragsley Outfitters (the three apparel merchants that showed high aggregate return rates). Base: shipments joined via fulfillments to orders for tenant_id, where shipments.shipped_at is in 2025-10-01 to 2025-12-31 and delivered_at is not null. delivery_bucket = 'on-time' if (delivered_at - shipped_at) <= 7 days, else 'late' (same 7-day proxy as the earlier delivery-speed report). For each tenant/bucket: shipments_count = count of shipments; pct_orders_with_return = among the distinct orders behind those shipments, the % with at least one order_returns row (order_returns.order_id = orders.id), rounded to 1 decimal. Order rows by tenant_name, then bucket with 'on-time' before 'late'.\", \"builds_on\": [\"Delivery speed and return rate by merchant, Q4 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

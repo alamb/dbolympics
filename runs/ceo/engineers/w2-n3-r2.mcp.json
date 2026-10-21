@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Deskline Supplies shipping cost breakdown by carrier",
+    "--question",
+    "Is Deskline Supplies' unusually high average shipping cost (~€1,038/shipment vs. ~€4-30/shipment for comparable merchants) a real freight-cost pattern or a data outlier?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Bea\", \"situation\": \"board-unit-economics\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per carrier and service_level, for Deskline Supplies shipments only\", \"columns_requested\": [\"carrier\", \"service_level\", \"shipment count (2025)\", \"total shipping cost (EUR)\", \"average shipping cost per shipment (EUR)\", \"minimum shipping cost (EUR)\", \"maximum shipping cost (EUR)\"], \"details\": \"Source: shipments joined to fulfillments->orders to filter to Deskline Supplies' tenant_id only, shipped_at in [2025-01-01,2026-01-01), shipping_cost converted to EUR via exchange_rates as_of shipped_at date. Group by carrier and service_level. I want to see whether the high average is spread evenly (suggesting a genuine bulk-freight cost structure for this B2B merchant) or driven by one or two extreme max values in an otherwise normal-looking carrier lane (suggesting a data entry error or currency mismatch). Order by total shipping cost EUR descending.\", \"builds_on\": [\"Cost-driver volume inventory by merchant, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,57 @@
+{
+ "notes": "Diego wants the webhook stuck-retry finding properly validated before it goes to leadership, and that's explicitly his #1 and #2 priority this week, so two of tonight's three slots go there: first, a correct tenant-level view (fixing last week's broken join) showing exactly how many merchants have ERP/WMS/Accounting sync webhooks stuck above a real threshold and what revenue/order volume sits behind them, so we can say concentrated-in-big-accounts vs long-tail; second, a full-year monthly trend of that same stuck-rate (webhook_deliveries has clean 12-month coverage, unlike job_runs/health_checks) to tell if this is longstanding or a recent regression. I'm using my third slot on Diego's #3 (carts.remind confidence) since it's a cheap, high-value pull: the actual error_message on the 20 failed runs will tell us in one query whether this was one shared root cause (supports his 'latent risk that could recur' concern being containable) or scattered causes (supports a load/capacity read). I'm deferring Diego's #4 (checking if tickets from the 10 affected tenants actually mention sync/reminders/carts) to night 2 since it needs careful text-search scoping and isn't his top priority this week.",
+ "requests": [
+  {
+   "title": "Merchants Affected by the Sync-Webhook Stuck-Retry Pattern and Their Size",
+   "question": "How many merchants have ERP/WMS/Accounting sync webhooks stuck in retry, and is this concentrated in our biggest accounts or spread across the long tail?",
+   "grain": "one row per tenant that has at least one ERP sync, WMS sync, or ACCOUNTING sync webhook",
+   "columns": [
+    "tenant_name",
+    "total_sync_deliveries_2025",
+    "success_rate_pct",
+    "pending_or_retrying_rate_pct",
+    "total_orders_2025",
+    "total_revenue_eur_2025",
+    "revenue_rank"
+   ],
+   "details": "Tables: webhook_deliveries joined to webhooks (match webhooks.name in the sync-integration set actually present in the data - 'ERP sync', 'WMS sync', 'ACCOUNTING sync', confirm exact distinct values and include any close variants) joined to tenants. Filter created_at in 2025. Aggregate all of a tenant's sync-type webhooks together: total_sync_deliveries_2025 = count of deliveries; success_rate_pct = share with status='success'; pending_or_retrying_rate_pct = share with status in ('pending','retrying'), both rounded 2dp. total_orders_2025 = count of orders with placed_at in 2025; total_revenue_eur_2025 = sum of orders.grand_total converted to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=date(placed_at)), rounded to 2dp. revenue_rank = dense rank of ALL tenants (not just this subset) by total_revenue_eur_2025 descending, so we can see where these merchants sit platform-wide. Order by pending_or_retrying_rate_pct descending, tie-break tenant_name ascending. Return all qualifying tenants (note total count in the report even if under 50).",
+   "builds_on": [
+    "2025 Webhook Delivery Reliability by Endpoint",
+    "Webhook Delivery Reliability: Carts.remind-Affected Tenants vs Others, 2025"
+   ]
+  },
+  {
+   "title": "2025 Monthly Stuck-Retry Rate for Sync Webhooks (ERP/WMS/Accounting)",
+   "question": "Has the ~15% stuck-in-retry rate on sync webhooks been happening all year, or did it start/worsen recently?",
+   "grain": "one row per calendar month of 2025",
+   "columns": [
+    "month",
+    "total_sync_deliveries",
+    "success_rate_pct",
+    "failed_rate_pct",
+    "pending_or_retrying_rate_pct"
+   ],
+   "details": "Table webhook_deliveries joined to webhooks, filtered to webhooks.name in the same sync-integration set as the companion merchant-level request ('ERP sync', 'WMS sync', 'ACCOUNTING sync'). Filter created_at in 2025 (full year - this table has complete 2025 coverage per last week's '2025 Webhook Delivery Reliability Trend'). Group by month of created_at, platform-wide across all affected tenants combined. Rates as shares of total_sync_deliveries for that month, rounded 2dp. Order by month ascending.",
+   "builds_on": [
+    "2025 Webhook Delivery Reliability Trend"
+   ]
+  },
+  {
+   "title": "Carts.remind Failure Root Cause: Error Messages",
+   "question": "Did the 20 carts.remind failures in Nov 2025 share a common root cause (pointing to one shared bug/config issue) or look like scattered, tenant-specific problems (pointing to load/capacity)?",
+   "grain": "one row per failed carts.remind job run (20 rows expected)",
+   "columns": [
+    "tenant_name",
+    "queued_at",
+    "started_at",
+    "finished_at",
+    "error_message",
+    "attempt"
+   ],
+   "details": "Table job_runs joined to jobs (handler='carts.remind') and tenants, filtered to status='failed' and queued_at in November 2025 (the same 20 rows identified in last week's handler breakdown). Show the full error_message text and attempt number for each failed run so we can see if they cluster around one error string/cause or vary. Order by queued_at ascending, tie-break tenant_name ascending.",
+   "builds_on": [
+    "2025 Job Failures by Job Type (Handler)"
+   ]
+  }
+ ]
+}

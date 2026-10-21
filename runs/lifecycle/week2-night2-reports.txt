@@ -1,0 +1,29 @@
+=== Report 1: Refund rate on orders with a same-day points redemption (written by Grace) ===
+Engineer's note: Classification uses user_id + calendar date of placed_at vs. loyalty_transactions.occurred_at (direction='burn') as requested, since order_id linkage isn't usable. avg_points_redeemed_that_day sums |points| across all same-day burn transactions for that user before averaging; avg_order_value_eur excludes cancelled orders per the given definition while order_count/refund_rate include all statuses.
+REPORT: Refund rate on orders with a same-day points redemption
+QUESTION: Using date-proximity matching instead of the unusable order_id link, do loyalty members' orders that coincide with a points redemption on the same calendar day show a different refund rate than their other orders?
+order_type                    | order_count | distinct_customers | refund_rate_pct | avg_order_value_eur | avg_points_redeemed_that_day
+------------------------------+-------------+--------------------+-----------------+---------------------+-----------------------------
+same-day points redemption    |           5 |                  5 |            40.0 |              183.69 |                        500.0
+no same-day points redemption |        4936 |               1330 |           32.35 |              194.41 |                          0.0
+(2 rows)
+
+=== Report 2: Apparel order value breakdown: subtotal, discount and total, member vs non-member (written by Grace) ===
+Engineer's note: Segment is based on ever having a loyalty_accounts row (not tenure-banded, since the request's grain is just member vs non-member); amounts are converted EUR via exchange_rates using the order's placed_at date, with EUR orders passed through unconverted.
+REPORT: Apparel order value breakdown: subtotal, discount and total, member vs non-member
+QUESTION: Is the large average-order-value gap seen among Apparel members (28-40% lower than non-members across every tenure band) explained by heavier discounting at checkout, or do members simply buy cheaper products before any discount is applied?
+segment        | order_count | avg_subtotal_eur | avg_discount_total_eur | avg_grand_total_eur | discount_rate_pct
+---------------+-------------+------------------+------------------------+---------------------+------------------
+loyalty member |        3411 |           150.48 |                   6.97 |              171.92 |              4.63
+non-member     |       12795 |           183.56 |                   6.61 |              196.75 |               3.6
+(2 rows)
+
+=== Report 3: What distinguishes higher-revenue loyalty members from the rest (written by Ines) ===
+Engineer's note: A member is a (tenant_id, user_id) pair since users aren't globally unique across tenants. The "unit-economics" points-to-EUR method isn't in the catalog, so I derived it as points ÷ program.points_per_currency (gives the program's currency amount), then converted to EUR via the daily exchange_rates as_of the transaction date; please flag if the real unit-economics report uses a different conversion. Top/bottom split uses NTILE(4), grouping tile 1 as "top 25%" and tiles 2-4 as "remaining 75%".
+REPORT: What distinguishes higher-revenue loyalty members from the rest
+QUESTION: Among enrolled loyalty members, do the ones who generate the most revenue use the programme differently - redeeming more or less, staying longer, returning less - giving a hint at what a healthier version of the programme would look like?
+performance_group           | member_count | avg_lifetime_revenue_eur | avg_lifetime_orders | avg_tenure_days | pct_who_ever_redeemed_points | own_redemption_rate_pct | refund_rate_pct
+----------------------------+--------------+--------------------------+---------------------+-----------------+------------------------------+-------------------------+----------------
+Top 25% by lifetime revenue |          333 |                   1822.4 |                7.48 |           551.6 |                         55.9 |                    34.6 |            35.7
+Remaining 75%               |          997 |                    309.1 |                2.46 |           224.4 |                          3.9 |                     9.3 |            29.0
+(2 rows)

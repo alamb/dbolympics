@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Order-level delivery reliability: Lowlands Express by destination lane, 2025",
+    "--question",
+    "How much better would Lowlands Express's orders perform, and how much would that help overall, if we only used it on its strong home lanes (Netherlands, Belgium, France) and moved everything else off it?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per lane_group: 'Lowlands core (NL/BE/FR)', 'Lowlands non-core (other countries)', 'All other carriers'\", \"columns_requested\": [\"lane_group\", \"orders_fully_delivered\", \"avg_delivery_days\", \"pct_within_5_days\", \"share_of_orders_pct\"], \"details\": \"Same scoping and single-carrier attribution rule as the other two reports in this set (orders placed_at in 2025, status='fulfilled', exactly one fulfillment with exactly one shipment, delivered_at not null). For orders where shipments.carrier = 'Lowlands Express', further split by the order's destination country (orders.shipping_address_id -> addresses -> countries): 'Lowlands core' if country in ('Netherlands','Belgium','France'), else 'Lowlands non-core'. All other orders (any other carrier) go to 'All other carriers'. Round avg_delivery_days to 2 decimals, pct columns to 1 decimal. Order: 'Lowlands core' first, then 'Lowlands non-core', then 'All other carriers'. Expect 3 rows.\", \"builds_on\": [\"Landfall Freight & Lowlands Express performance by destination country, full year 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

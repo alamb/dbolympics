@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cart contents: stalled vs. fast-converting carts, 2025",
+    "--question",
+    "Does basket size, price point, or discount usage differ between carts that convert quickly and carts that stall for hours or days?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Omar\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 1, \"request\": 1, \"grain\": \"one row per cart duration bucket\", \"columns_requested\": [\"duration bucket\", \"cart count\", \"avg item count\", \"avg subtotal (EUR)\", \"median subtotal (EUR)\", \"pct of bucket that converted to an order\", \"pct of converted carts (in this bucket) whose order has a discount or coupon applied\"], \"details\": \"Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-12-31. Buckets (same definitions as last week): resolution_time = coalesce(converted_at, abandoned_at, expires_at) - created_at in hours; '<1 hour', '1-24 hours', '1-7 days', '>7 days', 'unresolved/still active' (no resolution timestamp). avg/median subtotal: carts.subtotal converted to EUR via exchange_rates (base_code='EUR', quote_code=carts.currency_code, as_of = carts.created_at date; amount_eur = subtotal / rate). avg item count = carts.item_count. pct_converted = share of carts in the bucket with status='converted'. Discount/coupon presence can only be observed on carts that converted (abandoned carts never reach checkout, so there's no discount record) \\u2014 compute it only among converted carts in each bucket, as the % whose resulting order (orders.cart_id = carts.id) has at least one row in order_discounts. Order rows in the fixed sequence: '<1 hour', '1-24 hours', '1-7 days', '>7 days', 'unresolved/still active'.\", \"builds_on\": [\"Cart abandonment timing by tenant, Q4 2025 (retail merchants)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n1-r1.submit.json"
+   ]
+  }
+ }
+}

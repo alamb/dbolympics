@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Fennel & Flint December 2025: Product-Level Review Breakdown",
+    "--question",
+    "Is Fennel & Flint's declining rating trend concentrated in specific products, or spread broadly across its catalog, in parallel to what we found at Wiesgrund Wohnen?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one row per product, for Fennel & Flint only, among products with at least one approved review created in December 2025\", \"columns_requested\": [\"product_name\", \"category_name\", \"review_count\", \"avg_rating\", \"pct_1_2_star\", \"units_sold_last_12mo\"], \"details\": \"Same definitions as the Wiesgrund Wohnen December 2025: Product-Level Review Breakdown report, filtered to tenant = Fennel & Flint instead: review_count/avg_rating/pct_1_2_star over approved product_reviews with created_at in December 2025, category_name from primary_category_id, units_sold_last_12mo from order_items/orders placed in 2025 with status not cancelled. Round avg_rating to 2 decimals, pct to 1 decimal. Order by review_count descending, tie-break by avg_rating ascending.\", \"builds_on\": [\"Wiesgrund Wohnen December 2025: Product-Level Review Breakdown\", \"Fennel & Flint and Wiesgrund Wohnen: Historical December Pattern, 2023-2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

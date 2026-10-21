@@ -1,0 +1,52 @@
+{
+ "notes": "Two of Mia's four questions are now answered without needing more queries: tag coverage is 100% (every 2025 ticket carries at least one tag — Report 3 only returned a 'Tagged' row, no 'Untagged' row exists), so last week's topic breakdown isn't a skewed sample. And the macro question is closed too, just not the way we'd like: all 5 top macros show zero matching rows in change_history for usage_count changes (Report 2) — there is no audit trail behind that counter at all, so I'm recommending we drop it from reporting entirely rather than chase it further. On the staffing-vs-complexity question, Report 1 actually argues against under-staffing: Cragsley runs the highest tickets-per-agent (50.0) of the group yet has the lowest resolution time and breach rate, while Marrowby & Vane (46.2/agent) and Studio Vrij (41.5/agent) are slower despite lighter per-agent load — and messages-per-ticket/priority-mix don't explain it either (Studio Vrij actually has a lower urgent/high share than Cragsley). So tonight I want to test the next two hypotheses: (1) it's a specific topic (especially delivery/where-is-my-order, which the COO and VP CX teams flagged as carrier-driven this week) concentrated or uniquely slow at these two merchants, and (2) the delay is back-loaded (tickets drag after the first reply, consistent with waiting on an external process like shipping) rather than front-loaded (agents slow to even start). Third slot starts Mia's Q4 (KB deflection) since we have two more nights after this.",
+ "requests": [
+  {
+   "title": "Topic mix and resolution time by tag, flagged merchants vs. Cragsley",
+   "question": "Is Marrowby & Vane's and Studio Vrij's slowness concentrated in specific topics (especially delivery-related ones), or uniformly slow across all topics, compared to Cragsley Outfitters?",
+   "grain": "one row per (tenant, tag) combination, restricted to Marrowby & Vane, Studio Vrij, and Cragsley Outfitters",
+   "columns": [
+    "tenant_name",
+    "tag_name",
+    "ticket_count (2025)",
+    "pct_of_tenant_tickets (this tag's ticket_count / that tenant's total 2025 ticket_count)",
+    "avg_resolution_minutes",
+    "resolution_breach_rate"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31, restricted to tenant_id for Marrowby & Vane, Studio Vrij, Cragsley Outfitters. Source tables: tickets, ticket_tags_map, support_tags, sla_breaches (breach_kind = 'resolution'). Include every tag used by each of the three tenants (not just top N). Order by tenant_name, then ticket_count descending within tenant. Round pct and rates to 1 decimal percent, minutes to whole numbers. Goal: see whether 'delivery'/'where-is-my-order' (or any other single tag) is both a larger share of volume and notably slower than the platform-wide tag averages from last week (delivery: 3045 min, where-is-my-order: 3209 min) specifically for these two flagged merchants.",
+   "builds_on": [
+    "Staffing load vs. ticket complexity, top merchants benchmark",
+    "Ticket volume and speed by topic tag"
+   ]
+  },
+  {
+   "title": "Where the delay accumulates: first-response lag vs. post-response handling time",
+   "question": "For Marrowby & Vane, Studio Vrij, and Cragsley Outfitters, does the slowness happen before an agent first replies (pickup delay) or after the first reply, while the ticket is still being worked (handling/back-and-forth delay)?",
+   "grain": "one row per tenant, restricted to Marrowby & Vane, Studio Vrij, and Cragsley Outfitters",
+   "columns": [
+    "tenant_name",
+    "ticket_count (2025, resolved tickets with both first_response_at and resolved_at)",
+    "avg_first_response_minutes (first_response_at - created_at)",
+    "avg_post_response_minutes (resolved_at - first_response_at)",
+    "avg_resolution_minutes (resolved_at - created_at, as a check that the two components sum correctly)"
+   ],
+   "details": "Window: tickets.created_at between 2025-01-01 and 2025-12-31, restricted to tenant_id for the three named tenants, and to tickets with both first_response_at and resolved_at not null. Source table: tickets. Order by avg_post_response_minutes descending. Round all minute figures to whole numbers. Goal: if avg_post_response_minutes is disproportionately large for Marrowby & Vane / Studio Vrij relative to Cragsley, the delay is happening while the ticket is already being worked (consistent with waiting on something external, e.g. a shipment) rather than agents being slow to pick it up.",
+   "builds_on": [
+    "Staffing load vs. ticket complexity, top merchants benchmark"
+   ]
+  },
+  {
+   "title": "Monthly ticket volume vs. knowledge-base engagement trend",
+   "question": "Is there any visible relationship between how much customers engage with the knowledge base and how many tickets we get — even a rough, non-causal signal?",
+   "grain": "one row per calendar month in 2025",
+   "columns": [
+    "month_label (YYYY-MM)",
+    "ticket_count (tickets created that month)",
+    "kb_engagement_count (count of whichever signal is available and most plausible: events rows with event_name indicating a knowledge/article view, or page_views rows whose path indicates a knowledge-base/help-center page — engineer's judgment on which signal exists and is usable)",
+    "kb_engagement_signal_used (text noting which table/definition was actually used, e.g. 'events.event_name = article_viewed' or 'page_views.path LIKE %/help/%')"
+   ],
+   "details": "Window: 2025-01-01 through 2025-12-31, by calendar month (use calendar_days.month_label for consistent bucketing). Source tables: tickets for ticket_count; events and/or page_views for kb_engagement_count — please first check what event_name values or path patterns actually look knowledge-base-related in this warehouse and use whichever is usable, noting the exact definition in the kb_engagement_signal_used column (same text repeated on every row is fine). If genuinely nothing in events or page_views looks KB-related, return the report with kb_engagement_count as NULL and say so in the engineer's note rather than guessing — we'd rather know we don't have the signal than get a wrong one. Order by month_label ascending.",
+   "builds_on": []
+  }
+ ]
+}

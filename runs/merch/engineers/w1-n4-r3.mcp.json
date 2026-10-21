@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Catalog Structure: Top Merchants vs Long Tail",
+    "--question",
+    "Do our top-revenue merchants' catalogs look structurally different from the long tail in size, categorization, and media richness?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per merchant revenue tier: Top 10, Next 20 (ranks 11-30), and Rest (ranks 31 and below), ranked by revenue_eur_last_12mo\", \"columns_requested\": [\"tier\", \"merchant_count\", \"avg_active_products_per_merchant\", \"avg_variants_per_product\", \"avg_categories_per_product\", \"pct_products_with_primary_image\", \"avg_media_count_per_product\", \"pct_active_products_in_a_collection\", \"revenue_share_pct\"], \"details\": \"Rank all non-deleted tenants by the same revenue_eur_last_12mo definition used in the Merchant Catalog Profile report (orders placed 2025-01-01 to 2025-12-31, status not cancelled, EUR conversion via exchange_rates as of placed_at date), then bucket into tiers: rank 1-10 = 'Top 10', rank 11-30 = 'Next 20', rank 31+ = 'Rest'. avg_active_products_per_merchant and avg_variants_per_product use active, non-deleted products/variants as in the Merchant Catalog Profile report. avg_categories_per_product = average count of product_categories rows per active product (categorization depth, not just the single primary_category_id). pct_products_with_primary_image = share of active products with a product_media row where is_primary = true. avg_media_count_per_product = average count of all product_media rows (any kind) per active product. pct_active_products_in_a_collection = share of active products appearing in at least one collection_products row pointing to a non-deleted collection, as in the Collections and Bundles Adoption report. revenue_share_pct = that tier's total revenue_eur_last_12mo divided by the platform total, rounded to 1 decimal. Round other averages to 2 decimals, percentages to 1 decimal. Order rows as Top 10, Next 20, Rest.\", \"builds_on\": [\"Merchant Catalog Profile\", \"Collections and Bundles Adoption by Merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

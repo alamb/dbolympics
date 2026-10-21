@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  pop.status AS order_status,\n  pop.order_count,\n  ROUND(pop.order_count * 100.0 / SUM(pop.order_count) OVER (), 1) AS pct_of_orders,\n  ROUND(pop.grand_total_eur, 2) AS orders_grand_total_eur,\n  pop.orders_with_captured_payment_count,\n  ROUND(COALESCE(pay.captured_eur, 0), 2) AS matched_captured_payment_eur,\n  ROUND(pop.grand_total_eur - COALESCE(pay.captured_eur, 0), 2) AS gap_eur,\n  ROUND((pop.grand_total_eur - COALESCE(pay.captured_eur, 0)) / NULLIF(pop.grand_total_eur, 0) * 100, 1) AS gap_pct\nFROM (\n  SELECT\n    o.status,\n    COUNT(*) AS order_count,\n    SUM(o.grand_total / er.rate) AS grand_total_eur,\n    COUNT(CASE WHEN EXISTS (\n      SELECT 1 FROM payments p WHERE p.order_id = o.id AND p.status = 'captured'\n    ) THEN 1 END) AS orders_with_captured_payment_count\n  FROM orders o\n  JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.placed_at >= DATE '2023-01-01'\n    AND o.placed_at < DATE '2025-07-01'\n  GROUP BY o.status\n) pop\nLEFT JOIN (\n  SELECT\n    o.status,\n    SUM(p.amount / er2.rate) AS captured_eur\n  FROM payments p\n  JOIN orders o ON o.id = p.order_id\n  JOIN exchange_rates er2\n    ON er2.base_code = 'EUR'\n   AND er2.quote_code = p.currency_code\n   AND er2.as_of = CAST(p.captured_at AS date)\n  WHERE p.status = 'captured'\n    AND o.placed_at >= DATE '2023-01-01'\n    AND o.placed_at < DATE '2025-07-01'\n  GROUP BY o.status\n) pay ON pay.status = pop.status\nORDER BY orders_grand_total_eur DESC, pop.status",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: order_status, order_count, pct_of_orders, orders_grand_total_eur, orders_with_captured_payment_count, matched_captured_payment_eur, gap_eur, gap_pct"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  pop.status AS order_status,\n  pop.order_count,\n  ROUND(pop.order_count * 100.0 / SUM(pop.order_count) OVER (), 1) AS pct_of_orders,\n  ROUND(pop.grand_total_eur, 2) AS orders_grand_total_eur,\n  pop.orders_with_captured_payment_count,\n  ROUND(COALESCE(pay.captured_eur, 0), 2) AS matched_captured_payment_eur,\n  ROUND(pop.grand_total_eur - COALESCE(pay.captured_eur, 0), 2) AS gap_eur,\n  ROUND((pop.grand_total_eur - COALESCE(pay.captured_eur, 0)) / NULLIF(pop.grand_total_eur, 0) * 100, 1) AS gap_pct\nFROM (\n  SELECT\n    o.status,\n    COUNT(*) AS order_count,\n    SUM(o.grand_total / er.rate) AS grand_total_eur,\n    COUNT(CASE WHEN EXISTS (\n      SELECT 1 FROM payments p WHERE p.order_id = o.id AND p.status = 'captured'\n    ) THEN 1 END) AS orders_with_captured_payment_count\n  FROM orders o\n  JOIN exchange_rates er\n    ON er.base_code = 'EUR'\n   AND er.quote_code = o.currency_code\n   AND er.as_of = CAST(o.placed_at AS date)\n  WHERE o.placed_at >= DATE '2023-01-01'\n    AND o.placed_at < DATE '2025-07-01'\n  GROUP BY o.status\n) pop\nLEFT JOIN (\n  SELECT\n    o.status,\n    SUM(p.amount / er2.rate) AS captured_eur\n  FROM payments p\n  JOIN orders o ON o.id = p.order_id\n  JOIN exchange_rates er2\n    ON er2.base_code = 'EUR'\n   AND er2.quote_code = p.currency_code\n   AND er2.as_of = CAST(p.captured_at AS date)\n  WHERE p.status = 'captured'\n    AND o.placed_at >= DATE '2023-01-01'\n    AND o.placed_at < DATE '2025-07-01'\n  GROUP BY o.status\n) pay ON pay.status = pop.status\nORDER BY orders_grand_total_eur DESC, pop.status",
+  "note": "Grain is order status, population restricted to orders placed 2023-01-01 through 2025-06-30 inclusive as requested. EUR conversion divides each amount by the EUR→currency rate (orders by placed_at date, captured payments by captured_at date), matching the convention that exchange_rates.rate is EUR-based.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups orders placed between 2023-01-01 and 2025-06-30 by `orders.status`, giving order counts/share, EUR-converted order totals, how many of those orders have at least one captured payment, the EUR-converted captured amount, and the resulting gap in EUR and percent — which should let Yuki see whether the gap concentrates in non-paid-looking statuses (pending/cancelled) or shows up even in paid/fulfilled orders old enough that timing can't explain it."
+ }
+]

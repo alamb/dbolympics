@@ -1,0 +1,18 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH cancelled_orders AS (\n    SELECT\n        id AS order_id,\n        tenant_id\n    FROM orders\n    WHERE status = 'cancelled'\n),\njoined AS (\n    SELECT\n        co.tenant_id,\n        co.order_id,\n        h.id AS history_id,\n        h.changed_by_user_id\n    FROM cancelled_orders co\n    LEFT JOIN order_status_history h\n        ON h.order_id = co.order_id\n        AND h.to_status = 'cancelled'\n        AND h.tenant_id = co.tenant_id\n),\nper_tenant AS (\n    SELECT\n        tenant_id,\n        COUNT(DISTINCT order_id) AS cancelled_orders,\n        COUNT(history_id) AS matching_history_rows,\n        COUNT(DISTINCT CASE WHEN history_id IS NOT NULL THEN order_id END) AS orders_with_match,\n        COUNT(CASE WHEN changed_by_user_id IS NOT NULL THEN 1 END) AS matching_rows_with_actor\n    FROM joined\n    GROUP BY tenant_id\n)\nSELECT\n    t.name AS tenant_name,\n    pt.cancelled_orders,\n    pt.matching_history_rows,\n    ROUND(100.0 * pt.orders_with_match / pt.cancelled_orders, 1) AS coverage_rate_pct,\n    pt.matching_rows_with_actor\nFROM per_tenant pt\nJOIN tenants t ON t.id = pt.tenant_id\nORDER BY\n    coverage_rate_pct ASC,\n    pt.cancelled_orders DESC,\n    tenant_name ASC\nLIMIT 50",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_name, cancelled_orders, matching_history_rows, coverage_rate_pct, matching_rows_with_actor"
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH cancelled_orders AS (\n    SELECT\n        id AS order_id,\n        tenant_id\n    FROM orders\n    WHERE status = 'cancelled'\n),\njoined AS (\n    SELECT\n        co.tenant_id,\n        co.order_id,\n        h.id AS history_id,\n        h.changed_by_user_id\n    FROM cancelled_orders co\n    LEFT JOIN order_status_history h\n        ON h.order_id = co.order_id\n        AND h.to_status = 'cancelled'\n        AND h.tenant_id = co.tenant_id\n),\nper_tenant AS (\n    SELECT\n        tenant_id,\n        COUNT(DISTINCT order_id) AS cancelled_orders,\n        COUNT(history_id) AS matching_history_rows,\n        COUNT(DISTINCT CASE WHEN history_id IS NOT NULL THEN order_id END) AS orders_with_match,\n        COUNT(CASE WHEN changed_by_user_id IS NOT NULL THEN 1 END) AS matching_rows_with_actor\n    FROM joined\n    GROUP BY tenant_id\n)\nSELECT\n    t.name AS tenant_name,\n    pt.cancelled_orders,\n    pt.matching_history_rows,\n    ROUND(100.0 * pt.orders_with_match / pt.cancelled_orders, 1) AS coverage_rate_pct,\n    pt.matching_rows_with_actor\nFROM per_tenant pt\nJOIN tenants t ON t.id = pt.tenant_id\nORDER BY\n    coverage_rate_pct ASC,\n    pt.cancelled_orders DESC,\n    tenant_name ASC\nLIMIT 50",
+  "note": "Grain is one row per tenant with ≥1 cancelled order, worst coverage first; capped at 50 rows as instructed, and the warehouse's row-count note will show the true tenant total (expected ~90) since computing it would need a second metered query.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report returns, per tenant with at least one cancelled order: cancelled order count, matching `order_status_history` rows (to_status='cancelled'), coverage rate (% of cancelled orders with at least one matching history row), and how many of those matched rows carry a non-null `changed_by_user_id`, ordered worst-coverage-first. It's capped at 50 rows per the spec; the batch report's own row-count footer will confirm the full tenant total (~90 expected) without an extra metered query."
+ }
+]

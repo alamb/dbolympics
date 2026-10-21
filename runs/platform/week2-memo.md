@@ -1,0 +1,20 @@
+**Memo: Platform Reliability Review — Week 2 Update**
+To: Diego Morales (cc Samuel Whitcombe) — From: Lucas Moreau — Fri (Night 4 wrap-up)
+
+**1. The carts.remind "incident" was a symptom of something much bigger: checkout itself went down for ~2 hours on Black Friday.**
+Health checks show `checkout` and `storefront` both at **100% unhealthy, latency pegged at a 10,000ms timeout** at the 14:00 UTC check on Nov 28 2025 — fully recovered by 16:00 (2.7%/0% unhealthy). *Source: "Checkout/Storefront Outage Timeline."* The 20 carts.remind job failures (same week, same error: "503 Service Unavailable: storefront API," two batches an hour apart, same 10 tenants both times) were a side effect of this outage, not a separate bug — those 10 tenants just happened to be the only ones with a cart-reminder job scheduled in that window. I'm now confident this was a shared-dependency outage, not a tenant-specific or load issue.
+
+**2. The business cost was real and measurable: orders nearly stopped for 2 hours on the year's biggest shopping day.**
+In the 14:00-16:00 UTC window on Black Friday, we placed just **1 order (€103)**, versus 22 orders (€4,012) in the same window on Black Friday 2024, and 6 orders (€699-1,574) on the Fridays immediately before and after. That window normally carries 5-10% of a day's orders; on Nov 28 it carried **0.5%**. *Source: "Orders in the 14:00-16:00 UTC Window."* Full-day Black Friday 2025 revenue (€40,166) came in 26% below Black Friday 2024 (€54,186) despite platform growth since then — directionally consistent with real lost sales, though I haven't isolated the outage's exact share of that gap from other factors.
+
+**3. The block was in checkout/storefront, not payment processing.** Payment attempts during the outage hours were low in volume (5 total across both hours) but had **zero failures** — they simply couldn't be initiated, rather than failing once submitted. *Source: "Payment Attempts During the Nov 28 Outage Window."* This narrows where engineering should look: the fix is in the checkout/storefront serving layer, not the payment gateway.
+
+**4. This looks like a genuine one-off, not a recurring risk — within the window we can see.** Across all of Nov-Dec 2025, the Nov 28 14:00 reading is the *only* time checkout/storefront hit ≥50% unhealthy. *Source: "Checkout/Storefront Severe Outages, Nov-Dec 2025."* I can't check before November (health-check retention stops there), so I can't fully rule out a prior occurrence.
+
+**5. Monitoring caught it, but detection is coarse.** Checks for checkout/storefront only run roughly every 2 hours (data exists at 12:00/14:00/16:00, nothing between) — we got a clean signal, but an outage could run up to 2 hours before any automated check would flag it.
+
+**6. Webhook sync stuck-retries (your top priority): confirmed concentrated and longstanding, not new.** ~91% of all stuck ERP/WMS/Accounting sync deliveries sit with 4 tenants (Brennquell Kaffee ~1,574, Cragsley Outfitters ~700, Ampfeld Elektronik ~161, Marrowby & Vane ~88 of ~2,774 total). Their monthly stuck rates have been stable all year (Brennquell Kaffee 9.7-13.7%, Cragsley Outfitters 3.9-6.5%, Ampfeld Elektronik noisy 3-17% around ~9%) — this is a lived-with condition, not a recent regression. *Sources: "Merchants Affected by the Sync-Webhook Stuck-Retry Pattern," "Monthly Sync-Webhook Stuck Rate for the 4 Highest-Impact Tenants."* Last week's "~15%" figure was a selection-biased view of only the worst endpoints — the true platform average is a flat ~5.5%/month all year.
+
+**Caveats:** `job_runs`/`system_health_checks` retention is ~90/60 days, so no pre-October visibility. The ticket-subject keyword search for early-warning signs came back empty (0 rows) — inconclusive, since I only searched subjects, not message bodies.
+
+**Next steps:** get engineering confirmation of root cause/fix for the Nov 28 checkout outage; push to tighten health-check frequency on checkout/storefront; schedule a fix-it conversation on the ERP/WMS/Accounting sync retry logic using the 4-tenant sizing above.

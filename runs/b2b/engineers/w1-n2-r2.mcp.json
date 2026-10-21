@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "New Business Only: Won vs Lost Opportunity Characteristics",
+    "--question",
+    "Restricted to genuine new-customer acquisition deals (excluding renewals), what reliably differs between won and lost opportunities — deal size, activities before close, days open, or concentration among accounts and reps?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Grace\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per closed outcome (won or lost), New business pipeline only\", \"columns_requested\": [\"outcome (won / lost)\", \"opportunities (count)\", \"average amount in EUR\", \"median amount in EUR\", \"average activities per opportunity before close\", \"average days open (closed_at - created_at)\", \"distinct accounts involved\", \"distinct owning reps (owner_user_id) involved\"], \"details\": \"This re-runs last night's won-vs-lost comparison but adds pipeline_id = the tenant's 'New business' pipeline (join pipelines on name = 'New business') to the filter, because the prior report pooled 'New business' (acquisition) and 'Renewals' (existing-customer renew/churn) opportunities together under the same won/lost labels \\u2014 two very different sales motions with likely different base win rates (the Renewals pipeline's 'Renewed' stage carries a 1.0 default win_probability vs 0.1-0.75 for New business stages), which could distort the comparison. Same tenant scope as before (industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'), opportunities where is_closed = true, split by is_won. Convert amount to EUR via exchange_rates (base_code='EUR', quote_code = opportunity currency_code, rate as_of closed_at date or nearest prior day). Activities before close = count of activities rows with activities.opportunity_id = opportunities.id and occurred_at <= closed_at, averaged per opportunity within each outcome group. Order 'won' row first, then 'lost'.\", \"builds_on\": [\"B2B Wholesale Opportunities: Won vs Lost Characteristics\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

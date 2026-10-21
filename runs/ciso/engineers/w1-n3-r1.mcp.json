@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Dormant users holding Owner or Administrator access",
+    "--question",
+    "Specifically which accounts currently hold the two most powerful roles (Owner, Administrator) but haven't logged in recently — the concrete list of privileged accounts that look stale?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ciso\", \"analyst\": \"Noah Fischer\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per user who holds a role named 'Owner' or 'Administrator' and is dormant\", \"columns_requested\": [\"tenant name\", \"tenant status\", \"role name\", \"user email\", \"user status\", \"last login (timestamp, or 'never')\", \"days since last login (as of 2026-01-05; treat never-logged-in as the maximum/oldest)\", \"account age in days (2026-01-05 minus users.created_at)\"], \"details\": \"Source: user_roles joined to roles (name in ('Owner','Administrator')) joined to users (exclude deleted_at is not null) joined to tenants. Dormant = users.status = 'active' and (last_login_at is null or last_login_at < 2025-10-05). Compute days_since_last_login as 2026-01-05 minus last_login_at in days (null last_login_at should sort as the most stale, e.g. treat as a very large number or order nulls first \\u2014 make this explicit and consistent in the ORDER BY). Compute account_age_days as 2026-01-05 minus users.created_at. Order by days_since_last_login descending (most stale first, nulls/never first), tenant name as tie-break. Cap at 50 rows; note total qualifying rows if more.\", \"builds_on\": [\"Privileged roles per merchant: grant size and dormancy\", \"Privileged role landscape by role name, company-wide\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ciso/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

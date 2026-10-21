@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Coupon redemption patterns: repeat use, limit breaches and post-expiry usage, 2025",
+    "--question",
+    "Which coupon codes show signs of overuse or abuse — repeated redemption by the same customer, redemptions beyond stated limits, or use after the coupon's campaign window ended?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Omar\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one row per coupon (coupons.id / code)\", \"columns_requested\": [\"coupon code\", \"status\", \"usage_limit\", \"per_customer_limit\", \"times_redeemed (actual count from coupon_redemptions)\", \"distinct customers redeeming\", \"max redemptions by a single customer\", \"redemptions occurring after coupon's expires_at\", \"redemptions occurring before coupon's starts_at\", \"total discount amount redeemed (EUR)\"], \"details\": \"Source: coupon_redemptions joined to coupons (code, status, usage_limit, per_customer_limit, starts_at, expires_at) and orders (currency_code, placed_at) for EUR conversion via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=redeemed_at date). Include all redemptions with redeemed_at in 2023-01-01 through 2025-12-31 (need full history here, not just 2025, to correctly detect post-expiry use and true per-customer repeat counts since a coupon may have been created earlier). Flag rows where max redemptions by a single customer > per_customer_limit, or times_redeemed > usage_limit, or any redemption after expires_at. Order by (redemptions after expiry) descending, then by max redemptions by a single customer descending, then coupon code ascending for determinism. Note total coupon count returned; print top 50 most suspicious first.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Monthly Sync-Webhook Stuck Rate for the 4 Highest-Impact Tenants",
+    "--question",
+    "For the 4 tenants that account for ~91% of all stuck sync-webhook deliveries (Brennquell Kaffee, Cragsley Outfitters, Ampfeld Elektronik, Marrowby & Vane), has their stuck rate been stable all year or is it new/worsening?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Omar\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one row per tenant per calendar month of 2025\", \"columns_requested\": [\"tenant_name\", \"month\", \"total_sync_deliveries\", \"pending_or_retrying_rate_pct\"], \"details\": \"Table webhook_deliveries joined to webhooks (name in 'ERP sync','WMS sync','ACCOUNTING sync' and close variants, same matching as the prior sync-webhook report) and tenants, restricted to these 4 tenants: Brennquell Kaffee, Cragsley Outfitters, Ampfeld Elektronik, Marrowby & Vane. Filter created_at in 2025. Group by tenant and month of created_at. pending_or_retrying_rate_pct = share of that tenant-month's sync deliveries with status in ('pending','retrying'), rounded 2dp. Order by tenant_name ascending, month ascending.\", \"builds_on\": [\"Merchants Affected by the Sync-Webhook Stuck-Retry Pattern and Their Size\", \"2025 Monthly Stuck-Retry Rate for Sync Webhooks (ERP/WMS/Accounting)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

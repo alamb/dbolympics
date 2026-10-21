@@ -1,0 +1,43 @@
+=== Report 1: Cart contents: stalled vs. fast-converting carts, 2025 (written by Omar) ===
+Engineer's note: One row per duration bucket as specified, 5 rows total. Carts in EUR are passed through subtotal unchanged; other currencies divided by the matching exchange_rates.rate (EUR->currency) for the cart's creation date.
+REPORT: Cart contents: stalled vs. fast-converting carts, 2025
+QUESTION: Does basket size, price point, or discount usage differ between carts that convert quickly and carts that stall for hours or days?
+duration_bucket | cart_count | avg_item_count | avg_subtotal_eur | median_subtotal_eur | pct_converted | pct_converted_with_discount
+----------------+------------+----------------+------------------+---------------------+---------------+----------------------------
+<1 hour         |       5992 |           2.79 |           242.44 |              130.92 |         100.0 |                        17.2
+1-24 hours      |       6577 |           1.61 |           175.87 |               75.06 |           1.8 |                        16.2
+1-7 days        |       8293 |           1.74 |           168.84 |               77.63 |          16.0 |                        10.7
+>7 days         |        335 |           1.79 |           209.01 |               84.40 |          31.6 |                        15.1
+(4 rows)
+
+=== Report 2: Cart bleed trend by month, 2025 (written by Viktor) ===
+Engineer's note: pct_resolved_within_1_hour and pct_resolved_1_7_days are both computed as a share of all carts created in the month (same denominator as overall conversion), using resolution_time = coalesce(converted_at, abandoned_at, expires_at) - created_at; carts with none of those timestamps set (still open/no expiry recorded) fall outside both buckets. 12 rows expected, one per month of 2025.
+REPORT: Cart bleed trend by month, 2025
+QUESTION: Is the cart-stage drop-off getting better, worse, or staying flat over the past year?
+month   | carts_created | overall_conversion_pct | pct_resolved_within_1_hour | pct_resolved_1_7_days | median_days_to_convert
+--------+---------------+------------------------+----------------------------+-----------------------+-----------------------
+2025-01 |          1637 |                   37.9 |                       30.9 |                  68.5 |                    0.0
+2025-02 |          1136 |                   35.1 |                       26.5 |                  73.0 |                    0.0
+2025-03 |          1388 |                   35.4 |                       30.0 |                  69.5 |                    0.0
+2025-04 |          1367 |                   35.5 |                       28.6 |                  71.2 |                    0.0
+2025-05 |          1691 |                   35.7 |                       29.1 |                  70.4 |                    0.0
+2025-06 |          1337 |                   35.2 |                       29.8 |                  69.8 |                    0.0
+2025-07 |          1640 |                   34.3 |                       27.9 |                  71.3 |                    0.0
+2025-08 |          1345 |                   34.0 |                       28.0 |                  71.7 |                    0.0
+2025-09 |          1546 |                   35.8 |                       29.6 |                  69.9 |                    0.0
+2025-10 |          1919 |                   32.4 |                       28.6 |                  71.1 |                    0.0
+2025-11 |          2898 |                   37.7 |                       32.0 |                  67.5 |                    0.0
+2025-12 |          3293 |                   36.0 |                       30.0 |                  62.5 |                    0.0
+(12 rows)
+
+=== Report 3: Subscription merchants: do customers browse before vs. after their first order? (written by Viktor) ===
+Engineer's note: Customers are distinct (tenant_id,user_id) pairs from orders (any status) per tenant; web_sessions are matched by tenant_id+user_id (anonymous pre-login sessions without a user_id are not linked to a customer and so can't be counted as 'before' browsing for them). All 4 named subscription tenants are included by name match against tenants.
+REPORT: Subscription merchants: do customers browse before vs. after their first order?
+QUESTION: Is the near-zero web-session count for subscription merchants a tracking blind spot, or does it reflect real behavior — customers browsing once to sign up and then never browsing again?
+tenant_name       | customers | pct_with_session_before | pct_with_session_after | avg_sessions_after_first_order_per_custo
+------------------+-----------+-------------------------+------------------------+-----------------------------------------
+Brennquell Kaffee |       659 |                    20.2 |                   50.7 |                                     3.13
+Grind Collective  |       145 |                    15.9 |                   49.0 |                                     2.86
+Honeycomb Larder  |       115 |                    30.4 |                   69.6 |                                     4.13
+Spice Route Box   |       158 |                    22.8 |                   42.4 |                                     2.44
+(4 rows)

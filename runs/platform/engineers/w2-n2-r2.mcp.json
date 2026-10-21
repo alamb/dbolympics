@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Internal Health Check Signal Around the Nov 28 2025 Storefront API Outage",
+    "--question",
+    "Did our internal health checks detect a problem around the two carts.remind failure windows (2025-11-28, roughly 14:40 and 15:40 UTC)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Ines\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per hour and component, for 2025-11-28 between 12:00 and 18:00 UTC\", \"columns_requested\": [\"hour\", \"component\", \"total_checks\", \"unhealthy_checks\", \"unhealthy_rate_pct\", \"avg_latency_ms\"], \"details\": \"Table system_health_checks. Filter checked_at >= 2025-11-28 12:00:00 and < 2025-11-28 18:00:00. Group by hour of checked_at (truncated to the hour) and component. unhealthy_rate_pct = is_healthy=false count / total_checks * 100, rounded 2dp. avg_latency_ms over non-null latency_ms, rounded to whole number. Order by hour ascending, component ascending.\", \"builds_on\": [\"Carts.remind Failure Root Cause: Error Messages\", \"2025 Q4 Weekly Job Failures vs Health Check Alerts\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

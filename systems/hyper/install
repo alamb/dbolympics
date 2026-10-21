@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+# tableauhyperapi only publishes Linux wheels for x86_64.
+if [ "$(uname -m)" != "x86_64" ] && [ "$(uname -m)" != "amd64" ]; then
+    echo "hyper: tableauhyperapi has no Linux $(uname -m) wheel" >&2
+    exit 1
+fi
+
+sudo apt-get update -y
+sudo apt-get install -y --no-install-recommends postgresql-client
+
+python3 -m venv /opt/hyper
+/opt/hyper/bin/pip install --no-cache-dir tableauhyperapi==0.0.26784
+ln -s "$(find /opt/hyper -name hyperd -type f | head -1)" /usr/local/bin/hyperd
+
+# the query program (query.rs), built here with a Rust toolchain that is removed again
+cd /system
+sudo apt-get update -y
+sudo apt-get install -y --no-install-recommends build-essential
+curl -fsSL --retry 10 https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.99.0
+"$HOME/.cargo/bin/cargo" build --release --locked
+install -m 0755 target/release/query query
+rm -rf target "$HOME/.cargo" "$HOME/.rustup"

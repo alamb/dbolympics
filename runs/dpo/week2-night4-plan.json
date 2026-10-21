@@ -1,0 +1,61 @@
+{
+ "notes": "Last night's post-erasure report surfaced something I need to pin down on this final night: several \"remaining\" login_attempts/sessions dates are not just old pre-erasure history lingering — they occur well AFTER the erasure's completed_at (e.g. Marrowby & Vane, Cragsley Outfitters, and Studio Vrij subjects all show login attempts dated 2025-02-08 to 2025-02-11, and one Kontor24 Bürobedarf subject shows a session on 2025-12-02, seven months after its 2025-04-29 completion). The Feb 2025 cluster across multiple unrelated erased accounts lines up exactly with Noah Fischer's (CISO) channel post about a 10x login-failure spike in Feb 2025 that wasn't caught by alerts — this could mean that spike included attempts against accounts that should have already been locked down by erasure, which is squarely relevant to both the regulator response and Henrik's security angle. I want hard evidence (count, success/fail, exact timing) rather than eyeballing. I also realized I've never actually checked whether \"completed\" erasure touches the core users record at all (status/deleted_at) — all my evidence so far is about downstream history tables, not whether the primary account was deactivated, which is the more fundamental test of whether erasure does anything to account access. This is my last night, so I'm spending all 3 slots closing out Henrik's post-erasure footprint question definitively rather than opening new territory; the other items (1, 2, 3, 4, and Henrik's consent/closure-time asks) are already answered from the prior three nights.",
+ "requests": [
+  {
+   "title": "Post-erasure login and session activity: timing and success",
+   "question": "After an erasure is marked completed, do login attempts and sessions actually stop, or does activity continue afterward — and if attempts occur, do any of them succeed?",
+   "grain": "one row per completed erasure request (request_type='erasure', status='completed', the same 39 rows as last night)",
+   "columns": [
+    "dsar public_id",
+    "tenant name",
+    "subject_user_id",
+    "completed_at (date)",
+    "login attempts strictly after completed_at (count)",
+    "of those, succeeded (count, login_attempts.succeeded = true)",
+    "earliest login attempt after completed_at",
+    "latest login attempt after completed_at",
+    "sessions strictly after completed_at (count, sessions.started_at > completed_at)",
+    "latest session start after completed_at"
+   ],
+   "details": "Source: data_subject_requests (request_type='erasure', status='completed') left-joined to login_attempts and sessions on tenant_id + user_id = subject_user_id, filtered to occurred_at/started_at strictly greater than the request's completed_at. This isolates genuinely post-erasure activity (unlike last night's report, which counted all remaining rows regardless of date). The succeeded-count column is the critical security signal: failed attempts after erasure suggest stale/targeted credential attempts against a closed account; any succeeded=true row would mean live access continued after erasure. Order by completed_at ascending.",
+   "builds_on": [
+    "Post-erasure data footprint: what remains in sessions, logins, and access log"
+   ]
+  },
+  {
+   "title": "Does completed erasure actually deactivate the core user record?",
+   "question": "When an erasure request is marked completed, is the underlying users row actually deactivated or anonymized, or does the account remain fully active?",
+   "grain": "one row per completed erasure request (request_type='erasure', status='completed', 39 rows)",
+   "columns": [
+    "dsar public_id",
+    "tenant name",
+    "subject_user_id",
+    "completed_at (date)",
+    "user status (users.status)",
+    "user deleted_at (date, or blank if null)",
+    "user updated_at (most recent modification to the user row)",
+    "user last_login_at (date, or blank if null)"
+   ],
+   "details": "Source: data_subject_requests (request_type='erasure', status='completed') joined to users on tenant_id + id = subject_user_id. Do not pull email/full_name (avoid printing PII we don't need for this check) — status, deleted_at, updated_at and last_login_at are enough to tell whether the fulfillment process ever touches the primary account record at all, versus just closing the request ticket. Order by completed_at ascending.",
+   "builds_on": [
+    "Post-erasure data footprint: what remains in sessions, logins, and access log"
+   ]
+  },
+  {
+   "title": "Is users.deleted_at used anywhere on the platform?",
+   "question": "Is deleted_at a field that's actually populated for any users platform-wide, or is account deactivation simply not wired up at all (context for the erasure finding)?",
+   "grain": "one row per users.status value, platform-wide, full history",
+   "columns": [
+    "status",
+    "total users",
+    "count with deleted_at not null",
+    "pct with deleted_at set",
+    "most recent deleted_at observed"
+   ],
+   "details": "Source: users, platform-wide, no tenant filter, no date filter. This gives the baseline: if deleted_at is essentially never populated for anyone regardless of status (not just the 39 erasure subjects), that points to a platform-wide gap in how account deactivation is recorded rather than something specific to the DSAR erasure workflow. Order by total users descending.",
+   "builds_on": [
+    "Does completed erasure actually deactivate the core user record?"
+   ]
+  }
+ ]
+}

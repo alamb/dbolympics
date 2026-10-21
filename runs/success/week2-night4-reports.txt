@@ -1,0 +1,89 @@
+=== Report 1: Merchants slowing down: order-gap distribution among established merchants (written by Felix) ===
+Engineer's note: Grain is one row per tenant (merchant), restricted to lifetime orders >= 20 (excluding cancelled orders) and status <> 'churned'; the two 90-day windows are counted backward from each merchant's own last order date. Report notes total qualifying merchant count alongside the 50-row cap.
+REPORT: Merchants slowing down: order-gap distribution among established merchants
+QUESTION: Among established merchants (not formally churned), how long since their last order, and were they already slowing down before going quiet?
+merchant_name                 | industry                  | status    | last_order_date | days_since_last_order | lifetime_orders | orders_90d_before_last | orders_90d_before_prior
+------------------------------+---------------------------+-----------+-----------------+-----------------------+-----------------+------------------------+------------------------
+Little Larch Kids             | Apparel & Footwear        | active    | 2025-11-30      |                    36 |              28 |                      9 |                       4
+Tiny Atelier                  | Home & Living             | active    | 2025-12-01      |                    35 |              96 |                      8 |                      13
+Trailmark                     | Sports & Outdoor          | active    | 2025-12-09      |                    27 |              34 |                     12 |                       6
+Courtside Collective          | Sports & Outdoor          | active    | 2025-12-13      |                    23 |              27 |                      6 |                       5
+Meadow Row                    | Apparel & Footwear        | past_due  | 2025-12-14      |                    22 |              44 |                      6 |                       6
+Fjordline Wear                | Apparel & Footwear        | active    | 2025-12-16      |                    20 |             134 |                     23 |                       8
+Brick & Bobbin                | Apparel & Footwear        | active    | 2025-12-16      |                    20 |              69 |                     10 |                       4
+OfficeHub Nordic              | Office Supplies (B2B)     | active    | 2025-12-18      |                    18 |             440 |                     61 |                      37
+Castell Fasteners             | Industrial Supplies (B2B) | active    | 2025-12-19      |                    17 |             389 |                     48 |                      30
+Silverthread                  | Jewelry & Accessories     | suspended | 2025-12-20      |                    16 |              24 |                      7 |                       0
+Circuit Harbor                | Consumer Electronics      | active    | 2025-12-21      |                    15 |              23 |                      5 |                       5
+Driftwood Home                | Home & Living             | active    | 2025-12-22      |                    14 |              51 |                      9 |                       6
+Barkley & Co.                 | Pet Supplies              | active    | 2025-12-22      |                    14 |              54 |                     10 |                       8
+Ondine Botanicals             | Beauty                    | active    | 2025-12-22      |                    14 |              35 |                      7 |                       3
+Purrfect Pantry               | Pet Supplies              | active    | 2025-12-23      |                    13 |             166 |                     17 |                      14
+Deskline Supplies             | Office Supplies (B2B)     | active    | 2025-12-23      |                    13 |             161 |                     25 |                      16
+Polder Packaging              | Industrial Supplies (B2B) | active    | 2025-12-24      |                    12 |             112 |                     17 |                      18
+Ballycorran Industrial Supply | Industrial Supplies (B2B) | active    | 2025-12-26      |                    10 |             839 |                     93 |                      75
+Brewline Coffee               | Food & Coffee             | active    | 2025-12-26      |                    10 |              42 |                     18 |                       9
+Willow & Wren                 | Home & Living             | active    | 2025-12-27      |                     9 |             307 |                     33 |                      15
+Hound Hamper                  | Pet Supplies              | active    | 2025-12-28      |                     8 |             112 |                     15 |                      11
+Pfotenglück                   | Pet Supplies              | active    | 2025-12-28      |                     8 |             334 |                     28 |                      25
+Buchstabe                     | Books & Stationery        | active    | 2025-12-28      |                     8 |              63 |                     16 |                       4
+Lamplight Living              | Home & Living             | active    | 2025-12-28      |                     8 |              83 |                     19 |                      15
+Basecamp Nord                 | Sports & Outdoor          | active    | 2025-12-28      |                     8 |              64 |                     11 |                      11
+Wiesgrund Wohnen              | Home & Living             | active    | 2025-12-29      |                     7 |             729 |                    110 |                      59
+Kayak Corner                  | Sports & Outdoor          | active    | 2025-12-29      |                     7 |             321 |                     21 |                      22
+Tail Wag Supply               | Pet Supplies              | active    | 2025-12-29      |                     7 |             213 |                     29 |                      23
+Lumen Collective              | Apparel & Footwear        | active    | 2025-12-29      |                     7 |             148 |                     21 |                      10
+Haven Linen                   | Home & Living             | active    | 2025-12-29      |                     7 |              61 |                      6 |                       7
+Saffron & Sage                | Beauty                    | past_due  | 2025-12-29      |                     7 |             270 |                     44 |                      22
+Sorella Skin                  | Beauty                    | active    | 2025-12-29      |                     7 |             133 |                     43 |                      22
+Thistlecombe                  | Apparel & Footwear        | active    | 2025-12-29      |                     7 |             107 |                     43 |                      22
+Inkwell & Quire               | Books & Stationery        | active    | 2025-12-29      |                     7 |              22 |                      5 |                       2
+Juniper Apothecary            | Beauty                    | active    | 2025-12-30      |                     6 |             387 |                     55 |                      28
+Wohnglück                     | Home & Living             | active    | 2025-12-30      |                     6 |             311 |                     59 |                      28
+Rue Lafayette Studio          | Apparel & Footwear        | active    | 2025-12-30      |                     6 |             375 |                     59 |                      37
+Ostwind Mode                  | Apparel & Footwear        | active    | 2025-12-30      |                     6 |             277 |                     48 |                      21
+Ampfeld Elektronik            | Consumer Electronics      | active    | 2025-12-30      |                     6 |            1009 |                    187 |                      77
+Sourdough Club                | Food & Coffee             | active    | 2025-12-30      |                     6 |             800 |                     92 |                      56
+Mirelle                       | Beauty                    | active    | 2025-12-30      |                     6 |              99 |                     23 |                      14
+Fern & Fable                  | Home & Living             | active    | 2025-12-30      |                     6 |             112 |                     19 |                       7
+Velvet Ash                    | Apparel & Footwear        | active    | 2025-12-30      |                     6 |             339 |                     50 |                      28
+Ampere & Co.                  | Consumer Electronics      | active    | 2025-12-30      |                     6 |             152 |                     23 |                       8
+Fell & Fjell                  | Sports & Outdoor          | active    | 2025-12-30      |                     6 |             186 |                     17 |                      20
+Paperplane Press              | Books & Stationery        | active    | 2025-12-30      |                     6 |             127 |                     15 |                       7
+Roast Republic                | Food & Coffee             | active    | 2025-12-30      |                     6 |             105 |                     21 |                       7
+Ridgeback Gear                | Sports & Outdoor          | active    | 2025-12-30      |                     6 |             236 |                     29 |                      24
+Stoneware Studio              | Home & Living             | active    | 2025-12-30      |                     6 |              51 |                     12 |                       4
+Hautnah                       | Beauty                    | active    | 2025-12-30      |                     6 |             174 |                     35 |                      13
+(50 rows)
+
+=== Report 2: Refund friction and what follows: fast vs slow refunds (written by Bea) ===
+Engineer's note: Avg CSAT within 30 days is computed per refund event (averaging all csat scores from that user in the window) and then averaged across refunds in the group, so it reflects refunds that had at least one rating; refunds with no CSAT response in the window don't pull the average toward zero.
+REPORT: Refund friction and what follows: fast vs slow refunds
+QUESTION: Where refunds take longer to process, do shoppers rate us worse and come back less often afterward?
+refund_speed_group | refund_count | avg_processing_days | pct_with_order_within_90d | avg_csat_within_30d
+-------------------+--------------+---------------------+---------------------------+--------------------
+fast               |         8035 |                0.04 |                     48.18 |                2.74
+(1 rows)
+
+=== Report 3: Support experience for our top 15 merchants, and whether it tracks with CSAT (written by Grace) ===
+Engineer's note: Top 15 merchants are ranked by Oct 3–Dec 31 2025 EUR gross order revenue (non-cancelled orders, converted via daily exchange_rates); ticket and CSAT windows use the same calendar range on created_at/submitted_at respectively. Rows with no tickets or no CSAT responses in the window show as 0/NULL rather than being dropped.
+REPORT: Support experience for our top 15 merchants, and whether it tracks with CSAT
+QUESTION: How much support volume do our top merchants generate, how fast is our response, and does that show up in their CSAT?
+merchant_name          | industry                  | tickets_last_90_days | tickets_per_100_orders | avg_first_response_hours | avg_resolution_hours | csat_avg_score | csat_response_count
+-----------------------+---------------------------+----------------------+------------------------+--------------------------+----------------------+----------------+--------------------
+Cragsley Outfitters    | Apparel & Footwear        |                  149 |                  10.88 |                    25.53 |                42.68 |           2.91 |                  44
+Marrowby & Vane        | Apparel & Footwear        |                  101 |                  16.13 |                    78.95 |               136.59 |           2.68 |                  34
+Grind Collective       | Food & Coffee             |                   70 |                  20.65 |                    59.03 |               103.56 |           2.41 |                  22
+Petalcourt Beauty      | Beauty                    |                   64 |                  26.78 |                    47.05 |                63.37 |           2.87 |                  15
+Fennel & Flint         | Home & Living             |                   46 |                  27.22 |                    18.51 |                44.05 |            3.9 |                  10
+Kibblewick             | Pet Supplies              |                   43 |                  22.16 |                    25.52 |                55.62 |           2.38 |                  13
+Oakhurst Tailoring     | Apparel & Footwear        |                   18 |                   22.5 |                    25.47 |                33.14 |            2.6 |                   5
+Cinder Peak Sports Co. | Sports & Outdoor          |                   16 |                  15.53 |                      7.0 |                21.84 |           3.67 |                   3
+Honeycomb Larder       | Food & Coffee             |                   12 |                   6.63 |                    21.92 |                32.65 |            2.4 |                   5
+Coastline Interiors    | Home & Living             |                    9 |                  13.85 |                    12.46 |                15.72 |            4.0 |                   1
+OfficeHub Nordic       | Office Supplies (B2B)     |                    6 |                  11.11 |                     6.51 |                14.61 |            4.0 |                   2
+Velvet Ash             | Apparel & Footwear        |                    6 |                   12.0 |                    24.27 |                33.08 |            3.5 |                   2
+Bytefield              | Consumer Electronics      |                    6 |                  54.55 |                    19.44 |                32.36 |           3.33 |                   3
+Castell Fasteners      | Industrial Supplies (B2B) |                    5 |                   12.5 |                    33.49 |                 50.1 |           2.33 |                   3
+Deskline Supplies      | Office Supplies (B2B)     |                    5 |                  21.74 |                    27.59 |                 31.9 |           2.67 |                   3
+(15 rows)

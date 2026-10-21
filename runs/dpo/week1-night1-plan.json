@@ -1,0 +1,57 @@
+{
+ "notes": "Ines asked me to scope item 1 first (DSAR volume/closure time/overdue, trended monthly) but also flagged items 2 and 3 as high priority and well-defined enough to start in parallel, since the week is tight (5 topics, 4 nights). None of these three depend on each other's results, so I'm running all as independent first-look reports tonight rather than waiting. I kept each to one grain and used a dimension-as-row-grain (purpose, severity) instead of guessing at unknown code values, per the carrier/month pattern in the handbook. Items 4 (retention vs. policy) and 5 (legal holds) are intentionally deferred to a later night since they need review of retention_policies/legal_holds structure first and aren't part of what Ines asked me to scope tonight.",
+ "requests": [
+  {
+   "title": "Data subject requests: monthly volume, closure time, and overdue backlog",
+   "question": "How many access/erasure/portability/rectification/restriction requests are we receiving each month, how long do they typically take to close, and how many are overdue or still open?",
+   "grain": "one row per calendar month of request receipt (based on data_subject_requests.received_at), from 2023-01 through 2025-12",
+   "columns": [
+    "month (YYYY-MM)",
+    "requests received (total)",
+    "access requests received",
+    "erasure requests received",
+    "portability requests received",
+    "rectification + restriction requests received (combined)",
+    "completed count (received_at in this month AND completed_at is not null, as of 2026-01-05)",
+    "median days to close (completed_at - received_at, in days, for requests completed as of 2026-01-05; null if none completed)",
+    "still open count (received in this month, completed_at is null, as of 2026-01-05)",
+    "overdue count (received in this month, completed_at is null, due_at is not null, due_at < 2026-01-05)"
+   ],
+   "details": "Source: data_subject_requests. Group by date_trunc('month', received_at) or join to calendar_days on received_at date to get month_label. request_type is one of access/erasure/rectification/portability/restriction per the catalog — combine rectification and restriction into one column to stay within the column budget. 'Completed' = completed_at is not null (do not assume a specific status string; confirm status values via dry run if useful, but completed_at is the authoritative closure signal). Median days to close should only use rows with completed_at not null. Overdue is evaluated as of the reporting date 2026-01-05 (do not use CURRENT_DATE; hardcode this literal), restricted to rows where due_at is not null. This is platform-wide (all tenants) since the DPO's question is about Tidewick's overall privacy-request posture, not one merchant. Order by month ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "Consent trend by purpose and month: grants, withdrawals, and net opt-in rate",
+   "question": "How has the mix of granted vs. withdrawn vs. never-given consent changed over time, by purpose?",
+   "grain": "one row per consent purpose and calendar month (based on consent_records.occurred_at for the month's new events; net opt-in figures are evaluated as of that month's last day)",
+   "columns": [
+    "purpose",
+    "month (YYYY-MM)",
+    "grants recorded in month (status='granted' events occurring in month)",
+    "withdrawals recorded in month (status='withdrawn' events occurring in month)",
+    "expirations recorded in month (status='expired' events occurring in month)",
+    "users with any consent record for this purpose as of month end (distinct user_id across consent_records with occurred_at <= month end)",
+    "net active opt-ins at month end (distinct users whose most recent consent_records row for this purpose, as of month end, has status='granted')",
+    "active opt-in rate at month end (net active opt-ins / users with any consent record for this purpose as of month end, rounded to 1 decimal percent)"
+   ],
+   "details": "Source: consent_records. 'Most recent row per user per purpose as of month end' should use a window function (ROW_NUMBER partition by tenant_id, user_id, purpose order by occurred_at desc, restricted to occurred_at <= month end) to find the effective status. Build the month series from calendar_days (month_start) so months with zero events still appear, spanning 2023-01 through 2025-12. List each distinct purpose value found in consent_records as its own set of rows (do not assume specific purpose strings in advance — group by whatever purpose values exist in the data). Platform-wide, all tenants. Order by purpose, then month ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "Compliance events: monthly volume and resolution time by severity",
+   "question": "How many compliance incidents are being flagged each month by severity, how quickly are they resolved, and is an unresolved backlog building up?",
+   "grain": "one row per calendar month of detection (compliance_events.occurred_at) and severity level",
+   "columns": [
+    "month (YYYY-MM)",
+    "severity",
+    "incidents detected",
+    "resolved count (resolved = true, as of 2026-01-05)",
+    "unresolved count (resolved = false, as of 2026-01-05)",
+    "median days to resolve (resolved_at - occurred_at, in days, for resolved=true rows only)",
+    "unresolved and older than 30 days (resolved=false AND 2026-01-05 - occurred_at > 30 days)"
+   ],
+   "details": "Source: compliance_events. Group by date_trunc('month', occurred_at) (or join calendar_days) and by the severity column as-is (do not assume specific severity strings — use whatever distinct values are present). Use the literal date 2026-01-05 as 'today' for all age/backlog calculations (never CURRENT_DATE/now()). Span 2023-01 through 2025-12. Platform-wide, all tenants. Order by month ascending, then severity.",
+   "builds_on": []
+  }
+ ]
+}

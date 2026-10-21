@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Merchant Concentration Trend: 2024 vs 2025",
+    "--question",
+    "Is Tidewick's volume and revenue concentration among its largest merchants growing or shrinking year over year?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"one calendar year (2024, 2025)\", \"columns_requested\": [\"year\", \"active merchant count (tenants with >=1 completed payout that year)\", \"total gross volume (EUR)\", \"top 5 merchants' gross volume (EUR)\", \"top 5 share of total gross volume (%)\", \"top 10 merchants' gross volume (EUR)\", \"top 10 share of total gross volume (%)\", \"top 10 share of total fee revenue (%)\"], \"details\": \"Source: payouts joined to tenants. For each of 2024 and 2025 separately, aggregate gross_amount and fee_amount (converted to EUR via exchange_rates as in the other two reports) per tenant_id for payouts with completed/paid status and paid_at in that year. Rank tenants within each year by gross volume EUR descending to identify that year's top 5 and top 10, then sum their gross volume and fee revenue and express as a percentage of that year's total across all active tenants. Round shares to 1 decimal place. Order by year ascending (2 rows total).\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

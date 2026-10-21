@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "SELECT\n  date_trunc('hour', checked_at) AS hour,\n  component,\n  count(*) AS total_checks,\n  count(*) FILTER (WHERE is_healthy = false) AS unhealthy_checks,\n  round(100.0 * count(*) FILTER (WHERE is_healthy = false) / count(*), 2) AS unhealthy_rate_pct,\n  round(avg(latency_ms)) AS avg_latency_ms\nFROM system_health_checks\nWHERE checked_at >= TIMESTAMP '2025-11-28 12:00:00'\n  AND checked_at < TIMESTAMP '2025-11-28 18:00:00'\nGROUP BY 1, 2\nORDER BY hour ASC, component ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: hour, component, total_checks, unhealthy_checks, unhealthy_rate_pct, avg_latency_ms"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles cleanly with the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "SELECT\n  date_trunc('hour', checked_at) AS hour,\n  component,\n  count(*) AS total_checks,\n  count(*) FILTER (WHERE is_healthy = false) AS unhealthy_checks,\n  round(100.0 * count(*) FILTER (WHERE is_healthy = false) / count(*), 2) AS unhealthy_rate_pct,\n  round(avg(latency_ms)) AS avg_latency_ms\nFROM system_health_checks\nWHERE checked_at >= TIMESTAMP '2025-11-28 12:00:00'\n  AND checked_at < TIMESTAMP '2025-11-28 18:00:00'\nGROUP BY 1, 2\nORDER BY hour ASC, component ASC",
+  "note": "system_health_checks is not tenant-scoped in this report (it tracks internal platform components, not merchant data), so results are aggregated across all tenants per hour/component as requested.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups `system_health_checks` by hour and component for the 2025-11-28 12:00–18:00 UTC window, with total checks, unhealthy checks, unhealthy rate (%), and average latency — exactly matching the requested grain and columns, so Lucas can see whether the two ~14:40 and ~15:40 UTC `carts.remind` failure windows line up with spikes in unhealthy internal health checks."
+ }
+]

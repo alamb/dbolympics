@@ -1,0 +1,63 @@
+=== Report 1: Order-to-payment match rate by order age (written by Bea) ===
+Engineer's note: Built exactly as specified: age bucketed from 2025-12-31 minus placed_at, grand_total and matched payments (captured/refunded/partially_refunded) each converted to EUR via same-day exchange_rates, match_rate_pct = matched/grand_total*100 rounded to 1dp. Buckets with zero grand_total (none expected) would show a null match rate.
+REPORT: Order-to-payment match rate by order age
+QUESTION: At the portfolio level, how much of the gap between order value and money collected is just timing (recent orders not yet settled) versus a permanent shortfall that age doesn't fix?
+age_bucket   | order_count | orders_grand_total_eur | matched_money_collected_eur | match_rate_pct
+-------------+-------------+------------------------+-----------------------------+---------------
+0-3 days     |         348 |               34188.23 |                    34188.23 |          100.0
+4-7 days     |         298 |               23198.54 |                    23198.54 |          100.0
+8-14 days    |         594 |               58990.07 |                    49213.08 |           83.4
+15-30 days   |        1754 |              216605.73 |                   195981.86 |           90.5
+31-60 days   |        2550 |               328682.7 |                    308288.1 |           93.8
+61-90 days   |        1777 |              228982.28 |                   218550.72 |           95.4
+91-180 days  |        4645 |              524129.52 |                   524439.53 |          100.1
+181-365 days |        9556 |             1299647.47 |                  1293594.88 |           99.5
+366+ days    |       27805 |             3711376.17 |                  3669424.92 |           98.9
+(9 rows)
+
+=== Report 2: Late-refund concentration and trend by merchant (written by Omar) ===
+Engineer's note: pct_of_all_late_refunds_2025 is computed against the grand total across every tenant with late refunds in 2025, not just the top 20 shown, as requested. EUR conversion uses the exchange_rates row for the refund's own processed_at date (amount divided by the EUR->currency rate; EUR amounts passed through unconverted).
+REPORT: Late-refund concentration and trend by merchant
+QUESTION: Is the refund-after-payout-settled problem concentrated in a handful of merchants, and did it get bigger or smaller in the second half of 2025 versus the first?
+tenant_name                   | h1_2025_late_refund_eur | h2_2025_late_refund_eur | change_pct | total_2025_late_refund_eur | pct_of_all_late_refunds_2025
+------------------------------+-------------------------+-------------------------+------------+----------------------------+-----------------------------
+Cragsley Outfitters           |                67417.62 |                91799.89 |       36.2 |                  159217.51 |                         36.2
+Ampfeld Elektronik            |                41642.32 |                25512.18 |      -38.7 |                    67154.5 |                         15.3
+Marrowby & Vane               |                25503.42 |                31788.02 |       24.6 |                   57291.45 |                         13.0
+Studio Vrij                   |                12799.75 |                 14737.3 |       15.1 |                   27537.05 |                          6.3
+Cinder Peak Sports Co.        |                 6982.91 |                 8688.08 |       24.4 |                   15670.99 |                          3.6
+Gratlinie Outdoor             |                 2400.54 |                 8178.94 |      240.7 |                   10579.48 |                          2.4
+Ballycorran Industrial Supply |                 8496.84 |                  339.41 |      -96.0 |                    8836.25 |                          2.0
+Rue Lafayette Studio          |                 2796.59 |                 2690.02 |       -3.8 |                    5486.61 |                          1.2
+Velvet Ash                    |                  3256.5 |                 2227.21 |      -31.6 |                    5483.72 |                          1.2
+Fell & Fjell                  |                  365.31 |                  5105.0 |     1297.5 |                    5470.31 |                          1.2
+Midland Safety Wear           |                   10.44 |                 4736.58 |    45269.5 |                    4747.02 |                          1.1
+Bytefield                     |                    NULL |                 4487.99 |       NULL |                    4487.99 |                          1.0
+Trailmark                     |                 1907.49 |                 2018.13 |        5.8 |                    3925.62 |                          0.9
+Ostwind Mode                  |                 1450.17 |                 2216.34 |       52.8 |                    3666.51 |                          0.8
+Petalcourt Beauty             |                  862.03 |                 2728.32 |      216.5 |                    3590.34 |                          0.8
+Fennel & Flint                |                  1591.2 |                 1914.73 |       20.3 |                    3505.93 |                          0.8
+Strandgut                     |                 1143.18 |                 1879.35 |       64.4 |                    3022.53 |                          0.7
+Kayak Corner                  |                 1796.16 |                  911.48 |      -49.3 |                    2707.64 |                          0.6
+Linden & Loom                 |                 1273.36 |                 1388.23 |        9.0 |                    2661.59 |                          0.6
+Oakhurst Tailoring            |                  874.18 |                  1728.6 |       97.7 |                    2602.78 |                          0.6
+(20 rows)
+
+=== Report 3: 2025 revenue share by industry vertical (written by Omar) ===
+Engineer's note: Grain is one row per distinct tenants.industry value as stored (nulls bucketed as '(none)'), per the request; no re-bucketing into B2B vs. other was applied so the analyst can identify the wholesale rows (industrial supplies, office equipment) directly in the output.
+REPORT: 2025 revenue share by industry vertical
+QUESTION: How big a slice of our 2025 collected revenue comes from B2B wholesale merchants (industrial supplies, office equipment) versus every other vertical, so we know whether omitting their receivables line from the board pack is material?
+industry                  | tenant_count | total_2025_money_collected_eur | pct_of_total_revenue
+--------------------------+--------------+--------------------------------+---------------------
+Apparel & Footwear        |           12 |              1078095.093126067 |                 38.4
+Office Supplies (B2B)     |            2 |               707746.699374597 |                 25.2
+Industrial Supplies (B2B) |            1 |              386487.6248121912 |                 13.7
+Sports & Outdoor          |            5 |               208642.665255018 |                  7.4
+Home & Living             |            9 |             130876.13832331174 |                  4.7
+Beauty                    |            8 |              125299.2177342256 |                  4.5
+Food & Coffee             |            5 |              77195.58403267055 |                  2.7
+Pet Supplies              |            7 |              55275.88436275428 |                  2.0
+Consumer Electronics      |            3 |             32704.557149522403 |                  1.2
+Books & Stationery        |            4 |              5631.031170823513 |                  0.2
+Jewelry & Accessories     |            1 |             3001.8742620116054 |                  0.1
+(11 rows)

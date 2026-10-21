@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Email/campaign engagement baseline by channel",
+    "--question",
+    "How much campaign messaging goes out, and is anyone opening or clicking — is this a strength or a weak spot across the platform?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per campaign channel (campaigns.channel)\", \"columns_requested\": [\"channel - campaigns.channel\", \"messages_sent - count of campaign_messages with sent_at not null, created_at in 2025\", \"delivered_rate_pct - share of sent messages with delivered_at not null, *100, rounded to 1 decimal\", \"open_rate_pct - share of delivered messages with opened_at not null, *100, rounded to 1 decimal\", \"click_rate_pct - share of delivered messages with clicked_at not null, *100, rounded to 1 decimal\", \"bounce_rate_pct - share of sent messages with bounced_at not null, *100, rounded to 1 decimal\", \"unsubscribe_rate_pct - share of sent messages with unsubscribed_at not null, *100, rounded to 1 decimal\"], \"details\": \"Source: campaign_messages joined to campaigns on campaign_id for channel. Filter campaign_messages.created_at between 2025-01-01 and 2026-01-01 (platform-wide, no tenant filter). messages_sent = sent_at is not null; all rate denominators as specified (delivered/open/click relative to delivered count where noted, bounce/unsubscribe relative to sent count). Order by messages_sent descending, tie-break channel ascending. Expect a small number of distinct channel values, well under the row limit.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

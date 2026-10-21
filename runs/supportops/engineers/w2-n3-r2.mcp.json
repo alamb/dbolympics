@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley",
+    "--question",
+    "Did the delivery/where-is-my-order slowness at Marrowby & Vane and Studio Vrij spike in a specific period (e.g. November-December, matching a known carrier breakdown) or run elevated all year?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Omar\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per (tenant, month) for 2025, restricted to Marrowby & Vane, Studio Vrij, and Cragsley Outfitters, and to tickets tagged 'delivery' or 'where-is-my-order'\", \"columns_requested\": [\"tenant_name\", \"month_label (YYYY-MM)\", \"ticket_count\", \"avg_resolution_minutes\", \"resolution_breach_rate\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31, restricted to the three named tenants and to tickets with a tag of 'delivery' or 'where-is-my-order' in ticket_tags_map (count once per ticket even if it has both tags). Source tables: tickets, ticket_tags_map, support_tags, sla_breaches (breach_kind='resolution'). Order by tenant_name, then month_label ascending. Round avg_resolution_minutes to whole numbers, rate to 1 decimal percent.\", \"builds_on\": [\"Topic mix and resolution time by tag, flagged merchants vs. Cragsley\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

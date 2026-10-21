@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Webhook Delivery Reliability Trend",
+    "--question",
+    "How reliable were webhook deliveries to merchants' own systems across 2025, and what time window does the data actually cover?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Viktor\", \"situation\": \"reliability-review\", \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per calendar month\", \"columns_requested\": [\"month\", \"total_deliveries\", \"success_count\", \"success_rate_pct\", \"failed_count\", \"failure_rate_pct\", \"avg_duration_ms\", \"distinct_webhooks\"], \"details\": \"Table webhook_deliveries. Filter created_at >= 2025-01-01 and < 2026-01-01 (requesting the full year; per the pattern seen with job_runs and system_health_checks, report back whatever months actually have rows rather than erroring). Group by month of created_at. success_rate_pct = success_count/total_deliveries*100 rounded 2dp (success_count = status='success'); failure_rate_pct similarly for status='failed'. avg_duration_ms over non-null duration_ms, rounded to whole number. distinct_webhooks = count distinct webhook_id. Platform-wide, all tenants. Order by month ascending.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

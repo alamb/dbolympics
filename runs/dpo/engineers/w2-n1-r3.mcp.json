@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Retention reality check beyond email: events, job_runs, page_views, system_health_checks",
+    "--question",
+    "Beyond the confirmed email_log failure, how much data in the other four policy-covered tables is currently sitting past its stated retention window?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Bea\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per entity_table: events, job_runs, page_views, system_health_checks\", \"columns_requested\": [\"entity_table\", \"stated retention_days (from retention_policies, confirmed uniform across tenants last week)\", \"action_on_expiry\", \"total rows currently in the live table (platform-wide)\", \"oldest row age in days (as of 2026-01-05)\", \"rows exceeding stated retention (count)\", \"pct of rows exceeding stated retention\"], \"details\": \"Source: retention_policies for the stated retention_days/action_on_expiry per table (one value each, already confirmed uniform across all 120 tenants last week), joined against each live table using its natural timestamp: events.occurred_at, job_runs.queued_at, page_views.viewed_at, system_health_checks.checked_at. Use the literal date 2026-01-05 for all age math (never CURRENT_DATE/now()). This mirrors last week's email_log/audit_log checks but at a compact one-row-per-table summary so all four fit on one page, giving a complete current picture of retention-window violations across every policy-covered table, not just the one confirmed so far. Order by pct of rows exceeding retention, descending (worst first).\", \"builds_on\": [\"Retention policy landscape: distinct rules by entity table\", \"email_log actual retention vs. the stated 730-day delete policy\", \"audit_log actual archiving vs. the stated 730-day archive policy\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

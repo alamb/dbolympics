@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "select\n  currency_code,\n  count(*) as payout_count,\n  sum(gross_amount) as gross_native_total,\n  sum(fee_amount) as fee_native_total,\n  sum(net_amount) as net_native_total,\n  sum(net_amount) - (sum(gross_amount) - sum(fee_amount)) as net_check_diff_native,\n  round(\n    (sum(net_amount) - (sum(gross_amount) - sum(fee_amount))) / nullif(sum(gross_amount), 0) * 100,\n    2\n  ) as net_check_diff_pct\nfrom payouts\nwhere created_at >= timestamp '2023-01-01'\n  and created_at < timestamp '2026-01-01'\ngroup by currency_code\norder by payout_count desc, currency_code",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: currency_code, payout_count, gross_native_total, fee_native_total, net_native_total, net_check_diff_native, net_check_diff_pct"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles with the expected columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "select\n  currency_code,\n  count(*) as payout_count,\n  sum(gross_amount) as gross_native_total,\n  sum(fee_amount) as fee_native_total,\n  sum(net_amount) as net_native_total,\n  sum(net_amount) - (sum(gross_amount) - sum(fee_amount)) as net_check_diff_native,\n  round(\n    (sum(net_amount) - (sum(gross_amount) - sum(fee_amount))) / nullif(sum(gross_amount), 0) * 100,\n    2\n  ) as net_check_diff_pct\nfrom payouts\nwhere created_at >= timestamp '2023-01-01'\n  and created_at < timestamp '2026-01-01'\ngroup by currency_code\norder by payout_count desc, currency_code",
+  "note": "Used payouts.created_at to scope 2023-01-01 through 2025-12-31 (no payout date column other than arrival_date/paid_at which can be null for non-arrived payouts); all amounts are summed in native currency per currency_code with no FX conversion, as requested.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report groups payouts by native `currency_code` over 2023-01-01 to 2025-12-31 (scoped via `created_at`), with payout counts and native-currency totals for gross, fee, and net, plus the arithmetic drift (`net - (gross - fee)`) and that drift as a percent of gross — exactly as specified, with no FX conversion applied."
+ }
+]

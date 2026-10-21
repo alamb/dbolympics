@@ -1,0 +1,59 @@
+{
+ "notes": "Three things from last night change my plan. (1) The age-bucket report is reassuring but not a clean monotonic ramp: match rate is 100% at 0-7 days, dips to 83.4% at 8-14 days, climbs through the 90s, then settles around 98.9-100.1% from 91 days onward - so the true permanent \"never collected\" floor looks like just ~1-2%, but that mid-range dip needs an explanation before I tell Rosa this is purely timing; my best guess is a payment method with inherent capture lag (bank transfer/wire), which I want to test directly. (2) The refund-concentration report confirms Rosa's worry: the top 4 merchants (Cragsley Outfitters, Ampfeld Elektronik, Marrowby & Vane, Studio Vrij) account for 70.8% of all late-processed refunds in 2025, with Cragsley alone at 36.2% and still growing (+36.2% H1-to-H2) - this is genuinely concentrated, not spread thin, and it sits on our single biggest merchant. (3) The industry-revenue report was the big surprise: B2B wholesale (Office Supplies + Industrial Supplies) is 38.9% of 2025 collected revenue across just 3 tenants - far too material to leave out of the board pack, which changes the stakes on getting that receivables number right. But it also only found 3 B2B tenants by industry label, while Daniel Kim's team (last week's channel) referenced 5 B2B wholesale merchants - that gap is worth resolving properly now, by identifying B2B tenants operationally (via actual CRM deal activity) rather than by industry-text label, and recomputing their receivables on the corrected set. I'm also starting on Rosa's customer-definition-usage question tonight by surveying what audience/segment definitions already exist and are actively used elsewhere in the business.",
+ "requests": [
+  {
+   "title": "B2B wholesale tenants identified by CRM deal activity, with revenue and receivables",
+   "question": "Which tenants are actually operating as B2B wholesalers (by using the deals/CRM module, not just by industry label), how much 2025 revenue do they represent, and what does their receivables picture look like on the corrected tenant list?",
+   "grain": "tenant",
+   "columns": [
+    "tenant_name",
+    "industry",
+    "deal_count",
+    "total_contract_value_eur",
+    "total_2025_revenue_eur",
+    "pct_of_total_2025_revenue",
+    "open_amount_due_eur",
+    "pct_amount_due_overdue"
+   ],
+   "details": "Population: every tenant that has at least one row in the deals table (closed-won B2B contracts), which per the company briefing is the module used by B2B wholesale merchants. For each such tenant: industry = tenants.industry (as stored, for cross-reference against last night's industry report). deal_count = count of deals rows. total_contract_value_eur = sum of deals.contract_value converted to EUR via exchange_rates (base_code='EUR', quote_code=deals.currency_code, as_of=signed_at date, or created_at date if signed_at is null). total_2025_revenue_eur = sum of this tenant's payments.amount where status in ('captured','refunded','partially_refunded') and captured_at in 2025, converted to EUR via payments.currency_code and captured_at date. pct_of_total_2025_revenue = total_2025_revenue_eur / (sum of total_2025_revenue_eur across ALL tenants company-wide, not just this list) * 100, rounded to 1 decimal. open_amount_due_eur = sum of invoices.amount_due for this tenant where invoices.status in ('open','past_due') and amount_due > 0, as of snapshot 2025-12-31, converted to EUR via invoices.currency_code and as_of=2025-12-31. pct_amount_due_overdue = (sum of amount_due where due_at < 2025-12-31) / open_amount_due_eur * 100, rounded to 1 decimal. Tables: deals, tenants, payments, invoices, exchange_rates. Order by total_2025_revenue_eur descending.",
+   "builds_on": [
+    "2025 revenue share by industry vertical",
+    "B2B wholesaler receivables aging"
+   ]
+  },
+  {
+   "title": "Existing customer/audience definitions already in use",
+   "question": "Do any marketing segments or analytics cohorts already encode a definition like 'customers who purchased recently' or 'all customers', so we can certify a customer count the business already uses rather than inventing a new one?",
+   "grain": "named audience definition (one row per segment or cohort)",
+   "columns": [
+    "source",
+    "tenant_name",
+    "name",
+    "is_dynamic",
+    "member_count",
+    "rules_definition",
+    "last_updated"
+   ],
+   "details": "Population: all rows from the 'segments' table (marketing module) UNION ALL all rows from the 'cohorts' table (analytics module), across all tenants. source = literal 'segment' or 'cohort' depending on origin table. tenant_name = joined from tenants. name = segments.name or cohorts.name. is_dynamic = the respective is_dynamic boolean column. member_count = the respective member_count column. rules_definition = the rules (segments) or definition (cohorts) json column, cast to text (truncate to a reasonable length, e.g. 500 characters, if needed for display). last_updated = segments.last_refreshed_at or cohorts.computed_at. Order by member_count descending, limited to the top 50 rows by member_count.",
+   "builds_on": [
+    "Customer headcount by definition"
+   ]
+  },
+  {
+   "title": "Payment capture lag by payment method",
+   "question": "Does the 8-14 day dip in order-to-payment match rate trace to a specific payment method with inherently slower capture (e.g. bank transfer or wire), supporting the 'it's timing, not a hole' explanation?",
+   "grain": "payment method kind (payment_methods.kind)",
+   "columns": [
+    "kind",
+    "payment_count",
+    "avg_days_order_to_capture",
+    "pct_captured_within_7_days",
+    "pct_captured_within_14_days"
+   ],
+   "details": "Population: payments with status in ('captured','refunded','partially_refunded'), joined to payment_methods on payments.payment_method_id = payment_methods.id to get kind (card, bank_transfer, paypal, wallet, wire, credit), and joined to orders on payments.order_id = orders.id to get placed_at (only include payments linked to an order; skip payments with a null order_id). Group by payment_methods.kind. payment_count = count of such payments. avg_days_order_to_capture = average of (payments.captured_at minus orders.placed_at) in days, rounded to 1 decimal. pct_captured_within_7_days = percentage of these payments where (captured_at - placed_at) <= 7 days, rounded to 1 decimal. pct_captured_within_14_days = percentage where (captured_at - placed_at) <= 14 days, rounded to 1 decimal. Tables: payments, payment_methods, orders. Order by avg_days_order_to_capture descending.",
+   "builds_on": [
+    "Order-to-payment match rate by order age"
+   ]
+  }
+ ]
+}

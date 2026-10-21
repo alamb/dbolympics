@@ -1,0 +1,34 @@
+=== Report 1: Stock movement magnitude by kind, 2025 (written by Omar) ===
+Engineer's note: Used occurred_at >= 2025-01-01 and < 2026-01-01 (equivalent to the requested inclusive range) for a clean half-open bound on timestamps.
+REPORT: Stock movement magnitude by kind, 2025
+QUESTION: Is the finding that every recorded cycle-count discrepancy is exactly 1 unit (not a range of sizes) real, or does it only show up because other movement kinds behave differently — i.e., is quantity magnitude on stock_movements generally variable, or is ±1 specific to cycle_count?
+kind        | event_count | min_abs_qty | max_abs_qty | avg_abs_qty | median_abs_qty | pct_abs_qty_eq_1 | total_abs_qty
+------------+-------------+-------------+-------------+-------------+----------------+------------------+--------------
+adjustment  |         407 |           1 |         192 |        9.99 |            2.0 |             38.6 |          4067
+cycle_count |       10193 |           1 |           1 |         1.0 |            1.0 |            100.0 |         10193
+receipt     |       32687 |           1 |         397 |        4.36 |            3.0 |              0.6 |        142469
+return      |        3899 |           1 |          46 |        1.34 |            1.0 |             90.2 |          5220
+shipment    |       40177 |           1 |         236 |        2.14 |            1.0 |             81.3 |         86074
+(5 rows)
+
+=== Report 2: Stock-count discrepancies by storage-location kind, company-wide (written by Ines) ===
+Engineer's note: Valuation uses preferred-then-cheapest supplier_products.unit_cost per variant (COALESCE to 0 when a variant has no supplier_products cost or no matching exchange_rates row for that currency/date), converted to EUR via exchange_rates.rate (EUR as base_code) on the movement's occurred_at date; estimated_value_eur is computed from absolute unit variance (|quantity| × cost), not net.
+REPORT: Stock-count discrepancies by storage-location kind, company-wide
+QUESTION: Across the whole company (not just the top warehouses by value), does the cycle-count mismatch concentrate in pick locations specifically, or do other location kinds (bulk, overflow, etc.) also carry meaningful discrepancy volume?
+location_kind | distinct_locations_with_activity | total_locations_of_this_kind | cycle_count_events | abs_units_variance | net_units_variance | estimated_value_eur | share_of_total_value_pct
+--------------+----------------------------------+------------------------------+--------------------+--------------------+--------------------+---------------------+-------------------------
+pick          |                              120 |                          157 |              10193 |              10193 |              -3879 |           262456.85 |                    100.0
+bulk          |                                0 |                          157 |                  0 |                  0 |                  0 |                 0.0 |                      0.0
+returns       |                                0 |                          157 |                  0 |                  0 |                  0 |                 0.0 |                      0.0
+(3 rows)
+
+=== Report 3: Stock reservation outcomes: are soft holds reliable? (written by Felix) ===
+Engineer's note: Report is global across all tenants (no merchant breakdown was requested); all durations computed in days using the fixed 2025-12-31 reference date as specified. One row per outcome category, 4 rows total, no truncation.
+REPORT: Stock reservation outcomes: are soft holds reliable?
+QUESTION: When stock is reserved for an order, does the reservation get released normally (order fulfilled/cancelled in time), or do we see reservations left stuck past their expiry — quietly overstating what's actually available to sell?
+outcome_category  | reservation_count | pct_of_total | total_quantity_units | avg_quantity_per_reservation | avg_hold_duration_days
+------------------+-------------------+--------------+----------------------+------------------------------+-----------------------
+released_on_time  |             40453 |         99.3 |                86762 |                          2.1 |                    1.1
+released_late     |               139 |          0.3 |                  156 |                          1.1 |                    9.7
+still_open_active |               128 |          0.3 |                  206 |                          1.6 |                   -0.5
+(3 rows)

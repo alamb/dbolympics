@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Stock discrepancies by warehouse and location type",
+    "--question",
+    "Does the stock-count mismatch concentrate in particular warehouses, particular storage-location kinds (e.g. bulk shelving vs pick bins), or particular merchants, in a way that signals valuation/write-off exposure?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Viktor\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"warehouse and stock-location kind (e.g. one row = one warehouse's 'bulk' locations, another = that warehouse's 'pick' locations)\", \"columns_requested\": [\"tenant_name (merchant owning the warehouse)\", \"warehouse_name\", \"location_kind (stock_locations.kind)\", \"cycle_count_events\", \"net_units_variance (signed; negative = net shrinkage)\", \"abs_units_variance\", \"estimated_value_eur (abs variance costed and converted to EUR, same method as report 1)\", \"share_of_total_value_pct (this row's estimated_value_eur / sum of estimated_value_eur across all rows, *100, rounded 1dp)\"], \"details\": \"Same source and window as 'Scale of stock count discrepancies by month': stock_movements kind='cycle_count', occurred_at in 2025-01-01..2025-12-31. Join stock_locations (for kind and warehouse_id), warehouses (name, tenant_id), tenants (name). Cost/FX conversion identical to report 1 (supplier_products preferred-then-cheapest unit_cost, converted via exchange_rates). Group by tenant, warehouse, location_kind. Order by estimated_value_eur descending, tie-break by abs_units_variance descending, then tenant_name, warehouse_name, location_kind for determinism. Cap at 50 rows (top 50 by value) and note total distinct warehouse/location-kind combinations found in the data even if more than 50 exist.\", \"builds_on\": [\"Scale of stock count discrepancies by month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

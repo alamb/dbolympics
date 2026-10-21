@@ -1,0 +1,5 @@
+[
+ "B2B wholesale merchants are ~37% of our 2025 revenue, not the smaller slice we first reported — we found a data bug that was making 6 of 9 wholesale merchants show up as €0 in revenue reports; fixed, and their unpaid invoices look healthy (93% isn't even due yet).",
+ "Caught a currency-conversion bug before it caused bigger damage: if a report converts amounts to EUR the normal way, it can accidentally erase 100% of EUR revenue (€3.1M in 2025) — flagging this for a permanent fix so it can't quietly happen again elsewhere.",
+ "Cragsley Outfitters' outsized share of 'hard to trace' refunds (36% of the company total) is mostly just because they're our biggest merchant — their actual refund-timing rate (94%) is only slightly above the 84% company average, in line with several similar-sized merchants."
+]

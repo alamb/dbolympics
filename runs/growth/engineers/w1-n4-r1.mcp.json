@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Is loyalty members' lower spend a within-industry effect or a merchant-mix effect?",
+    "--question",
+    "Within the same industry, do loyalty-program members actually order more or spend more than non-members, or does the platform-wide 'members look worse' result just reflect which verticals have more loyalty members enrolled?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"growth\", \"analyst\": \"Sofie Nilsen\", \"engineer\": \"Viktor\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 1, \"grain\": \"one row per industry that has at least one tenant with an active loyalty program\", \"columns_requested\": [\"industry - tenants.industry\", \"members_count - distinct users with a loyalty_accounts row who placed >=1 order with placed_at in 2025 at a tenant in this industry\", \"nonmembers_count - distinct users without a loyalty_accounts row who placed >=1 order with placed_at in 2025 at a tenant in this industry\", \"avg_orders_per_member - that industry's members' total 2025 orders / members_count, rounded to 2 decimals\", \"avg_orders_per_nonmember - same calc for non-members, rounded to 2 decimals\", \"avg_order_value_member_eur - average grand_total (EUR) of members' 2025 orders in this industry, rounded to 0 decimals\", \"avg_order_value_nonmember_eur - average grand_total (EUR) of non-members' 2025 orders in this industry, rounded to 0 decimals\"], \"details\": \"Source: orders joined to tenants (for industry) and loyalty_accounts (match on user_id and tenant_id) to classify each ordering user as member/non-member, same definitions as last night's loyalty report. Restrict to industries where tenants.id appears in loyalty_programs with is_active = true (i.e. only verticals where loyalty is actually offered). Convert grand_total to EUR the same way as prior money reports (exchange_rates, base_code='EUR', quote_code=order currency, as_of=placed_at date, EUR=rate 1). Order by industry ascending.\", \"builds_on\": [\"Do loyalty program members behave differently from other shoppers?\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/growth/engineers/w1-n4-r1.submit.json"
+   ]
+  }
+ }
+}

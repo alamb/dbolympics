@@ -1,0 +1,80 @@
+=== Report 1: Shopper satisfaction (CSAT) by merchant, 2025 (written by Bea) ===
+Engineer's note: One row per tenant with >=10 CSAT responses in 2025, ordered worst-average first; printed to 50 rows. Note in the report footer the total count of qualifying tenants (i.e. the full row count before the LIMIT 50) so the analyst can see if any were cut off.
+REPORT: Shopper satisfaction (CSAT) by merchant, 2025
+QUESTION: Which merchants have the weakest shopper satisfaction, and how much does it vary across the platform?
+tenant_id | merchant_name                 | response_count | avg_score | median_score | pct_satisfied | pct_dissatisfied
+----------+-------------------------------+----------------+-----------+--------------+---------------+-----------------
+       79 | Kibblewick                    |             17 |      2.82 |          3.0 |          35.3 |             47.1
+        2 | Marrowby & Vane               |             79 |      2.86 |          3.0 |          34.2 |             39.2
+        7 | Cragsley Outfitters           |            130 |      3.05 |          3.0 |          39.2 |             37.7
+       25 | Studio Vrij                   |             49 |      3.10 |          3.0 |          49.0 |             32.7
+        9 | Honeycomb Larder              |             14 |      3.14 |          3.0 |          42.9 |             42.9
+        1 | Grind Collective              |             42 |      3.17 |          3.0 |          45.2 |             28.6
+       42 | Gratlinie Outdoor             |             10 |      3.20 |          3.0 |          30.0 |             10.0
+       17 | Ampfeld Elektronik            |             12 |      3.33 |          3.0 |          41.7 |              8.3
+       40 | Petalcourt Beauty             |             34 |      3.35 |          3.5 |          50.0 |             26.5
+       11 | Ballycorran Industrial Supply |             14 |      3.43 |          3.0 |          35.7 |             14.3
+       20 | Sourdough Club                |             15 |      3.60 |          4.0 |          53.3 |             20.0
+       18 | Brennquell Kaffee             |             32 |      3.63 |          4.0 |          56.3 |             18.8
+       12 | Spice Route Box               |             24 |      3.75 |          4.0 |          66.7 |             16.7
+        5 | Fennel & Flint                |             16 |      3.88 |          4.0 |          75.0 |             18.8
+       29 | Cinder Peak Sports Co.        |             13 |      4.08 |          4.0 |          69.2 |              0.0
+       35 | Wiesgrund Wohnen              |             10 |      4.20 |          4.5 |          70.0 |              0.0
+(16 rows)
+
+=== Report 2: CSAT score by ticket resolution-time bucket (written by Grace) ===
+Engineer's note: Platform-wide (all tenants pooled) since the request didn't scope to a merchant; resolution_hours computed from created_at to resolved_at as specified, with exactly the 5 requested buckets.
+REPORT: CSAT score by ticket resolution-time bucket
+QUESTION: Does a slower ticket resolution actually translate into a lower satisfaction score?
+resolution_time_bucket | tickets | avg_csat_score | pct_satisfied | pct_dissatisfied
+-----------------------+---------+----------------+---------------+-----------------
+<4h                    |     273 |           4.38 |          86.1 |              0.7
+4-24h                  |     712 |           3.82 |          64.3 |              7.9
+1-3 days               |     461 |           2.72 |          21.7 |             41.4
+3-7 days               |     124 |           1.70 |           2.4 |             83.9
+>7 days                |      64 |           1.72 |           1.6 |             82.8
+(5 rows)
+
+=== Report 3: Product review ratings trend, monthly (written by Bea) ===
+Engineer's note: Report is platform-wide review ratings only, at the requested grain and columns (36 monthly rows expected, 2023-01 through 2025-12). The CSAT comparison mentioned in the question isn't included as a column here since that would be a second metric/grain bundled into this report; if the analyst wants a side-by-side with support CSAT, that should be its own request (or a follow-up report joining metrics_daily/csat_responses).
+REPORT: Product review ratings trend, monthly
+QUESTION: What are shoppers' product review ratings telling us, and does the pattern echo the dips we see in support CSAT?
+month   | reviews_submitted | avg_rating | median_rating | pct_low_rating | pct_high_rating | pct_verified_purchase
+--------+-------------------+------------+---------------+----------------+-----------------+----------------------
+2023-01 |                31 |       4.03 |           5.0 |           16.1 |            67.7 |                 100.0
+2023-02 |                90 |       3.82 |           4.0 |           21.1 |            64.4 |                 100.0
+2023-03 |                73 |       3.85 |           5.0 |           23.3 |            63.0 |                 100.0
+2023-04 |               107 |       3.97 |           5.0 |           18.7 |            64.5 |                 100.0
+2023-05 |               117 |       4.05 |           5.0 |           17.9 |            68.4 |                 100.0
+2023-06 |               113 |       3.92 |           5.0 |           21.2 |            66.4 |                 100.0
+2023-07 |                92 |       4.08 |           5.0 |           15.2 |            68.5 |                 100.0
+2023-08 |               130 |       4.07 |           5.0 |           14.6 |            72.3 |                 100.0
+2023-09 |               132 |       4.10 |           5.0 |           14.4 |            68.9 |                 100.0
+2023-10 |               158 |       3.99 |           5.0 |           19.0 |            66.5 |                 100.0
+2023-11 |               146 |       4.11 |           5.0 |           13.0 |            69.9 |                 100.0
+2023-12 |               308 |       3.81 |           5.0 |           22.7 |            62.0 |                 100.0
+2024-01 |               219 |       4.13 |           5.0 |           14.2 |            72.1 |                 100.0
+2024-02 |               192 |       4.12 |           5.0 |           12.0 |            71.9 |                 100.0
+2024-03 |               189 |       4.18 |           5.0 |           12.7 |            73.0 |                 100.0
+2024-04 |               164 |       4.11 |           5.0 |           15.2 |            70.7 |                 100.0
+2024-05 |               142 |       4.16 |           5.0 |           12.0 |            73.2 |                 100.0
+2024-06 |               197 |       4.15 |           5.0 |           12.2 |            72.6 |                 100.0
+2024-07 |               188 |       4.06 |           5.0 |           15.4 |            69.7 |                 100.0
+2024-08 |               169 |       4.06 |           5.0 |           16.0 |            71.0 |                 100.0
+2024-09 |               173 |       4.19 |           5.0 |           11.0 |            73.4 |                 100.0
+2024-10 |               187 |       4.10 |           5.0 |           14.4 |            67.9 |                 100.0
+2024-11 |               230 |       4.02 |           5.0 |           18.3 |            68.3 |                 100.0
+2024-12 |               392 |       3.94 |           5.0 |           16.1 |            65.8 |                 100.0
+2025-01 |               310 |       3.93 |           5.0 |           19.7 |            65.2 |                 100.0
+2025-02 |               197 |       4.09 |           5.0 |           14.2 |            69.0 |                 100.0
+2025-03 |               204 |       4.11 |           5.0 |           12.7 |            70.6 |                 100.0
+2025-04 |               205 |       4.07 |           5.0 |           15.1 |            70.7 |                 100.0
+2025-05 |               205 |       4.07 |           5.0 |           15.6 |            72.2 |                 100.0
+2025-06 |               217 |       3.89 |           5.0 |           20.3 |            63.1 |                 100.0
+2025-07 |               161 |       4.07 |           5.0 |           15.5 |            70.8 |                 100.0
+2025-08 |               224 |       4.21 |           5.0 |           13.4 |            73.7 |                 100.0
+2025-09 |               188 |       3.96 |           4.0 |           14.9 |            67.6 |                 100.0
+2025-10 |               245 |       4.16 |           5.0 |           12.2 |            71.8 |                 100.0
+2025-11 |               258 |       4.23 |           5.0 |           12.8 |            73.6 |                 100.0
+2025-12 |               454 |       3.71 |           4.0 |           25.8 |            59.5 |                 100.0
+(36 rows)

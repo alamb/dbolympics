@@ -1,0 +1,7 @@
+#!/bin/bash
+# DuckDB runs inside the query program, which keeps the database open for the run.
+set -e
+mkdir -p db
+# the query program, for the whole run: the runner's protocol on /run/dbo/dbo.sock
+nohup ./query >/run/dbo/query.log 2>&1 &
+echo $! > query.pid

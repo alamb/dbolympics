@@ -1,0 +1,62 @@
+=== Report 1: The real euro cost of discounting, by vertical (written by Bea) ===
+Engineer's note: order_returns.refunded_at can be null for returns not yet refunded; for those rows I used requested_at date instead to look up the EUR exchange rate (COALESCE(refunded_at, requested_at)) so no refund amounts are silently dropped. Industry is taken as-is from tenants.industry, including a NULL-industry group if any tenants lack one.
+REPORT: The real euro cost of discounting, by vertical
+QUESTION: Beyond return rates, how much revenue does discounting actually cost each vertical once you add up both the discounts given and the refunds paid out on those orders?
+industry                  | order_group | orders_count | discount_given_eur | refund_amount_eur |  gmv_eur | net_leakage_pct | refund_rate_pct
+--------------------------+-------------+--------------+--------------------+-------------------+----------+-----------------+----------------
+Apparel & Footwear        | discounted  |          870 |            32434.0 |           33115.0 | 164367.0 |            39.9 |            37.8
+Apparel & Footwear        | full price  |         5079 |                0.0 |          188062.0 | 862386.0 |            21.8 |            34.4
+Beauty                    | discounted  |          269 |             8756.0 |            1967.0 |  24258.0 |            44.2 |             8.6
+Beauty                    | full price  |         1010 |                0.0 |            2266.0 |  87062.0 |             2.6 |             4.4
+Books & Stationery        | discounted  |            8 |              227.0 |               0.0 |    440.0 |            51.5 |             0.0
+Books & Stationery        | full price  |          111 |                0.0 |             128.0 |   4128.0 |             3.1 |             7.2
+Consumer Electronics      | discounted  |           15 |              831.0 |             209.0 |   6986.0 |            14.9 |            13.3
+Consumer Electronics      | full price  |           32 |                0.0 |            4400.0 |  25590.0 |            17.2 |             9.4
+Food & Coffee             | discounted  |         1099 |            41500.0 |              14.0 |  46580.0 |            89.1 |             0.2
+Food & Coffee             | full price  |          685 |                0.0 |             227.0 |  35641.0 |             0.6 |             1.6
+Home & Living             | discounted  |          150 |             4002.0 |            1881.0 |  23032.0 |            25.5 |            18.0
+Home & Living             | full price  |          693 |                0.0 |            7661.0 |  94049.0 |             8.1 |            12.8
+Industrial Supplies (B2B) | discounted  |          127 |            28231.0 |            3534.0 | 368552.0 |             8.6 |             7.9
+Industrial Supplies (B2B) | full price  |           32 |                0.0 |             530.0 |  17495.0 |             3.0 |             3.1
+Jewelry & Accessories     | discounted  |            4 |              115.0 |               0.0 |    889.0 |            13.0 |             0.0
+Jewelry & Accessories     | full price  |           10 |                0.0 |               0.0 |   2275.0 |             0.0 |            10.0
+Office Supplies (B2B)     | discounted  |          163 |            29282.0 |           19352.0 | 556429.0 |             8.7 |             8.0
+Office Supplies (B2B)     | full price  |           82 |                0.0 |            2754.0 |  68411.0 |             4.0 |             2.4
+Pet Supplies              | discounted  |          504 |            18123.0 |               8.0 |  21780.0 |            83.2 |             0.2
+Pet Supplies              | full price  |          617 |                0.0 |             594.0 |  32931.0 |             1.8 |             2.3
+Sports & Outdoor          | discounted  |          119 |            10221.0 |            8890.0 |  51250.0 |            37.3 |            26.1
+Sports & Outdoor          | full price  |          435 |                0.0 |           17341.0 | 149699.0 |            11.6 |            18.6
+(22 rows)
+
+=== Report 2: Which coupon codes cost more than they're worth (written by Ines) ===
+Engineer's note: Grouped by the coupon's literal code text across all tenants (not per-tenant), since the question asks about code patterns like "Welcome10" rather than one merchant's coupons; if two merchants happen to reuse the same code string, their redemptions are combined into one row. Rates for discount, refund and order value each use the exchange rate as of their own respective date, as specified.
+REPORT: Which coupon codes cost more than they're worth
+QUESTION: Ranking individual coupon codes by discount-plus-refund cost, which specific codes are the worst offenders (like Welcome10), and which are clean?
+code      | times_redeemed | orders_count | discount_given_eur | refund_amount_eur | net_cost_eur | refund_rate_pct | avg_order_value_eur
+----------+----------------+--------------+--------------------+-------------------+--------------+-----------------+--------------------
+WELCOME10 |            724 |          724 |            25976.0 |           25340.0 |      51316.0 |            28.5 |               348.0
+BF2530    |             89 |           89 |             5497.0 |            5106.0 |      10603.0 |            16.9 |               164.0
+BF2525    |             58 |           58 |             2216.0 |             677.0 |       2893.0 |            15.5 |               140.0
+BF2520    |             78 |           78 |             1202.0 |             322.0 |       1524.0 |             6.4 |                75.0
+BF2515    |             30 |           30 |              735.0 |             175.0 |        910.0 |             6.7 |               162.0
+(5 rows)
+
+=== Report 3: Is discount-related revenue leakage getting worse over 2025? (written by Omar) ===
+Engineer's note: Refunds are converted to EUR using the exchange rate as of the original order's placed_at date (not the return's own date), consistent with attributing leakage to the order's cohort month.
+REPORT: Is discount-related revenue leakage getting worse over 2025?
+QUESTION: Is the euro cost of discounting (discounts given plus refunds on those orders) trending up or down over the course of 2025, in step with the refund-rate creep other teams have flagged?
+month   | orders_count | discount_given_eur | refund_amount_eur |  gmv_eur | net_leakage_pct
+--------+--------------+--------------------+-------------------+----------+----------------
+2025-01 |         1827 |            49786.0 |           30247.0 | 552211.0 |            14.5
+2025-02 |         1400 |            25803.0 |           17427.0 | 397960.0 |            10.9
+2025-03 |         1638 |            28890.0 |           22539.0 | 387778.0 |            13.3
+2025-04 |         1568 |            32256.0 |           39840.0 | 446780.0 |            16.1
+2025-05 |         1691 |            34930.0 |           49731.0 | 450644.0 |            18.8
+2025-06 |         1509 |            24037.0 |           22741.0 | 325394.0 |            14.4
+2025-07 |         1648 |            50733.0 |           21049.0 | 370784.0 |            19.4
+2025-08 |         1564 |            25942.0 |           21713.0 | 334705.0 |            14.2
+2025-09 |         1712 |            36184.0 |           33424.0 | 437884.0 |            15.9
+2025-10 |         1879 |            34276.0 |           52837.0 | 483921.0 |            18.0
+2025-11 |         2645 |            83340.0 |           78744.0 | 798013.0 |            20.3
+2025-12 |         3112 |            50390.0 |           54949.0 | 658182.0 |            16.0
+(12 rows)

@@ -1,0 +1,52 @@
+=== Report 1: Corrected Tidewick Revenue by Month, 2025 (validated EUR conversion) (written by Grace) ===
+Engineer's note: Built exactly per the specified per-payout EUR conversion method (gross/fee/net divided by EUR→currency rate matched on paid_at date, rate=1 for EUR payouts), filtered to status in ('paid','completed'). Prior-year fee column matches the same calendar month in 2024 using the identical conversion method.
+REPORT: Corrected Tidewick Revenue by Month, 2025 (validated EUR conversion)
+QUESTION: What is the correct month-by-month view of Tidewick's 2025 gross payout volume and processing-fee revenue, using the per-payout EUR conversion method validated against the currency reconciliation?
+month   | payout_count | gross_volume_eur | fee_revenue_eur | net_paid_out_eur | fee_rate_pct | fee_revenue_prior_year_eur
+--------+--------------+------------------+-----------------+------------------+--------------+---------------------------
+2025-01 |          958 |         336997.3 |         7925.21 |        253932.01 |          2.4 |                    5121.57
+2025-02 |          752 |        280023.05 |         6459.16 |        243182.77 |          2.3 |                    5539.86
+2025-03 |          871 |        255837.34 |         5985.68 |        223413.62 |          2.3 |                    8182.78
+2025-04 |          839 |        340937.07 |         7828.37 |        304687.99 |          2.3 |                     5249.7
+2025-05 |          878 |        334528.07 |         7178.24 |         278317.0 |          2.1 |                    5641.83
+2025-06 |          840 |        229136.55 |         5713.03 |        184551.27 |          2.5 |                    4767.01
+2025-07 |          851 |        239376.66 |         6028.64 |        203551.42 |          2.5 |                    5620.38
+2025-08 |          869 |        259058.79 |         6808.71 |        225922.27 |          2.6 |                    4710.35
+2025-09 |          874 |        259147.15 |         5871.99 |        227184.81 |          2.3 |                    5717.95
+2025-10 |          959 |         351845.4 |         8090.78 |        304170.97 |          2.3 |                    6290.06
+2025-11 |         1154 |        471485.44 |        11427.35 |        412663.97 |          2.4 |                    7443.25
+2025-12 |         1441 |        614615.16 |        14266.05 |        493277.91 |          2.3 |                   11829.11
+TOTAL   |        11286 |       3972987.99 |         93583.2 |        3354856.0 |          2.4 |                   76113.86
+(13 rows)
+
+=== Report 2: Company-Wide Refund Rate Trend by Quarter, 2024-2025 (written by Bea) ===
+Engineer's note: Prior-year column is null for 2024 rows by construction since the source window starts 2024-01-01 (no 2023 data pulled in); EUR conversion divides each amount by the EUR->currency_code daily rate, matching the payouts convention.
+REPORT: Company-Wide Refund Rate Trend by Quarter, 2024-2025
+QUESTION: Is Tidewick's overall refund rate rising, falling, or flat over the last two years, and does it spike around the Nov/Dec peak-volume period?
+quarter | payment_count | gross_captured_eur | amount_refunded_eur | refund_rate_pct | refund_rate_same_quarter_prior_year_pct
+--------+---------------+--------------------+---------------------+-----------------+----------------------------------------
+2024-Q1 |          1753 |           443060.0 |            46897.52 |           10.58 |                                    NULL
+2024-Q2 |          1890 |           443690.4 |            46481.96 |           10.48 |                                    NULL
+2024-Q3 |          1956 |          540910.23 |            45449.84 |             8.4 |                                    NULL
+2024-Q4 |          3484 |          799816.05 |            113006.0 |           14.13 |                                    NULL
+2025-Q1 |          2429 |          694589.94 |            53953.48 |            7.77 |                                   10.58
+2025-Q2 |          2417 |          605811.02 |            64609.26 |           10.66 |                                   10.48
+2025-Q3 |          2525 |          582250.66 |            78289.11 |           13.45 |                                     8.4
+2025-Q4 |          4269 |          928304.74 |           110674.65 |           11.92 |                                   14.13
+(8 rows)
+
+=== Report 3: Apparel & Footwear Refund Rate Trend by Quarter, 2024-2025 (written by Bea) ===
+Engineer's note: Quarter buckets come from calendar_days (so all 8 quarters print even if a quarter had zero qualifying apparel payments, shown as 0/NULL). Refund rates are volume-weighted (total refunded / total captured) per quarter, matching the company-wide refund trend report's EUR conversion method.
+REPORT: Apparel & Footwear Refund Rate Trend by Quarter, 2024-2025
+QUESTION: Within the outlier Apparel & Footwear vertical, is the elevated refund rate structural/stable or getting worse over time, and how does it compare to the company average each quarter?
+quarter | merchant_count | payment_count | gross_captured_eur | amount_refunded_eur | refund_rate_pct | company_avg_refund_rate_pct
+--------+----------------+---------------+--------------------+---------------------+-----------------+----------------------------
+2024-Q1 |              7 |           894 |          197075.62 |             41567.9 |           21.09 |                       10.58
+2024-Q2 |              8 |           922 |          181654.82 |            41182.07 |           22.67 |                       10.48
+2024-Q3 |              9 |           988 |          168971.48 |            35312.27 |            20.9 |                         8.4
+2024-Q4 |              9 |          1975 |          386950.72 |            99873.88 |           25.81 |                       14.13
+2025-Q1 |             11 |          1150 |          216621.44 |            44831.18 |            20.7 |                        7.77
+2025-Q2 |             11 |          1169 |          198881.22 |            44578.08 |           22.41 |                       10.66
+2025-Q3 |             11 |          1212 |           192047.6 |            42818.11 |            22.3 |                       13.45
+2025-Q4 |             11 |          2298 |          470544.84 |            91672.62 |           19.48 |                       11.92
+(8 rows)

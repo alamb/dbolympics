@@ -1,0 +1,46 @@
+=== Report 1: Payout status & date-field reconciliation (written by Ines) ===
+Engineer's note: EUR conversion join (base_code='EUR', quote_code=currency_code, as_of=date(paid_at)) only applies to rows with non-null paid_at, so null-paid_at rows are counted but excluded from the fee/gross EUR sums as requested; the 2025 window is treated as paid_at in [2025-01-01, 2026-01-01) to include all of Dec 31 correctly.
+REPORT: Payout status & date-field reconciliation
+QUESTION: Why do our two trailing-12-month fee-revenue totals disagree, and what is the correct definition of a 'settled' payout?
+status     | total_payout_count | count_paid_in_window | count_paid_at_null | fee_revenue_eur | gross_volume_eur | earliest_paid_at    | latest_paid_at      | earliest_arrival_date | latest_arrival_date
+-----------+--------------------+----------------------+--------------------+-----------------+------------------+---------------------+---------------------+-----------------------+--------------------
+paid       |              26949 |                11286 |                  0 |        53185.85 |       1991449.08 | 2023-01-03 09:00:00 | 2025-12-31 09:00:00 | 2023-01-03            | 2025-12-31         
+in_transit |                 63 |                    0 |                 63 |            NULL |             NULL | NULL                | NULL                | 2026-01-01            | 2026-01-03         
+(2 rows)
+
+=== Report 2: Merchant and order growth by quarter (written by Grace) ===
+Engineer's note: One row per quarter (2024-Q1 through 2025-Q4), aggregated across all tenants as the question is about platform-wide growth rather than individual merchants. GMV/AOV converted to EUR via same-day exchange_rates as specified.
+REPORT: Merchant and order growth by quarter
+QUESTION: Are we gaining merchants and order volume, and how has that trended over the last two years?
+quarter | new_merchants | cumulative_active_merchants | order_count |   gmv_eur | avg_order_value_eur
+--------+---------------+-----------------------------+-------------+-----------+--------------------
+2024-Q1 |             4 |                          76 |        1717 | 442030.82 |              257.44
+2024-Q2 |             3 |                          78 |        1909 | 477592.82 |              250.18
+2024-Q3 |             6 |                          83 |        1976 | 532608.59 |              269.54
+2024-Q4 |             8 |                          88 |        3461 | 779322.62 |              225.17
+2025-Q1 |             2 |                          90 |        2417 |  721097.1 |              298.34
+2025-Q2 |            10 |                         100 |        2424 | 549427.23 |              226.66
+2025-Q3 |             9 |                         109 |        2557 | 542407.57 |              212.13
+2025-Q4 |             2 |                         111 |        4259 |  894406.3 |               210.0
+(8 rows)
+
+=== Report 3: GMV growth by merchant cohort: new vs existing, per quarter (written by Omar) ===
+Engineer's note: Quarter derived via the calendar_days dimension (year_num/quarter_num/quarter_start) joined on placed_at's date; cohort and EUR conversion follow the rules given exactly as specified.
+REPORT: GMV growth by merchant cohort: new vs existing, per quarter
+QUESTION: Is Tidewick's order-volume growth coming from newly-joined merchants or from existing merchants transacting more?
+quarter | cohort   | merchant_count | order_count |   gmv_eur | share_of_quarter_gmv_pct
+--------+----------+----------------+-------------+-----------+-------------------------
+2024-Q1 | new      |              2 |          22 |   1454.77 |                     0.33
+2024-Q1 | existing |             39 |        1695 | 440576.05 |                    99.67
+2024-Q2 | existing |             40 |        1909 | 477592.82 |                    100.0
+2024-Q3 | new      |              2 |           3 |    205.51 |                     0.04
+2024-Q3 | existing |             42 |        1973 | 532403.08 |                    99.96
+2024-Q4 | new      |              1 |           1 |     42.36 |                     0.01
+2024-Q4 | existing |             45 |        3460 | 779280.27 |                    99.99
+2025-Q1 | existing |             47 |        2417 |  721097.1 |                    100.0
+2025-Q2 | new      |              2 |          10 |    700.98 |                     0.13
+2025-Q2 | existing |             47 |        2414 | 548726.25 |                    99.87
+2025-Q3 | new      |              2 |           4 |    189.05 |                     0.03
+2025-Q3 | existing |             50 |        2553 | 542218.52 |                    99.97
+2025-Q4 | existing |             55 |        4259 |  894406.3 |                    100.0
+(13 rows)

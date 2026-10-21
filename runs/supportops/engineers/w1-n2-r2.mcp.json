@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Highest-volume merchant + agent-group units",
+    "--question",
+    "At the real operational unit (one merchant's one agent group), where is ticket load heaviest, and does staffing (agent count) look right for that load?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Omar\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 2, \"request\": 2, \"grain\": \"one row per (tenant, agent_group) pair\", \"columns_requested\": [\"tenant_name\", \"agent_group_name\", \"ticket_count (created 2025)\", \"agent_count (support_agents in that tenant's group via agent_group_members)\", \"tickets_per_agent\", \"pct_unassigned\", \"avg_first_response_minutes\", \"avg_resolution_minutes\", \"resolution_breach_rate\"], \"details\": \"Window: tickets.created_at between 2025-01-01 and 2025-12-31, tickets.agent_group_id not null. Source tables: tickets, agent_groups, agent_group_members, support_agents, tenants, sla_breaches. Group by tenant_id + agent_group_id (do not roll up by group name across tenants). Order by ticket_count descending, show the top 20 rows, and note how many (tenant, agent_group) combinations exist in total in 2025. Round tickets_per_agent to 1 decimal, rates to 1 decimal percent.\", \"builds_on\": [\"Ticket volume and staffing by agent group\", \"SLA breach rates by agent group\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n2-r2.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Image-Richness vs Sales Within Apparel & Footwear",
+    "--question",
+    "Within a single vertical, removing the cross-vertical confound seen in the platform-wide bucket report, do products with more images actually sell better?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per product image-count bucket (0, 1, 2-3, 4-6, 7+), restricted to products belonging to tenants in the Apparel & Footwear industry\", \"columns_requested\": [\"image_count_bucket\", \"product_count\", \"pct_with_description\", \"avg_variants_per_product\", \"avg_reviews_per_product\", \"avg_rating\", \"avg_units_sold_per_product_last_12mo\", \"avg_revenue_per_product_eur_last_12mo\"], \"details\": \"Same methodology as the night-1 'Catalog Richness vs Sales Performance by Image Count Bucket' report (products, product_media kind=image for the bucket, product_reviews approved for reviews/rating, product_variants for variant count, order_items joined to orders with placed_at between 2025-01-01 and 2025-12-31 and status not cancelled, revenue converted to EUR via exchange_rates base_code=EUR quote_code=order currency_code as_of the order's placed_at date), but filtered to products whose tenant has tenants.industry = 'Apparel & Footwear'. Only active, non-deleted products. avg_rating excludes products with zero reviews from the average (as before) but they still count at 0 in avg_reviews_per_product and sales averages. Round rates/averages to 2 decimals, revenue to whole EUR. Order by image_count_bucket in natural ascending order (0, 1, 2-3, 4-6, 7+).\", \"builds_on\": [\"Catalog Richness vs Sales Performance by Image Count Bucket\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

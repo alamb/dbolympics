@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "\nWITH active_tenants AS (\n    SELECT\n        id AS tenant_id,\n        status AS tenant_status,\n        created_at\n    FROM tenants\n    WHERE deleted_at IS NULL\n),\nrecent_paid_payouts AS (\n    SELECT DISTINCT tenant_id\n    FROM payouts\n    WHERE status = 'paid'\n      AND paid_at >= DATE '2025-01-01'\n      AND paid_at < DATE '2026-01-01'\n),\ntenant_payout_flags AS (\n    SELECT\n        t.tenant_id,\n        t.tenant_status,\n        t.created_at,\n        CASE WHEN p.tenant_id IS NOT NULL THEN 1 ELSE 0 END AS has_recent_payout,\n        (DATE '2026-01-05' - CAST(t.created_at AS DATE)) AS tenure_days\n    FROM active_tenants t\n    LEFT JOIN recent_paid_payouts p\n        ON p.tenant_id = t.tenant_id\n)\nSELECT\n    tenant_status,\n    COUNT(*) AS tenant_count,\n    SUM(has_recent_payout) AS with_recent_payout,\n    SUM(1 - has_recent_payout) AS without_recent_payout,\n    ROUND(100.0 * SUM(1 - has_recent_payout) / COUNT(*), 1) AS pct_without_recent_payout,\n    ROUND(AVG(CASE WHEN has_recent_payout = 0 THEN tenure_days END), 1) AS avg_tenure_days_without_payout\nFROM tenant_payout_flags\nGROUP BY tenant_status\nORDER BY tenant_count DESC, tenant_status ASC\n",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: tenant_status, tenant_count, with_recent_payout, without_recent_payout, pct_without_recent_payout, avg_tenure_days_without_payout"
+ },
+ {
+  "kind": "text",
+  "text": "This compiles and returns the expected columns. Submitting now."
+ },
+ {
+  "kind": "submit",
+  "sql": "\nWITH active_tenants AS (\n    SELECT\n        id AS tenant_id,\n        status AS tenant_status,\n        created_at\n    FROM tenants\n    WHERE deleted_at IS NULL\n),\nrecent_paid_payouts AS (\n    SELECT DISTINCT tenant_id\n    FROM payouts\n    WHERE status = 'paid'\n      AND paid_at >= DATE '2025-01-01'\n      AND paid_at < DATE '2026-01-01'\n),\ntenant_payout_flags AS (\n    SELECT\n        t.tenant_id,\n        t.tenant_status,\n        t.created_at,\n        CASE WHEN p.tenant_id IS NOT NULL THEN 1 ELSE 0 END AS has_recent_payout,\n        (DATE '2026-01-05' - CAST(t.created_at AS DATE)) AS tenure_days\n    FROM active_tenants t\n    LEFT JOIN recent_paid_payouts p\n        ON p.tenant_id = t.tenant_id\n)\nSELECT\n    tenant_status,\n    COUNT(*) AS tenant_count,\n    SUM(has_recent_payout) AS with_recent_payout,\n    SUM(1 - has_recent_payout) AS without_recent_payout,\n    ROUND(100.0 * SUM(1 - has_recent_payout) / COUNT(*), 1) AS pct_without_recent_payout,\n    ROUND(AVG(CASE WHEN has_recent_payout = 0 THEN tenure_days END), 1) AS avg_tenure_days_without_payout\nFROM tenant_payout_flags\nGROUP BY tenant_status\nORDER BY tenant_count DESC, tenant_status ASC\n",
+  "note": "Report is as requested: one row per tenants.status, counting tenants with/without a settled (status='paid') payout dated 2025-01-01 to 2025-12-31, plus average tenure (days as of 2026-01-05) for the no-recent-payout group. Note the reporting \"today\" is 2026-01-05 per the handbook, even though the system date shown to me was 2026-10-04.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "The report has been submitted. It groups all non-deleted tenants by their `status`, left-joins to settled payouts (`status='paid'`, `paid_at` in 2025) to flag each tenant as having a recent payout or not, then aggregates to show tenant count, counts with/without recent payout, the share with no recent payout, and the average tenure (in days, as of 2026-01-05) for the no-payout group — ordered by tenant count descending with status as a tie-break."
+ }
+]

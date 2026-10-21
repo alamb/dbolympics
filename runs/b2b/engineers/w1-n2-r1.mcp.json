@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "New Business Pipeline: Stage Where Lost Opportunities Were Last Seen",
+    "--question",
+    "Among B2B wholesale opportunities that were actually lost in new-customer acquisition (not renewals), which stage were they sitting in just before they were marked Closed Lost — i.e. where is the real graveyard?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Ines\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"one row per New-business pipeline stage (plus one row for opportunities with no recorded stage transition)\", \"columns_requested\": [\"stage_name\", \"stage_order\", \"lost_opportunities_last_seen_here (count)\", \"pct_of_total_lost_in_new_business\", \"total_lost_opportunities_new_business (constant, for reference)\"], \"details\": \"Night 1's stage report showed that for every wholesale tenant, the 'New business' pipeline has ZERO opportunities currently open or closed at Prospecting/Qualification/Proposal/Negotiation \\u2014 all closed opportunities show only as 'Closed Won' or 'Closed Lost' (the terminal stages). This means opportunities.stage_id only reflects the FINAL state and does not preserve where a lost deal actually stalled before dying \\u2014 the earlier 'graveyard stage' question cannot be answered from current stage_id alone. This report reconstructs it from history. Scope: opportunities where tenant_id is a wholesale merchant (tenants.industry ILIKE '%industrial%' OR '%office equipment%' OR '%wholesal%'), pipeline_id = the tenant's 'New business' pipeline (join pipelines on name = 'New business'), is_closed = true, is_won = false. For each such opportunity, look at change_history where entity_table = 'opportunities', entity_id = opportunities.id, changed_columns includes 'stage_id', ordered by occurred_at. Take the most recent such change event and read before_data->>'stage_id' as the stage the opportunity was in immediately before that final change (presumed to be the move into Closed Lost); join that id to opportunity_stages for stage_name/stage_order. If an opportunity has no change_history row with a stage_id change at all, bucket it as 'No stage transition recorded' (it was apparently created or recorded as lost without a logged progression). Group by the resulting stage (or the no-record bucket), count opportunities, and compute each group's share of all lost New-business opportunities for this tenant set. Order by lost_opportunities_last_seen_here descending. Please flag in the report notes if change_history has little or no coverage for these opportunities (e.g., most rows fall into 'No transition recorded'), since that would mean the audit trail can't answer this and we should say so plainly rather than over-interpret a small sample.\", \"builds_on\": [\"B2B Wholesale Pipeline: Opportunities by Merchant and Stage\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

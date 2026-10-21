@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "How far back does data go in tables without a retention policy?",
+    "--question",
+    "For the five tables that currently have no configured retention policy, how far back does the oldest data actually go, and how much of it is already older than our one known retention benchmark (audit_log's 730-day policy)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Felix\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 2, \"request\": 3, \"grain\": \"one row per table, for access_log, change_history, data_subject_requests, compliance_events, and login_attempts, across all tenants\", \"columns_requested\": [\"table_name\", \"earliest_record_date (min of the relevant timestamp column: occurred_at for access_log/change_history/compliance_events/login_attempts, received_at for data_subject_requests)\", \"days_since_earliest_record (as of 2025-12-31)\", \"total_row_count\", \"row_count_older_than_730_days\", \"pct_older_than_730_days\"], \"details\": \"Sources: access_log, change_history, data_subject_requests, compliance_events, login_attempts (one SELECT per table, unioned into a single result keyed by table_name). Use 2025-12-31 as the fixed reference date. Purpose: size how exposed we are before escalating the 'no retention policy' finding to Rosa \\u2014 if these tables only go back a few months this is minor, if they go back close to our full 3-year history (like audit_log's archive) it's a bigger conversation. Order by table_name.\", \"builds_on\": [\"Retention policy coverage for audit and compliance-relevant tables\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n2-r3.submit.json"
+   ]
+  }
+ }
+}

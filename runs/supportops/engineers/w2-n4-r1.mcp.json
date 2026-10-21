@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Albion Parcel monthly on-time performance at Marrowby & Vane",
+    "--question",
+    "Did Albion Parcel's on-time performance at Marrowby & Vane specifically collapse in November-December 2025, and has it recovered by year end?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Grace\", \"situation\": \"helpdesk-efficiency\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per month in 2025, for Marrowby & Vane shipments carried by Albion Parcel only\", \"columns_requested\": [\"month_label (YYYY-MM)\", \"shipment_count (shipped_at in that month)\", \"avg_delivery_days\", \"pct_delivered_within_3_days\"], \"details\": \"Window: shipments.shipped_at between 2025-01-01 and 2025-12-31, restricted to tenant = Marrowby & Vane and carrier = 'Albion Parcel'. Source table: shipments. Compute avg_delivery_days and pct_delivered_within_3_days only over shipments with both shipped_at and delivered_at populated. Order by month_label ascending. Round avg_delivery_days to 1 decimal, pct to 1 decimal percent.\", \"builds_on\": [\"Carrier mix and on-time delivery performance, flagged merchants vs. Cragsley\", \"Monthly delivery-topic ticket volume and speed, flagged merchants vs. Cragsley\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

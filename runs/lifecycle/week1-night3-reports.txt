@@ -1,0 +1,37 @@
+=== Report 1: Refund rate on points-redeeming orders vs other member orders (written by Grace) ===
+Engineer's note: Population is scoped to orders with a non-null placed_at in 2023-2025 (orders without a placed_at, e.g. still-pending carts-to-order, can't be dated and are excluded). avg_order_value_eur is averaged only over non-cancelled orders with a matching EUR exchange rate for their placed_at date; refund_rate_pct uses all orders in the group regardless of status, per the stated refund definition.
+REPORT: Refund rate on points-redeeming orders vs other member orders
+QUESTION: Among loyalty members' own orders, do the ones where loyalty points were actually redeemed show a higher refund rate than their other orders - i.e. is the elevated member refund rate concentrated in reward-redeeming purchases, suggesting rewards are being used without real purchase intent?
+order_type                       | order_count | distinct_customers | refund_rate_pct | avg_order_value_eur | avg_points_redeemed_per_order
+---------------------------------+-------------+--------------------+-----------------+---------------------+------------------------------
+no points redeemed on this order |        4941 |               1330 |           32.36 |              207.88 |                           0.0
+(1 rows)
+
+=== Report 2: Loyalty and referral programme participation rate over time (written by Viktor) ===
+Engineer's note: Counts are aggregated across all tenants (global platform view) since the question is about overall customer base, not a specific merchant; percentages are rounded to 2 decimals and 0-base guarded with NULLIF.
+REPORT: Loyalty and referral programme participation rate over time
+QUESTION: What share of our active customer base is enrolled in loyalty or has ever used a referral code, and is that share growing, flat, or shrinking over time?
+quarter | active_customers_cumulative | loyalty_members_cumulative | pct_customers_loyalty_members | referred_customers_cumulative | pct_customers_referred
+--------+-----------------------------+----------------------------+-------------------------------+-------------------------------+-----------------------
+2023-Q1 |                        1047 |                        279 |                         26.65 |                             0 |                    0.0
+2023-Q2 |                        1795 |                        358 |                         19.94 |                             2 |                   0.11
+2023-Q3 |                        2421 |                        442 |                         18.26 |                             7 |                   0.29
+2023-Q4 |                        3401 |                        559 |                         16.44 |                            10 |                   0.29
+2024-Q1 |                        4004 |                        636 |                         15.88 |                            16 |                    0.4
+2024-Q2 |                        4654 |                        727 |                         15.62 |                            20 |                   0.43
+2024-Q3 |                        5269 |                        813 |                         15.43 |                            25 |                   0.47
+2024-Q4 |                        6314 |                        975 |                         15.44 |                            38 |                    0.6
+2025-Q1 |                        6963 |                       1092 |                         15.68 |                            43 |                   0.62
+2025-Q2 |                        7632 |                       1217 |                         15.95 |                            50 |                   0.66
+2025-Q3 |                        8377 |                       1344 |                         16.04 |                            57 |                   0.68
+2025-Q4 |                        9640 |                       1546 |                         16.04 |                            67 |                    0.7
+(12 rows)
+
+=== Report 3: B2B invoice payment behavior: loyalty-enrolled vs not (written by Omar) ===
+Engineer's note: B2B wholesaler tenants were identified by matching tenants.industry/name/slug against 'industrial supplies', 'office equipment', 'industrial' and 'wholesale' (case-insensitive substring match) — since I can only dry-run queries (no data preview), I can't list the exact matched tenant names here; the analyst should pull the matched tenant.id/name list as a quick follow-up if the exact roster needs sign-off. A user is 'loyalty member' if they have any loyalty_accounts row for that tenant, regardless of program status; avg_invoice_amount_eur excludes invoices whose currency had no exchange_rates row for the issue date.
+REPORT: B2B invoice payment behavior: loyalty-enrolled vs not
+QUESTION: Among our B2B wholesaler tenants (industrial supplies, office equipment), do customers enrolled in the loyalty programme settle invoices faster and carry fewer overdue balances than non-enrolled customers?
+segment    | customer_count | invoice_count | avg_days_to_pay | pct_invoices_paid_late | pct_invoices_currently_overdue | avg_invoice_amount_eur
+-----------+----------------+---------------+-----------------+------------------------+--------------------------------+-----------------------
+non-member |            164 |          1287 |           41.42 |                  74.63 |                           0.62 |                 2203.5
+(1 rows)

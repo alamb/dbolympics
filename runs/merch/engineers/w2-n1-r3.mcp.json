@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cragsley Outfitters: Sales Trajectory of Poor-Rated vs Other Products",
+    "--question",
+    "For Cragsley's already-identified poor-rated products, is demand starting to slow down to match the bad reviews, or is it still growing despite them?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Ines\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 3, \"grain\": \"one row per calendar month, 2023-01 through 2025-12, for Cragsley Outfitters only, split into two fixed product groups\", \"columns_requested\": [\"month\", \"poor_tier_units_sold\", \"poor_tier_revenue_eur\", \"other_tier_units_sold\", \"other_tier_revenue_eur\"], \"details\": \"Define the 'poor tier' as the fixed set of Cragsley products with at least 5 approved reviews (all-time) and an all-time average rating below 3.0 (the same set identified in the Poorly-Rated Product Concentration report, 23 products); 'other tier' is all of Cragsley's remaining active products. For each month, sum order_items.quantity and EUR-converted revenue (via exchange_rates as of placed_at date) from orders placed that month (status not cancelled), separately for each tier. Build off the full calendar so months with zero sales for a tier still show 0. Round revenue to whole EUR. Order by month ascending.\", \"builds_on\": [\"Poorly-Rated Product Concentration by Merchant\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n1-r3.submit.json"
+   ]
+  }
+ }
+}

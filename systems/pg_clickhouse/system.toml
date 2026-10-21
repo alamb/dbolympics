@@ -1,0 +1,42 @@
+# pg_clickhouse: PostgreSQL with the pg_clickhouse extension (from its image, in a container next
+# to this one), which pushes queries down to ClickHouse (installed in the system's own container).
+# The data is in ClickHouse tables; PostgreSQL has a foreign table for each. Its query program sends DDL
+# and loads to ClickHouse and the queries to PostgreSQL, so the schema below is ClickHouse's and
+# the queries are in PostgreSQL's dialect.
+name = "pg_clickhouse"
+# the version, kept with the results (by hand)
+version = "0.11 (PostgreSQL 18.6, ClickHouse 26.9.22.3)"
+
+
+[load]
+statement = "INSERT INTO {table} SELECT * FROM file('{file}', Parquet)"
+
+[ddl]
+suffix = "ENGINE = MergeTree"
+suffix_without_keys = "ENGINE = MergeTree ORDER BY tuple()"
+
+[dialect.types]
+date = "Date32"
+timestamp = "DateTime64(6)"
+json = "String"
+uuid = "UUID"
+"varchar(length)" = "String"
+"array(element)" = "Array({element})"
+
+[dialect.functions]
+# no DISTINCT in window aggregates: the distinct non-NULL values from two dense ranks
+"count_distinct_over(x, window)" = "(DENSE_RANK() OVER ({window} ORDER BY {x} ASC NULLS FIRST) + DENSE_RANK() OVER ({window} ORDER BY {x} DESC NULLS LAST) - 1 - MAX(CASE WHEN {x} IS NULL THEN 1 ELSE 0 END) OVER ({window}))"
+
+[[container]]
+name = "pg"
+image = "ghcr.io/clickhouse/pg_clickhouse:18"
+command = [
+    "postgres",
+    "-c", "unix_socket_directories=/var/run/postgresql,/run/dbo",
+    "-c", "shared_buffers={memory_mb%10}MB",
+    "-c", "max_worker_processes={threads%300}",
+    "-c", "max_parallel_workers={threads}",
+    "-c", "max_parallel_workers_per_gather={threads%50}",
+    "-c", "work_mem=64MB",
+]
+env = { POSTGRES_PASSWORD = "Dbolympics-Bench-2026!" }

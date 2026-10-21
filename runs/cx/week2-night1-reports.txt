@@ -1,0 +1,81 @@
+=== Report 1: Support agent staffing vs ticket volume, by merchant (written by Ines) ===
+Engineer's note: Row count of the full qualifying-tenant set (before the 50-row cap) will show on the printed report per house standard; the query itself returns at most 50 merchants ranked by tickets-per-active-agent.
+REPORT: Support agent staffing vs ticket volume, by merchant
+QUESTION: Are Cragsley, Marrowby, and Studio Vrij understaffed relative to their ticket volume compared to the rest of the book?
+merchant_name                 | tickets_created | registered_support_agents | distinct_agents_handled | tickets_per_active_agent | pct_unassigned
+------------------------------+-----------------+---------------------------+-------------------------+--------------------------+---------------
+Cragsley Outfitters           |             400 |                         8 |                       8 |                     50.0 |            0.5
+Marrowby & Vane               |             231 |                         5 |                       5 |                     46.2 |            2.6
+Studio Vrij                   |             166 |                         4 |                       4 |                     41.5 |            0.0
+Grind Collective              |             122 |                         3 |                       3 |                     40.7 |            0.0
+Brennquell Kaffee             |             137 |                         4 |                       4 |                     34.3 |            0.7
+Petalcourt Beauty             |             119 |                         4 |                       4 |                     29.8 |            0.0
+Spice Route Box               |              71 |                         3 |                       3 |                     23.7 |            0.0
+Honeycomb Larder              |              58 |                         3 |                       3 |                     19.3 |            0.0
+Kibblewick                    |              72 |                         4 |                       4 |                     18.0 |            0.0
+Fennel & Flint                |              67 |                         4 |                       4 |                     16.8 |            0.0
+Sourdough Club                |              47 |                         3 |                       3 |                     15.7 |            0.0
+Ballycorran Industrial Supply |              44 |                         3 |                       3 |                     14.7 |            0.0
+Ampfeld Elektronik            |              56 |                         5 |                       5 |                     11.2 |            1.8
+Cinder Peak Sports Co.        |              43 |                         4 |                       4 |                     10.8 |            0.0
+Wiesgrund Wohnen              |              32 |                         3 |                       3 |                     10.7 |            0.0
+Linden & Loom                 |              29 |                         3 |                       3 |                      9.7 |            0.0
+Oakhurst Tailoring            |              27 |                         3 |                       3 |                      9.0 |            3.7
+Rue Lafayette Studio          |              27 |                         3 |                       3 |                      9.0 |            0.0
+Coastline Interiors           |              21 |                         3 |                       3 |                      7.0 |            0.0
+Thistlecombe                  |              21 |                         3 |                       3 |                      7.0 |            0.0
+Gratlinie Outdoor             |              27 |                         4 |                       4 |                      6.8 |            0.0
+Kayak Corner                  |              20 |                         3 |                       3 |                      6.7 |            0.0
+(22 rows)
+
+=== Report 2: Ticket channel mix, by merchant (written by Omar) ===
+Engineer's note: Grain is one row per tenant; percentages are rounded to 1 decimal so they may sum to slightly off 100.0 due to rounding. The query caps at 50 rows as requested; the batch report framework will note the total row count returned.
+REPORT: Ticket channel mix, by merchant
+QUESTION: Do Cragsley, Marrowby, and Studio Vrij rely more on slower contact channels (e.g. email) than the rest of the book?
+merchant_name                 | tickets_2025 | pct_email | pct_chat | pct_phone | pct_web | pct_social | pct_api
+------------------------------+--------------+-----------+----------+-----------+---------+------------+--------
+Cragsley Outfitters           |          400 |      36.5 |     27.5 |      11.0 |    14.0 |       11.0 |     0.0
+Marrowby & Vane               |          231 |      28.1 |     29.4 |      13.4 |    12.1 |       16.9 |     0.0
+Studio Vrij                   |          166 |      38.6 |     21.7 |      19.9 |     9.0 |       10.8 |     0.0
+Brennquell Kaffee             |          137 |      35.8 |     27.7 |      12.4 |     9.5 |       14.6 |     0.0
+Grind Collective              |          122 |      43.4 |     22.1 |       9.0 |    10.7 |       14.8 |     0.0
+Petalcourt Beauty             |          119 |      41.2 |     18.5 |      14.3 |    21.0 |        5.0 |     0.0
+Kibblewick                    |           72 |      36.1 |     25.0 |      11.1 |    12.5 |       15.3 |     0.0
+Spice Route Box               |           71 |      42.3 |     15.5 |      18.3 |    11.3 |       12.7 |     0.0
+Fennel & Flint                |           67 |      41.8 |     32.8 |       7.5 |    11.9 |        6.0 |     0.0
+Honeycomb Larder              |           58 |      39.7 |     24.1 |      12.1 |     8.6 |       15.5 |     0.0
+Ampfeld Elektronik            |           56 |      30.4 |     30.4 |      10.7 |    10.7 |       17.9 |     0.0
+Sourdough Club                |           47 |      42.6 |     27.7 |       8.5 |     6.4 |       14.9 |     0.0
+Ballycorran Industrial Supply |           44 |      29.5 |     36.4 |       6.8 |    11.4 |       15.9 |     0.0
+Cinder Peak Sports Co.        |           43 |      27.9 |     27.9 |       9.3 |    18.6 |       16.3 |     0.0
+Wiesgrund Wohnen              |           32 |      31.3 |     28.1 |      15.6 |     9.4 |       15.6 |     0.0
+Linden & Loom                 |           29 |      24.1 |     17.2 |      17.2 |    31.0 |       10.3 |     0.0
+Gratlinie Outdoor             |           27 |      48.1 |     18.5 |      11.1 |    18.5 |        3.7 |     0.0
+Oakhurst Tailoring            |           27 |      44.4 |     18.5 |       7.4 |    14.8 |       14.8 |     0.0
+Rue Lafayette Studio          |           27 |      33.3 |     37.0 |       3.7 |    18.5 |        7.4 |     0.0
+Coastline Interiors           |           21 |      52.4 |     14.3 |       9.5 |    14.3 |        9.5 |     0.0
+Thistlecombe                  |           21 |      47.6 |     28.6 |       4.8 |     4.8 |       14.3 |     0.0
+Kayak Corner                  |           20 |      45.0 |     10.0 |      20.0 |    25.0 |        0.0 |     0.0
+(22 rows)
+
+=== Report 3: Urgent-priority ticket resolution failure, by merchant (written by Viktor) ===
+Engineer's note: "Urgent tickets created, 2025" is the raw count of urgent tickets opened in 2025 (including any with a null sla_policy_id); the miss-rate denominators and the filter (>=5) use only the evaluable subset (non-null sla_policy_id), per the request. Per-tenant exclusion counts aren't broken out as a column to stay within the 5 requested columns — let me know if you'd like that as a separate report.
+REPORT: Urgent-priority ticket resolution failure, by merchant
+QUESTION: Is the urgent-ticket resolution failure (missing resolution about half the time, company-wide) concentrated in Cragsley, Marrowby, and Studio Vrij, or is it a broad pattern across the book?
+merchant_name       | urgent_created | urgent_missing | urgent_miss_rate_pct | all_priority_miss_rate_pct
+--------------------+----------------+----------------+----------------------+---------------------------
+Honeycomb Larder    |              9 |              9 |                100.0 |                       37.9
+Sourdough Club      |              7 |              6 |                 85.7 |                       29.8
+Ampfeld Elektronik  |              6 |              5 |                 83.3 |                       16.1
+Marrowby & Vane     |             33 |             22 |                 66.7 |                       39.8
+Cragsley Outfitters |             50 |             33 |                 66.0 |                       29.8
+Studio Vrij         |             11 |              7 |                 63.6 |                       39.2
+Linden & Loom       |              6 |              3 |                 50.0 |                       13.8
+Petalcourt Beauty   |             10 |              5 |                 50.0 |                       32.8
+Fennel & Flint      |              5 |              2 |                 40.0 |                       17.9
+Wohnglück           |              5 |              2 |                 40.0 |                       13.3
+Spice Route Box     |              9 |              3 |                 33.3 |                       11.3
+Brennquell Kaffee   |             16 |              5 |                 31.3 |                       12.4
+Grind Collective    |              6 |              1 |                 16.7 |                       33.6
+Wiesgrund Wohnen    |              7 |              1 |                 14.3 |                        6.3
+(14 rows)

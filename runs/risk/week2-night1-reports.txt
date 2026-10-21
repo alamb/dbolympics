@@ -1,0 +1,80 @@
+=== Report 1: February 2025 failed login concentration by merchant (written by Felix) ===
+Engineer's note: Returns one row per tenant with any February 2025 login activity, ordered by failed attempts descending; the standard report printer will cap at 50 rows and note the true row count (i.e. the total number of active tenants), so no separate total-tenants column was added since the grain is one row per tenant.
+REPORT: February 2025 failed login concentration by merchant
+QUESTION: Did the February 2025 failed-login spike concentrate in a handful of merchants (and within them, a handful of emails or IPs), or was it spread evenly across the platform?
+tenant_name            | total_attempts_feb | failed_attempts_feb | pct_failed_feb | distinct_emails_with_any_failed_attempt | distinct_ips_with_any_failed_attempt | max_failed_attempts_single_ip | max_failed_attempts_single_email
+-----------------------+--------------------+---------------------+----------------+-----------------------------------------+--------------------------------------+-------------------------------+---------------------------------
+Cragsley Outfitters    |               5005 |                4407 |           88.1 |                                    2786 |                                 1903 |                             9 |                                8
+Marrowby & Vane        |               2297 |                1978 |           86.1 |                                    1243 |                                 1265 |                             7 |                                7
+Studio Vrij            |                930 |                 783 |           84.2 |                                     481 |                                  642 |                             4 |                                7
+Brennquell Kaffee      |                306 |                  17 |            5.6 |                                      11 |                                   11 |                             2 |                                2
+Gratlinie Outdoor      |                 86 |                   9 |           10.5 |                                       6 |                                    5 |                             3 |                                2
+Honeycomb Larder       |                 89 |                   9 |           10.1 |                                       6 |                                    5 |                             3 |                                2
+Noordzee Surfwear      |                 49 |                   9 |           18.4 |                                       5 |                                    5 |                             2 |                                2
+OfficeHub Nordic       |                 49 |                   8 |           16.3 |                                       4 |                                    4 |                             2 |                                2
+Petalcourt Beauty      |                161 |                   8 |            5.0 |                                       5 |                                    5 |                             2 |                                2
+Ampfeld Elektronik     |                137 |                   7 |            5.1 |                                       5 |                                    5 |                             2 |                                2
+Cinder Peak Sports Co. |                 94 |                   6 |            6.4 |                                       2 |                                    1 |                             6 |                                4
+Linden & Loom          |                 85 |                   6 |            7.1 |                                       4 |                                    4 |                             2 |                                2
+Nordic Bloom Cosmetics |                 49 |                   6 |           12.2 |                                       3 |                                    2 |                             4 |                                3
+Sourdough Club         |                 93 |                   6 |            6.5 |                                       4 |                                    3 |                             3 |                                2
+Spice Route Box        |                 77 |                   6 |            7.8 |                                       3 |                                    2 |                             4 |                                2
+Velo Noord             |                 32 |                   6 |           18.8 |                                       4 |                                    2 |                             5 |                                2
+Atelier Nouveau        |                 42 |                   5 |           11.9 |                                       3 |                                    3 |                             2 |                                2
+Brewline Coffee        |                 24 |                   5 |           20.8 |                                       2 |                                    1 |                             5 |                                3
+Castell Fasteners      |                 49 |                   5 |           10.2 |                                       3 |                                    1 |                             5 |                                2
+Chocolaterie Mireille  |                 25 |                   5 |           20.0 |                                       4 |                                    4 |                             2 |                                2
+Kontor24 Bürobedarf    |                 75 |                   5 |            6.7 |                                       3 |                                    3 |                             2 |                                2
+Velvet Ash             |                 55 |                   5 |            9.1 |                                       5 |                                    4 |                             2 |                                1
+Wiesgrund Wohnen       |                 89 |                   5 |            5.6 |                                       4 |                                    4 |                             2 |                                2
+Deskline Supplies      |                 30 |                   4 |           13.3 |                                       2 |                                    1 |                             4 |                                2
+Fell & Fjell           |                 48 |                   4 |            8.3 |                                       2 |                                    2 |                             3 |                                3
+Kibblewick             |                 87 |                   4 |            4.6 |                                       3 |                                    2 |                             3 |                                2
+Lumen Collective       |                 40 |                   4 |           10.0 |                                       2 |                                    2 |                             2 |                                2
+Midland Safety Wear    |                 41 |                   4 |            9.8 |                                       3 |                                    3 |                             2 |                                2
+Northstar Watches      |                 28 |                   4 |           14.3 |                                       2 |                                    2 |                             3 |                                3
+Ostwind Mode           |                 46 |                   4 |            8.7 |                                       2 |                                    1 |                             4 |                                3
+Strandgut              |                 27 |                   4 |           14.8 |                                       2 |                                    2 |                             2 |                                2
+Willow & Wren          |                 54 |                   4 |            7.4 |                                       2 |                                    2 |                             2 |                                2
+Courtside Collective   |                 31 |                   3 |            9.7 |                                       2 |                                    1 |                             3 |                                2
+Hanse Industriebedarf  |                 29 |                   3 |           10.3 |                                       2 |                                    1 |                             3 |                                2
+Maison Clair           |                 34 |                   3 |            8.8 |                                       2 |                                    2 |                             2 |                                2
+Meadow Row             |                 25 |                   3 |           12.0 |                                       2 |                                    2 |                             2 |                                2
+Mirelle                |                 23 |                   3 |           13.0 |                                       2 |                                    2 |                             2 |                                2
+Ondine Botanicals      |                 24 |                   3 |           12.5 |                                       2 |                                    1 |                             3 |                                2
+Polder Packaging       |                 23 |                   3 |           13.0 |                                       3 |                                    2 |                             2 |                                1
+Ridgeback Gear         |                 45 |                   3 |            6.7 |                                       2 |                                    2 |                             2 |                                2
+Roast Republic         |                 26 |                   3 |           11.5 |                                       2 |                                    2 |                             2 |                                2
+Saffron & Sage         |                 43 |                   3 |            7.0 |                                       1 |                                    1 |                             3 |                                3
+Thistlecombe           |                 34 |                   3 |            8.8 |                                       2 |                                    2 |                             2 |                                2
+Tiny Atelier           |                 29 |                   3 |           10.3 |                                       2 |                                    2 |                             2 |                                2
+Trailmark              |                 35 |                   3 |            8.6 |                                       2 |                                    2 |                             2 |                                2
+Wohnglück              |                 51 |                   3 |            5.9 |                                       2 |                                    1 |                             3 |                                2
+Basecamp Nord          |                 31 |                   2 |            6.5 |                                       2 |                                    1 |                             2 |                                1
+Bijoux Lune            |                 30 |                   2 |            6.7 |                                       1 |                                    1 |                             2 |                                2
+Brick & Bobbin         |                 23 |                   2 |            8.7 |                                       2 |                                    2 |                             1 |                                1
+Buchstabe              |                 24 |                   2 |            8.3 |                                       1 |                                    1 |                             2 |                                2
+(92 rows, first 50 printed)
+
+=== Report 2: February 2025 repeat-failure accounts: did they succeed afterward? (written by Omar) ===
+Engineer's note: Cohort and 'distinct emails' are matched on email alone (not scoped per tenant) since login_attempts.email is only unique per tenant and the requested distinct_tenants_affected column implies cross-tenant matching is intended; avg_failed_attempts_before_success uses each email's total Feb failed-attempt count (all fails precede the first subsequent success by construction), and is blank (NULL) for the never_succeeded bucket.
+REPORT: February 2025 repeat-failure accounts: did they succeed afterward?
+QUESTION: Among the accounts with 5+ failed logins in February 2025, how many went on to log in successfully afterward, and how soon — i.e. was this a near-miss or just noise?
+outcome_bucket           | email_count | pct_of_cohort | avg_failed_attempts_before_success | distinct_tenants_affected
+-------------------------+-------------+---------------+------------------------------------+--------------------------
+succeeded_within_1h      |          42 |          41.2 |                                5.6 |                         3
+succeeded_within_24h     |          12 |          11.8 |                                5.0 |                         2
+succeeded_later_in_month |          89 |          87.3 |                               5.51 |                         2
+never_succeeded_in_month |         452 |         443.1 |                               NULL |                         3
+(4 rows)
+
+=== Report 3: Rejected DSAR timing via the record's own updated_at (written by Grace) ===
+Engineer's note: Used data_subject_requests.updated_at only (no change_history/audit_log) as a proxy for "last touched" — this assumes nothing else modified these rows after the rejection decision, which is not verified by the data. days_received_to_updated_at is a fractional day count (updated_at - received_at in days).
+REPORT: Rejected DSAR timing via the record's own updated_at
+QUESTION: Using a simpler, reliable timestamp (the request record's own updated_at, not JSON history), roughly when were the 3 rejected-without-completed_at DSARs last touched relative to their received and due dates?
+request_type | received_at                | due_at                     | updated_at                 | days_received_to_updated_at | within_due_at
+-------------+----------------------------+----------------------------+----------------------------+-----------------------------+--------------
+erasure      | 2023-05-26 18:29:11.494494 | 2023-06-25 18:29:11.494494 | 2023-06-04 10:47:12.496131 |             8.6791782596875 | true         
+erasure      | 2024-07-09 00:58:55.84208  | 2024-08-08 00:58:55.84208  | 2024-07-12 21:14:08.79453  |          3.8438999126157407 | true         
+erasure      | 2025-03-21 06:44:26.231555 | 2025-04-20 06:44:26.231555 | 2025-04-13 23:03:58.864716 |          23.680238809733797 | true         
+(3 rows)

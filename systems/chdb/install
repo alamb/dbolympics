@@ -1,0 +1,20 @@
+#!/bin/bash
+# chDB (ClickHouse as a library) is embedded in the query program.
+set -e
+
+# chDB's library of the release, which the query program links (CHDB_LIB_DIR)
+mkdir -p /tmp/libchdb
+curl -fsSL --retry 10 "https://github.com/chdb-io/chdb-core/releases/download/v26.9.0/linux-$(uname -m)-libchdb.tar.gz" | tar -xz -C /tmp/libchdb
+sudo install -m 0644 /tmp/libchdb/libchdb.so /usr/local/lib/
+sudo install -m 0644 /tmp/libchdb/chdb.h /usr/local/include/
+sudo ldconfig
+rm -rf /tmp/libchdb
+
+# the query program (query.rs), built here with a Rust toolchain that is removed again
+cd /system
+sudo apt-get update -y
+sudo apt-get install -y --no-install-recommends build-essential libclang-dev pkg-config libssl-dev
+curl -fsSL --retry 10 https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.99.0
+CHDB_LIB_DIR=/usr/local/lib CHDB_INCLUDE_DIR=/usr/local/include "$HOME/.cargo/bin/cargo" build --release --locked
+install -m 0755 target/release/query query
+rm -rf target "$HOME/.cargo" "$HOME/.rustup"

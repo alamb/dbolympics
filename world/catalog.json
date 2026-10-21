@@ -1,0 +1,4316 @@
+{
+ "axes": {
+  "size_apparel": [
+   "XS",
+   "S",
+   "M",
+   "L",
+   "XL",
+   "XXL"
+  ],
+  "size_kids": [
+   "2-3Y",
+   "4-5Y",
+   "6-7Y",
+   "8-9Y",
+   "10-11Y",
+   "12-13Y"
+  ],
+  "size_shoe_eu": [
+   "36",
+   "37",
+   "38",
+   "39",
+   "40",
+   "41",
+   "42",
+   "43",
+   "44",
+   "45",
+   "46"
+  ],
+  "size_waist": [
+   "W28",
+   "W30",
+   "W32",
+   "W34",
+   "W36",
+   "W38"
+  ],
+  "color_apparel": [
+   "Black",
+   "White",
+   "Navy",
+   "Grey Marl",
+   "Ecru",
+   "Olive",
+   "Burgundy",
+   "Camel",
+   "Sky Blue",
+   "Forest Green",
+   "Charcoal",
+   "Sand",
+   "Rust",
+   "Lilac"
+  ],
+  "color_tech": [
+   "Black",
+   "White",
+   "Silver",
+   "Space Grey",
+   "Midnight Blue",
+   "Sage"
+  ],
+  "storage": [
+   "64GB",
+   "128GB",
+   "256GB",
+   "512GB"
+  ],
+  "volume_ml": [
+   "30ml",
+   "50ml",
+   "100ml",
+   "200ml"
+  ],
+  "shade": [
+   "Fair",
+   "Light",
+   "Light Medium",
+   "Medium",
+   "Medium Tan",
+   "Tan",
+   "Deep",
+   "Rich"
+  ],
+  "color_home": [
+   "Natural",
+   "Oatmeal",
+   "Charcoal",
+   "Sage",
+   "Terracotta",
+   "Ochre",
+   "Dusty Pink",
+   "Ink Blue",
+   "White",
+   "Oak",
+   "Walnut"
+  ],
+  "size_bedding": [
+   "Single",
+   "Double",
+   "King",
+   "Super King"
+  ],
+  "coffee_weight": [
+   "250g",
+   "500g",
+   "1kg"
+  ],
+  "grind": [
+   "Whole Bean",
+   "Espresso",
+   "Filter",
+   "Cafetière",
+   "Aeropress"
+  ],
+  "pet_weight": [
+   "1.5kg",
+   "2kg",
+   "7kg",
+   "12kg"
+  ],
+  "pet_size": [
+   "XS",
+   "S",
+   "M",
+   "L",
+   "XL"
+  ],
+  "pack": [
+   "Box of 50",
+   "Box of 100",
+   "Box of 500",
+   "Case of 1000"
+  ],
+  "size_gloves": [
+   "7 (S)",
+   "8 (M)",
+   "9 (L)",
+   "10 (XL)",
+   "11 (XXL)"
+  ],
+  "paper_pack": [
+   "Ream (500 sheets)",
+   "Box (5 reams)",
+   "Pallet (200 reams)"
+  ],
+  "ring_size": [
+   "J",
+   "K",
+   "L",
+   "M",
+   "N",
+   "O",
+   "P",
+   "Q",
+   "R"
+  ],
+  "metal": [
+   "Sterling Silver",
+   "Gold Vermeil",
+   "9ct Gold",
+   "Rose Gold Plated"
+  ],
+  "format_book": [
+   "Hardback",
+   "Paperback",
+   "Large Print"
+  ],
+  "notebook_ruling": [
+   "Plain",
+   "Lined",
+   "Dotted",
+   "Squared"
+  ],
+  "frame_size": [
+   "S (49cm)",
+   "M (52cm)",
+   "L (55cm)",
+   "XL (58cm)"
+  ]
+ },
+ "verticals": {
+  "apparel_footwear": {
+   "label": "Apparel & Footwear",
+   "return_rate": 0.24,
+   "conversion": 0.022,
+   "items_per_order": 2.3,
+   "seasonality": [
+    0.9,
+    0.75,
+    0.9,
+    1.0,
+    1.05,
+    0.95,
+    0.9,
+    0.9,
+    1.0,
+    1.05,
+    1.35,
+    1.5
+   ],
+   "brand_style": "own",
+   "products": [
+    {
+     "type": "T-Shirt",
+     "categories": [
+      "Women > Tops",
+      "Men > Tops"
+     ],
+     "price_eur": [
+      15,
+      45
+     ],
+     "weight_g": [
+      150,
+      260
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Essential",
+      "Relaxed",
+      "Boxy",
+      "Heavyweight",
+      "Striped",
+      "Slub",
+      "Pocket"
+     ],
+     "materials": [
+      "Organic Cotton",
+      "Pima Cotton",
+      "Cotton Jersey"
+     ],
+     "season": "summer",
+     "complements": [
+      "Jeans",
+      "Chinos",
+      "Socks"
+     ]
+    },
+    {
+     "type": "Shirt",
+     "categories": [
+      "Women > Tops",
+      "Men > Shirts"
+     ],
+     "price_eur": [
+      39,
+      95
+     ],
+     "weight_g": [
+      220,
+      350
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Oxford",
+      "Poplin",
+      "Linen Blend",
+      "Overshirt",
+      "Flannel",
+      "Corduroy"
+     ],
+     "materials": [
+      "Cotton",
+      "Linen"
+     ],
+     "season": null,
+     "complements": [
+      "Chinos",
+      "Jeans",
+      "Sweater"
+     ]
+    },
+    {
+     "type": "Sweater",
+     "categories": [
+      "Women > Knitwear",
+      "Men > Knitwear"
+     ],
+     "price_eur": [
+      49,
+      160
+     ],
+     "weight_g": [
+      300,
+      600
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Crew Neck",
+      "Roll Neck",
+      "V-Neck",
+      "Cable Knit",
+      "Cardigan",
+      "Half-Zip"
+     ],
+     "materials": [
+      "Merino Wool",
+      "Lambswool",
+      "Cashmere Blend",
+      "Cotton"
+     ],
+     "season": "winter",
+     "complements": [
+      "Shirt",
+      "Scarf",
+      "Beanie",
+      "Jeans"
+     ]
+    },
+    {
+     "type": "Jeans",
+     "categories": [
+      "Women > Trousers",
+      "Men > Trousers"
+     ],
+     "price_eur": [
+      59,
+      140
+     ],
+     "weight_g": [
+      550,
+      800
+     ],
+     "axes": [
+      "size_waist",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Slim",
+      "Straight Leg",
+      "Relaxed Tapered",
+      "Wide Leg",
+      "High Rise",
+      "Bootcut"
+     ],
+     "materials": [
+      "Selvedge Denim",
+      "Organic Denim",
+      "Stretch Denim"
+     ],
+     "season": null,
+     "complements": [
+      "T-Shirt",
+      "Sneakers",
+      "Shirt",
+      "Boots"
+     ]
+    },
+    {
+     "type": "Chinos",
+     "categories": [
+      "Women > Trousers",
+      "Men > Trousers"
+     ],
+     "price_eur": [
+      49,
+      99
+     ],
+     "weight_g": [
+      400,
+      600
+     ],
+     "axes": [
+      "size_waist",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Slim",
+      "Regular",
+      "Pleated",
+      "Cropped"
+     ],
+     "materials": [
+      "Cotton Twill",
+      "Stretch Cotton"
+     ],
+     "season": null,
+     "complements": [
+      "Shirt",
+      "T-Shirt",
+      "Sneakers"
+     ]
+    },
+    {
+     "type": "Dress",
+     "categories": [
+      "Women > Dresses"
+     ],
+     "price_eur": [
+      59,
+      180
+     ],
+     "weight_g": [
+      250,
+      500
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Midi",
+      "Maxi",
+      "Wrap",
+      "Slip",
+      "Shirt",
+      "Tiered",
+      "Knitted"
+     ],
+     "materials": [
+      "Viscose",
+      "Linen",
+      "Silk",
+      "Cotton Poplin"
+     ],
+     "season": "summer",
+     "complements": [
+      "Sandals",
+      "Scarf",
+      "Jacket"
+     ]
+    },
+    {
+     "type": "Jacket",
+     "categories": [
+      "Women > Outerwear",
+      "Men > Outerwear"
+     ],
+     "price_eur": [
+      89,
+      320
+     ],
+     "weight_g": [
+      600,
+      1400
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Quilted",
+      "Field",
+      "Bomber",
+      "Trucker",
+      "Waxed",
+      "Harrington",
+      "Puffer",
+      "Rain"
+     ],
+     "materials": [
+      "Recycled Nylon",
+      "Waxed Cotton",
+      "Wool Blend",
+      "Denim"
+     ],
+     "season": "winter",
+     "complements": [
+      "Sweater",
+      "Scarf",
+      "Beanie",
+      "Jeans"
+     ]
+    },
+    {
+     "type": "Coat",
+     "categories": [
+      "Women > Outerwear",
+      "Men > Outerwear"
+     ],
+     "price_eur": [
+      160,
+      450
+     ],
+     "weight_g": [
+      1200,
+      2200
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Overcoat",
+      "Car Coat",
+      "Trench",
+      "Peacoat",
+      "Duffle"
+     ],
+     "materials": [
+      "Wool",
+      "Cotton Gabardine",
+      "Recycled Wool"
+     ],
+     "season": "winter",
+     "complements": [
+      "Scarf",
+      "Beanie",
+      "Boots",
+      "Sweater"
+     ]
+    },
+    {
+     "type": "Hoodie",
+     "categories": [
+      "Women > Loungewear",
+      "Men > Loungewear"
+     ],
+     "price_eur": [
+      49,
+      99
+     ],
+     "weight_g": [
+      450,
+      750
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Pullover",
+      "Zip-Through",
+      "Oversized",
+      "Garment Dyed"
+     ],
+     "materials": [
+      "Organic Cotton Fleece",
+      "Loopback Cotton"
+     ],
+     "season": "winter",
+     "complements": [
+      "T-Shirt",
+      "Sneakers",
+      "Socks"
+     ]
+    },
+    {
+     "type": "Sneakers",
+     "categories": [
+      "Shoes > Sneakers"
+     ],
+     "price_eur": [
+      69,
+      180
+     ],
+     "weight_g": [
+      700,
+      1100
+     ],
+     "axes": [
+      "size_shoe_eu",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Low-Top",
+      "High-Top",
+      "Court",
+      "Retro Runner",
+      "Canvas"
+     ],
+     "materials": [
+      "Leather",
+      "Suede",
+      "Recycled Canvas"
+     ],
+     "season": null,
+     "complements": [
+      "Socks",
+      "T-Shirt",
+      "Jeans"
+     ]
+    },
+    {
+     "type": "Boots",
+     "categories": [
+      "Shoes > Boots"
+     ],
+     "price_eur": [
+      110,
+      290
+     ],
+     "weight_g": [
+      1100,
+      1800
+     ],
+     "axes": [
+      "size_shoe_eu",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Chelsea",
+      "Lace-Up",
+      "Hiking-Style",
+      "Desert",
+      "Combat"
+     ],
+     "materials": [
+      "Leather",
+      "Suede",
+      "Waterproof Leather"
+     ],
+     "season": "winter",
+     "complements": [
+      "Socks",
+      "Jeans",
+      "Coat"
+     ]
+    },
+    {
+     "type": "Sandals",
+     "categories": [
+      "Shoes > Sandals"
+     ],
+     "price_eur": [
+      39,
+      120
+     ],
+     "weight_g": [
+      300,
+      600
+     ],
+     "axes": [
+      "size_shoe_eu",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Slider",
+      "Strappy",
+      "Footbed",
+      "Espadrille"
+     ],
+     "materials": [
+      "Leather",
+      "Cork"
+     ],
+     "season": "summer",
+     "complements": [
+      "Dress",
+      "T-Shirt"
+     ]
+    },
+    {
+     "type": "Socks",
+     "categories": [
+      "Accessories > Socks"
+     ],
+     "price_eur": [
+      9,
+      25
+     ],
+     "weight_g": [
+      50,
+      120
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Ribbed",
+      "Everyday",
+      "Hiking",
+      "Striped",
+      "3-Pack"
+     ],
+     "materials": [
+      "Merino",
+      "Organic Cotton",
+      "Bamboo"
+     ],
+     "season": null,
+     "complements": [
+      "Sneakers",
+      "Boots"
+     ]
+    },
+    {
+     "type": "Scarf",
+     "categories": [
+      "Accessories > Scarves & Hats"
+     ],
+     "price_eur": [
+      29,
+      110
+     ],
+     "weight_g": [
+      120,
+      300
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Chunky",
+      "Fine Knit",
+      "Checked",
+      "Oversized"
+     ],
+     "materials": [
+      "Lambswool",
+      "Cashmere",
+      "Merino"
+     ],
+     "season": "winter",
+     "complements": [
+      "Beanie",
+      "Coat",
+      "Jacket"
+     ]
+    },
+    {
+     "type": "Beanie",
+     "categories": [
+      "Accessories > Scarves & Hats"
+     ],
+     "price_eur": [
+      19,
+      49
+     ],
+     "weight_g": [
+      60,
+      120
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Ribbed",
+      "Fisherman",
+      "Pom-Pom"
+     ],
+     "materials": [
+      "Merino Wool",
+      "Recycled Wool"
+     ],
+     "season": "winter",
+     "complements": [
+      "Scarf",
+      "Coat"
+     ]
+    },
+    {
+     "type": "Kids T-Shirt",
+     "categories": [
+      "Kids > Tops"
+     ],
+     "price_eur": [
+      12,
+      25
+     ],
+     "weight_g": [
+      100,
+      160
+     ],
+     "axes": [
+      "size_kids",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Graphic",
+      "Striped",
+      "Essential"
+     ],
+     "materials": [
+      "Organic Cotton"
+     ],
+     "season": null,
+     "complements": [
+      "Kids T-Shirt"
+     ]
+    }
+   ]
+  },
+  "consumer_electronics": {
+   "label": "Consumer Electronics",
+   "return_rate": 0.09,
+   "conversion": 0.014,
+   "items_per_order": 1.3,
+   "seasonality": [
+    0.85,
+    0.75,
+    0.8,
+    0.8,
+    0.85,
+    0.85,
+    0.85,
+    0.9,
+    0.95,
+    1.0,
+    1.6,
+    1.7
+   ],
+   "brand_style": "multi",
+   "brand_names": [
+    "Lumio",
+    "Ampera",
+    "Northwire",
+    "Pixelo",
+    "Sonari",
+    "Voxa",
+    "Kestrel Audio",
+    "Brightcell",
+    "Orbis",
+    "Tekmo",
+    "Halden",
+    "Quanta",
+    "Zephyr Labs",
+    "Arclight",
+    "Fennix"
+   ],
+   "products": [
+    {
+     "type": "Wireless Earbuds",
+     "categories": [
+      "Audio > Headphones"
+     ],
+     "price_eur": [
+      39,
+      279
+     ],
+     "weight_g": [
+      50,
+      90
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Pro",
+      "Air",
+      "Active Noise Cancelling",
+      "Sport",
+      "Lite"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Charger",
+      "Phone Case"
+     ]
+    },
+    {
+     "type": "Over-Ear Headphones",
+     "categories": [
+      "Audio > Headphones"
+     ],
+     "price_eur": [
+      79,
+      399
+     ],
+     "weight_g": [
+      250,
+      350
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Studio",
+      "Wireless ANC",
+      "Travel",
+      "Monitor"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Cable"
+     ]
+    },
+    {
+     "type": "Bluetooth Speaker",
+     "categories": [
+      "Audio > Speakers"
+     ],
+     "price_eur": [
+      39,
+      249
+     ],
+     "weight_g": [
+      400,
+      1200
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Mini",
+      "Outdoor",
+      "Party",
+      "360"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Cable",
+      "Power Bank"
+     ]
+    },
+    {
+     "type": "Smartphone",
+     "categories": [
+      "Phones > Smartphones"
+     ],
+     "price_eur": [
+      199,
+      1199
+     ],
+     "weight_g": [
+      170,
+      230
+     ],
+     "axes": [
+      "storage",
+      "color_tech"
+     ],
+     "modifiers": [
+      "5G",
+      "Pro",
+      "Max",
+      "Lite",
+      "Plus"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Phone Case",
+      "Charger",
+      "Wireless Earbuds",
+      "Power Bank",
+      "Cable"
+     ]
+    },
+    {
+     "type": "Tablet",
+     "categories": [
+      "Computing > Tablets"
+     ],
+     "price_eur": [
+      179,
+      999
+     ],
+     "weight_g": [
+      450,
+      700
+     ],
+     "axes": [
+      "storage",
+      "color_tech"
+     ],
+     "modifiers": [
+      "10.9-inch",
+      "Pro 11",
+      "Mini",
+      "Air"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Charger",
+      "Cable",
+      "Over-Ear Headphones"
+     ]
+    },
+    {
+     "type": "Laptop",
+     "categories": [
+      "Computing > Laptops"
+     ],
+     "price_eur": [
+      499,
+      2299
+     ],
+     "weight_g": [
+      1200,
+      2100
+     ],
+     "axes": [
+      "storage",
+      "color_tech"
+     ],
+     "modifiers": [
+      "13-inch Ultrabook",
+      "14-inch",
+      "15-inch Creator",
+      "Gaming 16-inch",
+      "2-in-1"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Monitor",
+      "Charger",
+      "Cable",
+      "Over-Ear Headphones"
+     ]
+    },
+    {
+     "type": "Monitor",
+     "categories": [
+      "Computing > Monitors"
+     ],
+     "price_eur": [
+      149,
+      899
+     ],
+     "weight_g": [
+      3500,
+      7500
+     ],
+     "axes": [],
+     "modifiers": [
+      "27-inch QHD",
+      "24-inch FHD",
+      "32-inch 4K",
+      "34-inch Ultrawide"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Cable",
+      "Laptop"
+     ]
+    },
+    {
+     "type": "Smartwatch",
+     "categories": [
+      "Wearables > Smartwatches"
+     ],
+     "price_eur": [
+      99,
+      499
+     ],
+     "weight_g": [
+      40,
+      70
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Fitness",
+      "GPS",
+      "LTE",
+      "Classic"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Charger",
+      "Fitness Tracker"
+     ]
+    },
+    {
+     "type": "Fitness Tracker",
+     "categories": [
+      "Wearables > Fitness Trackers"
+     ],
+     "price_eur": [
+      39,
+      149
+     ],
+     "weight_g": [
+      25,
+      40
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Band",
+      "Slim",
+      "HR"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Charger"
+     ]
+    },
+    {
+     "type": "Charger",
+     "categories": [
+      "Accessories > Power"
+     ],
+     "price_eur": [
+      15,
+      79
+     ],
+     "weight_g": [
+      80,
+      250
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "65W USB-C",
+      "Dual-Port",
+      "Wireless Pad",
+      "GaN 100W"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Cable"
+     ]
+    },
+    {
+     "type": "Power Bank",
+     "categories": [
+      "Accessories > Power"
+     ],
+     "price_eur": [
+      25,
+      99
+     ],
+     "weight_g": [
+      200,
+      450
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "10000mAh",
+      "20000mAh",
+      "MagSafe",
+      "Slim"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Cable"
+     ]
+    },
+    {
+     "type": "Cable",
+     "categories": [
+      "Accessories > Cables"
+     ],
+     "price_eur": [
+      9,
+      35
+     ],
+     "weight_g": [
+      30,
+      90
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "USB-C to USB-C 2m",
+      "Lightning 1m",
+      "HDMI 2.1 2m",
+      "Braided USB-C 1m"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Charger"
+     ]
+    },
+    {
+     "type": "Phone Case",
+     "categories": [
+      "Accessories > Cases"
+     ],
+     "price_eur": [
+      15,
+      59
+     ],
+     "weight_g": [
+      30,
+      80
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Clear",
+      "Rugged",
+      "Leather",
+      "Silicone"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Cable",
+      "Charger"
+     ]
+    },
+    {
+     "type": "Smart Bulb",
+     "categories": [
+      "Smart Home > Lighting"
+     ],
+     "price_eur": [
+      12,
+      49
+     ],
+     "weight_g": [
+      60,
+      120
+     ],
+     "axes": [],
+     "modifiers": [
+      "E27 Colour",
+      "GU10 White",
+      "Filament",
+      "Starter Kit"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Smart Bulb",
+      "Security Camera"
+     ]
+    },
+    {
+     "type": "Security Camera",
+     "categories": [
+      "Smart Home > Security"
+     ],
+     "price_eur": [
+      49,
+      229
+     ],
+     "weight_g": [
+      250,
+      600
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Indoor",
+      "Outdoor 2K",
+      "Doorbell",
+      "Floodlight"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Smart Bulb",
+      "Cable"
+     ]
+    },
+    {
+     "type": "Robot Vacuum",
+     "categories": [
+      "Smart Home > Appliances"
+     ],
+     "price_eur": [
+      199,
+      999
+     ],
+     "weight_g": [
+      3500,
+      5000
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Mapping",
+      "Self-Emptying",
+      "Mop Combo"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Smart Bulb"
+     ]
+    }
+   ]
+  },
+  "beauty": {
+   "label": "Beauty",
+   "return_rate": 0.06,
+   "conversion": 0.03,
+   "items_per_order": 2.6,
+   "seasonality": [
+    0.9,
+    1.05,
+    0.95,
+    0.95,
+    1.05,
+    0.95,
+    0.9,
+    0.9,
+    0.95,
+    1.0,
+    1.35,
+    1.5
+   ],
+   "brand_style": "mixed",
+   "brand_names": [
+    "Aurelle",
+    "Sorel Skin",
+    "Botanica Lab",
+    "Maré",
+    "Velda",
+    "Nordflora",
+    "Kissa",
+    "Ondine",
+    "Petalist",
+    "Haute Rosée",
+    "Lunaria",
+    "Saltbloom"
+   ],
+   "products": [
+    {
+     "type": "Serum",
+     "categories": [
+      "Skincare > Serums"
+     ],
+     "price_eur": [
+      18,
+      85
+     ],
+     "weight_g": [
+      80,
+      150
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "Hydrating",
+      "Brightening",
+      "Vitamin C",
+      "Niacinamide 10%",
+      "Retinol 0.3%",
+      "Hyaluronic Acid",
+      "Peptide"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Moisturiser",
+      "Sunscreen",
+      "Cleanser"
+     ]
+    },
+    {
+     "type": "Moisturiser",
+     "categories": [
+      "Skincare > Moisturisers"
+     ],
+     "price_eur": [
+      16,
+      75
+     ],
+     "weight_g": [
+      120,
+      250
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "Daily",
+      "Rich",
+      "Gel",
+      "Barrier Repair",
+      "SPF 30",
+      "Night"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Serum",
+      "Sunscreen",
+      "Cleanser"
+     ]
+    },
+    {
+     "type": "Cleanser",
+     "categories": [
+      "Skincare > Cleansers"
+     ],
+     "price_eur": [
+      12,
+      38
+     ],
+     "weight_g": [
+      150,
+      300
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "Gentle Foaming",
+      "Cleansing Balm",
+      "Micellar",
+      "Oil",
+      "Exfoliating"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Serum",
+      "Moisturiser",
+      "Face Mask"
+     ]
+    },
+    {
+     "type": "Face Mask",
+     "categories": [
+      "Skincare > Masks"
+     ],
+     "price_eur": [
+      9,
+      45
+     ],
+     "weight_g": [
+      60,
+      200
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "Clay",
+      "Overnight",
+      "Sheet (5-Pack)",
+      "Purifying",
+      "Glow"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Serum",
+      "Cleanser"
+     ]
+    },
+    {
+     "type": "Sunscreen",
+     "categories": [
+      "Skincare > Sun Care"
+     ],
+     "price_eur": [
+      14,
+      39
+     ],
+     "weight_g": [
+      80,
+      200
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "SPF 50 Fluid",
+      "Mineral SPF 30",
+      "Tinted SPF 50",
+      "Body SPF 50"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Moisturiser",
+      "Serum"
+     ]
+    },
+    {
+     "type": "Foundation",
+     "categories": [
+      "Makeup > Face"
+     ],
+     "price_eur": [
+      19,
+      49
+     ],
+     "weight_g": [
+      50,
+      90
+     ],
+     "axes": [
+      "shade"
+     ],
+     "modifiers": [
+      "Skin Tint",
+      "Matte",
+      "Dewy",
+      "Full Coverage"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Concealer",
+      "Mascara",
+      "Lipstick"
+     ]
+    },
+    {
+     "type": "Concealer",
+     "categories": [
+      "Makeup > Face"
+     ],
+     "price_eur": [
+      14,
+      32
+     ],
+     "weight_g": [
+      20,
+      40
+     ],
+     "axes": [
+      "shade"
+     ],
+     "modifiers": [
+      "Radiant",
+      "Creamy",
+      "Brightening"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Foundation",
+      "Mascara"
+     ]
+    },
+    {
+     "type": "Mascara",
+     "categories": [
+      "Makeup > Eyes"
+     ],
+     "price_eur": [
+      12,
+      32
+     ],
+     "weight_g": [
+      20,
+      40
+     ],
+     "axes": [],
+     "modifiers": [
+      "Volumising",
+      "Lengthening",
+      "Waterproof",
+      "Tubing"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Lipstick",
+      "Concealer"
+     ]
+    },
+    {
+     "type": "Lipstick",
+     "categories": [
+      "Makeup > Lips"
+     ],
+     "price_eur": [
+      14,
+      36
+     ],
+     "weight_g": [
+      20,
+      40
+     ],
+     "axes": [
+      "shade"
+     ],
+     "modifiers": [
+      "Satin",
+      "Matte",
+      "Sheer Balm",
+      "Liquid"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Mascara",
+      "Foundation"
+     ]
+    },
+    {
+     "type": "Shampoo",
+     "categories": [
+      "Hair > Shampoo & Conditioner"
+     ],
+     "price_eur": [
+      9,
+      34
+     ],
+     "weight_g": [
+      250,
+      550
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "Repair",
+      "Volume",
+      "Curl",
+      "Scalp Care",
+      "Colour Protect"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Hair Oil",
+      "Shampoo"
+     ]
+    },
+    {
+     "type": "Hair Oil",
+     "categories": [
+      "Hair > Treatments"
+     ],
+     "price_eur": [
+      16,
+      45
+     ],
+     "weight_g": [
+      80,
+      150
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "Argan",
+      "Bond Repair",
+      "Lightweight"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Shampoo"
+     ]
+    },
+    {
+     "type": "Body Lotion",
+     "categories": [
+      "Body > Moisturisers"
+     ],
+     "price_eur": [
+      10,
+      35
+     ],
+     "weight_g": [
+      250,
+      450
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "Shea",
+      "Firming",
+      "Unscented",
+      "Oat"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Eau de Parfum",
+      "Shampoo"
+     ]
+    },
+    {
+     "type": "Eau de Parfum",
+     "categories": [
+      "Fragrance > Perfume"
+     ],
+     "price_eur": [
+      45,
+      160
+     ],
+     "weight_g": [
+      200,
+      400
+     ],
+     "axes": [
+      "volume_ml"
+     ],
+     "modifiers": [
+      "Fig & Cedar",
+      "Neroli",
+      "Amber Musk",
+      "Sea Salt",
+      "Vetiver",
+      "Peony"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Body Lotion",
+      "Gift Set"
+     ]
+    },
+    {
+     "type": "Gift Set",
+     "categories": [
+      "Gifts > Sets"
+     ],
+     "price_eur": [
+      25,
+      95
+     ],
+     "weight_g": [
+      300,
+      700
+     ],
+     "axes": [],
+     "modifiers": [
+      "Skincare Discovery",
+      "Hydration Heroes",
+      "Glow Edit",
+      "Travel Minis"
+     ],
+     "materials": [],
+     "season": "winter",
+     "complements": [
+      "Eau de Parfum"
+     ]
+    }
+   ]
+  },
+  "home_living": {
+   "label": "Home & Living",
+   "return_rate": 0.1,
+   "conversion": 0.016,
+   "items_per_order": 1.7,
+   "seasonality": [
+    1.0,
+    0.85,
+    0.95,
+    1.0,
+    1.0,
+    0.9,
+    0.85,
+    0.9,
+    1.0,
+    1.1,
+    1.35,
+    1.4
+   ],
+   "brand_style": "mixed",
+   "brand_names": [
+    "Hollin",
+    "Kaarna",
+    "Studio Ferm",
+    "Ashby & Co.",
+    "Norrland Home",
+    "Maison Avoine",
+    "Tiller",
+    "Vinda",
+    "Kettlewell"
+   ],
+   "products": [
+    {
+     "type": "Stand Mixer",
+     "categories": [
+      "Kitchen > Appliances"
+     ],
+     "price_eur": [
+      199,
+      549
+     ],
+     "weight_g": [
+      7500,
+      11000
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "5L Tilt-Head",
+      "Professional 6.6L",
+      "Compact 4L"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Casserole Dish",
+      "Chef's Knife"
+     ]
+    },
+    {
+     "type": "Kettle",
+     "categories": [
+      "Kitchen > Appliances"
+     ],
+     "price_eur": [
+      39,
+      149
+     ],
+     "weight_g": [
+      1000,
+      1500
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Gooseneck",
+      "Temperature Control",
+      "Retro",
+      "Cordless"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Glassware Set",
+      "Dinner Plate Set"
+     ]
+    },
+    {
+     "type": "Chef's Knife",
+     "categories": [
+      "Kitchen > Cookware"
+     ],
+     "price_eur": [
+      39,
+      189
+     ],
+     "weight_g": [
+      180,
+      300
+     ],
+     "axes": [],
+     "modifiers": [
+      "20cm",
+      "Santoku 18cm",
+      "Damascus 21cm"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Frying Pan",
+      "Casserole Dish"
+     ]
+    },
+    {
+     "type": "Casserole Dish",
+     "categories": [
+      "Kitchen > Cookware"
+     ],
+     "price_eur": [
+      49,
+      329
+     ],
+     "weight_g": [
+      3000,
+      6000
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Round 24cm",
+      "Oval 29cm",
+      "Shallow 28cm"
+     ],
+     "materials": [
+      "Cast Iron",
+      "Enamelled Cast Iron"
+     ],
+     "season": null,
+     "complements": [
+      "Frying Pan",
+      "Chef's Knife"
+     ]
+    },
+    {
+     "type": "Frying Pan",
+     "categories": [
+      "Kitchen > Cookware"
+     ],
+     "price_eur": [
+      29,
+      129
+     ],
+     "weight_g": [
+      900,
+      1800
+     ],
+     "axes": [],
+     "modifiers": [
+      "Non-Stick 28cm",
+      "Carbon Steel 26cm",
+      "Stainless 24cm"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Chef's Knife",
+      "Casserole Dish"
+     ]
+    },
+    {
+     "type": "Dinner Plate Set",
+     "categories": [
+      "Dining > Tableware"
+     ],
+     "price_eur": [
+      29,
+      119
+     ],
+     "weight_g": [
+      2500,
+      5000
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Set of 4",
+      "Set of 6",
+      "Reactive Glaze Set of 4"
+     ],
+     "materials": [
+      "Stoneware",
+      "Porcelain"
+     ],
+     "season": null,
+     "complements": [
+      "Glassware Set",
+      "Candle"
+     ]
+    },
+    {
+     "type": "Glassware Set",
+     "categories": [
+      "Dining > Glassware"
+     ],
+     "price_eur": [
+      19,
+      79
+     ],
+     "weight_g": [
+      1200,
+      2500
+     ],
+     "axes": [],
+     "modifiers": [
+      "Tumblers Set of 4",
+      "Wine Glasses Set of 2",
+      "Ribbed Set of 6"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dinner Plate Set"
+     ]
+    },
+    {
+     "type": "Duvet Cover",
+     "categories": [
+      "Bedroom > Bedding"
+     ],
+     "price_eur": [
+      45,
+      189
+     ],
+     "weight_g": [
+      900,
+      1600
+     ],
+     "axes": [
+      "size_bedding",
+      "color_home"
+     ],
+     "modifiers": [
+      "Washed",
+      "Percale",
+      "Sateen",
+      "Waffle"
+     ],
+     "materials": [
+      "Linen",
+      "Organic Cotton",
+      "Cotton Percale"
+     ],
+     "season": "winter",
+     "complements": [
+      "Pillow",
+      "Throw",
+      "Cushion Cover"
+     ]
+    },
+    {
+     "type": "Pillow",
+     "categories": [
+      "Bedroom > Bedding"
+     ],
+     "price_eur": [
+      25,
+      89
+     ],
+     "weight_g": [
+      700,
+      1200
+     ],
+     "axes": [],
+     "modifiers": [
+      "Medium",
+      "Firm",
+      "Soft",
+      "Side Sleeper"
+     ],
+     "materials": [
+      "Down Alternative",
+      "Feather & Down",
+      "Memory Foam"
+     ],
+     "season": null,
+     "complements": [
+      "Duvet Cover"
+     ]
+    },
+    {
+     "type": "Throw",
+     "categories": [
+      "Living > Textiles"
+     ],
+     "price_eur": [
+      39,
+      149
+     ],
+     "weight_g": [
+      700,
+      1400
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Chunky Knit",
+      "Herringbone",
+      "Waffle",
+      "Fringed"
+     ],
+     "materials": [
+      "Wool",
+      "Cotton",
+      "Recycled Wool"
+     ],
+     "season": "winter",
+     "complements": [
+      "Cushion Cover",
+      "Candle",
+      "Duvet Cover"
+     ]
+    },
+    {
+     "type": "Cushion Cover",
+     "categories": [
+      "Living > Textiles"
+     ],
+     "price_eur": [
+      15,
+      49
+     ],
+     "weight_g": [
+      150,
+      300
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Square 45cm",
+      "Lumbar 30x50",
+      "Velvet",
+      "Embroidered"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Throw",
+      "Cushion Cover"
+     ]
+    },
+    {
+     "type": "Table Lamp",
+     "categories": [
+      "Living > Lighting"
+     ],
+     "price_eur": [
+      49,
+      249
+     ],
+     "weight_g": [
+      1500,
+      4000
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Mushroom",
+      "Ceramic Base",
+      "Rechargeable",
+      "Pleated Shade"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Side Table",
+      "Vase",
+      "Candle"
+     ]
+    },
+    {
+     "type": "Side Table",
+     "categories": [
+      "Living > Furniture"
+     ],
+     "price_eur": [
+      79,
+      349
+     ],
+     "weight_g": [
+      5000,
+      12000
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Round",
+      "Nesting Set",
+      "Pedestal"
+     ],
+     "materials": [
+      "Solid Oak",
+      "Walnut Veneer",
+      "Rattan"
+     ],
+     "season": null,
+     "complements": [
+      "Table Lamp",
+      "Vase"
+     ]
+    },
+    {
+     "type": "Vase",
+     "categories": [
+      "Living > Decor"
+     ],
+     "price_eur": [
+      19,
+      89
+     ],
+     "weight_g": [
+      500,
+      1800
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Bud",
+      "Tall",
+      "Fluted",
+      "Sculptural"
+     ],
+     "materials": [
+      "Ceramic",
+      "Recycled Glass",
+      "Stoneware"
+     ],
+     "season": null,
+     "complements": [
+      "Candle",
+      "Table Lamp"
+     ]
+    },
+    {
+     "type": "Candle",
+     "categories": [
+      "Living > Decor"
+     ],
+     "price_eur": [
+      14,
+      49
+     ],
+     "weight_g": [
+      250,
+      600
+     ],
+     "axes": [],
+     "modifiers": [
+      "Fig",
+      "Cedar & Smoke",
+      "Sea Salt",
+      "Linen",
+      "Tomato Leaf"
+     ],
+     "materials": [],
+     "season": "winter",
+     "complements": [
+      "Vase",
+      "Throw"
+     ]
+    },
+    {
+     "type": "Bath Towel",
+     "categories": [
+      "Bathroom > Towels"
+     ],
+     "price_eur": [
+      15,
+      49
+     ],
+     "weight_g": [
+      500,
+      900
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Waffle",
+      "Ribbed",
+      "Plush",
+      "Hand Towel"
+     ],
+     "materials": [
+      "Turkish Cotton",
+      "Organic Cotton"
+     ],
+     "season": null,
+     "complements": [
+      "Bath Towel",
+      "Candle"
+     ]
+    }
+   ]
+  },
+  "sports_outdoor": {
+   "label": "Sports & Outdoor",
+   "return_rate": 0.12,
+   "conversion": 0.02,
+   "items_per_order": 1.8,
+   "seasonality": [
+    1.15,
+    0.95,
+    1.05,
+    1.1,
+    1.15,
+    1.15,
+    1.1,
+    1.0,
+    0.95,
+    0.9,
+    1.05,
+    1.1
+   ],
+   "brand_style": "multi",
+   "brand_names": [
+    "Fellcraft",
+    "Ridgeway",
+    "Altura",
+    "Kvist",
+    "Basegrade",
+    "Tidewater",
+    "Summitline",
+    "Nordhang",
+    "Peakform",
+    "Veloce"
+   ],
+   "products": [
+    {
+     "type": "Running Shoes",
+     "categories": [
+      "Running > Shoes"
+     ],
+     "price_eur": [
+      89,
+      199
+     ],
+     "weight_g": [
+      500,
+      700
+     ],
+     "axes": [
+      "size_shoe_eu",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Road",
+      "Trail",
+      "Carbon Plate",
+      "Stability",
+      "Daily Trainer"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Running Jacket",
+      "Water Bottle",
+      "Base Layer"
+     ]
+    },
+    {
+     "type": "Running Jacket",
+     "categories": [
+      "Running > Apparel"
+     ],
+     "price_eur": [
+      59,
+      180
+     ],
+     "weight_g": [
+      150,
+      300
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Packable",
+      "Waterproof",
+      "Windproof",
+      "Reflective"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Running Shoes",
+      "Base Layer"
+     ]
+    },
+    {
+     "type": "Hiking Boots",
+     "categories": [
+      "Hiking > Footwear"
+     ],
+     "price_eur": [
+      119,
+      259
+     ],
+     "weight_g": [
+      1100,
+      1600
+     ],
+     "axes": [
+      "size_shoe_eu",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Mid GTX",
+      "Lightweight",
+      "Leather",
+      "Approach"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Backpack",
+      "Base Layer",
+      "Water Bottle"
+     ]
+    },
+    {
+     "type": "Backpack",
+     "categories": [
+      "Hiking > Packs"
+     ],
+     "price_eur": [
+      49,
+      249
+     ],
+     "weight_g": [
+      600,
+      1800
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "22L Daypack",
+      "35L",
+      "45L Trekking",
+      "Hydration"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Water Bottle",
+      "Hiking Boots"
+     ]
+    },
+    {
+     "type": "Tent",
+     "categories": [
+      "Camping > Tents"
+     ],
+     "price_eur": [
+      149,
+      699
+     ],
+     "weight_g": [
+      1500,
+      4500
+     ],
+     "axes": [],
+     "modifiers": [
+      "2-Person Ultralight",
+      "3-Person",
+      "4-Season",
+      "Family 6-Person"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Sleeping Bag",
+      "Backpack"
+     ]
+    },
+    {
+     "type": "Sleeping Bag",
+     "categories": [
+      "Camping > Sleep"
+     ],
+     "price_eur": [
+      69,
+      399
+     ],
+     "weight_g": [
+      800,
+      1800
+     ],
+     "axes": [],
+     "modifiers": [
+      "3-Season",
+      "Down -5°C",
+      "Synthetic Summer"
+     ],
+     "materials": [],
+     "season": "winter",
+     "complements": [
+      "Tent",
+      "Base Layer"
+     ]
+    },
+    {
+     "type": "Base Layer",
+     "categories": [
+      "Hiking > Apparel"
+     ],
+     "price_eur": [
+      39,
+      99
+     ],
+     "weight_g": [
+      150,
+      250
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Long Sleeve",
+      "Zip Neck",
+      "Leggings"
+     ],
+     "materials": [
+      "Merino",
+      "Recycled Polyester"
+     ],
+     "season": null,
+     "complements": [
+      "Running Jacket",
+      "Hiking Boots"
+     ]
+    },
+    {
+     "type": "Yoga Mat",
+     "categories": [
+      "Fitness > Yoga"
+     ],
+     "price_eur": [
+      29,
+      99
+     ],
+     "weight_g": [
+      1200,
+      2500
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "4mm",
+      "6mm Cork",
+      "Travel",
+      "Grip"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Water Bottle",
+      "Dumbbell Set"
+     ]
+    },
+    {
+     "type": "Dumbbell Set",
+     "categories": [
+      "Fitness > Weights"
+     ],
+     "price_eur": [
+      49,
+      299
+     ],
+     "weight_g": [
+      5000,
+      25000
+     ],
+     "axes": [],
+     "modifiers": [
+      "Adjustable 2-24kg",
+      "Hex 2x10kg",
+      "Neoprene Pair"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Yoga Mat",
+      "Water Bottle"
+     ]
+    },
+    {
+     "type": "Road Bike",
+     "categories": [
+      "Cycling > Bikes"
+     ],
+     "price_eur": [
+      899,
+      3499
+     ],
+     "weight_g": [
+      8000,
+      11000
+     ],
+     "axes": [
+      "frame_size"
+     ],
+     "modifiers": [
+      "Endurance 105",
+      "Aero Disc",
+      "Gravel GRX",
+      "Carbon Ultegra"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Cycling Helmet",
+      "Water Bottle"
+     ]
+    },
+    {
+     "type": "Cycling Helmet",
+     "categories": [
+      "Cycling > Helmets"
+     ],
+     "price_eur": [
+      49,
+      249
+     ],
+     "weight_g": [
+      250,
+      350
+     ],
+     "axes": [
+      "size_apparel",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "MIPS Road",
+      "Commuter",
+      "Aero"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Water Bottle"
+     ]
+    },
+    {
+     "type": "Water Bottle",
+     "categories": [
+      "Accessories > Hydration"
+     ],
+     "price_eur": [
+      12,
+      39
+     ],
+     "weight_g": [
+      150,
+      400
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Insulated 750ml",
+      "Squeeze 600ml",
+      "Filter 1L"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Water Bottle"
+     ]
+    },
+    {
+     "type": "Swim Goggles",
+     "categories": [
+      "Swimming > Accessories"
+     ],
+     "price_eur": [
+      15,
+      49
+     ],
+     "weight_g": [
+      40,
+      80
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Racing",
+      "Open Water",
+      "Mirrored"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Water Bottle"
+     ]
+    }
+   ]
+  },
+  "food_coffee": {
+   "label": "Food & Coffee",
+   "return_rate": 0.02,
+   "conversion": 0.035,
+   "items_per_order": 1.6,
+   "seasonality": [
+    1.0,
+    0.95,
+    1.0,
+    0.95,
+    0.95,
+    0.9,
+    0.85,
+    0.9,
+    1.0,
+    1.05,
+    1.15,
+    1.3
+   ],
+   "brand_style": "own",
+   "subscription_share": 0.55,
+   "products": [
+    {
+     "type": "Coffee Beans",
+     "categories": [
+      "Coffee > Single Origin",
+      "Coffee > Blends"
+     ],
+     "price_eur": [
+      9,
+      32
+     ],
+     "weight_g": [
+      250,
+      1000
+     ],
+     "axes": [
+      "coffee_weight",
+      "grind"
+     ],
+     "modifiers": [
+      "Ethiopia Yirgacheffe",
+      "Colombia Huila",
+      "Brazil Cerrado",
+      "Kenya AA",
+      "Guatemala Antigua",
+      "Rwanda Nyamasheke",
+      "House Espresso Blend",
+      "Breakfast Blend",
+      "Decaf Swiss Water"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Coffee Beans",
+      "Coffee Grinder",
+      "Pour-Over Kit",
+      "Chocolate Bar"
+     ]
+    },
+    {
+     "type": "Coffee Capsules",
+     "categories": [
+      "Coffee > Capsules"
+     ],
+     "price_eur": [
+      5,
+      12
+     ],
+     "weight_g": [
+      60,
+      120
+     ],
+     "axes": [],
+     "modifiers": [
+      "Lungo (10)",
+      "Espresso (10)",
+      "Decaf (10)",
+      "Variety Pack (40)"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Coffee Capsules",
+      "Chocolate Bar"
+     ]
+    },
+    {
+     "type": "Loose Leaf Tea",
+     "categories": [
+      "Tea > Loose Leaf"
+     ],
+     "price_eur": [
+      7,
+      24
+     ],
+     "weight_g": [
+      100,
+      250
+     ],
+     "axes": [],
+     "modifiers": [
+      "Earl Grey",
+      "Sencha",
+      "Darjeeling First Flush",
+      "Rooibos Vanilla",
+      "Chamomile",
+      "Assam Breakfast"
+     ],
+     "materials": [],
+     "season": "winter",
+     "complements": [
+      "Loose Leaf Tea",
+      "Chocolate Bar"
+     ]
+    },
+    {
+     "type": "Hot Chocolate",
+     "categories": [
+      "Drinking Chocolate"
+     ],
+     "price_eur": [
+      8,
+      19
+     ],
+     "weight_g": [
+      250,
+      500
+     ],
+     "axes": [],
+     "modifiers": [
+      "Dark 70%",
+      "Milk",
+      "Salted Caramel"
+     ],
+     "materials": [],
+     "season": "winter",
+     "complements": [
+      "Chocolate Bar"
+     ]
+    },
+    {
+     "type": "Coffee Grinder",
+     "categories": [
+      "Equipment > Grinders"
+     ],
+     "price_eur": [
+      49,
+      349
+     ],
+     "weight_g": [
+      700,
+      3500
+     ],
+     "axes": [],
+     "modifiers": [
+      "Hand Burr",
+      "Electric Conical",
+      "Flat Burr"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Coffee Beans",
+      "Pour-Over Kit"
+     ]
+    },
+    {
+     "type": "Pour-Over Kit",
+     "categories": [
+      "Equipment > Brewers"
+     ],
+     "price_eur": [
+      29,
+      99
+     ],
+     "weight_g": [
+      500,
+      1500
+     ],
+     "axes": [],
+     "modifiers": [
+      "V60 Starter",
+      "Chemex 6-Cup",
+      "Aeropress Go"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Coffee Beans",
+      "Coffee Grinder"
+     ]
+    },
+    {
+     "type": "Chocolate Bar",
+     "categories": [
+      "Snacks > Chocolate"
+     ],
+     "price_eur": [
+      3,
+      8
+     ],
+     "weight_g": [
+      70,
+      100
+     ],
+     "axes": [],
+     "modifiers": [
+      "Dark 72% Sea Salt",
+      "Milk Hazelnut",
+      "Raspberry White",
+      "Orange Dark"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Chocolate Bar",
+      "Coffee Beans"
+     ]
+    },
+    {
+     "type": "Gift Box",
+     "categories": [
+      "Gifts"
+     ],
+     "price_eur": [
+      25,
+      79
+     ],
+     "weight_g": [
+      800,
+      2000
+     ],
+     "axes": [],
+     "modifiers": [
+      "Coffee Lover's",
+      "Tea Explorer",
+      "Christmas Hamper"
+     ],
+     "materials": [],
+     "season": "winter",
+     "complements": [
+      "Chocolate Bar"
+     ]
+    }
+   ]
+  },
+  "pet_supplies": {
+   "label": "Pet Supplies",
+   "return_rate": 0.03,
+   "conversion": 0.038,
+   "items_per_order": 2.0,
+   "seasonality": [
+    1.0,
+    0.95,
+    1.0,
+    1.0,
+    1.0,
+    0.95,
+    0.95,
+    0.95,
+    1.0,
+    1.0,
+    1.1,
+    1.2
+   ],
+   "brand_style": "multi",
+   "subscription_share": 0.35,
+   "brand_names": [
+    "Barkwell",
+    "Pawsitive",
+    "Feline Fine",
+    "Nordpaw",
+    "Tailtown",
+    "Whiskerly",
+    "Furrow",
+    "Happy Hound"
+   ],
+   "products": [
+    {
+     "type": "Dry Dog Food",
+     "categories": [
+      "Dog > Food"
+     ],
+     "price_eur": [
+      14,
+      79
+     ],
+     "weight_g": [
+      1500,
+      12000
+     ],
+     "axes": [
+      "pet_weight"
+     ],
+     "modifiers": [
+      "Adult Chicken & Rice",
+      "Puppy Salmon",
+      "Senior Lamb",
+      "Grain-Free Turkey",
+      "Sensitive Fish"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dog Treats",
+      "Wet Dog Food"
+     ]
+    },
+    {
+     "type": "Wet Dog Food",
+     "categories": [
+      "Dog > Food"
+     ],
+     "price_eur": [
+      9,
+      34
+     ],
+     "weight_g": [
+      2400,
+      4800
+     ],
+     "axes": [],
+     "modifiers": [
+      "Chicken Chunks (12x400g)",
+      "Beef Stew (6x400g)",
+      "Variety Pack (24x150g)"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dry Dog Food",
+      "Dog Treats"
+     ]
+    },
+    {
+     "type": "Dry Cat Food",
+     "categories": [
+      "Cat > Food"
+     ],
+     "price_eur": [
+      9,
+      49
+     ],
+     "weight_g": [
+      1500,
+      7000
+     ],
+     "axes": [
+      "pet_weight"
+     ],
+     "modifiers": [
+      "Adult Salmon",
+      "Kitten Chicken",
+      "Indoor",
+      "Sterilised"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Wet Cat Food",
+      "Cat Litter"
+     ]
+    },
+    {
+     "type": "Wet Cat Food",
+     "categories": [
+      "Cat > Food"
+     ],
+     "price_eur": [
+      8,
+      29
+     ],
+     "weight_g": [
+      1000,
+      2400
+     ],
+     "axes": [],
+     "modifiers": [
+      "Fish Selection (12x85g)",
+      "Pâté (24x85g)",
+      "Senior (12x85g)"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dry Cat Food",
+      "Cat Litter"
+     ]
+    },
+    {
+     "type": "Dog Treats",
+     "categories": [
+      "Dog > Treats"
+     ],
+     "price_eur": [
+      4,
+      15
+     ],
+     "weight_g": [
+      100,
+      500
+     ],
+     "axes": [],
+     "modifiers": [
+      "Dental Sticks",
+      "Training Bites",
+      "Chews",
+      "Biscuits"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dry Dog Food",
+      "Dog Lead"
+     ]
+    },
+    {
+     "type": "Cat Litter",
+     "categories": [
+      "Cat > Litter"
+     ],
+     "price_eur": [
+      8,
+      29
+     ],
+     "weight_g": [
+      5000,
+      15000
+     ],
+     "axes": [],
+     "modifiers": [
+      "Clumping 10L",
+      "Wood Pellet 15L",
+      "Silica 8L"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dry Cat Food",
+      "Wet Cat Food"
+     ]
+    },
+    {
+     "type": "Dog Bed",
+     "categories": [
+      "Dog > Beds"
+     ],
+     "price_eur": [
+      29,
+      149
+     ],
+     "weight_g": [
+      1500,
+      5000
+     ],
+     "axes": [
+      "pet_size",
+      "color_home"
+     ],
+     "modifiers": [
+      "Orthopaedic",
+      "Donut",
+      "Waterproof"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dog Treats",
+      "Dog Lead"
+     ]
+    },
+    {
+     "type": "Dog Lead",
+     "categories": [
+      "Dog > Walking"
+     ],
+     "price_eur": [
+      12,
+      39
+     ],
+     "weight_g": [
+      100,
+      300
+     ],
+     "axes": [
+      "pet_size",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Rope",
+      "Leather",
+      "Reflective"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dog Treats"
+     ]
+    },
+    {
+     "type": "Cat Scratcher",
+     "categories": [
+      "Cat > Toys & Furniture"
+     ],
+     "price_eur": [
+      15,
+      129
+     ],
+     "weight_g": [
+      1000,
+      9000
+     ],
+     "axes": [],
+     "modifiers": [
+      "Post",
+      "Tower",
+      "Cardboard Lounge"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Wet Cat Food"
+     ]
+    },
+    {
+     "type": "Pet Shampoo",
+     "categories": [
+      "Grooming"
+     ],
+     "price_eur": [
+      7,
+      19
+     ],
+     "weight_g": [
+      250,
+      500
+     ],
+     "axes": [],
+     "modifiers": [
+      "Oatmeal",
+      "Puppy",
+      "Deodorising"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Dog Treats"
+     ]
+    }
+   ]
+  },
+  "b2b_industrial": {
+   "label": "Industrial Supplies (B2B)",
+   "return_rate": 0.03,
+   "conversion": 0.06,
+   "items_per_order": 6.0,
+   "quantity_scale": 12,
+   "seasonality": [
+    0.95,
+    1.0,
+    1.1,
+    1.05,
+    1.05,
+    1.0,
+    0.85,
+    0.8,
+    1.05,
+    1.1,
+    1.05,
+    0.75
+   ],
+   "brand_style": "multi",
+   "brand_names": [
+    "Forgeline",
+    "Castell",
+    "Arbor Safety",
+    "Midland Pro",
+    "Torque & Co.",
+    "Stahlwerk",
+    "Grippa",
+    "Duraweld"
+   ],
+   "products": [
+    {
+     "type": "Hex Bolts",
+     "categories": [
+      "Fasteners > Bolts"
+     ],
+     "price_eur": [
+      12,
+      95
+     ],
+     "weight_g": [
+      1000,
+      8000
+     ],
+     "axes": [
+      "pack"
+     ],
+     "modifiers": [
+      "M6x20 A2 Stainless",
+      "M8x30 Zinc",
+      "M10x50 Grade 8.8",
+      "M12x60 Galvanised"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Wood Screws",
+      "Cordless Drill"
+     ]
+    },
+    {
+     "type": "Wood Screws",
+     "categories": [
+      "Fasteners > Screws"
+     ],
+     "price_eur": [
+      6,
+      45
+     ],
+     "weight_g": [
+      400,
+      3000
+     ],
+     "axes": [
+      "pack"
+     ],
+     "modifiers": [
+      "4x40 Pozi",
+      "5x60 Torx",
+      "3.5x30 Countersunk"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Hex Bolts",
+      "Cordless Drill"
+     ]
+    },
+    {
+     "type": "Safety Gloves",
+     "categories": [
+      "PPE > Gloves"
+     ],
+     "price_eur": [
+      2,
+      15
+     ],
+     "weight_g": [
+      60,
+      150
+     ],
+     "axes": [
+      "size_gloves"
+     ],
+     "modifiers": [
+      "Cut Level C",
+      "Nitrile Coated",
+      "Thermal",
+      "Chemical Resistant"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Safety Glasses",
+      "Hi-Vis Vest"
+     ]
+    },
+    {
+     "type": "Safety Glasses",
+     "categories": [
+      "PPE > Eye Protection"
+     ],
+     "price_eur": [
+      3,
+      25
+     ],
+     "weight_g": [
+      30,
+      60
+     ],
+     "axes": [],
+     "modifiers": [
+      "Clear Anti-Fog",
+      "Tinted",
+      "Over-Spec"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Safety Gloves",
+      "Hi-Vis Vest"
+     ]
+    },
+    {
+     "type": "Hi-Vis Vest",
+     "categories": [
+      "PPE > Workwear"
+     ],
+     "price_eur": [
+      3,
+      15
+     ],
+     "weight_g": [
+      100,
+      180
+     ],
+     "axes": [
+      "size_apparel"
+     ],
+     "modifiers": [
+      "Class 2 Yellow",
+      "Class 2 Orange",
+      "Executive"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Safety Gloves",
+      "Safety Glasses"
+     ]
+    },
+    {
+     "type": "Cordless Drill",
+     "categories": [
+      "Power Tools > Drills"
+     ],
+     "price_eur": [
+      79,
+      349
+     ],
+     "weight_g": [
+      1300,
+      2200
+     ],
+     "axes": [],
+     "modifiers": [
+      "18V Combi",
+      "12V Compact",
+      "Brushless 18V Kit"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Wood Screws",
+      "Safety Glasses"
+     ]
+    },
+    {
+     "type": "Angle Grinder",
+     "categories": [
+      "Power Tools > Grinders"
+     ],
+     "price_eur": [
+      59,
+      249
+     ],
+     "weight_g": [
+      1800,
+      2800
+     ],
+     "axes": [],
+     "modifiers": [
+      "115mm",
+      "125mm Brushless",
+      "230mm"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Cutting Discs",
+      "Safety Glasses",
+      "Safety Gloves"
+     ]
+    },
+    {
+     "type": "Cutting Discs",
+     "categories": [
+      "Abrasives"
+     ],
+     "price_eur": [
+      8,
+      49
+     ],
+     "weight_g": [
+      500,
+      2500
+     ],
+     "axes": [
+      "pack"
+     ],
+     "modifiers": [
+      "115mm Steel",
+      "125mm Inox",
+      "Flap Disc 40 Grit"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Angle Grinder",
+      "Safety Gloves"
+     ]
+    },
+    {
+     "type": "Pallet Wrap",
+     "categories": [
+      "Packaging"
+     ],
+     "price_eur": [
+      15,
+      49
+     ],
+     "weight_g": [
+      2500,
+      4000
+     ],
+     "axes": [],
+     "modifiers": [
+      "Cast 400mm x 250m",
+      "Blown 500mm x 300m"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Shelving Unit"
+     ]
+    },
+    {
+     "type": "Shelving Unit",
+     "categories": [
+      "Storage"
+     ],
+     "price_eur": [
+      89,
+      399
+     ],
+     "weight_g": [
+      25000,
+      60000
+     ],
+     "axes": [],
+     "modifiers": [
+      "Boltless 5-Tier",
+      "Heavy Duty 1800mm",
+      "Longspan"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Pallet Wrap"
+     ]
+    }
+   ]
+  },
+  "b2b_office": {
+   "label": "Office Supplies (B2B)",
+   "return_rate": 0.03,
+   "conversion": 0.06,
+   "items_per_order": 5.5,
+   "quantity_scale": 8,
+   "seasonality": [
+    1.1,
+    1.0,
+    1.05,
+    1.0,
+    0.95,
+    0.95,
+    0.8,
+    1.05,
+    1.1,
+    1.05,
+    1.0,
+    0.75
+   ],
+   "brand_style": "multi",
+   "brand_names": [
+    "Officio",
+    "Paperline",
+    "Deskwell",
+    "Kontora",
+    "Inkpoint",
+    "Ergonomix",
+    "Filewise"
+   ],
+   "products": [
+    {
+     "type": "Copy Paper",
+     "categories": [
+      "Paper > Copy Paper"
+     ],
+     "price_eur": [
+      4,
+      550
+     ],
+     "weight_g": [
+      2500,
+      500000
+     ],
+     "axes": [
+      "paper_pack"
+     ],
+     "modifiers": [
+      "A4 80gsm White",
+      "A4 100gsm Premium",
+      "A3 80gsm",
+      "A4 Recycled"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Toner Cartridge",
+      "Ballpoint Pens"
+     ]
+    },
+    {
+     "type": "Toner Cartridge",
+     "categories": [
+      "Printing > Toner"
+     ],
+     "price_eur": [
+      39,
+      189
+     ],
+     "weight_g": [
+      600,
+      1200
+     ],
+     "axes": [],
+     "modifiers": [
+      "Black High Yield",
+      "Cyan",
+      "Magenta",
+      "Yellow"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Copy Paper"
+     ]
+    },
+    {
+     "type": "Ballpoint Pens",
+     "categories": [
+      "Writing > Pens"
+     ],
+     "price_eur": [
+      3,
+      25
+     ],
+     "weight_g": [
+      100,
+      600
+     ],
+     "axes": [
+      "pack"
+     ],
+     "modifiers": [
+      "Blue Medium",
+      "Black Fine",
+      "Assorted"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Copy Paper",
+      "Lever Arch File"
+     ]
+    },
+    {
+     "type": "Lever Arch File",
+     "categories": [
+      "Filing > Files"
+     ],
+     "price_eur": [
+      2,
+      40
+     ],
+     "weight_g": [
+      400,
+      8000
+     ],
+     "axes": [
+      "pack"
+     ],
+     "modifiers": [
+      "A4 75mm",
+      "A4 50mm",
+      "Coloured"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Copy Paper",
+      "Ballpoint Pens"
+     ]
+    },
+    {
+     "type": "Office Chair",
+     "categories": [
+      "Furniture > Seating"
+     ],
+     "price_eur": [
+      149,
+      699
+     ],
+     "weight_g": [
+      14000,
+      22000
+     ],
+     "axes": [],
+     "modifiers": [
+      "Ergonomic Mesh",
+      "Task",
+      "Executive Leather"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Sit-Stand Desk",
+      "Monitor Arm"
+     ]
+    },
+    {
+     "type": "Sit-Stand Desk",
+     "categories": [
+      "Furniture > Desks"
+     ],
+     "price_eur": [
+      299,
+      999
+     ],
+     "weight_g": [
+      30000,
+      45000
+     ],
+     "axes": [],
+     "modifiers": [
+      "1400x800 Electric",
+      "1600x800 Dual Motor"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Office Chair",
+      "Monitor Arm"
+     ]
+    },
+    {
+     "type": "Monitor Arm",
+     "categories": [
+      "Ergonomics"
+     ],
+     "price_eur": [
+      39,
+      199
+     ],
+     "weight_g": [
+      1500,
+      4000
+     ],
+     "axes": [],
+     "modifiers": [
+      "Single",
+      "Dual",
+      "Gas Spring"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Sit-Stand Desk"
+     ]
+    },
+    {
+     "type": "Coffee Pods (Office)",
+     "categories": [
+      "Breakroom"
+     ],
+     "price_eur": [
+      15,
+      79
+     ],
+     "weight_g": [
+      500,
+      2000
+     ],
+     "axes": [
+      "pack"
+     ],
+     "modifiers": [
+      "Espresso",
+      "Lungo",
+      "Decaf"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Hand Soap Refill"
+     ]
+    },
+    {
+     "type": "Hand Soap Refill",
+     "categories": [
+      "Facilities > Hygiene"
+     ],
+     "price_eur": [
+      6,
+      29
+     ],
+     "weight_g": [
+      1000,
+      5000
+     ],
+     "axes": [],
+     "modifiers": [
+      "5L",
+      "2L Foam",
+      "Sensitive 1L"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Coffee Pods (Office)"
+     ]
+    }
+   ]
+  },
+  "books_stationery": {
+   "label": "Books & Stationery",
+   "return_rate": 0.04,
+   "conversion": 0.028,
+   "items_per_order": 1.9,
+   "seasonality": [
+    0.95,
+    0.85,
+    0.9,
+    0.9,
+    0.9,
+    0.85,
+    0.95,
+    1.05,
+    1.0,
+    1.0,
+    1.3,
+    1.6
+   ],
+   "brand_style": "multi",
+   "brand_names": [
+    "Harbour Press",
+    "Quillmark",
+    "Northlight Books",
+    "Inkwell",
+    "Lindqvist & Sons",
+    "Paperhouse"
+   ],
+   "products": [
+    {
+     "type": "Novel",
+     "categories": [
+      "Books > Fiction"
+     ],
+     "price_eur": [
+      9,
+      24
+     ],
+     "weight_g": [
+      250,
+      600
+     ],
+     "axes": [
+      "format_book"
+     ],
+     "modifiers": [
+      "The Silent Harbour",
+      "A Map of Small Hours",
+      "Salt and Iron",
+      "The Glasshouse Year",
+      "Winter at Lindholm",
+      "The Last Lighthouse",
+      "North of Everything",
+      "The Orchard Keeper's Daughter"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Novel",
+      "Notebook"
+     ]
+    },
+    {
+     "type": "Cookbook",
+     "categories": [
+      "Books > Food & Drink"
+     ],
+     "price_eur": [
+      18,
+      35
+     ],
+     "weight_g": [
+      700,
+      1300
+     ],
+     "axes": [
+      "format_book"
+     ],
+     "modifiers": [
+      "Slow Sundays",
+      "One Pot Nordic",
+      "The Sourdough Year",
+      "Green Kitchen"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Cookbook",
+      "Greeting Cards"
+     ]
+    },
+    {
+     "type": "Children's Book",
+     "categories": [
+      "Books > Children's"
+     ],
+     "price_eur": [
+      6,
+      16
+     ],
+     "weight_g": [
+      200,
+      500
+     ],
+     "axes": [
+      "format_book"
+     ],
+     "modifiers": [
+      "The Very Brave Badger",
+      "Moon Over Puddle Lane",
+      "Otto and the Lost Kite"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Children's Book"
+     ]
+    },
+    {
+     "type": "Notebook",
+     "categories": [
+      "Stationery > Notebooks"
+     ],
+     "price_eur": [
+      8,
+      29
+     ],
+     "weight_g": [
+      200,
+      400
+     ],
+     "axes": [
+      "notebook_ruling",
+      "color_apparel"
+     ],
+     "modifiers": [
+      "A5 Hardcover",
+      "B5 Softcover",
+      "Pocket",
+      "Bullet Journal"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Fountain Pen",
+      "Planner"
+     ]
+    },
+    {
+     "type": "Fountain Pen",
+     "categories": [
+      "Stationery > Pens"
+     ],
+     "price_eur": [
+      19,
+      149
+     ],
+     "weight_g": [
+      20,
+      50
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Medium Nib",
+      "Fine Nib",
+      "Calligraphy"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Notebook"
+     ]
+    },
+    {
+     "type": "Planner",
+     "categories": [
+      "Stationery > Planners"
+     ],
+     "price_eur": [
+      15,
+      39
+     ],
+     "weight_g": [
+      300,
+      600
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Weekly 2025",
+      "Daily 2025",
+      "Undated",
+      "Academic"
+     ],
+     "materials": [],
+     "season": "winter",
+     "complements": [
+      "Notebook",
+      "Fountain Pen"
+     ]
+    },
+    {
+     "type": "Greeting Cards",
+     "categories": [
+      "Stationery > Cards"
+     ],
+     "price_eur": [
+      3,
+      15
+     ],
+     "weight_g": [
+      20,
+      200
+     ],
+     "axes": [],
+     "modifiers": [
+      "Birthday",
+      "Thank You (10-Pack)",
+      "Christmas (8-Pack)"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Novel"
+     ]
+    }
+   ]
+  },
+  "jewelry_accessories": {
+   "label": "Jewelry & Accessories",
+   "return_rate": 0.08,
+   "conversion": 0.012,
+   "items_per_order": 1.2,
+   "seasonality": [
+    0.85,
+    1.4,
+    0.9,
+    0.95,
+    1.15,
+    0.9,
+    0.85,
+    0.85,
+    0.9,
+    0.95,
+    1.3,
+    1.7
+   ],
+   "brand_style": "own",
+   "products": [
+    {
+     "type": "Necklace",
+     "categories": [
+      "Jewelry > Necklaces"
+     ],
+     "price_eur": [
+      39,
+      349
+     ],
+     "weight_g": [
+      10,
+      40
+     ],
+     "axes": [
+      "metal"
+     ],
+     "modifiers": [
+      "Pendant",
+      "Chain",
+      "Pearl",
+      "Initial",
+      "Layered"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Earrings",
+      "Jewelry Box"
+     ]
+    },
+    {
+     "type": "Earrings",
+     "categories": [
+      "Jewelry > Earrings"
+     ],
+     "price_eur": [
+      25,
+      249
+     ],
+     "weight_g": [
+      5,
+      20
+     ],
+     "axes": [
+      "metal"
+     ],
+     "modifiers": [
+      "Hoop",
+      "Stud",
+      "Drop",
+      "Huggie"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Necklace",
+      "Ring"
+     ]
+    },
+    {
+     "type": "Ring",
+     "categories": [
+      "Jewelry > Rings"
+     ],
+     "price_eur": [
+      29,
+      499
+     ],
+     "weight_g": [
+      3,
+      10
+     ],
+     "axes": [
+      "ring_size",
+      "metal"
+     ],
+     "modifiers": [
+      "Signet",
+      "Stacking",
+      "Band",
+      "Solitaire"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Earrings",
+      "Jewelry Box"
+     ]
+    },
+    {
+     "type": "Bracelet",
+     "categories": [
+      "Jewelry > Bracelets"
+     ],
+     "price_eur": [
+      29,
+      299
+     ],
+     "weight_g": [
+      10,
+      40
+     ],
+     "axes": [
+      "metal"
+     ],
+     "modifiers": [
+      "Chain",
+      "Bangle",
+      "Cuff",
+      "Tennis"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Necklace",
+      "Ring"
+     ]
+    },
+    {
+     "type": "Watch",
+     "categories": [
+      "Watches"
+     ],
+     "price_eur": [
+      99,
+      599
+     ],
+     "weight_g": [
+      60,
+      150
+     ],
+     "axes": [
+      "color_tech"
+     ],
+     "modifiers": [
+      "Automatic 38mm",
+      "Quartz 36mm",
+      "Chronograph 42mm",
+      "Field 40mm"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Leather Wallet"
+     ]
+    },
+    {
+     "type": "Leather Wallet",
+     "categories": [
+      "Accessories > Leather Goods"
+     ],
+     "price_eur": [
+      39,
+      149
+     ],
+     "weight_g": [
+      80,
+      150
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Bifold",
+      "Card Holder",
+      "Zip Around"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Watch"
+     ]
+    },
+    {
+     "type": "Sunglasses",
+     "categories": [
+      "Accessories > Eyewear"
+     ],
+     "price_eur": [
+      59,
+      229
+     ],
+     "weight_g": [
+      30,
+      60
+     ],
+     "axes": [
+      "color_apparel"
+     ],
+     "modifiers": [
+      "Aviator",
+      "Round",
+      "Cat-Eye",
+      "Square"
+     ],
+     "materials": [],
+     "season": "summer",
+     "complements": [
+      "Leather Wallet"
+     ]
+    },
+    {
+     "type": "Jewelry Box",
+     "categories": [
+      "Gifts"
+     ],
+     "price_eur": [
+      29,
+      99
+     ],
+     "weight_g": [
+      300,
+      900
+     ],
+     "axes": [
+      "color_home"
+     ],
+     "modifiers": [
+      "Travel",
+      "Large",
+      "Ring Dish"
+     ],
+     "materials": [],
+     "season": null,
+     "complements": [
+      "Necklace",
+      "Earrings"
+     ]
+    }
+   ]
+  }
+ },
+ "price_levels": {
+  "EUR": 1.0,
+  "GBP": 0.87,
+  "USD": 1.1,
+  "SEK": 11.0,
+  "DKK": 7.46,
+  "NOK": 11.2,
+  "CHF": 0.97
+ },
+ "price_endings": {
+  "EUR": [
+   0.99,
+   0.95,
+   0.0,
+   0.9
+  ],
+  "GBP": [
+   0.99,
+   0.0,
+   0.5,
+   0.95
+  ],
+  "USD": [
+   0.99,
+   0.0,
+   0.95,
+   0.49
+  ],
+  "SEK": [
+   0.0
+  ],
+  "DKK": [
+   0.0,
+   0.95
+  ],
+  "NOK": [
+   0.0
+  ],
+  "CHF": [
+   0.9,
+   0.0,
+   0.5
+  ]
+ }
+}

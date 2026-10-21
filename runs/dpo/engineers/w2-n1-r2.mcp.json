@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Portability requests: formal DSAR count vs. unlinked data exports",
+    "--question",
+    "Is 'zero portability requests in 3 years' a real zero, or are shopper data exports being fulfilled outside the formal DSAR process (a logging blind spot)?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"dpo\", \"analyst\": \"Priyanka Desai\", \"engineer\": \"Ines\", \"situation\": \"regulator-inquiry\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per linked-to-DSAR status (2 rows: linked, not linked)\", \"columns_requested\": [\"linked to a data_subject_requests record (Y/N)\", \"export count\", \"distinct subject users (count of distinct subject_user_id)\", \"earliest requested_at (date)\", \"latest requested_at (date)\", \"completed export count (status indicating the export finished)\", \"average row_count (for exports where row_count is not null)\"], \"details\": \"Source: data_exports LEFT JOIN data_subject_requests ON data_subject_requests.data_export_id = data_exports.id. 'Linked' = a matching data_subject_requests row exists (regardless of that row's request_type); 'not linked' = no such row. Platform-wide, full history, no date filter. If the 'not linked' row has a meaningful count, that indicates shopper data exports happen outside the DSAR table entirely, which would mean request_type='portability' showing 0 in data_subject_requests is a process/logging gap rather than genuine zero demand. Order by linked_to_dsar (Y first, then N).\", \"builds_on\": [\"Data subject requests: monthly volume, closure time, and overdue backlog\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dpo/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

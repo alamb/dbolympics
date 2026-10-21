@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Current stockout exposure by warehouse, as of 2025-12-31",
+    "--question",
+    "As of now, how exposed are our fulfillment sites to stockouts, and how many SKUs are already at or below their reorder point?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ops\", \"analyst\": \"Lena Hartmann\", \"engineer\": \"Bea\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per warehouse\", \"columns_requested\": [\"warehouse_name\", \"tenant_name\", \"variants_tracked (distinct variant_id with a stock_items row at a location in this warehouse)\", \"variants_out_of_stock (quantity - reserved_quantity <= 0, summed across the warehouse's locations per variant, i.e. no sellable units left)\", \"pct_out_of_stock\", \"variants_at_or_below_reorder_point (reorder_point is not null and on-hand quantity <= reorder_point)\", \"pct_at_or_below_reorder\"], \"details\": \"Tables: stock_items (variant_id, stock_location_id, quantity, reserved_quantity, reorder_point) joined to stock_locations (warehouse_id) joined to warehouses (name, tenant_id) joined to tenants (name). This reflects the current live snapshot as replicated into the warehouse (effectively as of 2025-12-31) -- note in the report that this is a point-in-time view, not a trend over the year, since we don't have a reliable historical stockout event log. For variants present at multiple locations within the same warehouse, aggregate (sum quantity and reserved_quantity) to one on-hand figure per variant per warehouse before applying the out-of-stock and reorder-point tests. Round pct columns to 1 decimal (as %). Include only warehouses with at least 20 tracked variants. Order by pct_out_of_stock descending, tie-break by warehouse_name ascending. Cap at 50 rows.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ops/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

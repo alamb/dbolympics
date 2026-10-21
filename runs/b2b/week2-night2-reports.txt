@@ -1,0 +1,80 @@
+=== Report 1: B2B Wholesale New-Business Opportunities: Created vs Closed by Month (written by Ines) ===
+Engineer's note: Scoped to the five named tenants' 'New business' pipeline as requested; one row per month Jan 2023-Dec 2025 (36 rows), with zero-filled months where no opportunities were created/closed.
+REPORT: B2B Wholesale New-Business Opportunities: Created vs Closed by Month
+QUESTION: Did new-deal creation actually stop or slow down recently, or did deals just happen to all get closed out right as the data ends — i.e., is the 'zero open pipeline' at Dec 2025 a real freeze or a coincidence of timing?
+month   | opportunities_created | opportunities_closed
+--------+-----------------------+---------------------
+2023-01 |                     4 |                    3
+2023-02 |                     4 |                    4
+2023-03 |                     3 |                    5
+2023-04 |                     3 |                    2
+2023-05 |                     3 |                    2
+2023-06 |                     2 |                    3
+2023-07 |                     1 |                    1
+2023-08 |                     3 |                    2
+2023-09 |                     2 |                    2
+2023-10 |                     4 |                    2
+2023-11 |                     4 |                    7
+2023-12 |                     7 |                    3
+2024-01 |                     4 |                    8
+2024-02 |                     6 |                    4
+2024-03 |                     1 |                    3
+2024-04 |                     9 |                    3
+2024-05 |                     2 |                    8
+2024-06 |                     3 |                    0
+2024-07 |                     3 |                    5
+2024-08 |                     2 |                    3
+2024-09 |                     5 |                    2
+2024-10 |                     8 |                    7
+2024-11 |                     5 |                    7
+2024-12 |                     3 |                    4
+2025-01 |                     2 |                    3
+2025-02 |                     3 |                    2
+2025-03 |                     5 |                    4
+2025-04 |                     5 |                    6
+2025-05 |                     2 |                    3
+2025-06 |                     3 |                    2
+2025-07 |                     3 |                    5
+2025-08 |                     6 |                    2
+2025-09 |                     4 |                    5
+2025-10 |                     7 |                    5
+2025-11 |                     3 |                    7
+2025-12 |                     1 |                    2
+(36 rows)
+
+=== Report 2: B2B Wholesale: Dollar-Weighted vs Count-Weighted Win Rate by Rep (written by Felix) ===
+Engineer's note: Pipeline scoped by pipelines.name = 'New business' per tenant as requested; amount converted to EUR via the exchange rate on or before closed_at (falls back to the most recent prior rate, consistent with weekend carry-forward). Reps with fewer than 3 closed opportunities in scope are excluded via HAVING.
+REPORT: B2B Wholesale: Dollar-Weighted vs Count-Weighted Win Rate by Rep
+QUESTION: Is Youssef Meijer's pattern of winning small deals but losing his biggest one a one-off, or do several reps actually perform worse on a dollar basis than their deal-count win rate suggests?
+rep_name            | merchant                      | opportunities_closed | count_win_rate_pct | total_amount_won_eur | total_amount_lost_eur | dollar_weighted_win_rate_pct | gap_pct_points
+--------------------+-------------------------------+----------------------+--------------------+----------------------+-----------------------+------------------------------+---------------
+Youssef Meijer      | Polder Packaging              |                    7 |               57.1 |              14100.0 |               40700.0 |                         25.7 |           31.4
+Megan Taylor        | Castell Fasteners             |                   15 |               86.7 |              56581.5 |              10477.75 |                         84.4 |            2.3
+Greta Schmitt       | Hanse Industriebedarf         |                   12 |               83.3 |              45800.0 |               10400.0 |                         81.5 |            1.8
+Logan Roberts       | Ballycorran Industrial Supply |                   40 |               80.0 |             121300.0 |               33400.0 |                         78.4 |            1.6
+Sarah Hartmann      | Hanse Industriebedarf         |                    5 |              100.0 |              37500.0 |                   0.0 |                        100.0 |            0.0
+Joshua Jackson      | Castell Fasteners             |                   21 |               85.7 |            106670.12 |              17665.22 |                         85.8 |           -0.1
+Lotte van den Broek | Midland Safety Wear           |                   18 |               83.3 |              87700.0 |               16700.0 |                         84.0 |           -0.7
+Niamh Harrison      | Ballycorran Industrial Supply |                   36 |               86.1 |             136300.0 |               17800.0 |                         88.4 |           -2.3
+Thijs Dijkstra      | Polder Packaging              |                    9 |               88.9 |              44800.0 |                2800.0 |                         94.1 |           -5.2
+Jesse Novotný       | Midland Safety Wear           |                   22 |               86.4 |             100200.0 |                9100.0 |                         91.7 |           -5.3
+(10 rows)
+
+=== Report 3: B2B Wholesale: Seasonality of Lost-Deal Cycle Time by Quarter (written by Grace) ===
+Engineer's note: Grain is one row per calendar quarter (2023Q1-2025Q4) for the five named tenants' 'New business' pipeline, lost opportunities only (is_closed=true, is_won=false); quarter assigned by the calendar quarter of closed_at. days_open is computed as closed_at minus created_at in fractional days, rounded to 1 decimal for avg and median.
+REPORT: B2B Wholesale: Seasonality of Lost-Deal Cycle Time by Quarter
+QUESTION: Do lost deals linger longest at particular times of year (e.g., end-of-quarter or holiday periods), or is the ~35-day drag before a deal is given up on roughly constant regardless of when it started?
+quarter | lost_opportunities_count | avg_days_open | median_days_open
+--------+--------------------------+---------------+-----------------
+2023Q1  |                        2 |          20.5 |             20.5
+2023Q2  |                        2 |          31.8 |             31.8
+2023Q3  |                        1 |          18.0 |             18.0
+2023Q4  |                        3 |          39.9 |             37.0
+2024Q2  |                        2 |          31.7 |             31.7
+2024Q3  |                        3 |          49.2 |             37.0
+2024Q4  |                        8 |          31.3 |             34.5
+2025Q1  |                        3 |          37.8 |             35.2
+2025Q2  |                        1 |          38.0 |             38.0
+2025Q3  |                        1 |          22.0 |             22.0
+2025Q4  |                        4 |          46.7 |             49.4
+(11 rows)

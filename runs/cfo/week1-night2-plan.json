@@ -1,0 +1,62 @@
+{
+ "notes": "Before trusting the 2025 revenue narrative, I cross-footed the three Night 1 reports. Report 2's top-25 merchants alone sum to ~€3.32M gross volume and ~€79.9k fee revenue, and Report 3 independently confirms a 2025 total of ~€3.97M gross volume with top-10 fee share of 65.1%. But Report 1's monthly trend sums to only ~€1.99M gross volume and ~€53.2k fee revenue for all of 2025 — roughly half the true total, and even less than the top-25 merchants alone. That's a real inconsistency, not noise. The implied average fee rate is similar across reports (~2.5-2.7% vs ~2.35%), which points to a *coverage* problem rather than a rate/conversion-formula error: Report 1 is likely dropping a chunk of payouts, most plausibly through an inner join to exchange_rates that silently excludes payouts in currencies/dates without a matching FX row, rather than a global bug that would also show up in Reports 2/3 (which are internally consistent with each other). I want this diagnosed before I ask for a restated monthly trend, so I'm spending one slot on a currency-level reconciliation with an explicit LEFT JOIN and a count of unmatched rows.\n\nWith the remaining two slots I'm moving to Tobias's #3 (refunds/returns), since #2 (concentration) already has a solid answer from Reports 2-3 and doesn't need more tonight. My hypothesis: B2B wholesale verticals (industrial supplies, office equipment) have lower refund rates than apparel/footwear and beauty (higher return propensity categories), and a handful of merchants will be clear outliers worth flagging to Tobias. I'm using `payments.amount` vs `payments.amount_refunded` as the cleanest refund-rate source (already cumulative per payment), split by vertical and then by merchant to find outliers.",
+ "requests": [
+  {
+   "title": "2025 Payout Reconciliation by Currency (Local vs EUR-Converted)",
+   "question": "Is the 2025 monthly fee-revenue trend understating totals because some currencies/dates fail to match an exchange rate, causing payouts to be dropped from the EUR-converted total?",
+   "grain": "one payout currency_code, for 2025",
+   "columns": [
+    "currency_code",
+    "payout_count",
+    "gross_volume_local_sum (sum of gross_amount in that currency, unconverted)",
+    "gross_volume_eur (converted)",
+    "fee_revenue_eur (converted)",
+    "payout_count_with_matched_fx_rate",
+    "payout_count_missing_fx_rate",
+    "avg_eur_rate_used"
+   ],
+   "details": "Source: payouts, filtered to status IN ('paid','completed') and paid_at in calendar year 2025. For each payout, LEFT JOIN exchange_rates on base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at) (treat currency_code='EUR' as rate=1 with no join needed). Do NOT inner-join or filter out unmatched rows — keep every payout, and count how many per currency found a matching exchange_rate row vs how many did not (gross_volume_eur/fee_revenue_eur should reflect only the matched rows so the gap vs Night 1's Report 1 total becomes visible per currency). Group by currency_code. Order by payout_count descending, tie-break currency_code ascending.",
+   "builds_on": [
+    "Tidewick Processing Fee Revenue by Month, 2025",
+    "Top Merchants by 2025 Gross Payment Volume and Fee Revenue",
+    "Merchant Concentration Trend: 2024 vs 2025"
+   ]
+  },
+  {
+   "title": "Refund Rate by Merchant Vertical, 2025",
+   "question": "Do refund rates differ meaningfully across merchant verticals, and which verticals look like outliers?",
+   "grain": "one tenant industry vertical",
+   "columns": [
+    "vertical",
+    "merchant count",
+    "payment count",
+    "gross captured amount (EUR)",
+    "amount refunded (EUR)",
+    "refund rate (%) = refunded / captured",
+    "avg refund rate per merchant (%) (simple average across merchants in the vertical, for comparison to the volume-weighted rate)"
+   ],
+   "details": "Source: payments joined to tenants (tenants.industry) for the vertical grouping. Filter to payments with captured_at in calendar year 2025 and status in a captured/refunded/partially_refunded state (i.e., payments that were actually captured, regardless of later refund). Convert payments.amount and payments.amount_refunded to EUR via exchange_rates (base_code='EUR', quote_code=payments.currency_code, as_of=date(captured_at)). Compute the volume-weighted refund rate per vertical (sum(amount_refunded)/sum(amount)) and also a simple average of each merchant's own refund rate within the vertical, to see whether a few large merchants are skewing the vertical number. Order by volume-weighted refund rate descending, tie-break vertical name ascending.",
+   "builds_on": []
+  },
+  {
+   "title": "Merchant Refund Rate Outliers, 2025 (merchants with 50+ captured payments)",
+   "question": "Which individual merchants have refund rates well above or below their peers, net of vertical effects?",
+   "grain": "one tenant, for 2025",
+   "columns": [
+    "merchant name",
+    "vertical",
+    "tenant status",
+    "payment count",
+    "gross captured (EUR)",
+    "amount refunded (EUR)",
+    "refund rate (%)",
+    "vertical avg refund rate (%) (for comparison)",
+    "refund rate vs vertical avg (percentage points)"
+   ],
+   "details": "Source: payments joined to tenants. Filter to payments captured in 2025 (captured_at in 2025, status reflecting captured/refunded/partially_refunded), convert amount and amount_refunded to EUR via exchange_rates as in the vertical report. Restrict to tenants with at least 50 qualifying payments in 2025 to avoid small-sample noise (note how many tenants were excluded by this filter in the report notes). Join/compute each tenant's vertical's volume-weighted average refund rate (same definition as the vertical report) to show how far each merchant sits from its vertical's norm. Order by refund rate descending, tie-break merchant name ascending; print the top 20 highest and note total qualifying tenant count.",
+   "builds_on": [
+    "Refund Rate by Merchant Vertical, 2025"
+   ]
+  }
+ ]
+}

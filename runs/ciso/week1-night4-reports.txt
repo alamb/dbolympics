@@ -1,0 +1,36 @@
+=== Report 1: Audit-trail coverage of actual soft-deletions, by entity table (written by Felix) ===
+Engineer's note: Coverage rate is capped at 100% per the request; since data only spans 2023-01-01 to 2025-12-31, no additional date filter was needed on deleted_at as all rows already fall in that window. If any table's matching_audit_rows exceeds total_soft_deleted, the rate will show 100% but that itself signals an anomaly worth flagging.
+REPORT: Audit-trail coverage of actual soft-deletions, by entity table
+QUESTION: For tables where the app actually soft-deletes rows (deleted_at), does audit_log's 'delete' action consistently capture those deletions, or is there a real gap between what was deleted and what the audit trail shows?
+entity_table | total_soft_deleted | matching_audit_rows | coverage_rate_pct | distinct_tenants | earliest_deleted_at        | most_recent_deleted_at    
+-------------+--------------------+---------------------+-------------------+------------------+----------------------------+---------------------------
+products     |                615 |                   0 |               0.0 |               91 | 2023-01-02 10:00:00        | 2025-12-31 10:00:00       
+users        |                 39 |                  27 |              69.2 |               20 | 2020-04-28 19:22:51.144924 | 2025-11-10 15:18:24.435098
+campaigns    |                  0 |                   0 |              NULL |                0 | NULL                       | NULL                      
+coupons      |                  0 |                   0 |              NULL |                0 | NULL                       | NULL                      
+discounts    |                  0 |                   0 |              NULL |                0 | NULL                       | NULL                      
+promotions   |                  0 |                   0 |              NULL |                0 | NULL                       | NULL                      
+(6 rows)
+
+=== Report 2: Active API key age distribution (rotation hygiene) (written by Omar) ===
+Engineer's note: Age is computed as 2026-01-05 minus created_at (date), per the fixed reference date in the request. "Unused 90+ days" counts keys with a non-null last_used_at before 2025-10-05; never-used keys are reported separately in their own column rather than folded into this count.
+REPORT: Active API key age distribution (rotation hygiene)
+QUESTION: Platform-wide, how old are our currently active API keys — do we have a meaningful population of long-lived, apparently never-rotated credentials, even though usage patterns look healthy?
+age_bucket     | active_key_count | share_pct | distinct_tenants | oldest_key_age_days | never_used_count | unused_90d_plus_count
+---------------+------------------+-----------+------------------+---------------------+------------------+----------------------
+under 90 days  |                1 |       0.9 |                1 |                  68 |                0 |                     0
+90 days-1 year |               11 |       9.7 |               11 |                 327 |                0 |                     0
+1-2 years      |               14 |      12.4 |                9 |                 699 |                0 |                     0
+2-4 years      |               11 |       9.7 |               10 |                1346 |                0 |                     0
+4+ years       |               76 |      67.3 |               32 |                2743 |                0 |                     0
+(5 rows)
+
+=== Report 3: Compliance event resolution health by severity (written by Viktor) ===
+Engineer's note: Report covers all tenants combined (platform-wide), since the question is about whether monitoring is a real control overall, not per merchant. All-time range is naturally bounded by the data (2023-01-01 through 2025-12-31); no explicit date filter was needed since compliance_events has no earlier/later rows.
+REPORT: Compliance event resolution health by severity
+QUESTION: When compliance_events flags something (suspicious access, retention overruns, failed DSAR SLAs, etc.), is it actually getting resolved, or are flagged incidents piling up unresolved — is existing monitoring a real control or just theoretical?
+severity | total_events | resolved_count | unresolved_count | resolution_rate_pct | oldest_unresolved_age_days | most_recent_occurred_at   
+---------+--------------+----------------+------------------+---------------------+----------------------------+---------------------------
+high     |            4 |              4 |                0 |               100.0 |                       NULL | 2025-10-27 09:00:00       
+medium   |            5 |              5 |                0 |               100.0 |                       NULL | 2025-02-28 09:38:06.883908
+(2 rows)

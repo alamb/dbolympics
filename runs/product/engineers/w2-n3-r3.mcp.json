@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Single-item vs. multi-item cart conversion, by tenant",
+    "--question",
+    "Does the pattern 'small, single-item carts convert worse than multi-item carts' hold consistently across all 6 retail merchants, or is it driven by one or two of them?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Bea\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per tenant\", \"columns_requested\": [\"tenant name\", \"single-item cart count\", \"single-item conversion pct\", \"multi-item (2+) cart count\", \"multi-item conversion pct\", \"gap in points (multi minus single)\"], \"details\": \"Tenants: Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik. Population: carts with created_at in 2025-01-01 to 2025-12-31. Split each tenant's carts into item_count = 1 ('single-item') vs item_count >= 2 ('multi-item') using carts.item_count. conversion pct = share of carts in that group with status='converted', rounded 1 decimal, for each tenant. gap_in_points = multi-item conversion pct minus single-item conversion pct. Order rows by gap in points descending, tie-break by tenant name.\", \"builds_on\": [\"Cart contents: stalled vs. fast-converting carts, 2025\", \"Cart value tier vs. conversion speed, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

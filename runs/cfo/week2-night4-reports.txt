@@ -1,0 +1,82 @@
+=== Report 1: 2025 Revenue Reconciliation via Ledger Accounts, Including VAT, by Quarter (written by Ines) ===
+Engineer's note: Ledger-side EUR conversion uses the exchange rate as of the entry's own occurred_at date (same for payments on captured_at); rows in EUR itself skip the rate join. diff_pct is NULL for a quarter if payments_net_amount_eur is exactly 0, to avoid divide-by-zero.
+REPORT: 2025 Revenue Reconciliation via Ledger Accounts, Including VAT, by Quarter
+QUESTION: Once VAT/sales-tax is included on the ledger side (not just net-of-tax revenue), does the ledger's gross billed amount tie to the payments table's net captured amount each quarter?
+quarter | ledger_gross_billed_eur | payments_net_amount_eur |  diff_eur | diff_pct
+--------+-------------------------+-------------------------+-----------+---------
+2025-Q1 |              1224288.48 |              1249571.12 | -25282.64 |    -2.02
+2025-Q2 |              1281589.56 |              1279430.77 |   2158.79 |     0.17
+2025-Q3 |              1070758.66 |              1065326.23 |   5432.43 |     0.51
+2025-Q4 |              1795895.17 |              1824173.25 | -28278.07 |    -1.55
+(4 rows)
+
+=== Report 2: Bank Transfer Payments With Unexplained Ledger Mismatch: Full List, 2025 (written by Viktor) ===
+Engineer's note: Reconstructed the 'other mismatch' classification from the description: for each 2025 captured/refunded/partially_refunded bank-transfer payment, ledger_credit_total_eur (sum of credit ledger_entries by payment_id, FX-converted using each entry's own currency/date) is compared against net_amount_eur (payment-refund, EUR) and payment_plus_refund_eur (payment+refund, EUR), each converted using the payment's own currency/captured_at date; nearest_expected_eur is whichever is closer, diff_eur is ledger minus that value, tolerance is max(1%, €1), and rows with no ledger entries at all are excluded. Used LEFT JOIN to orders since payments.order_id is nullable, so order_number may be blank if a matching payment has no linked order.
+REPORT: Bank Transfer Payments With Unexplained Ledger Mismatch: Full List, 2025
+QUESTION: Which specific bank-transfer payments have an unexplained ledger mismatch, so they can be handed to the auditors as a named, bounded list?
+order_number | merchant_name                 | payment_captured_at        | currency_code | payment_amount | amount_refunded | ledger_credit_total_eur | nearest_expected_eur | diff_eur
+-------------+-------------------------------+----------------------------+---------------+----------------+-----------------+-------------------------+----------------------+---------
+SO-100403    | OfficeHub Nordic              | 2025-11-18 02:56:49.141529 | NOK           |       223.4400 |          0.0000 |                 9230.38 |                18.81 |  9211.57
+SO-100455    | Kontor24 Bürobedarf           | 2025-05-10 08:55:04.344739 | EUR           |       408.6300 |          0.0000 |                 6368.23 |               408.63 |   5959.6
+SO-100272    | OfficeHub Nordic              | 2025-01-23 23:33:35.632494 | NOK           |    145930.2000 |          0.0000 |                16082.74 |             12793.98 |  3288.76
+SO-100491    | Ballycorran Industrial Supply | 2025-01-11 07:16:48.524388 | EUR           |         0.0100 |          0.0000 |                 2654.92 |                 0.01 |  2654.91
+SO-100259    | Castell Fasteners             | 2025-05-03 03:04:30.576959 | USD           |         0.0000 |          0.0000 |                 1359.98 |                  0.0 |  1359.98
+SO-100422    | OfficeHub Nordic              | 2025-12-08 17:43:06.838108 | NOK           |       223.4400 |          0.0000 |                  905.79 |                18.92 |   886.87
+SO-100316    | Castell Fasteners             | 2025-07-24 14:54:29.107042 | USD           |        16.2200 |          0.0000 |                  655.93 |                14.03 |    641.9
+SO-100761    | Ballycorran Industrial Supply | 2025-12-02 20:06:15.967329 | EUR           |         9.9700 |          0.0000 |                  647.53 |                 9.97 |   637.56
+SO-100292    | Castell Fasteners             | 2025-06-07 09:27:13.256556 | USD           |         0.0400 |          0.0000 |                  527.31 |                 0.03 |   527.27
+SO-100063    | Polder Packaging              | 2025-04-03 02:27:47.363995 | EUR           |      1127.4200 |          0.0000 |                 1480.43 |              1127.42 |   353.01
+SO-100464    | Kontor24 Bürobedarf           | 2025-05-09 11:38:17.404246 | EUR           |         0.0200 |          0.0000 |                  321.95 |                 0.02 |   321.93
+SO-100584    | Ballycorran Industrial Supply | 2025-05-16 16:02:44.176106 | EUR           |      7574.2600 |          0.0000 |                  7864.0 |              7574.26 |   289.74
+SO-100499    | Ballycorran Industrial Supply | 2025-02-16 22:44:52.478936 | EUR           |      1312.9200 |          0.0000 |                  1552.9 |              1312.92 |   239.98
+SO-100578    | Ballycorran Industrial Supply | 2025-04-18 03:32:05.77973  | EUR           |      2473.8200 |          0.0000 |                 2713.71 |              2473.82 |   239.89
+SO-100325    | Castell Fasteners             | 2025-08-22 15:23:46.247542 | USD           |     10309.0800 |          0.0000 |                 9088.94 |              8886.71 |   202.23
+SO-100330    | OfficeHub Nordic              | 2025-06-23 23:58:05.290898 | NOK           |     17279.7500 |          0.0000 |                 1680.93 |              1523.45 |   157.48
+SO-100128    | Deskline Supplies             | 2025-09-23 06:16:30.644573 | GBP           |       299.5800 |          0.0000 |                  506.62 |               349.25 |   157.37
+SO-100323    | OfficeHub Nordic              | 2025-07-09 04:33:00.473791 | NOK           |     24181.0000 |          0.0000 |                 2242.47 |              2100.76 |   141.71
+SO-100302    | Castell Fasteners             | 2025-07-23 19:39:11.25488  | USD           |      2831.5400 |          0.0000 |                 2569.72 |              2451.98 |   117.73
+SO-100591    | Ballycorran Industrial Supply | 2025-04-28 02:19:49.97968  | EUR           |         5.0700 |          0.0000 |                  117.78 |                 5.07 |   112.71
+SO-100626    | Ballycorran Industrial Supply | 2025-07-07 01:27:07.947353 | EUR           |      2159.9900 |          0.0000 |                 2266.07 |              2159.99 |   106.08
+#1168        | Ostwind Mode                  | 2025-01-22 14:07:50.627724 | EUR           |        50.7100 |          0.0000 |                  150.71 |                50.71 |    100.0
+SO-100164    | Hanse Industriebedarf         | 2025-12-24 11:26:49.545005 | EUR           |       770.6200 |          0.0000 |                   865.4 |               770.62 |    94.78
+SO-100124    | Hanse Industriebedarf         | 2025-07-01 06:12:54.419193 | EUR           |       640.0400 |          0.0000 |                   731.0 |               640.04 |    90.96
+SO-100332    | Castell Fasteners             | 2025-10-10 09:10:44.57573  | USD           |         5.4700 |          0.0000 |                   94.26 |                 4.87 |    89.39
+SO-100390    | OfficeHub Nordic              | 2025-11-13 20:34:12.911315 | NOK           |     12803.1200 |          0.0000 |                  1149.3 |              1076.33 |    72.97
+SO-100564    | Ballycorran Industrial Supply | 2025-03-18 06:43:06.246469 | EUR           |       222.0400 |          0.0000 |                  292.86 |               222.04 |    70.82
+SO-100442    | Kontor24 Bürobedarf           | 2025-05-04 03:15:20.707363 | EUR           |       140.4500 |          0.0000 |                  207.45 |               140.45 |     67.0
+SO-100733    | Ballycorran Industrial Supply | 2025-09-30 06:19:43.677077 | EUR           |      3344.4700 |          0.0000 |                 3411.17 |              3344.47 |     66.7
+SO-100093    | Hanse Industriebedarf         | 2025-01-01 14:09:06.161264 | EUR           |       354.1800 |          0.0000 |                  418.58 |               354.18 |     64.4
+SO-100270    | Castell Fasteners             | 2025-06-02 20:50:48.3459   | USD           |       790.8500 |          0.0000 |                  735.47 |               673.16 |    62.31
+SO-100131    | Hanse Industriebedarf         | 2025-07-04 17:12:11.772823 | EUR           |       545.7600 |          0.0000 |                  606.66 |               545.76 |     60.9
+SO-100319    | OfficeHub Nordic              | 2025-06-21 11:10:03.769644 | NOK           |     21075.7500 |          0.0000 |                 1917.58 |              1866.65 |    50.93
+WW-100501    | Wiesgrund Wohnen              | 2025-02-11 13:38:44.726425 | EUR           |       102.9400 |          0.0000 |                  152.94 |               102.94 |     50.0
+WW-100672    | Wiesgrund Wohnen              | 2025-10-23 08:22:36.519884 | EUR           |        41.3900 |          0.0000 |                   90.49 |                41.39 |     49.1
+SO-100233    | Castell Fasteners             | 2025-02-13 05:29:52.262559 | USD           |       752.9100 |          0.0000 |                  713.32 |                666.7 |    46.62
+SO-100725    | Ballycorran Industrial Supply | 2025-10-04 16:07:35.110258 | EUR           |        23.0000 |          0.0000 |                   64.52 |                 23.0 |    41.52
+SO-100236    | Midland Safety Wear           | 2025-04-04 18:49:17.165822 | EUR           |         4.9700 |          0.0000 |                   44.93 |                 4.97 |    39.96
+SO-100310    | Castell Fasteners             | 2025-07-12 08:56:04.981953 | USD           |      1695.8300 |          0.0000 |                 1477.93 |              1438.39 |    39.54
+SO-100605    | Ballycorran Industrial Supply | 2025-07-05 08:30:06.143469 | EUR           |        10.0900 |          0.0000 |                   46.89 |                10.09 |     36.8
+SO-100688    | Ballycorran Industrial Supply | 2025-09-09 15:58:50.609058 | EUR           |        13.6600 |          0.0000 |                   49.58 |                13.66 |    35.92
+SO-100544    | Kontor24 Bürobedarf           | 2025-10-14 00:13:55.981511 | EUR           |       623.6400 |          0.0000 |                  659.44 |               623.64 |     35.8
+SO-100069    | Polder Packaging              | 2025-05-01 22:13:21.365376 | EUR           |      1791.0500 |          0.0000 |                 1823.99 |              1791.05 |    32.94
+SO-100685    | Ballycorran Industrial Supply | 2025-08-06 15:26:21.552864 | EUR           |       154.2700 |          0.0000 |                  185.63 |               154.27 |    31.36
+SO-100594    | Ballycorran Industrial Supply | 2025-05-27 09:09:18.968208 | EUR           |       449.1700 |          0.0000 |                  477.05 |               449.17 |    27.88
+WW-100480    | Wiesgrund Wohnen              | 2025-01-10 09:56:47.366821 | EUR           |       173.8900 |          0.0000 |                  198.89 |               173.89 |     25.0
+WW-100579    | Wiesgrund Wohnen              | 2025-06-09 23:18:55.287282 | EUR           |       510.4100 |          0.0000 |                  535.41 |               510.41 |     25.0
+SO-100554    | Ballycorran Industrial Supply | 2025-03-22 07:20:44.713082 | EUR           |       344.8700 |          0.0000 |                  363.77 |               344.87 |     18.9
+SO-100551    | Ballycorran Industrial Supply | 2025-04-25 13:23:08.433043 | EUR           |       139.1900 |          0.0000 |                  154.19 |               139.19 |     15.0
+SO-100815    | Ballycorran Industrial Supply | 2025-12-24 04:33:03.019467 | EUR           |       621.9800 |          0.0000 |                  636.88 |               621.98 |     14.9
+(54 rows, first 50 printed)
+
+=== Report 3: Ledger Reconciliation Outcome by Payment Method, All 2025 Payments (written by Ines) ===
+Engineer's note: Reconciliation uses the same logic as this week's series: 2025 payments with status captured/refunded/partially_refunded, ledger credit total in EUR (FX by entry date) compared to net_amount_eur (payment - refunded) and payment_plus_refund_eur (payment + refunded), 1%-or-€1 tolerance, 'no ledger entries' when zero linked ledger_entries rows for that payment_id; payment_methods.kind defaulted to 'unknown' when missing. One row per kind, all qualifying 2025 payments included (not pre-filtered to mismatches).
+REPORT: Ledger Reconciliation Outcome by Payment Method, All 2025 Payments
+QUESTION: Is bank_transfer systemically more prone to ledger mismatches as a payment channel, or are the 19 flagged payments a rare exception within a much larger, mostly-clean population?
+payment_method_kind | total_payment_count_2025 | count_credit_equals_net | count_credit_equals_payment_plus_refund | count_other_mismatch | count_no_ledger_entries | pct_clean
+--------------------+--------------------------+-------------------------+-----------------------------------------+----------------------+-------------------------+----------
+card                |                    12964 |                   10540 |                                    2228 |                  196 |                       0 |      98.5
+wallet              |                     4051 |                    3477 |                                     518 |                   56 |                       0 |      98.6
+bank_transfer       |                     2716 |                    2443 |                                     219 |                   54 |                       0 |      98.0
+credit              |                     1207 |                    1153 |                                      50 |                    4 |                       0 |      99.7
+unknown             |                      115 |                      15 |                                       0 |                    0 |                     100 |      13.0
+(5 rows)

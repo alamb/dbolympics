@@ -1,0 +1,114 @@
+=== Report 1: Cragsley Outfitters: Poor Ratings by Product Category (written by Felix) ===
+Engineer's note: product_count and the review-based metrics include products of any status, while units_sold/revenue are restricted to currently active products per the request wording; revenue uses order_items.line_total (post-discount, pre/post-tax as stored) converted to EUR via same-day exchange_rates.
+REPORT: Cragsley Outfitters: Poor Ratings by Product Category
+QUESTION: Within Cragsley Outfitters, is the poor-rating problem concentrated in particular kinds of products, or spread evenly across the catalog?
+category_name  | product_count | products_with_5plus_reviews | poor_rated_product_count | pct_poor_rated_products | avg_rating_of_reviewed_products | units_sold_last_12mo | revenue_eur_last_12mo
+---------------+---------------+-----------------------------+--------------------------+-------------------------+---------------------------------+----------------------+----------------------
+Tops           |            83 |                           8 |                        3 |                    37.5 |                            3.43 |                  594 |               23513.0
+Loungewear     |            40 |                           3 |                        2 |                    66.7 |                            3.22 |                  255 |               17596.0
+Outerwear      |            79 |                           4 |                        2 |                    50.0 |                            3.04 |                  378 |               58451.0
+Shirts         |            34 |                           4 |                        2 |                    50.0 |                            3.69 |                  153 |                9670.0
+Loungewear     |            38 |                           5 |                        2 |                    40.0 |                            3.68 |                  252 |               14215.0
+Trousers       |            87 |                           5 |                        2 |                    40.0 |                            3.68 |                  417 |               34736.0
+Sneakers       |            74 |                           6 |                        2 |                    33.3 |                             3.8 |                  390 |               51254.0
+Outerwear      |            82 |                           7 |                        2 |                    28.6 |                            4.02 |                  327 |               64103.0
+Dresses        |            86 |                           4 |                        1 |                    25.0 |                            4.05 |                  394 |               29861.0
+Sandals        |            80 |                           6 |                        1 |                    16.7 |                            4.12 |                  334 |               20103.0
+Trousers       |            84 |                           6 |                        1 |                    16.7 |                            4.17 |                  319 |               24561.0
+Socks          |            82 |                           9 |                        1 |                    11.1 |                            3.89 |                  911 |               10764.0
+Tops           |            82 |                           9 |                        1 |                    11.1 |                            4.02 |                  753 |               11310.0
+Scarves & Hats |           166 |                          16 |                        1 |                     6.3 |                            4.59 |                  947 |               38029.0
+Boots          |            78 |                           3 |                        0 |                     0.0 |                            4.74 |                  198 |               35650.0
+Knitwear       |            40 |                           2 |                        0 |                     0.0 |                            4.83 |                  282 |               22132.0
+Knitwear       |            42 |                           4 |                        0 |                     0.0 |                            4.68 |                  177 |               13170.0
+Tops           |            40 |                           4 |                        0 |                     0.0 |                            4.36 |                  135 |                3554.0
+Accessories    |             1 |                           0 |                        0 |                    NULL |                            NULL |                   28 |                1654.0
+(19 rows)
+
+=== Report 2: Cragsley Outfitters: Rating Trend Over Time (written by Omar) ===
+Engineer's note: avg_rating and pct_1_2_star are NULL for months with zero approved reviews (no reviews to average); review_count and orders_count show 0 as requested. EUR-currency orders are passed through at face value, others converted via exchange_rates as of placed_at date.
+REPORT: Cragsley Outfitters: Rating Trend Over Time
+QUESTION: Has Cragsley Outfitters' rating problem been building over time, or has it always looked this way?
+month   | review_count | avg_rating | pct_1_2_star | orders_count | revenue_eur
+--------+--------------+------------+--------------+--------------+------------
+2023-01 |            5 |       3.00 |         40.0 |           94 |       25035
+2023-02 |           20 |       4.05 |         10.0 |           79 |       18094
+2023-03 |           16 |       4.13 |         25.0 |          103 |       24369
+2023-04 |           26 |       4.00 |         15.4 |          117 |       26098
+2023-05 |           27 |       4.44 |          3.7 |          146 |       30783
+2023-06 |           32 |       3.56 |         31.3 |          122 |       21379
+2023-07 |           19 |       3.68 |         26.3 |          137 |       27450
+2023-08 |           24 |       4.13 |         16.7 |          120 |       20647
+2023-09 |           31 |       3.97 |         16.1 |          140 |       27363
+2023-10 |           29 |       4.00 |         20.7 |          190 |       41431
+2023-11 |           48 |       3.77 |         16.7 |          417 |      101426
+2023-12 |          100 |       3.62 |         25.0 |          344 |       76851
+2024-01 |           65 |       4.14 |         13.8 |          250 |       53276
+2024-02 |           48 |       4.08 |         16.7 |          153 |       40195
+2024-03 |           43 |       4.26 |         14.0 |          200 |       50040
+2024-04 |           47 |       4.19 |         10.6 |          194 |       44801
+2024-05 |           35 |       4.40 |          5.7 |          208 |       45129
+2024-06 |           40 |       4.00 |         17.5 |          200 |       38508
+2024-07 |           44 |       4.07 |         13.6 |          228 |       39802
+2024-08 |           43 |       3.72 |         23.3 |          208 |       39039
+2024-09 |           43 |       4.44 |          9.3 |          206 |       43448
+2024-10 |           50 |       4.24 |         12.0 |          253 |       52528
+2024-11 |           49 |       3.92 |         16.3 |          426 |       91266
+2024-12 |          122 |       3.80 |         22.1 |          571 |      111122
+2025-01 |           75 |       3.92 |         18.7 |          263 |       54903
+2025-02 |           35 |       4.11 |         14.3 |          166 |       33473
+2025-03 |           35 |       4.14 |         11.4 |          217 |       44102
+2025-04 |           32 |       3.94 |         21.9 |          236 |       47458
+2025-05 |           45 |       4.13 |         13.3 |          257 |       47074
+2025-06 |           56 |       3.98 |         14.3 |          233 |       39323
+2025-07 |           27 |       4.04 |         14.8 |          274 |       41600
+2025-08 |           40 |       4.13 |         12.5 |          198 |       37026
+2025-09 |           29 |       4.00 |         17.2 |          257 |       45447
+2025-10 |           48 |       4.15 |         14.6 |          298 |       63257
+2025-11 |           49 |       4.10 |         12.2 |          500 |      112926
+2025-12 |          109 |       3.70 |         25.7 |          587 |      129125
+(36 rows)
+
+=== Report 3: Cragsley Outfitters: Sales Trajectory of Poor-Rated vs Other Products (written by Ines) ===
+Engineer's note: Poor tier is recomputed from the stated rule (>=5 approved reviews, all-time avg rating <3.0) rather than reusing the prior report's product list directly, since that list isn't materialized in the warehouse; it should match the 23 products if the same rule was used. Revenue uses order_items.line_total (post-discount, pre-tax) converted to EUR via same-day exchange_rates, rounded to whole EUR; products in neither tier (inactive, non-poor) are excluded from both columns.
+REPORT: Cragsley Outfitters: Sales Trajectory of Poor-Rated vs Other Products
+QUESTION: For Cragsley's already-identified poor-rated products, is demand starting to slow down to match the bad reviews, or is it still growing despite them?
+month      | poor_tier_units_sold | poor_tier_revenue_eur | other_tier_units_sold | other_tier_revenue_eur
+-----------+----------------------+-----------------------+-----------------------+-----------------------
+2023-01-01 |                   11 |                 896.0 |                    41 |                 3006.0
+2023-02-01 |                   12 |                 943.0 |                    31 |                 1933.0
+2023-03-01 |                   26 |                1645.0 |                    50 |                 4224.0
+2023-04-01 |                   24 |                2161.0 |                    39 |                 2725.0
+2023-05-01 |                   31 |                2362.0 |                    40 |                 2651.0
+2023-06-01 |                   27 |                1771.0 |                    47 |                 3332.0
+2023-07-01 |                   18 |                1113.0 |                    64 |                 3400.0
+2023-08-01 |                   14 |                 980.0 |                    37 |                 2221.0
+2023-09-01 |                   27 |                1764.0 |                    56 |                 3424.0
+2023-10-01 |                   42 |                3082.0 |                    83 |                 5921.0
+2023-11-01 |                  100 |                8259.0 |                   260 |                15934.0
+2023-12-01 |                   62 |                5198.0 |                   193 |                11909.0
+2024-01-01 |                   54 |                3746.0 |                   151 |                 6976.0
+2024-02-01 |                   35 |                2977.0 |                    85 |                 5775.0
+2024-03-01 |                   40 |                3863.0 |                   131 |                 9016.0
+2024-04-01 |                   37 |                2865.0 |                   152 |                 8955.0
+2024-05-01 |                   49 |                3497.0 |                   161 |                 9846.0
+2024-06-01 |                   50 |                3335.0 |                   122 |                 7504.0
+2024-07-01 |                   42 |                1757.0 |                   202 |                12222.0
+2024-08-01 |                   39 |                2250.0 |                   186 |                 9467.0
+2024-09-01 |                   43 |                2262.0 |                   198 |                14023.0
+2024-10-01 |                   49 |                2994.0 |                   257 |                14804.0
+2024-11-01 |                   74 |                4676.0 |                   524 |                34254.0
+2024-12-01 |                   92 |                6171.0 |                   653 |                43214.0
+2025-01-01 |                   57 |                4234.0 |                   366 |                25020.0
+2025-02-01 |                   33 |                2393.0 |                   245 |                16858.0
+2025-03-01 |                   63 |                3577.0 |                   323 |                22304.0
+2025-04-01 |                   55 |                3866.0 |                   359 |                24717.0
+2025-05-01 |                   39 |                2675.0 |                   445 |                27068.0
+2025-06-01 |                   38 |                3061.0 |                   386 |                22646.0
+2025-07-01 |                   68 |                3687.0 |                   487 |                24439.0
+2025-08-01 |                   19 |                1433.0 |                   347 |                22744.0
+2025-09-01 |                   31 |                2399.0 |                   557 |                32374.0
+2025-10-01 |                   53 |                4338.0 |                   669 |                44473.0
+2025-11-01 |                   78 |                7397.0 |                  1187 |                81773.0
+2025-12-01 |                   75 |                6177.0 |                  1388 |               100513.0
+(36 rows)

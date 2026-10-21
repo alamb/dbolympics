@@ -1,0 +1,56 @@
+{
+ "notes": "Two things from last night need explaining before I trust the headline numbers, plus one gap Chloé explicitly asked about that I haven't covered yet. First, 'direct/none' is 57% of 2025 sessions and growing 26% YoY — before I call that normal I want to see whether it's a tracking artifact concentrated in a few big merchants (consistent with the 'handful of large merchants' pattern) or spread evenly. Second, the discount-rate report showed two anomalous months (Jan 53%, Jul 59%) versus a ~35% baseline the rest of the year, with discount size per order flat — meaning more orders got a code, not bigger discounts. I want to know if that's a few tenants running sitewide promos. Third, Chloé specifically asked whether promoted orders 'look healthy, not just cheaper' — I haven't produced that comparison yet, so it goes in tonight regardless of the anomalies.",
+ "requests": [
+  {
+   "title": "Direct traffic concentration by merchant",
+   "question": "Is the dominant 'direct/none' traffic channel spread evenly across merchants, or concentrated in a handful of them?",
+   "grain": "one row per tenant",
+   "columns": [
+    "tenant_name - tenants.name",
+    "total_sessions_2025 - count of web_sessions for that tenant with started_at in 2025",
+    "direct_sessions_2025 - count of those sessions where utm_source is null/blank",
+    "direct_share_of_tenant_pct - direct_sessions_2025 / total_sessions_2025 * 100, rounded to 1 decimal",
+    "pct_of_platform_direct_sessions - direct_sessions_2025 / (sum of direct_sessions_2025 across all tenants) * 100, rounded to 1 decimal"
+   ],
+   "details": "Source: web_sessions joined to tenants on tenant_id. Filter started_at between 2025-01-01 and 2025-12-31. 'direct/none' = utm_source is null or trimmed empty string. Compute per-tenant totals and the platform-wide direct total as a window/subquery for the share column. Order by direct_sessions_2025 descending, tie-break by tenant_name ascending, limit to top 15 tenants. This tests whether report 1's 57%-direct / +26% YoY finding is a concentration effect from a few large merchants.",
+   "builds_on": [
+    "Website traffic channel mix, 2025 vs 2024"
+   ]
+  },
+  {
+   "title": "Do discounted orders look healthy, or just cheaper?",
+   "question": "Compared to full-price orders, do discounted orders in 2025 have a healthy order value, basket size, and return/cancellation rate, or do they look worse on the metrics that matter?",
+   "grain": "one row per order group: 'discounted' (discount_total > 0) vs 'full price' (discount_total = 0)",
+   "columns": [
+    "order_group - 'discounted' or 'full price'",
+    "orders_count - count of orders in that group, placed_at in 2025",
+    "avg_order_value_eur - average orders.grand_total converted to EUR, rounded to 0 decimals",
+    "avg_items_per_order - average of sum(order_items.quantity) per order for that group, rounded to 1 decimal",
+    "return_rate_pct - share of orders in that group with at least one linked order_returns row, *100, rounded to 1 decimal",
+    "cancelled_rate_pct - share of orders in that group with status = 'cancelled', *100, rounded to 1 decimal"
+   ],
+   "details": "Source: orders (placed_at in 2025-01-01..2025-12-31, all tenants, no status filter so cancellations are visible) split into exactly two groups by discount_total > 0. Join order_items for item counts (sum quantity per order_id, then average across orders in the group). Join order_returns on order_id to flag any return. Convert grand_total to EUR via exchange_rates (base_code='EUR', quote_code=orders.currency_code, as_of=date of placed_at; EUR rate=1). Exactly 2 output rows, ordered 'discounted' then 'full price'.",
+   "builds_on": [
+    "Discounting baseline: monthly coupon usage and discount rate"
+   ]
+  },
+  {
+   "title": "Which merchants drove the January and July discount-rate spikes",
+   "question": "The platform-wide discount rate jumped from a ~35% baseline to 53-59% in January and July 2025 with no increase in average discount size — was that driven by a handful of merchants running sitewide promotions in those two months?",
+   "grain": "one row per tenant",
+   "columns": [
+    "tenant_name - tenants.name",
+    "industry - tenants.industry",
+    "orders_jan_jul_2025 - count of that tenant's orders placed_at in Jan or Jul 2025",
+    "discount_rate_jan_jul_pct - share of those orders with discount_total > 0, *100, rounded to 1 decimal",
+    "orders_other_months_2025 - count of that tenant's orders placed_at in the other 10 months of 2025",
+    "discount_rate_other_months_pct - share of those orders with discount_total > 0, *100, rounded to 1 decimal",
+    "delta_pct_points - discount_rate_jan_jul_pct minus discount_rate_other_months_pct, rounded to 1 decimal"
+   ],
+   "details": "Source: orders table, all tenants, placed_at in 2025. Split each tenant's orders into two buckets by month(placed_at) in (1,7) vs not, compute discount rate (discount_total > 0) in each bucket. Only include tenants with at least 20 orders in the Jan/Jul bucket (to avoid noise from tiny samples) — note the excluded count in a comment if easy, otherwise just apply the filter. Order by delta_pct_points descending, tie-break by orders_jan_jul_2025 descending, limit to top 15 tenants.",
+   "builds_on": [
+    "Discounting baseline: monthly coupon usage and discount rate"
+   ]
+  }
+ ]
+}

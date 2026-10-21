@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cart value tier vs. conversion speed, 2025",
+    "--question",
+    "Is checkout hesitation concentrated in higher-priced carts specifically (not just low-item-count carts), i.e. does price point on its own predict stalling?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Grace\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 2, \"request\": 2, \"grain\": \"one row per cart subtotal (price) tier\", \"columns_requested\": [\"price tier\", \"cart count\", \"pct of total carts\", \"avg item count\", \"overall conversion pct\", \"pct resolved within 1 hour\", \"pct resolved in 1-7 days\"], \"details\": \"Tenants: the 6 retail merchants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik). Population: carts with created_at in 2025-01-01 to 2025-12-31. Convert carts.subtotal to EUR via exchange_rates as in the earlier cart-contents report (base_code='EUR', quote_code=currency_code, as_of=created_at date). Price tiers on the EUR subtotal: '<\\u20ac50', '\\u20ac50-100', '\\u20ac100-200', '\\u20ac200+'. overall_conversion_pct, pct_resolved_within_1_hour, pct_resolved_in_1_7_days use the same definitions as prior cart-timing reports. Order rows in the fixed tier sequence above (not alphabetical).\", \"builds_on\": [\"Cart contents: stalled vs. fast-converting carts, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n2-r2.submit.json"
+   ]
+  }
+ }
+}

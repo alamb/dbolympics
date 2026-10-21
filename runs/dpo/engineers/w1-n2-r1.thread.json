@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH open_requests AS (\n    SELECT\n        dsr.public_id,\n        dsr.tenant_id,\n        dsr.request_type,\n        dsr.status,\n        dsr.received_at,\n        dsr.due_at,\n        dsr.assigned_to_user_id\n    FROM data_subject_requests dsr\n    WHERE dsr.completed_at IS NULL\n),\nenriched AS (\n    SELECT\n        r.public_id AS request_public_id,\n        t.name AS tenant_name,\n        r.request_type,\n        r.status,\n        CAST(r.received_at AS date) AS received_date,\n        CAST(r.due_at AS date) AS due_date,\n        DATE '2026-01-05' - CAST(r.received_at AS date) AS days_since_received,\n        CASE\n            WHEN r.due_at IS NULL THEN NULL\n            WHEN DATE '2026-01-05' < CAST(r.due_at AS date) THEN 0\n            ELSE DATE '2026-01-05' - CAST(r.due_at AS date)\n        END AS days_overdue,\n        COALESCE(u.full_name, 'unassigned') AS assigned_to\n    FROM open_requests r\n    JOIN tenants t ON t.id = r.tenant_id\n    LEFT JOIN users u ON u.id = r.assigned_to_user_id\n)\nSELECT\n    request_public_id,\n    tenant_name,\n    request_type,\n    status,\n    received_date AS received_at,\n    due_date AS due_at,\n    days_since_received,\n    days_overdue,\n    assigned_to\nFROM enriched\nORDER BY received_at ASC, request_public_id ASC",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: request_public_id, tenant_name, request_type, status, received_at, due_at, days_since_received, days_overdue, assigned_to"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns the expected columns."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH open_requests AS (\n    SELECT\n        dsr.public_id,\n        dsr.tenant_id,\n        dsr.request_type,\n        dsr.status,\n        dsr.received_at,\n        dsr.due_at,\n        dsr.assigned_to_user_id\n    FROM data_subject_requests dsr\n    WHERE dsr.completed_at IS NULL\n),\nenriched AS (\n    SELECT\n        r.public_id AS request_public_id,\n        t.name AS tenant_name,\n        r.request_type,\n        r.status,\n        CAST(r.received_at AS date) AS received_date,\n        CAST(r.due_at AS date) AS due_date,\n        DATE '2026-01-05' - CAST(r.received_at AS date) AS days_since_received,\n        CASE\n            WHEN r.due_at IS NULL THEN NULL\n            WHEN DATE '2026-01-05' < CAST(r.due_at AS date) THEN 0\n            ELSE DATE '2026-01-05' - CAST(r.due_at AS date)\n        END AS days_overdue,\n        COALESCE(u.full_name, 'unassigned') AS assigned_to\n    FROM open_requests r\n    JOIN tenants t ON t.id = r.tenant_id\n    LEFT JOIN users u ON u.id = r.assigned_to_user_id\n)\nSELECT\n    request_public_id,\n    tenant_name,\n    request_type,\n    status,\n    received_date AS received_at,\n    due_date AS due_at,\n    days_since_received,\n    days_overdue,\n    assigned_to\nFROM enriched\nORDER BY received_at ASC, request_public_id ASC",
+  "note": "Days overdue is NULL when due_at is not set, and 0 when due_at is in the future (not yet overdue); all date math uses the literal 2026-01-05 reporting date as requested.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report lists every data subject request still open as of 2026-01-05 (completed_at IS NULL), one row per request, with tenant name, type, status, received/due dates, age in days, overdue days (NULL if no due date, 0 if due date hasn't passed yet), and the assigned agent (or 'unassigned'), ordered oldest-first by received_at."
+ }
+]

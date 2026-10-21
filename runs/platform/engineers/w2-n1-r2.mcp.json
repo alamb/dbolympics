@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "2025 Monthly Stuck-Retry Rate for Sync Webhooks (ERP/WMS/Accounting)",
+    "--question",
+    "Has the ~15% stuck-in-retry rate on sync webhooks been happening all year, or did it start/worsen recently?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"platform\", \"analyst\": \"Lucas Moreau\", \"engineer\": \"Bea\", \"situation\": \"reliability-review\", \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per calendar month of 2025\", \"columns_requested\": [\"month\", \"total_sync_deliveries\", \"success_rate_pct\", \"failed_rate_pct\", \"pending_or_retrying_rate_pct\"], \"details\": \"Table webhook_deliveries joined to webhooks, filtered to webhooks.name in the same sync-integration set as the companion merchant-level request ('ERP sync', 'WMS sync', 'ACCOUNTING sync'). Filter created_at in 2025 (full year - this table has complete 2025 coverage per last week's '2025 Webhook Delivery Reliability Trend'). Group by month of created_at, platform-wide across all affected tenants combined. Rates as shares of total_sync_deliveries for that month, rounded 2dp. Order by month ascending.\", \"builds_on\": [\"2025 Webhook Delivery Reliability Trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/platform/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

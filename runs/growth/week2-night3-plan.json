@@ -1,0 +1,55 @@
+{
+ "notes": "Loyalty picture is now reconcilable: Apparel carries the lion's share of both the redemption cost (€40k, 23.7% of member revenue) and the outstanding liability (€192k of ~€354k total), yet its repeat-purchase rate is flat between members and non-members (58.5% vs 59.6%) — expensive with no retention payoff, the clearest 'fix or shrink' case. Electronics and Home & Living cost far less but show a real repeat-rate lift for members (+27pp, +13pp) — worth leaving alone. (Caveat: member_revenue_eur reads as exactly €0 for Books, Food & Coffee, Pet Supplies and Jewelry despite those segments having real members and orders in the companion report — looks like a currency-conversion gap for a few small tenants; doesn't change the Apparel/Sports-driven headline since those two verticals hold ~85% of the cost, but I'm flagging it as unverified rather than re-querying tonight.) The referral report found something clean and robust: referrers order 1.5-2.4x more often than non-referrers in *every single vertical*, even where their average order value is actually lower — frequency, not basket size, is the referrer signature. Tonight I want to find the lifecycle trigger point (how many orders in before someone typically refers) to make the 'how do we get more of them' question concrete, then move to Chloé's lowest-priority but still-requested Q4 (the unattributed-orders blind spot) since this is likely my last real chance before Friday.",
+ "requests": [
+  {
+   "title": "At what point in their order history do customers start referring?",
+   "question": "Is there a typical order-count threshold after which a customer becomes a referrer, which would tell us when to prompt the referral ask?",
+   "grain": "one row per bucket of orders-placed-before-first-referral",
+   "columns": [
+    "orders_before_first_referral_bucket - '0 (referred before ordering)', '1', '2', '3', '4-5', or '6+'",
+    "referrer_count - count of distinct (tenant_id, referrer_user_id) pairs falling in that bucket",
+    "share_of_referrers_pct - referrer_count / total referrers across all buckets * 100, rounded to 1 decimal",
+    "avg_total_2025_orders - average of each referrer's full count of 2025 orders (not just pre-referral), rounded to 2 decimals"
+   ],
+   "details": "Source: referrals, deduplicated to one row per (tenant_id, referrer_user_id) by taking the earliest created_at as 'first_referral_at'. For each, count that user's orders (any status) with placed_at strictly before first_referral_at, bucket per the labels above. avg_total_2025_orders = average count of that user's orders with placed_at in 2025 (full year, for context on eventual frequency). Order rows in the fixed sequence 0, 1, 2, 3, 4-5, 6+ (use a CASE-based sort key, not alphabetical). Expect exactly 6 rows.",
+   "builds_on": [
+    "Do referred or referring shoppers spend differently than everyone else?",
+    "Referral reach and value by vertical"
+   ]
+  },
+  {
+   "title": "Does the unattributed-orders blind spot differ by vertical or by new-vs-repeat customers?",
+   "question": "Among orders with no linked marketing attribution, is there a pattern by vertical or by whether the buyer is a new or repeat customer that would tell us if this blind spot is worth chasing?",
+   "grain": "one row per industry and attribution status ('attributed' vs 'unattributed')",
+   "columns": [
+    "industry - tenants.industry",
+    "attribution_status - 'attributed' if the order's id appears in attributions.order_id, else 'unattributed'",
+    "orders_count - count of orders placed_at in 2025 in that industry/status",
+    "share_of_industry_orders_pct - orders_count / total 2025 orders for that industry * 100, rounded to 1 decimal",
+    "new_customer_order_pct - share of orders in that cell that are the buyer's first order ever (placed_at equal to the minimum placed_at across all of that user's orders in the full dataset, not just 2025), *100, rounded to 1 decimal",
+    "avg_order_value_eur - average grand_total (EUR) of orders in that cell, rounded to 0 decimals"
+   ],
+   "details": "Source: orders joined to tenants (industry) and left-joined to attributions (match on order_id, any row = attributed) for 2025 orders, all tenants. 'First order ever' is computed per user_id (scoped to tenant since users are tenant-scoped) across their full order history including pre-2025 orders, to correctly flag new vs repeat. Convert grand_total to EUR using exchange_rates as of placed_at (EUR=rate 1). Order by industry ascending, then attribution_status ascending ('attributed' before 'unattributed'). Expect roughly 9-10 industries x 2 rows.",
+   "builds_on": [
+    "Which marketing channels drive orders and revenue"
+   ]
+  },
+  {
+   "title": "Is the attribution blind spot growing, shrinking, or stable over 2025?",
+   "question": "Across the months of 2025, what share of orders and revenue can we trace to a marketing touchpoint, and is that coverage changing over time?",
+   "grain": "one row per calendar month (2025)",
+   "columns": [
+    "month - YYYY-MM label from orders.placed_at",
+    "orders_count - count of orders placed_at in that month, all tenants",
+    "attributed_orders_count - count of those orders whose id appears in attributions.order_id",
+    "attribution_coverage_pct - attributed_orders_count / orders_count * 100, rounded to 1 decimal",
+    "total_revenue_eur - sum of grand_total (EUR) for that month's orders, rounded to 0 decimals",
+    "attributed_revenue_eur - sum of grand_total (EUR) for just the attributed orders in that month, rounded to 0 decimals"
+   ],
+   "details": "Source: orders left joined to attributions (distinct match on order_id) for 2025, all tenants. Convert grand_total to EUR using exchange_rates as of placed_at date (EUR=rate 1). Cover all 12 months of 2025. Order by month ascending.",
+   "builds_on": [
+    "Which marketing channels drive orders and revenue"
+   ]
+  }
+ ]
+}

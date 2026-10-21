@@ -1,0 +1,44 @@
+=== Report 1: Session-tracking coverage vs order volume for top merchants, 2025 (written by Felix) ===
+Engineer's note: Visits and orders are raw counts (not currency, so no FX conversion needed). Visits-per-order and subscription-linked % are NULL-safe (divide-by-zero guarded via NULLIF) in case any of the 10 tenants had zero 2025 orders.
+REPORT: Session-tracking coverage vs order volume for top merchants, 2025
+QUESTION: Does the >100% visit-to-cart ratio in the Q4 funnel reflect real shopper behavior, or is web-session tracking sparse relative to order volume for certain merchants (e.g. subscription sellers), making 'visits' an unreliable denominator for them?
+tenant_name         | industry             | visits_2025 | orders_2025 | visits_per_order | subscription_linked_orders_pct | active_subscriptions
+--------------------+----------------------+-------------+-------------+------------------+--------------------------------+---------------------
+Brennquell Kaffee   | Food & Coffee        |        2206 |        4195 |             0.53 |                            0.0 |                  197
+Spice Route Box     | Food & Coffee        |         465 |         780 |              0.6 |                            0.0 |                   33
+Grind Collective    | Food & Coffee        |         697 |        1111 |             0.63 |                            0.0 |                   54
+Honeycomb Larder    | Food & Coffee        |         455 |         620 |             0.73 |                            0.0 |                   32
+Kibblewick          | Pet Supplies         |         667 |         672 |             0.99 |                            0.0 |                   40
+Petalcourt Beauty   | Beauty               |        1221 |         706 |             1.73 |                            0.0 |                    0
+Marrowby & Vane     | Apparel & Footwear   |        3699 |        1758 |              2.1 |                            0.0 |                    0
+Studio Vrij         | Apparel & Footwear   |        1404 |         631 |             2.23 |                            0.0 |                    0
+Cragsley Outfitters | Apparel & Footwear   |        8134 |        3635 |             2.24 |                            0.0 |                    0
+Ampfeld Elektronik  | Consumer Electronics |        1483 |         449 |              3.3 |                            0.0 |                    0
+(10 rows)
+
+=== Report 2: Where orders stall after checkout: status-transition funnel, Q4 2025 (written by Bea) ===
+Engineer's note: I did not have the companion Q4 funnel report's exact tenant list (no tenant names were supplied), so as a proxy I selected the 10 tenants with the most orders created in Q4 2025; please swap in the actual tenant_id list if it differs. Median hours is null for a status if no order in the base population ever reached it.
+REPORT: Where orders stall after checkout: status-transition funnel, Q4 2025
+QUESTION: Within the post-checkout order lifecycle, is the drop-off to a paid order a single cliff at one status or a slow bleed spread across several, and which status is it?
+status              | orders_reaching_status | pct_of_total_orders | median_hours_to_status
+--------------------+------------------------+---------------------+-----------------------
+pending             |                   4909 |               100.0 |                    0.0
+paid                |                   4810 |                98.0 |                    0.0
+fulfilled           |                   4697 |                95.7 |                   22.3
+refunded            |                    179 |                 3.6 |                  523.6
+cancelled           |                    162 |                 3.3 |                    0.1
+confirmed           |                      0 |                 0.0 |                   NULL
+partially_fulfilled |                      0 |                 0.0 |                   NULL
+(7 rows)
+
+=== Report 3: Cart abandonment: cliff or slow bleed, Q4 2025 (non-subscription merchants) (written by Ines) ===
+Engineer's note: Resolution time = coalesce(converted_at, abandoned_at, expires_at) - created_at, computed in hours; carts with all three null fall into the 'unresolved/still active' bucket. Tenant names matched exactly as given against tenants.name.
+REPORT: Cart abandonment: cliff or slow bleed, Q4 2025 (non-subscription merchants)
+QUESTION: When a cart doesn't convert, does the shopper give up quickly within the same visit, or does the cart linger for days before being abandoned or expiring?
+duration_bucket | cart_count | pct_of_carts | converted_pct
+----------------+------------+--------------+--------------
+<1 hour         |       2350 |         29.0 |         100.0
+1-24 hours      |       2455 |         30.3 |           1.8
+1-7 days        |       3034 |         37.4 |          15.3
+>7 days         |        271 |          3.3 |          15.5
+(4 rows)

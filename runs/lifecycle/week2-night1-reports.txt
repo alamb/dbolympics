@@ -1,0 +1,45 @@
+=== Report 1: Apparel and Footwear: loyalty member vs non-member behavior by tenure (written by Omar) ===
+Engineer's note: avg_order_value_eur is computed as aggregate (non-cancelled EUR revenue / non-cancelled order count) within each tenure_band x segment cell, not an average of per-customer AOVs, to match the standard order-value definition; avg_lifetime_orders and avg_lifetime_revenue_eur are per-customer averages as specified. Only 8 rows expected (4 tenure bands x 2 segments).
+REPORT: Apparel and Footwear: loyalty member vs non-member behavior by tenure
+QUESTION: Within Apparel and Footwear alone, where 72% of loyalty members sit, do members still look worse off than non-members on orders, revenue and refunds once we also control for how long they have been a customer?
+tenure_band     | segment        | customer_count | avg_lifetime_orders | avg_lifetime_revenue_eur | avg_order_value_eur | refund_rate_pct
+----------------+----------------+----------------+---------------------+--------------------------+---------------------+----------------
+under 6 months  | loyalty member |            186 |                1.71 |                   283.46 |              128.41 |           33.65
+under 6 months  | non-member     |            645 |                 1.8 |                   345.91 |              177.61 |           37.04
+6 to 12 months  | loyalty member |            152 |                2.41 |                   369.57 |              101.47 |           38.42
+6 to 12 months  | non-member     |            474 |                2.76 |                   495.31 |              162.48 |           37.23
+12 to 24 months | loyalty member |            264 |                4.24 |                   649.01 |              115.76 |           39.86
+12 to 24 months | non-member     |           1019 |                4.05 |                   752.18 |              176.95 |           38.77
+over 24 months  | loyalty member |            351 |                5.09 |                   745.05 |              106.56 |           38.26
+over 24 months  | non-member     |           1273 |                5.33 |                   989.22 |              177.34 |           39.48
+(8 rows)
+
+=== Report 2: Loyalty points redemption rate by enrollment cohort age (written by Grace) ===
+Engineer's note: months_since_cohort_quarter_start is computed as an exact calendar-month difference from each cohort quarter's start date to 2025-12-31 (e.g. 2023-Q1 comes out to 35, not the illustrative ~36, since 2023-01-01 to 2025-12-31 is 35 full months); redeemed/earned values assume loyalty_transactions.points is stored as a positive magnitude with sign conveyed only by direction, consistent with the earlier unit-economics conversion method.
+REPORT: Loyalty points redemption rate by enrollment cohort age
+QUESTION: Is the growing points liability just a 'young programme, redemptions lag issuance' phase that will level out, or do even our oldest member cohorts still show a structurally low redemption rate?
+enrollment_quarter | member_count | months_since_cohort_quarter_start | total_points_earned_value_eur | total_points_redeemed_value_eur | lifetime_redemption_rate_pct
+-------------------+--------------+-----------------------------------+-------------------------------+---------------------------------+-----------------------------
+2023-Q1            |           71 |                                35 |                      53321.25 |                        19210.96 |                        36.03
+2023-Q2            |           79 |                                32 |                      56411.44 |                         17960.9 |                        31.84
+2023-Q3            |           84 |                                29 |                      58397.95 |                        21700.95 |                        37.16
+2023-Q4            |          117 |                                26 |                      69771.34 |                        22025.15 |                        31.57
+2024-Q1            |           77 |                                23 |                      57808.09 |                        16190.81 |                        28.01
+2024-Q2            |           91 |                                20 |                      39710.82 |                         8435.43 |                        21.24
+2024-Q3            |           86 |                                17 |                       46566.8 |                        12920.23 |                        27.75
+2024-Q4            |          162 |                                14 |                      69095.93 |                         17820.6 |                        25.79
+2025-Q1            |          117 |                                11 |                      47248.24 |                         5470.62 |                        11.58
+2025-Q2            |          125 |                                 8 |                      25855.05 |                         1086.02 |                          4.2
+2025-Q3            |          127 |                                 5 |                      26118.48 |                         2311.09 |                         8.85
+2025-Q4            |          202 |                                 2 |                      17562.57 |                          842.63 |                          4.8
+(12 rows)
+
+=== Report 3: Loyalty transaction order-linkage diagnostic by direction (written by Viktor) ===
+Engineer's note: Grain is one row per direction value as requested, covering all tenants and the full 2023-01-01 to 2025-12-31 window (upper bound applied as occurred_at < 2026-01-01).
+REPORT: Loyalty transaction order-linkage diagnostic by direction
+QUESTION: Before retesting the rewards-redemption-without-purchase hypothesis, is order_id even populated on redemption-direction loyalty_transactions, or do we need a different way to connect a redemption to an order?
+direction | transaction_count | transactions_with_order_id | pct_with_order_id | distinct_order_ids_referenced
+----------+-------------------+----------------------------+-------------------+------------------------------
+earn      |              3931 |                       3931 |             100.0 |                          3931
+burn      |               343 |                          0 |               0.0 |                             0
+(2 rows)

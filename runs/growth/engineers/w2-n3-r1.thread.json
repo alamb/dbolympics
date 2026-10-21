@@ -1,0 +1,22 @@
+[
+ {
+  "kind": "dry_run",
+  "sql": "WITH first_referral AS (\n  SELECT tenant_id, referrer_user_id, MIN(created_at) AS first_referral_at\n  FROM referrals\n  GROUP BY tenant_id, referrer_user_id\n),\nreferrer_orders AS (\n  SELECT\n    fr.tenant_id,\n    fr.referrer_user_id,\n    COUNT(CASE WHEN o.placed_at < fr.first_referral_at THEN 1 END) AS orders_before,\n    COUNT(CASE WHEN o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01' THEN 1 END) AS orders_2025\n  FROM first_referral fr\n  LEFT JOIN orders o\n    ON o.tenant_id = fr.tenant_id AND o.user_id = fr.referrer_user_id\n  GROUP BY fr.tenant_id, fr.referrer_user_id, fr.first_referral_at\n)\nSELECT\n  bucket_label AS orders_before_first_referral_bucket,\n  COUNT(*) AS referrer_count,\n  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1) AS share_of_referrers_pct,\n  ROUND(AVG(orders_2025), 2) AS avg_total_2025_orders\nFROM (\n  SELECT\n    ro.orders_before,\n    ro.orders_2025,\n    CASE\n      WHEN ro.orders_before = 0 THEN 0\n      WHEN ro.orders_before = 1 THEN 1\n      WHEN ro.orders_before = 2 THEN 2\n      WHEN ro.orders_before = 3 THEN 3\n      WHEN ro.orders_before BETWEEN 4 AND 5 THEN 4\n      ELSE 6\n    END AS sort_key,\n    CASE\n      WHEN ro.orders_before = 0 THEN '0 (referred before ordering)'\n      WHEN ro.orders_before = 1 THEN '1'\n      WHEN ro.orders_before = 2 THEN '2'\n      WHEN ro.orders_before = 3 THEN '3'\n      WHEN ro.orders_before BETWEEN 4 AND 5 THEN '4-5'\n      ELSE '6+'\n    END AS bucket_label\n  FROM referrer_orders ro\n) b\nGROUP BY bucket_label, sort_key\nORDER BY sort_key",
+  "note": "",
+  "result": "STATUS: COMPILES (dry run on the empty schema, no data read)\nCOLUMNS: orders_before_first_referral_bucket, referrer_count, share_of_referrers_pct, avg_total_2025_orders"
+ },
+ {
+  "kind": "text",
+  "text": "Query compiles and returns exactly the requested columns. Submitting."
+ },
+ {
+  "kind": "submit",
+  "sql": "WITH first_referral AS (\n  SELECT tenant_id, referrer_user_id, MIN(created_at) AS first_referral_at\n  FROM referrals\n  GROUP BY tenant_id, referrer_user_id\n),\nreferrer_orders AS (\n  SELECT\n    fr.tenant_id,\n    fr.referrer_user_id,\n    COUNT(CASE WHEN o.placed_at < fr.first_referral_at THEN 1 END) AS orders_before,\n    COUNT(CASE WHEN o.placed_at >= DATE '2025-01-01' AND o.placed_at < DATE '2026-01-01' THEN 1 END) AS orders_2025\n  FROM first_referral fr\n  LEFT JOIN orders o\n    ON o.tenant_id = fr.tenant_id AND o.user_id = fr.referrer_user_id\n  GROUP BY fr.tenant_id, fr.referrer_user_id, fr.first_referral_at\n)\nSELECT\n  bucket_label AS orders_before_first_referral_bucket,\n  COUNT(*) AS referrer_count,\n  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1) AS share_of_referrers_pct,\n  ROUND(AVG(orders_2025), 2) AS avg_total_2025_orders\nFROM (\n  SELECT\n    ro.orders_before,\n    ro.orders_2025,\n    CASE\n      WHEN ro.orders_before = 0 THEN 0\n      WHEN ro.orders_before = 1 THEN 1\n      WHEN ro.orders_before = 2 THEN 2\n      WHEN ro.orders_before = 3 THEN 3\n      WHEN ro.orders_before BETWEEN 4 AND 5 THEN 4\n      ELSE 6\n    END AS sort_key,\n    CASE\n      WHEN ro.orders_before = 0 THEN '0 (referred before ordering)'\n      WHEN ro.orders_before = 1 THEN '1'\n      WHEN ro.orders_before = 2 THEN '2'\n      WHEN ro.orders_before = 3 THEN '3'\n      WHEN ro.orders_before BETWEEN 4 AND 5 THEN '4-5'\n      ELSE '6+'\n    END AS bucket_label\n  FROM referrer_orders ro\n) b\nGROUP BY bucket_label, sort_key\nORDER BY sort_key",
+  "note": "Orders-before-referral counts any order status (per request, \"any status\"), matched by orders.user_id = referrals.referrer_user_id within the same tenant; placed_at is used as the order date and NULL placed_at orders are excluded from both the pre-referral count and the 2025 count since they can't be dated.",
+  "result": "Submitted to tonight's batch. Your work on this request is done."
+ },
+ {
+  "kind": "text",
+  "text": "Submitted. The report buckets each distinct (tenant_id, referrer_user_id) referrer by how many orders they had placed before their first referral (earliest `referrals.created_at`), with the fixed 6-bucket sequence, share-of-total percentage, and their average full-year-2025 order count for context on eventual purchase frequency."
+ }
+]

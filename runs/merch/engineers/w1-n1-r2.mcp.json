@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Catalog Richness vs Sales Performance by Image Count Bucket",
+    "--question",
+    "Do products with more images, a proxy for richer catalog content, see higher engagement and sales than sparser listings?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per product image-count bucket: 0, 1, 2 to 3, 4 to 6, 7 plus\", \"columns_requested\": [\"image_count_bucket\", \"product_count\", \"pct_with_description\", \"avg_reviews_per_product\", \"avg_rating\", \"avg_units_sold_per_product_last_12mo\", \"avg_revenue_per_product_eur_last_12mo\"], \"details\": \"Tables: products, product_media (kind = image, counted per product_id to form the bucket), product_reviews, order_items, product_variants, orders, exchange_rates. Scope to products with status = active and deleted_at is null across all tenants. Sales measures from order_items joined to orders where placed_at is between 2025-01-01 and 2025-12-31 and orders.status is not cancelled; units_sold = sum of order_items.quantity; revenue converted to EUR per order line using exchange_rates (base_code EUR, quote_code = currency_code, as_of = order placed_at date), summed then averaged per product within the bucket. Round rates and averages to 2 decimals, revenue to whole EUR. Order by image_count_bucket in the natural ascending order listed (not alphabetical).\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

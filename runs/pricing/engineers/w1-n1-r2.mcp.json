@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Discount spend concentration by tenant and vertical, 2025",
+    "--question",
+    "Are one or two merchants (or one vertical) responsible for most of our discount spend, relative to their share of revenue?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"pricing\", \"analyst\": \"Oliver Grant\", \"engineer\": \"Grace\", \"situation\": \"promotion-effectiveness\", \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per tenant\", \"columns_requested\": [\"tenant name\", \"vertical (tenants.industry)\", \"total discount amount (EUR)\", \"total order revenue, grand_total (EUR)\", \"discount amount as % of order revenue\", \"order count\", \"distinct discount codes/coupons used\", \"share of company-wide discount spend (%)\"], \"details\": \"Source: order_discounts joined to orders (grand_total, currency_code, placed_at, status) and tenants (name, industry, default_currency_code). Filter orders.placed_at in 2025-01-01 to 2025-12-31, exclude cancelled orders. Convert all amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at date). 'Share of company-wide discount spend' = this tenant's EUR discount total / sum across all tenants. Order by total discount amount (EUR) descending. Note total tenant count returned; print top 50.\", \"builds_on\": []}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/pricing/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

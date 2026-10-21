@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Late delivery and repeat purchase, September 2025 shipments",
+    "--question",
+    "Does a late delivery visibly reduce the chance a customer buys again, compared to an on-time delivery?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Felix\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 4, \"request\": 2, \"grain\": \"one row per delivery-speed bucket (on-time vs late)\", \"columns_requested\": [\"delivery bucket (on-time / late)\", \"shipments count\", \"distinct customers\", \"pct of customers with another order within 90 days of delivery\", \"median days to that next order\"], \"details\": \"Restrict to the 6 retail tenants (Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik) to avoid subscription-renewal noise. Base: shipments joined via fulfillments to orders (for tenant_id and the order's user_id), where shipments.delivered_at is in 2025-09-01 to 2025-09-30 (chosen so a full 90-day forward window fits before the data ends on 2025-12-31). delivery_bucket = 'on-time' if (delivered_at - shipped_at) <= 7 days, else 'late'. distinct_customers = distinct (tenant_id, user_id) behind those shipments. For each customer, check whether they placed any other order (orders.placed_at) strictly after this shipment's delivered_at and within 90 days after it; pct_of_customers = % of distinct_customers with such a subsequent order, rounded 1 decimal; median_days_to_next_order = median of (that next order's placed_at minus delivered_at) in days, among customers who did place one, rounded to a whole number. Order rows with 'on-time' first, then 'late'.\", \"builds_on\": [\"Delivery speed and return rate by merchant, Q4 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n4-r2.submit.json"
+   ]
+  }
+ }
+}

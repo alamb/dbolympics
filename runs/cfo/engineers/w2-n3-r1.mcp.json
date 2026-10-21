@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Other-Mismatch Payments: Characterization by Payment Method, 2025",
+    "--question",
+    "Is the 2.1%-of-payments 'other mismatch' ledger bucket explained by a specific payment method (e.g. bank transfer/wire rather than card/gateway), or is it unexplained?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Bea\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 3, \"request\": 1, \"grain\": \"one payment_methods.kind, restricted to 2025 payments in the 'other mismatch' reconciliation category\", \"columns_requested\": [\"payment_method_kind\", \"payment_count\", \"pct_of_mismatch_count\", \"total_payment_amount_eur\", \"pct_of_mismatch_amount\", \"avg_abs_diff_eur (average of |ledger_credit_total_eur - expected_eur| where expected is the nearer of net_amount or payment+refund)\"], \"details\": \"Recompute the same classification as last night's 'Ledger-to-Payment Reconciliation Pattern at Scale, 2025' report: for payments captured in 2025 (status captured/refunded/partially_refunded), aggregate linked ledger_entries by payment_id (sum of direction='credit' amounts, each converted to EUR via exchange_rates on the ledger entry's own currency_code and date(occurred_at)), and compare to payment_amount_eur and amount_refunded_eur (converted via exchange_rates on captured_at). A payment falls in 'other mismatch' if its ledger credit total is NOT within 1% (or \\u20ac1, whichever is larger) of either (payment_amount_eur - amount_refunded_eur) or (payment_amount_eur + amount_refunded_eur), and it has at least one ledger_entries row (i.e., exclude 'no ledger entries' payments). For that 'other mismatch' set only, join payments.payment_method_id -> payment_methods.kind and group by kind (null/missing payment_method_id as 'unknown'). avg_abs_diff_eur = average of the absolute difference between ledger_credit_total_eur and whichever of the two expected values (net or gross+refund) is closer. Order by payment_count descending.\", \"builds_on\": [\"Ledger-to-Payment Reconciliation Pattern at Scale, 2025\", \"Ledger Line-Item Detail for Flagged Sample Payments, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n3-r1.submit.json"
+   ]
+  }
+ }
+}

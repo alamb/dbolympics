@@ -1,0 +1,45 @@
+=== Report 1: Merchant status and payout activity, today (written by Grace) ===
+Engineer's note: Report is as requested: one row per tenants.status, counting tenants with/without a settled (status='paid') payout dated 2025-01-01 to 2025-12-31, plus average tenure (days as of 2026-01-05) for the no-recent-payout group. Note the reporting "today" is 2026-01-05 per the handbook, even though the system date shown to me was 2026-10-04.
+REPORT: Merchant status and payout activity, today
+QUESTION: What share of our merchant base is actually transacting, and how does that break down by account status?
+tenant_status | tenant_count | with_recent_payout | without_recent_payout | pct_without_recent_payout | avg_tenure_days_without_payout
+--------------+--------------+--------------------+-----------------------+---------------------------+-------------------------------
+active        |          107 |                105 |                     2 |                       1.9 |                          117.5
+past_due      |            3 |                  3 |                     0 |                       0.0 |                           NULL
+suspended     |            1 |                  1 |                     0 |                       0.0 |                           NULL
+(3 rows)
+
+=== Report 2: Vertical health: merchant status mix and support load (written by Omar) ===
+Engineer's note: Used tickets.tenant_id directly (equivalent to joining via requester_user_id's tenant, but simpler and exact). Trailing-12-months window taken literally as the stated 2025-01-01 to 2026-01-01 range since the warehouse's complete data ends 2025-12-31.
+REPORT: Vertical health: merchant status mix and support load
+QUESTION: Which verticals have the most at-risk merchants or the heaviest support burden, independent of revenue growth?
+vertical                  | total_merchants | active_merchants | at_risk_merchants | tickets_per_merchant | avg_csat_score
+--------------------------+-----------------+------------------+-------------------+----------------------+---------------
+Apparel & Footwear        |              22 |               21 |                 1 |                43.91 |           3.12
+Beauty                    |              12 |               11 |                 1 |                 17.5 |           3.37
+Food & Coffee             |              11 |               10 |                 1 |                40.91 |           3.45
+Jewelry & Accessories     |               5 |                4 |                 1 |                  1.4 |            3.0
+Books & Stationery        |               5 |                5 |                 0 |                  4.6 |            3.0
+Consumer Electronics      |               8 |                8 |                 0 |                 9.38 |           3.28
+Home & Living             |              16 |               16 |                 0 |                13.88 |           3.71
+Industrial Supplies (B2B) |               5 |                5 |                 0 |                 16.2 |           3.27
+Office Supplies (B2B)     |               4 |                4 |                 0 |                10.25 |           3.38
+Pet Supplies              |              10 |               10 |                 0 |                 12.2 |           3.07
+Sports & Outdoor          |              13 |               13 |                 0 |                 9.38 |           3.56
+(11 rows)
+
+=== Report 3: Operational warning signs trend: refunds, payment failures, support volume (written by Felix) ===
+Engineer's note: Platform-wide (all tenants) quarterly trend; multi-currency refund/payment amounts converted to EUR using exchange_rates.as_of matched to the transaction date as specified.
+REPORT: Operational warning signs trend: refunds, payment failures, support volume
+QUESTION: Are payment, refund, or support problems trending up over the last two years in a way that could become a board-level concern?
+quarter | payment_failure_rate_pct | refund_rate_pct | tickets_per_100_orders | avg_csat_score
+--------+--------------------------+-----------------+------------------------+---------------
+2024-Q1 |                     6.98 |            12.8 |                   8.87 |           3.42
+2024-Q2 |                     7.25 |           10.71 |                   9.98 |           3.45
+2024-Q3 |                     7.24 |            8.78 |                   9.22 |           3.64
+2024-Q4 |                     7.23 |           11.64 |                  12.72 |           3.22
+2025-Q1 |                      6.5 |           10.34 |                   7.62 |           3.16
+2025-Q2 |                      6.6 |           10.31 |                  11.01 |           3.45
+2025-Q3 |                     7.29 |           12.65 |                   9.65 |           3.46
+2025-Q4 |                     6.74 |           13.68 |                  13.47 |           3.12
+(8 rows)

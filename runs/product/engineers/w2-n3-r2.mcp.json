@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Daily cart conversion at Cragsley Outfitters, Nov 17 – Dec 1 2025",
+    "--question",
+    "Is there a visible conversion dip in the first few days after cart-reminder emails broke (Nov 24), before Black Friday/Cyber Monday demand likely swamps the signal?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Ines\", \"situation\": \"conversion-journey-review\", \"week\": 2, \"night\": 3, \"request\": 2, \"grain\": \"one row per calendar day of cart creation, Cragsley Outfitters only\", \"columns_requested\": [\"date\", \"carts created\", \"overall conversion pct\", \"pct converted within 1 hour\"], \"details\": \"Tenant: Cragsley Outfitters. Population: carts with created_at on each day from 2025-11-17 through 2025-12-01 inclusive (15 days), bracketing one week before the outage (Nov 17-23) against the outage week and the days just after (Nov 24-Dec 1, including Black Friday Nov 28 and Cyber Monday Dec 1). Use the same overall_conversion_pct and pct_converted_within_1_hour definitions as the prior weekly report. Order rows by date ascending.\", \"builds_on\": [\"Cart conversion by week at Cragsley Outfitters around the Nov 24 reminder-email outage\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w2-n3-r2.submit.json"
+   ]
+  }
+ }
+}

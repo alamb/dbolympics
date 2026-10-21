@@ -1,0 +1,8 @@
+#!/bin/bash
+# CedarDB's container is started by the runner (system.toml); the query program connects once it
+# takes connections.
+set -e
+
+# the query program, for the whole run: the runner's protocol on /run/dbo/dbo.sock
+nohup ./query >/run/dbo/query.log 2>&1 &
+echo $! > query.pid

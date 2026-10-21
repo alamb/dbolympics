@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Pre-2023 data subject requests: status and completion check",
+    "--question",
+    "Do the 12 data_subject_requests rows with received_at before 2023-01-01 represent any hidden backlog or unresolved risk, outside the window we've otherwise been reporting on?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"risk\", \"analyst\": \"Claire Dubois\", \"engineer\": \"Grace\", \"situation\": \"security-questionnaire\", \"week\": 2, \"night\": 4, \"request\": 1, \"grain\": \"one row per status value, restricted to data_subject_requests rows with received_at < 2023-01-01\", \"columns_requested\": [\"status\", \"count\", \"count_with_completed_at\", \"min_received_at\", \"max_received_at\"], \"details\": \"Source: data_subject_requests, filtered to received_at < 2023-01-01 (expect 12 rows total across statuses). Purpose: these rows predate the system's stated 2023-01-01 history start and are likely migration/seed artifacts, but before treating them as pure noise I want to confirm none of them show an open/unresolved status that would be backlog we haven't accounted for. Order by status.\", \"builds_on\": [\"Row counts by year for tables with pre-2023 timestamps\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/risk/engineers/w2-n4-r1.submit.json"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Revenue concentration trend by quarter",
+    "--question",
+    "Has Tidewick's revenue become more or less concentrated among its largest merchants over the last two years?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 1, \"request\": 2, \"grain\": \"one row per calendar quarter\", \"columns_requested\": [\"quarter (e.g. 2024-Q1)\", \"active merchants with a payout that quarter\", \"total fee revenue (EUR)\", \"fee revenue from top 5 merchants that quarter (EUR)\", \"top-5 share of fee revenue (%)\", \"fee revenue from top 10 merchants that quarter (EUR)\", \"top-10 share of fee revenue (%)\"], \"details\": \"Source: payouts joined to tenants, same inclusion rule and EUR conversion method as the merchant-concentration report (convert via exchange_rates, base_code='EUR', quote_code=payout currency_code, as_of=payout paid_at date). Window: quarters from 2024-Q1 through 2025-Q4 (8 quarters), using calendar_days or payout paid_at to assign the quarter. For each quarter, rank merchants (tenant_id) by that quarter's fee revenue EUR and sum the top 5 and top 10 merchants' fee revenue to get top5/top10 shares of that quarter's total. 'Active merchants' = distinct tenant_id with qualifying payouts in that quarter. Order by quarter ascending.\", \"builds_on\": [\"Merchant revenue concentration, trailing 12 months\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n1-r2.submit.json"
+   ]
+  }
+ }
+}

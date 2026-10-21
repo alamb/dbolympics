@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Stock movement magnitude by kind, 2025",
+    "--question",
+    "Is the finding that every recorded cycle-count discrepancy is exactly 1 unit (not a range of sizes) real, or does it only show up because other movement kinds behave differently — i.e., is quantity magnitude on stock_movements generally variable, or is ±1 specific to cycle_count?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Omar\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 2, \"request\": 1, \"grain\": \"stock_movements.kind (one row per kind: receipt, shipment, adjustment, transfer, return, cycle_count)\", \"columns_requested\": [\"kind\", \"event_count (rows in 2025)\", \"min_abs_qty\", \"max_abs_qty\", \"avg_abs_qty (rounded 2dp)\", \"median_abs_qty\", \"pct_abs_qty_eq_1 (% of rows where abs(quantity)=1, rounded 1dp)\", \"total_abs_qty (sum of abs(quantity) for the kind)\"], \"details\": \"Source: stock_movements, occurred_at between 2025-01-01 and 2025-12-31 inclusive, across all tenants. Group by kind. abs_qty = abs(quantity). Compute min, max, average, median and the total sum of abs(quantity), plus the percentage of rows per kind where abs(quantity) equals exactly 1. No joins needed beyond stock_movements itself. Order by kind alphabetically for determinism.\", \"builds_on\": [\"Scale of stock count discrepancies by month\", \"Stock discrepancies by product category: handling vs tracking-method issue\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n2-r1.submit.json"
+   ]
+  }
+ }
+}

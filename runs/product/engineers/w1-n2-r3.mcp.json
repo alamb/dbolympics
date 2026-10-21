@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cart abandonment: cliff or slow bleed, Q4 2025 (non-subscription merchants)",
+    "--question",
+    "When a cart doesn't convert, does the shopper give up quickly within the same visit, or does the cart linger for days before being abandoned or expiring?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"product\", \"analyst\": \"Emeka Obi\", \"engineer\": \"Ines\", \"situation\": \"conversion-journey-review\", \"week\": 1, \"night\": 2, \"request\": 3, \"grain\": \"one row per time-to-resolution bucket\", \"columns_requested\": [\"duration bucket\", \"cart count\", \"pct of carts\", \"converted pct (share of carts in this bucket that ended status = converted)\"], \"details\": \"Base population: carts with created_at in 2025-10-01 to 2025-12-31, restricted to tenant_id for Kibblewick, Studio Vrij, Petalcourt Beauty, Marrowby & Vane, Cragsley Outfitters, Ampfeld Elektronik (the non-subscription-looking merchants from the Q4 funnel report; look up tenant_id by name in tenants). For each cart compute resolution_time = coalesce(converted_at, abandoned_at, expires_at) minus created_at, in hours; carts where all three are null are 'unresolved/still active' (no time computed). Bucket resolution_time into: '<1 hour', '1-24 hours', '1-7 days', '>7 days', plus a separate 'unresolved/still active' bucket for carts with no resolution timestamp. cart_count = carts in the bucket; pct_of_carts = bucket count / total carts in the base population * 100 (1 decimal); converted_pct = % of carts in that bucket with status = 'converted' (1 decimal). Order rows in this fixed sequence: '<1 hour', '1-24 hours', '1-7 days', '>7 days', 'unresolved/still active' (not alphabetical).\", \"builds_on\": [\"Storefront-to-order funnel for top merchants, Q4 2025\", \"Checkout funnel by device type and arrival channel\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/product/engineers/w1-n2-r3.submit.json"
+   ]
+  }
+ }
+}

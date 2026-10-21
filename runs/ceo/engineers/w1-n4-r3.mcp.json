@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Operational warning signs trend: refunds, payment failures, support volume",
+    "--question",
+    "Are payment, refund, or support problems trending up over the last two years in a way that could become a board-level concern?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Felix\", \"situation\": null, \"week\": 1, \"night\": 4, \"request\": 3, \"grain\": \"one row per calendar quarter\", \"columns_requested\": [\"quarter\", \"payment failure rate (%, failed payment_attempts / all payment_attempts)\", \"refund rate (%, succeeded payment_refunds amount EUR / captured payments amount EUR)\", \"tickets per 100 orders\", \"average CSAT score (1-5)\"], \"details\": \"Source: payment_attempts (attempted_at in quarter; failure rate = count where status='failed' / count of all attempts), payment_refunds (processed_at in quarter, status='succeeded', amount converted to EUR via exchange_rates as_of processed_at date) divided by payments (captured_at in quarter, status='captured' or 'partially_refunded' or 'refunded', amount converted to EUR via exchange_rates as_of captured_at date), tickets (created_at in quarter, count), orders (placed_at in quarter, status in ('paid','partially_fulfilled','fulfilled','refunded'), count) for the tickets-per-100-orders ratio, and csat_responses (submitted_at in quarter, average score). Window: 2024-Q1 through 2025-Q4 (8 quarters), assigned via calendar_days. Order by quarter ascending.\", \"builds_on\": [\"Merchant and order growth by quarter\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n4-r3.submit.json"
+   ]
+  }
+ }
+}

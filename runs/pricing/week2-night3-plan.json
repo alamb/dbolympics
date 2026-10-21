@@ -1,0 +1,37 @@
+{
+ "notes": "Night 2's categorization fix produced a clean but puzzling result: all 291 active-bucket orders now land in a single \"unexplained\" category (100%, €11,746.39) — meaning none of them precede a first subscription and none fall between two stints. Logically that leaves only one explanation: the \"active\" subscription record itself doesn't actually cover the order date (otherwise the order wouldn't have been flagged as orphan in the first place), which most likely means either (a) that subscription started *after* the free order — a different, more benign situation than leakage — or (b) the subscription is marked status='active' but already has a past ended_at on it, a genuine data inconsistency where the status field disagrees with the subscription's own dates. I need to split these apart with a precise, narrow query before I can tell Marco whether this €11.7k belongs in the leakage total, is a separate curiosity, or signals a real bug in the original orphan flag.\n\nThe good news from night 2: the incrementality re-cut (matched by item count) shows positive lift in every single bucket (+13% to +117%), which is a much stronger, more defensible signal than last week's confounded numbers — I'm now reasonably confident the top discounts are associated with genuinely bigger baskets, not just selection into already-large carts. And the tenant-by-half-year leakage breakdown confirms the 2024-peak/2025-decline pattern is broad-based across all 6 tenants, not one outlier fixing itself — so \"slow-burning historical gap, now resolving\" is a solid, well-checked claim for the memo. Neither needs more digging.\n\nTonight's two priorities: (1) cleanly split the 291 \"unexplained\" active-bucket orders into their true underlying cause (started-after-order vs. active-status-but-already-ended vs. a genuine bug in the original orphan flag), which determines the final €-figure I give Tobias; (2) check whether \"subscription marked active/trialing/past_due but already has a past ended_at\" is a one-off to these 6 tenants or a platform-wide data-quality issue, since that changes how I'd frame the finding and who else should know about it. I'm holding back a third slot rather than manufacturing a question — the other open items (incrementality, trend concentration, Welcome10 drivers) are already well-answered and I'd rather save the slot for whatever the diagnostic turns up.",
+ "requests": [
+  {
+   "title": "Root cause of the 291 'unexplained' active-bucket orphan orders",
+   "question": "For the 291 orphan orders whose customer's most-recent subscription is 'active', does that subscription's own start/end dates show it started after the order, show it marked active while already past its end date, or show dates that should have overlapped (meaning the original orphan flag was a bug)?",
+   "grain": "one row per explanation category, covering the full 291-order population",
+   "columns": [
+    "category: 'subscription started after this order' (S.started_at > order.placed_at) / 'active status but already past its end date' (S.started_at <= placed_at AND S.ended_at is not null AND S.ended_at < placed_at) / 'dates indicate overlap - likely a bug in the original orphan flag' (S.started_at <= placed_at AND (S.ended_at is null OR S.ended_at >= placed_at))",
+    "order count",
+    "% of the 291-order bucket",
+    "distinct customers",
+    "total discount amount (EUR)"
+   ],
+   "details": "Source: the exact same 291 orders from last week's report (order_discounts + discounts name='Subscription delivery (prepaid)' + orders placed_at 2025, status != 'cancelled', no overlapping active/trialing/past_due subscription, most-recent subscription by started_at has status='active'). For each order, use S = that same most-recent-by-started_at subscription row (not a different join), and classify purely by comparing S.started_at and S.ended_at to order.placed_at per the three mutually-exclusive, exhaustive categories above. Convert discount amounts to EUR via exchange_rates (base_code='EUR', quote_code=currency_code, as_of=placed_at). Add an explicit check that the three category counts sum to 291. Order by order count descending. Print all categories.",
+   "builds_on": [
+    "Corrected categorization of all 291 active-bucket orphan subscription-delivery orders"
+   ]
+  },
+  {
+   "title": "Platform-wide check: how often do 'currently active' subscriptions already have a past end date?",
+   "question": "Is a subscription being marked trialing/active/past_due while already having an ended_at in the past a one-off to the subscription-delivery analysis, or a broader data-quality pattern across the platform?",
+   "grain": "one row per subscription status (trialing, active, past_due)",
+   "columns": [
+    "status",
+    "total subscriptions with this status (platform-wide, all tenants, current snapshot)",
+    "count with ended_at not null and ended_at before 2026-01-05 (today)",
+    "% with a past ended_at despite this status",
+    "count with ended_at null or in the future (status-consistent)"
+   ],
+   "details": "Source: subscriptions table, all tenants, no date filter on started_at (current full snapshot as of today, 2026-01-05). Filter to status in ('trialing','active','past_due'). For each status, count total rows, count rows where ended_at is not null and ended_at < 2026-01-05, and compute the percentage. Order by % with a past ended_at descending. Print all 3 rows.",
+   "builds_on": [
+    "Root cause of the 291 'unexplained' active-bucket orphan orders"
+   ]
+  }
+ ]
+}

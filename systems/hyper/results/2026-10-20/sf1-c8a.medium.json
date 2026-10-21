@@ -1,0 +1,33 @@
+{
+  "benchmark": "bench/benchmark_sf1.toml",
+  "commit": "ea6c16dceb0bd4a0868ac97716bde7c751cf4c7a",
+  "complete": true,
+  "config": "sf1-c8a.medium",
+  "cpuset": "0",
+  "date": "2026-10-20",
+  "dirty": false,
+  "grace_period": 5,
+  "host": {
+    "cpu": "AMD EPYC 9745 128-Core Processor",
+    "cpus": 256,
+    "kernel": "7.0.0-38-generic",
+    "memory_bytes": 1080968810496
+  },
+  "images": {
+    "system": "localhost/dbo-hyper@sha256:a4ea7cf4407a56b0164ee50c0ecd8c70d372643f71fda691dd2e58b0608f3946"
+  },
+  "keys": "none",
+  "load_timeout": 300,
+  "memory": "2GB",
+  "memory_peak_bytes": 1878581248,
+  "queries": null,
+  "query_timeout": 5,
+  "repetitions": 1,
+  "schema_seconds": 1.850752522999999,
+  "sf": 1.0,
+  "storage_bytes": 126033801,
+  "system": "hyper",
+  "threads": 1,
+  "timeout_check": "cancelled",
+  "version": "0.0.26784"
+}

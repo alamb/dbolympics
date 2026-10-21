@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "SLA breach_kind code audit and validation",
+    "--question",
+    "What values does sla_breaches.breach_kind actually take, and do our assumed codes ('first_response', 'resolution') account for all breach rows so last night's breach-rate numbers can be trusted?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"supportops\", \"analyst\": \"Ben Carter\", \"engineer\": \"Grace\", \"situation\": \"helpdesk-efficiency\", \"week\": 1, \"night\": 3, \"request\": 1, \"grain\": \"one row per distinct breach_kind value\", \"columns_requested\": [\"breach_kind\", \"row_count (2025)\", \"distinct_tickets_affected\", \"avg_minutes_over\", \"min_minutes_over\", \"max_minutes_over\", \"earliest_breached_at\", \"latest_breached_at\"], \"details\": \"Source table: sla_breaches, filtered to breached_at in 2025-01-01 through 2025-12-31 (or occurred ticket creation in 2025, whichever is simpler to join via tickets.id). No assumption on the set of breach_kind values \\u2014 group by whatever distinct strings exist, do not filter to only 'first_response'/'resolution'. Also include a row for any tickets.id referenced in sla_breaches that doesn't match a 2025-created ticket if that's easy, otherwise skip. Order by row_count descending. This is a data-quality check, not a business metric: if a kind other than first_response/resolution shows up, or counts look inconsistent with ticket_count_with_sla totals from earlier reports (~2320 tickets, ~875 first-response breaches, ~471 resolution breaches), flag it in the engineer's note.\", \"builds_on\": [\"SLA breach rates by agent group\", \"SLA breach rates by priority, with overall headline rate\", \"SLA breach rates by day of week and time of day\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/supportops/engineers/w1-n3-r1.submit.json"
+   ]
+  }
+ }
+}

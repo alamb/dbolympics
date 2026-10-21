@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "B2B Wholesale: Win Rate and Cycle Time by Sales Rep (New Business)",
+    "--question",
+    "Among reps who own B2B wholesale new-business opportunities, are a few reps clearly underperforming on win rate or cycle time, or is performance broadly similar?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"b2b\", \"analyst\": \"Daniel Kim\", \"engineer\": \"Felix\", \"situation\": \"b2b-pipeline-review\", \"week\": 1, \"night\": 3, \"request\": 2, \"grain\": \"one row per sales rep (opportunities.owner_user_id)\", \"columns_requested\": [\"rep_name\", \"merchant\", \"opportunities_closed\", \"closed_won\", \"closed_lost\", \"win_rate_pct\", \"avg_days_open\", \"avg_amount_eur\"], \"details\": \"Scope: same wholesale tenant filter, pipeline_id = the tenant's 'New business' pipeline, is_closed = true, grouped by owner_user_id (join users for full_name as rep_name, and tenants for merchant name). Exclude reps with fewer than 3 closed opportunities in scope to avoid single-deal noise (note the excluded rep count in the report notes). avg_days_open and avg_amount_eur defined as in the merchant-level report (EUR via exchange_rates as of closed_at). Order by win_rate_pct ascending (worst first), tie-break by opportunities_closed descending, then rep_name ascending.\", \"builds_on\": [\"New Business Only: Won vs Lost Opportunity Characteristics\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/b2b/engineers/w1-n3-r2.submit.json"
+   ]
+  }
+ }
+}

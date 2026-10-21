@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Vertical revenue growth, 2024 vs 2025",
+    "--question",
+    "Which verticals are growing and which are shrinking year over year, in both fee revenue and merchant count?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"ceo\", \"analyst\": \"Hannah Brooks\", \"engineer\": \"Grace\", \"situation\": null, \"week\": 1, \"night\": 3, \"request\": 3, \"grain\": \"one row per merchant vertical (tenants.industry)\", \"columns_requested\": [\"vertical (industry)\", \"fee revenue 2024 (EUR)\", \"fee revenue 2025 (EUR)\", \"YoY fee revenue growth (%)\", \"merchant count 2024\", \"merchant count 2025\", \"merchant count change\"], \"details\": \"Source: payouts (status='paid') joined to tenants for industry, aggregated per tenant first and then grouped by industry (same anti-fan-out approach as the corrected vertical revenue report in this batch). Two calendar-year windows on paid_at: 2024 = [2024-01-01, 2025-01-01), 2025 = [2025-01-01, 2026-01-01). Convert gross/fee amounts to EUR via exchange_rates (base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at)) before summing. 'Merchant count' per year = distinct tenant_id with at least one qualifying payout that year. YoY fee revenue growth % = 100 * (2025 fee revenue - 2024 fee revenue) / 2024 fee revenue (null/flag if 2024 revenue is zero for a vertical that only appears in 2025). Group null/blank industry into 'Unspecified'. Order by 2025 fee revenue descending, tie-break by vertical name ascending.\", \"builds_on\": [\"Revenue by vertical, trailing 12 months (corrected)\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/ceo/engineers/w1-n3-r3.submit.json"
+   ]
+  }
+ }
+}

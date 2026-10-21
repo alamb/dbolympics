@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Stock discrepancies by product category: handling vs tracking-method issue",
+    "--question",
+    "Are stock-count discrepancies spread evenly across product categories, or concentrated in certain categories, lot/serial-tracked items, or high-velocity items — pointing to a handling problem vs a tracking-method problem?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"warehouse\", \"analyst\": \"Fatima Zahra\", \"engineer\": \"Ines\", \"situation\": \"inventory-accuracy\", \"week\": 1, \"night\": 1, \"request\": 3, \"grain\": \"product category (products.primary_category_id -> categories)\", \"columns_requested\": [\"category_name\", \"cycle_count_events\", \"abs_units_variance\", \"net_units_variance (signed; negative = net shrinkage)\", \"estimated_value_eur (same costing/FX method as report 1)\", \"pct_events_lot_or_serial_tracked (% of this category's cycle_count events where stock_movements.lot_id is not null)\", \"avg_monthly_units_sold (velocity proxy: total order_items.quantity for variants in this category, orders placed in 2025, divided by 12, rounded 1dp)\", \"variance_per_1000_units_sold (abs_units_variance / (avg_monthly_units_sold*12) * 1000, rounded 1dp; normalizes discrepancy by sales volume so high-velocity categories aren't automatically flagged just for having more activity)\"], \"details\": \"Source: stock_movements where kind='cycle_count', occurred_at in 2025-01-01..2025-12-31, joined to product_variants (variant_id) -> products (product_id) -> categories (primary_category_id) for category_name; treat variants whose product has no primary_category_id as a single 'Uncategorized' row. Lot/serial-tracked flag: stock_movements.lot_id is not null on the cycle_count row itself. Velocity: order_items joined to product_variants on product_variant_id, orders.placed_at in 2025-01-01..2025-12-31, status not in ('cancelled'), summed by the variant's category. Cost/FX conversion identical to report 1. Order by estimated_value_eur descending, tie-break by category_name. Expect well under 50 rows (category count is small); if it is large due to deep category trees, group only by the product's primary_category (no rollup to parent).\", \"builds_on\": [\"Scale of stock count discrepancies by month\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/warehouse/engineers/w1-n1-r3.submit.json"
+   ]
+  }
+ }
+}

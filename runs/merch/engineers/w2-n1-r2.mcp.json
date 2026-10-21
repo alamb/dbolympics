@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Cragsley Outfitters: Rating Trend Over Time",
+    "--question",
+    "Has Cragsley Outfitters' rating problem been building over time, or has it always looked this way?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"merch\", \"analyst\": \"Zara Ahmed\", \"engineer\": \"Omar\", \"situation\": null, \"week\": 2, \"night\": 1, \"request\": 2, \"grain\": \"one row per calendar month, 2023-01 through 2025-12, for Cragsley Outfitters only\", \"columns_requested\": [\"month\", \"review_count\", \"avg_rating\", \"pct_1_2_star\", \"orders_count\", \"revenue_eur\"], \"details\": \"Filter to tenant = Cragsley Outfitters. review_count/avg_rating/pct_1_2_star computed over approved product_reviews with created_at in that month (same definitions used in the platform-wide Monthly Review Volume and Rating Trend report, so the two can be compared). orders_count = count of Cragsley orders with placed_at in that month and status not cancelled. revenue_eur = sum of grand_total for those orders converted to EUR via exchange_rates as of placed_at date. Build off the full calendar so every month appears even with zero reviews. Round avg_rating to 2 decimals, pct to 1 decimal, revenue to whole EUR. Order by month ascending.\", \"builds_on\": [\"Poorly-Rated Product Concentration by Merchant\", \"Monthly Review Volume and Rating Trend\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/merch/engineers/w2-n1-r2.submit.json"
+   ]
+  }
+ }
+}

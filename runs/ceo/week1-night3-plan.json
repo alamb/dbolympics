@@ -1,0 +1,58 @@
+{
+ "notes": "The reconciliation confirms the correct answer: payouts.status only has two values, 'paid' (fully settled, paid_at always populated) and 'in_transit' (future-dated, paid_at always null). Filtering status='paid' with paid_at in [2025-01-01, 2026-01-01) gives fee revenue of €53,185.85 for the trailing 12 months — matching night 1's merchant-level report almost exactly. That means the merchant-concentration report (Report 1, night 1) was correct, and the vertical-level report (Report 3, night 1, €93.6k) has a bug, most likely a join fan-out against exchange_rates or tenants. I'm having that redone first since it's a wrong number already in front of me. I also want to note for Maren: I don't see any table in the catalog that represents Tidewick's own monthly platform-plan billing of merchants — billing/subscriptions/invoices tables are all tenant-scoped to the merchant's own business (their customers' subscriptions), not Tidewick-to-merchant billing. So priority #3 (platform fees vs. processing mix) likely can't be answered from this warehouse as a two-sided split; I'll reframe it around the processing take-rate trend, which is measurable, and flag the gap. Third slot starts priority #4 (vertical health) with a YoY growth view by vertical.",
+ "requests": [
+  {
+   "title": "Revenue by vertical, trailing 12 months (corrected)",
+   "question": "Which merchant verticals generate the bulk of Tidewick's processing volume and fee revenue today? (redo of night-1 report, which disagreed with the merchant-level total by ~1.76x)",
+   "grain": "one row per merchant vertical (tenants.industry)",
+   "columns": [
+    "vertical (industry)",
+    "merchant count (distinct tenants with a qualifying payout)",
+    "gross payment volume (EUR)",
+    "fee revenue (EUR)",
+    "average fee revenue per merchant (EUR)",
+    "share of total fee revenue (%)"
+   ],
+   "details": "Source: payouts only, filtered to status='paid' and paid_at >= 2025-01-01 and paid_at < 2026-01-01 (matches the window validated in last night's reconciliation report, which found total fee revenue of EUR 53,185.85 for this exact filter). To avoid the fan-out bug suspected in the prior version: first aggregate payouts per tenant_id (sum gross_amount and fee_amount, converting each payout row to EUR individually via exchange_rates where base_code='EUR', quote_code=payouts.currency_code, as_of = date(payouts.paid_at) — this should be a 1-row match per payout given the (base_code,quote_code,as_of) unique constraint), and only THEN join that per-tenant aggregate to tenants to pick up industry and group by industry. Please confirm in the report notes that the grand total fee revenue across all vertical rows sums to approximately EUR 53,186 (if it doesn't, something is still wrong and should be flagged rather than printed). Group any tenant with null/blank industry into a single 'Unspecified' row. Order by fee revenue EUR descending, tie-break by vertical name ascending.",
+   "builds_on": [
+    "Revenue by vertical, trailing 12 months",
+    "Payout status & date-field reconciliation"
+   ]
+  },
+  {
+   "title": "Processing take-rate trend by quarter",
+   "question": "Is Tidewick's effective processing take rate (fee revenue as a share of payment volume) rising, falling, or stable over the last two years?",
+   "grain": "one row per calendar quarter",
+   "columns": [
+    "quarter",
+    "gross payment volume (EUR)",
+    "fee revenue (EUR)",
+    "take rate (%, fee revenue / gross volume)",
+    "take rate change vs prior quarter (percentage points)"
+   ],
+   "details": "Source: payouts, filtered to status='paid' (per the validated definition; paid_at is always populated for this status). Window: quarters 2024-Q1 through 2025-Q4 (8 quarters), using paid_at to assign the quarter (via calendar_days or date truncation). Convert gross_amount and fee_amount to EUR per payout using exchange_rates (base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at)), then sum per quarter. take_rate_pct = 100 * fee_revenue_eur / gross_volume_eur, rounded to 2 decimals. take_rate_change_pp = this quarter's take rate minus the previous quarter's (null for the first quarter, 2024-Q1). Order by quarter ascending. Note: this only captures the payment-processing side of revenue; I don't believe the warehouse models Tidewick's monthly platform-plan billing of merchants separately, so this report cannot show the platform-fee/processing-fee mix Maren asked about — flag if you find a table that does represent that.",
+   "builds_on": [
+    "Merchant revenue concentration, trailing 12 months",
+    "Payout status & date-field reconciliation"
+   ]
+  },
+  {
+   "title": "Vertical revenue growth, 2024 vs 2025",
+   "question": "Which verticals are growing and which are shrinking year over year, in both fee revenue and merchant count?",
+   "grain": "one row per merchant vertical (tenants.industry)",
+   "columns": [
+    "vertical (industry)",
+    "fee revenue 2024 (EUR)",
+    "fee revenue 2025 (EUR)",
+    "YoY fee revenue growth (%)",
+    "merchant count 2024",
+    "merchant count 2025",
+    "merchant count change"
+   ],
+   "details": "Source: payouts (status='paid') joined to tenants for industry, aggregated per tenant first and then grouped by industry (same anti-fan-out approach as the corrected vertical revenue report in this batch). Two calendar-year windows on paid_at: 2024 = [2024-01-01, 2025-01-01), 2025 = [2025-01-01, 2026-01-01). Convert gross/fee amounts to EUR via exchange_rates (base_code='EUR', quote_code=payouts.currency_code, as_of=date(paid_at)) before summing. 'Merchant count' per year = distinct tenant_id with at least one qualifying payout that year. YoY fee revenue growth % = 100 * (2025 fee revenue - 2024 fee revenue) / 2024 fee revenue (null/flag if 2024 revenue is zero for a vertical that only appears in 2025). Group null/blank industry into 'Unspecified'. Order by 2025 fee revenue descending, tie-break by vertical name ascending.",
+   "builds_on": [
+    "Revenue by vertical, trailing 12 months (corrected)"
+   ]
+  }
+ ]
+}

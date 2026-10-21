@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ledger Line-Item Detail for Flagged Sample Payments, 2025",
+    "--question",
+    "What do the actual ledger entries look like for the refunded and anomalous payments flagged in the transaction walkthrough, and does the accounting treatment of refunds make sense?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Grace\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 2, \"request\": 1, \"grain\": \"one ledger_entries row, for a fixed list of flagged payments\", \"columns_requested\": [\"merchant_name\", \"order_number\", \"ledger_account_name\", \"account_type\", \"direction\", \"amount\", \"currency_code\", \"description\", \"entry_group\", \"occurred_at\"], \"details\": \"Source: ledger_entries joined to ledger_accounts (for name/account_type), joined to payments via ledger_entries.payment_id, joined to orders (for order_number) and tenants (for merchant_name). Restrict to the ledger entries for exactly these 9 (merchant, order_number) pairs from last night's walkthrough sample: (OfficeHub Nordic, SO-100363), (Fell & Fjell, #1179), (Courtside Collective, CC-100015), (Ampfeld Elektronik, #1727), (Ballycorran Industrial Supply, SO-100835), (Ballycorran Industrial Supply, SO-100608), (Midland Safety Wear, SO-100307), (Halden Boots, #1004), (Castell Fasteners, SO-100233) \\u2014 match each pair to its order then its payment(s). Show every ledger_entries row tied to those payment_id(s), not aggregated. Order by merchant_name, order_number, occurred_at, entry_group.\", \"builds_on\": [\"Audit Sample: End-to-End Transaction Walkthrough, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n2-r1.submit.json"
+   ]
+  }
+ }
+}

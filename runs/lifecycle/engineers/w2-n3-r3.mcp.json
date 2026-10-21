@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Member order behavior before vs after their first points redemption",
+    "--question",
+    "Among members who have redeemed at least once, does their order frequency and spend actually pick up after that first redemption, or were they already heavy buyers beforehand - i.e. does redeeming look like a cause of engagement or just a marker of customers who were already engaged?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"lifecycle\", \"analyst\": \"Ingrid Solberg\", \"engineer\": \"Bea\", \"situation\": \"loyalty-programme-review\", \"week\": 2, \"night\": 3, \"request\": 3, \"grain\": \"one row per relative period: 'before first redemption' vs 'after first redemption', aggregated across all such members' own orders\", \"columns_requested\": [\"period\", \"distinct_customers\", \"total_orders\", \"avg_order_value_eur\", \"orders_per_customer_per_year\", \"refund_rate_pct\"], \"details\": \"Population: users with a loyalty_accounts row who have at least one 'burn'-direction loyalty_transactions row. For each such user, find their first redemption's occurred_at timestamp. Split their orders (any status, placed_at not null, 2023-01-01 to 2025-12-31) into 'before first redemption' (placed_at before that timestamp) and 'after first redemption' (placed_at on or after that timestamp). total_orders and distinct_customers are counts within each period. avg_order_value_eur uses non-cancelled orders, grand_total converted to EUR via exchange_rates (as_of placed_at). refund_rate_pct = share of orders in the period with payments.amount_refunded greater than 0 OR an order_returns row. orders_per_customer_per_year = total_orders in the period divided by (sum across customers of exposed days in that period divided by 365); exposed days before = first-redemption timestamp minus the customer's first order placed_at (or users.created_at if no earlier order); exposed days after = (customer's last order placed_at, or 2025-12-31 if still active) minus the first-redemption timestamp; floor exposed days at 1. Order rows: 'before first redemption' first, then 'after first redemption'.\", \"builds_on\": [\"Loyalty member order behavior before vs after enrollment\", \"What distinguishes higher-revenue loyalty members from the rest\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/lifecycle/engineers/w2-n3-r3.submit.json"
+   ]
+  }
+ }
+}

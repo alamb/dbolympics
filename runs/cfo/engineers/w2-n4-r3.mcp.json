@@ -1,0 +1,24 @@
+{
+ "mcpServers": {
+  "warehouse": {
+   "command": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "args": [
+    "/Users/[redacted: user name]/git/dbolympics/tools/roleplay_mcp.py",
+    "--bin",
+    "/Users/[redacted: user name]/git/dbolympics/target/release/dbolympics",
+    "--db",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/sf1.duckdb",
+    "--dry-log",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/dry_runs.jsonl",
+    "--title",
+    "Ledger Reconciliation Outcome by Payment Method, All 2025 Payments",
+    "--question",
+    "Is bank_transfer systemically more prone to ledger mismatches as a payment channel, or are the 19 flagged payments a rare exception within a much larger, mostly-clean population?",
+    "--tags",
+    "{\"run\": \"run6\", \"manager\": \"cfo\", \"analyst\": \"Kofi Mensah\", \"engineer\": \"Ines\", \"situation\": \"year-end-audit\", \"week\": 2, \"night\": 4, \"request\": 3, \"grain\": \"one payment_methods.kind, across ALL 2025 captured payments (not just the mismatched ones)\", \"columns_requested\": [\"payment_method_kind\", \"total_payment_count_2025\", \"count_credit_equals_net\", \"count_credit_equals_payment_plus_refund\", \"count_other_mismatch\", \"count_no_ledger_entries\", \"pct_clean (count_credit_equals_net + count_credit_equals_payment_plus_refund, as % of total)\"], \"details\": \"Same reconciliation classification used all week (payments captured/refunded/partially_refunded in 2025; per-payment ledger credit total in EUR vs net_amount_eur and payment+refund_eur with 1%-or-\\u20ac1 tolerance; 'no ledger entries' when zero linked ledger_entries rows). This time classify and count ALL qualifying 2025 payments (not pre-filtered to any mismatch category), joined to payment_methods.kind (null/missing as 'unknown'), and group by kind. Order by total_payment_count_2025 descending.\", \"builds_on\": [\"Other-Mismatch Payments: Characterization by Payment Method, 2025\", \"Ledger-to-Payment Reconciliation Pattern at Scale, 2025\"]}",
+    "--state",
+    "/Users/[redacted: user name]/git/dbolympics/tmp/roleplay/run6/cfo/engineers/w2-n4-r3.submit.json"
+   ]
+  }
+ }
+}

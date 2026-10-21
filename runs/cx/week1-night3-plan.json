@@ -1,0 +1,58 @@
+{
+ "notes": "Report 1 (night 2) shows the May-Jun 2025 anomaly is strongly concentrated in delivery-tagged tickets specifically (response/resolution hours for delivery tickets roughly 2-3x worse than 'other' tickets in those two months, whereas Nov/Dec spikes hit both groups evenly - that looks like genuine seasonal volume, not a delivery-specific problem). Report 2 pins the May-Jun spike almost entirely on one merchant: Studio Vrij had 86 tickets vs an expected ~16 (5.38x their normal rate), 83.7% delivery-tagged, and it was also the slowest-resolving merchant in the whole-year peer table from night 1. Every other merchant with a high spike ratio is tiny in absolute volume (noise), and the platform's other big merchants (Cragsley, Marrowby) were actually below their own baseline rate in May-Jun. So this looks like a single-merchant fulfillment incident, not a platform-wide issue - I want to confirm that with real delivery/shipment data before I write it into the memo as a finding. Report 3 (returns trend) is reassuring: resolve time is flat around ~8 days and rejection rate flat regardless of volume swings; the return-rate spikes track the same Nov/Dec seasonality as everything else. I want one merchant-level peer cut on returns (mirroring the support-speed peer report) to see if any merchant stands out the way Studio Vrij did on tickets. With priorities #1-3 now well covered, I'm using the third slot tonight to open priority #4 (CSAT) so there's something in hand for Friday's memo if priority #5 doesn't fit.",
+ "requests": [
+  {
+   "title": "Delivery performance: Studio Vrij vs platform, 2025",
+   "question": "Did Studio Vrij's actual shipping/delivery performance deteriorate in May-June 2025, explaining the spike in their delivery-related support tickets, or was it a support-side issue only?",
+   "grain": "one calendar month in 2025, with paired columns for Studio Vrij and the rest of the platform",
+   "columns": [
+    "month (YYYY-MM)",
+    "Studio Vrij shipments delivered",
+    "Studio Vrij avg days placed-to-delivered",
+    "Studio Vrij % of shipments over 7 days placed-to-delivered",
+    "platform (ex-Studio Vrij) shipments delivered",
+    "platform (ex-Studio Vrij) avg days placed-to-delivered",
+    "platform (ex-Studio Vrij) % of shipments over 7 days placed-to-delivered"
+   ],
+   "details": "Source: shipments joined to fulfillments (for order_id and tenant scoping) joined to orders (for placed_at). Only include shipments with delivered_at not null. 'Days placed-to-delivered' = extract(epoch from shipments.delivered_at - orders.placed_at)/86400. Grain the month on orders.placed_at (2025-01 through 2025-12). Split into two groups: tenant = the 'Studio Vrij' tenant (join tenants on name to find its id) vs all other tenants combined. '% over 7 days' = share of that group/month's delivered shipments where days placed-to-delivered > 7, as a percentage rounded to 1 decimal. Round avg days to 1 decimal. Note in the report that Nov/Dec 2025 cohorts will be incomplete since some orders placed late in the year may not show a delivered shipment yet (right-censoring), similar to the earlier ticket-resolution caveat. Order by month ascending.",
+   "builds_on": [
+    "Ticket spike in May-June 2025: which merchants drove it",
+    "Delivery-related vs other tickets: volume and resolution speed"
+   ]
+  },
+  {
+   "title": "Returns and refunds experience by merchant, 2025",
+   "question": "Does the returns/refund experience vary a lot across merchants, and does any merchant stand out as a problem spot the way Studio Vrij did on support tickets?",
+   "grain": "one row per tenant (merchant), among tenants with at least 20 returns requested in 2025",
+   "columns": [
+    "merchant name",
+    "orders placed, 2025",
+    "returns requested, 2025",
+    "return rate (%)",
+    "avg days requested-to-refunded",
+    "median days requested-to-refunded",
+    "returns rejected (%)"
+   ],
+   "details": "Source: order_returns joined to tenants (for name) and orders (for the orders-placed denominator). Window: order_returns.requested_at and orders.placed_at both in 2025-01-01 through 2025-12-31. Return rate = tenant's returns requested in 2025 / tenant's orders placed in 2025, as a percentage rounded to 1 decimal (same approximation caveat as the platform-wide returns report: a given return may relate to an order placed outside the year, so treat this as a rough proxy, not a precise cohort rate). avg/median days requested-to-refunded = extract(epoch from refunded_at - requested_at)/86400 over that tenant's returns with status='refunded' and refunded_at not null in 2025, rounded to 1 decimal. returns rejected (%) = tenant's order_returns with status='rejected' in 2025 / tenant's returns requested in 2025, percentage rounded to 1 decimal. Only include tenants with >=20 returns requested in 2025. Order by returns requested descending, tie-break by merchant name ascending. Cap at 50 printed rows per house standard; note total qualifying tenant count in the footer.",
+   "builds_on": [
+    "Returns and refunds: volume and time-to-resolve trend",
+    "Response & resolution times by merchant, 2025"
+   ]
+  },
+  {
+   "title": "Shopper satisfaction (CSAT) trend, monthly",
+   "question": "How satisfied are shoppers with support interactions overall, and is satisfaction trending up or down?",
+   "grain": "one calendar month, platform-wide",
+   "columns": [
+    "month (YYYY-MM)",
+    "CSAT responses",
+    "avg score (1-5)",
+    "median score (1-5)",
+    "% satisfied (score >= 4)",
+    "% dissatisfied (score <= 2)"
+   ],
+   "details": "Source: csat_responses. Grain the month on submitted_at. Window: 2023-01-01 through 2025-12-31 (36 months). avg/median score computed directly over csat_responses.score for that month. '% satisfied' = count of responses with score>=4 / total responses that month, percentage rounded to 1 decimal; '% dissatisfied' = count with score<=2 / total responses that month, percentage rounded to 1 decimal. Round avg score to 2 decimals, median to 1 decimal. Order by month ascending.",
+   "builds_on": []
+  }
+ ]
+}
