@@ -605,7 +605,7 @@ class Bot:
                 self.stage(job, f"Waiting for the machine: {st.splitlines()[0]}.")
                 said = st
             self.cancel.wait(60)
-        sh(["reserve-machine", "-y"], check=True)
+        sh(["reserve-machine", f"{self.cfg['reserve_hours']}h", "-y"], check=True)
         job["reserved_at"] = time.time()
         self.schedule_release(job)
 
