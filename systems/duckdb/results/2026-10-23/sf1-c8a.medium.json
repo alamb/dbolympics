@@ -1,0 +1,33 @@
+{
+  "benchmark": "bench/benchmark_sf1.toml",
+  "commit": "e90d7b3359d3039a5e264c490da3785c630b08db",
+  "complete": true,
+  "config": "sf1-c8a.medium",
+  "cpuset": "0",
+  "date": "2026-10-23",
+  "dirty": false,
+  "grace_period": 5,
+  "host": {
+    "cpu": "AMD EPYC 9745 128-Core Processor",
+    "cpus": 256,
+    "kernel": "7.0.0-38-generic",
+    "memory_bytes": 1080968810496
+  },
+  "images": {
+    "system": "localhost/dbo-duckdb@sha256:b1e4dd487bd1f942ea2251c260cc33f6efbc0a461ba0ffb2118c6d2736c9e77b"
+  },
+  "keys": "none",
+  "load_timeout": 300,
+  "memory": "2GB",
+  "memory_peak_bytes": 1207889920,
+  "queries": null,
+  "query_timeout": 5,
+  "repetitions": 1,
+  "schema_seconds": 0.09511453399999999,
+  "sf": 1.0,
+  "storage_bytes": 410197436,
+  "system": "duckdb",
+  "threads": 1,
+  "timeout_check": "cancelled",
+  "version": "1.5.6"
+}
