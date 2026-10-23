@@ -542,13 +542,18 @@ class Bot:
             raise Refused("The run wrote no results.\n\n" + details("The end of the log", self.tail(job)))
 
         with self.git_lock:
-            # the newest results of the systems not run now stay, if they are still of the systems' code
+            # the earlier results of the systems whose code is still the same stay: of the systems not run now, and of
+            # the configurations not run now of those that ran (e.g. after `/benchmark clickhouse sf1000`)
             old = results[-1] if results else None
-            kept = [s for s, h in (benchmarked(self.mirror, old) if old else {}).items()
-                    if s not in job["systems"] and code_hash(self.mirror, tip, s) == h]
-            changes = [("100644", git(self.run_dir, "hash-object", "-w", p), p) for p in files] + (self.changes_of(old, kept) if old else [])
-            code = {**{s: h for s, h in (benchmarked(self.mirror, old) if old else {}).items() if s in kept},
-                    **{s: code_hash(self.mirror, tip, s) for s in job["systems"]}}
+            before = benchmarked(self.mirror, old) if old else {}
+            same = sorted(s for s, h in before.items() if code_hash(self.mirror, tip, s) == h)
+            kept = [s for s in same if s not in job["systems"]]
+            config = lambda path: (path.split("/")[1], path.rsplit("/", 1)[1].rsplit(".", 1)[0])  # (system, configuration)
+            now = {config(p) for p in files}
+            earlier = [c for c in (self.changes_of(old, same) if old else []) if config(c[2]) not in now]
+            partly = sorted({config(p)[0] for _, _, p in earlier} & set(job["systems"]))
+            changes = [("100644", git(self.run_dir, "hash-object", "-w", p), p) for p in files] + earlier
+            code = {**{s: before[s] for s in kept}, **{s: code_hash(self.mirror, tip, s) for s in job["systems"]}}
             message = (f"Benchmark results of {', '.join(code)}\n\nRun by the benchmark bot for pull request #{n}, "
                        f"approved by @{job['approver']}: {job['comment_url']}\n\n{RESULTS_TRAILER}: {' '.join(code)}\n"
                        + "".join(f"{SYSTEM_TRAILER}: {s} {h}\n" for s, h in code.items())
@@ -563,6 +568,8 @@ class Bot:
                "The results of each system: " + ", ".join(f"[{s}]({links[s]})" if links.get(s) else s for s in job["systems"]) + ".", ""]
         if kept:
             out.append(f"The results of {', '.join(kept)} from the earlier run stay in the commit.")
+        if partly:
+            out.append(f"The earlier results of {', '.join(partly)} in the configurations not run now stay in the commit.")
         if undone:
             out.append("The commit undoes the pull request's own changes to results ("
                        + ", ".join(f"`{p}`" for _, _, p in undone[:10]) + (" ..." if len(undone) > 10 else "") + ").")

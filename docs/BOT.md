@@ -55,7 +55,8 @@ Each command goes at the start of a line. Edited comments do not count.
    --system <system>` once per benchmark file. The output goes to `<work>/logs/<pull request>-<comment>.log`.
 6. **The results commit.** The new `systems/<name>/results/<date>/` files become one commit, authored by the bot, on
    top of the pull request's last commit.
-   - Results of other systems from the earlier results commit stay, as long as those systems' code has not changed.
+   - Earlier results from the last results commit stay, as long as the system's code has not changed: those of the other
+     systems, and those of the configurations not run now (`/benchmark clickhouse sf1000` keeps ClickHouse's sf1 to sf100).
    - The commit's trailers name the systems and a hash of each system's code (without its results). That is how the
      check tells whether the results are still of the code as it is.
    - **Results are the bot's.** The commit undoes the pull request's own changes to `systems/*/results/`: files it
