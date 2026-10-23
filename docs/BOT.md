@@ -33,13 +33,15 @@ Each command goes at the start of a line. Edited comments do not count.
 
 1. **Approval.** The bot takes the pull request as it is when it reads the comment. If commits arrive before the run
    starts, it refuses, and the maintainer approves again.
-2. **Checks.** The bot runs a pull request only if every file outside its systems' directories is main's.
-   - The exceptions are documentation (`*.md`, `docs/`), `site/` and `.github/`, which never run on the server.
-   - The bot builds the runner and the generator from the pull request's checkout, so their code must be main's.
-     Otherwise the bot asks for a rebase onto main.
+2. **Checks.** The bot runs the pull request's systems on main: main's files, with the directories of the systems
+   the pull request changes as they are in it. So it needs no rebase when main has moved on, but:
+   - The pull request may change nothing outside its systems' directories, since that would not be in the run. The
+     exceptions are documentation (`*.md`, `docs/`), `site/` and `.github/`, which never run on the server.
+   - If main changed one of the pull request's systems since the pull request branched off, the bot asks for a
+     rebase onto main: the run would leave main's change out.
    - The systems' own code only runs inside their containers. It may not contain symbolic links or submodules.
-3. **Build.** `cargo build --release --workspace` runs in the bot's checkout, which keeps the generated data and the
-   build from run to run.
+3. **Build.** `cargo build --release --workspace` runs in the bot's checkout of that tree (a commit on main of the
+   bot's own, not pushed), which keeps the generated data and the build from run to run.
 4. **The machine.** The bot waits until nobody holds the machine. Then it reserves it with `reserve-machine`, which
    ends the other users' sessions and processes.
    - It schedules `release-machine 24h --kill` at the same time: each system gets 24 hours (`reserve_hours`).

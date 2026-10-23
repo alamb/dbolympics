@@ -35,7 +35,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (APPROVED_TRAILER, RESULTS_PATH, RESULTS_TRAILER, SYSTEM_NAME, SYSTEM_TRAILER, benchmarked,  # noqa: E402
-                    changed_systems, code_hash, git, problems, split, summary, table, trailers, user_results)
+                    changed_systems, code_hash, git, problems, run_tree, split, summary, table, trailers, user_results)
 
 DEFAULTS = {
     "repo": "dbolympics/dbolympics",
@@ -231,6 +231,16 @@ class Bot:
             new[c] = git(self.mirror, "commit-tree", *parents, "-F", "-", tree, input=git(self.mirror, "log", "-1", "--format=%B", c),
                          env=dict(self.identity(), GIT_AUTHOR_NAME=name, GIT_AUTHOR_EMAIL=email, GIT_AUTHOR_DATE=date))
         return new[head]
+
+    def run_commit(self, pr, base, tip):
+        """A commit on main of the tree a run of the pull request has (run_tree); not pushed anywhere."""
+        index = self.work / "index"
+        env = dict(self.identity(), GIT_INDEX_FILE=str(index))
+        index.unlink(missing_ok=True)
+        tree = run_tree(self.mirror, "main", base, tip, env)
+        index.unlink()
+        return git(self.mirror, "commit-tree", "-p", "main", "-F", "-", tree, env=env,
+                   input=f"The systems of pull request #{pr} at {tip[:10]} on main, as the bot runs them\n")
 
     def write_commit(self, parent, changes, message):
         """A commit on `parent` with `changes` [(mode, blob, path)] (blob None: removed)."""
@@ -501,7 +511,8 @@ class Bot:
                 raise Refused("The bot does not run this pull request:\n" + "\n".join(f"- {e}" for e in errs))
             pr = self.gh.get(f"/repos/{self.cfg['repo']}/pulls/{n}")
             job["commit"] = tip
-            git(self.run_dir, "checkout", "--quiet", "--detach", "--force", tip)
+            # the pull request's systems on main (run_tree): main's runner, whatever main the branch started from
+            git(self.run_dir, "checkout", "--quiet", "--detach", "--force", self.run_commit(n, base, tip))
             git(self.run_dir, "clean", "-ffdq")  # untracked files go, the ignored ones (data/, target/) stay
 
         self.stage(job, "Building the runner ...")

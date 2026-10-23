@@ -19,9 +19,9 @@ APPROVED_TRAILER = "Approved-By"
 RESULTS_PATH = re.compile(r"^systems/[^/]+/results/")
 SYSTEM_PATH = re.compile(r"^systems/([^/]+)/")
 SYSTEM_NAME = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
-# Files a pull request may have apart from main's, besides its systems, for the bot to run it: none of them runs on
-# the host. Everything else (the runner, the generator, the queries, the schema, the shared systems/dbo, Cargo's
-# files) must be main's, since the bot builds and runs it outside the containers.
+# Files a pull request may change, besides its systems, for the bot to run it: none of them runs on the host. The bot
+# runs the pull request's systems on main (run_tree): a change to anything else (the runner, the generator, the
+# queries, the schema, the shared systems/dbo, Cargo's files) would not be in the run.
 NOT_RUN = re.compile(r"^(docs/|site/|\.github/)|\.md$|^LICENSE$")
 SHARED = "dbo"  # systems/dbo: the library every system's query program uses, not a system
 # a system's files (systems/README.md); logo.svg is optional
@@ -86,17 +86,23 @@ def changed_systems(repo, base, tip):
 def problems(repo, main, base, tip):
     """Why the bot must not run the pull request's tip, as (error, sentence) pairs; none if it may. An error is
     wrong in any pull request; the rest only keeps the bot from running it:
-    - a file differs from main's that runs on the host (NOT_RUN, the systems' directories),
+    - the pull request changes a file that runs on the host (not NOT_RUN, not a system's directory): the bot runs the
+      systems on main's, so the change would not be in the run;
+    - main changed one of the pull request's systems since the merge base: the run would leave that change out;
     - a system's directory has a symbolic link or a submodule, or a name that is not a plain one (errors).
-    Results the pull request changes itself are no reason: the bot's results commit undoes them (user_results)."""
+    What main changed elsewhere since the merge base is no reason: the run has it. Results the pull request changes
+    itself are none either: the bot's results commit undoes them (user_results)."""
     out = []
-    outside = [f for f in git(repo, "diff", "--name-only", main, tip).splitlines()
+    outside = [f for f in git(repo, "diff", "--name-only", base, tip).splitlines()
                if not NOT_RUN.search(f) and not ((m := SYSTEM_PATH.match(f)) and m.group(1) != SHARED)]
     if outside:
-        out.append((False, "These files differ from main's, and the bot builds or runs them outside the containers: "
+        out.append((False, "The pull request changes files that run outside the containers: "
                    + ", ".join(f"`{f}`" for f in outside[:20]) + (" ..." if len(outside) > 20 else "")
-                   + ". Rebase the pull request onto main (or keep the change for a separate pull request)."))
+                   + ". The bot runs the systems on main's runner, so keep these changes for a separate pull request."))
     systems, _ = changed_systems(repo, base, tip)
+    if both := sorted(set(systems) & set(changed_systems(repo, base, main)[0])):
+        out.append((False, f"Main changed {', '.join(f'`systems/{s}`' for s in both)} since the pull request branched off, "
+                   "and the run would leave that out: rebase the pull request onto main."))
     for s in systems:
         if not SYSTEM_NAME.match(s):
             out.append((True, f"`systems/{s}`: a system's name has lower-case letters, digits, `-` and `_` only."))
@@ -106,6 +112,23 @@ def problems(repo, main, base, tip):
             if mode in ("120000", "160000"):
                 out.append((True, f"`{path}` is a {'symbolic link' if mode == '120000' else 'submodule'}; a system has plain files only."))
     return out
+
+
+def run_tree(repo, main, base, tip, env):
+    """The tree the bot runs a pull request in: main's, with the directories of the systems the pull request changes
+    as they are at its tip (their results as on main). The index of $GIT_INDEX_FILE (in `env`) is used for it."""
+    git(repo, "read-tree", main, env=env)
+    systems, _ = changed_systems(repo, base, tip)
+    entries = lambda rev, s: {line.split("\t", 1)[1]: line.split()[:3] for line in git(repo, "ls-tree", "-r", rev, "--", f"systems/{s}/").splitlines()
+                              if not RESULTS_PATH.match(line.split("\t", 1)[1])}
+    lines = []
+    for s in systems:
+        theirs = entries(tip, s)
+        lines += [f"0 {'0' * 40}\t{p}\n" for p in entries(main, s) if p not in theirs]  # removed in the pull request
+        lines += [f"{mode} {blob}\t{p}\n" for p, (mode, _, blob) in theirs.items()]
+    if lines:
+        git(repo, "update-index", "--index-info", env=env, input="".join(lines))
+    return git(repo, "write-tree", env=env)
 
 
 def user_results(repo, base, rev):
