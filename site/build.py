@@ -408,6 +408,35 @@ SERVER = ("an AMD EPYC 9745 (Zen 5c, up to 3.7 GHz)", 128,
           "its cores are Zen 5c, the cores of c8a’s generation made smaller and run at a lower clock, so we expect a "
           "core to be somewhat slower than a c8a vCPU")
 
+# DuckDB on every configuration, on the c8a instances themselves (us-east-2, the same image and settings) and on the
+# server, 20 October 2026: (scale factor, machine, the queries both answered correctly, the time of the last run over
+# them on c8a, on the server, in seconds)
+HOST_COMPARISON = [
+    (1, "c8a.medium", 409, 2.642, 3.122), (1, "c8a.large", 409, 2.607, 2.690), (1, "c8a.xlarge", 409, 2.370, 2.621),
+    (1, "c8a.2xlarge", 409, 2.284, 2.651), (10, "c8a.xlarge", 408, 8.588, 9.651), (10, "c8a.2xlarge", 408, 7.006, 8.217),
+    (10, "c8a.4xlarge", 408, 7.191, 7.938), (10, "c8a.8xlarge", 408, 7.413, 8.472), (100, "c8a.4xlarge", 408, 33.393, 37.300),
+    (100, "c8a.8xlarge", 408, 28.159, 32.133), (100, "c8a.12xlarge", 408, 27.349, 31.346), (100, "c8a.16xlarge", 408, 27.763, 31.430),
+    (100, "c8a.24xlarge", 408, 28.634, 32.804), (1000, "c8a.12xlarge", 407, 201.566, 215.411), (1000, "c8a.16xlarge", 407, 181.663, 200.361),
+    (1000, "c8a.24xlarge", 407, 177.729, 192.511),
+]
+
+def host_comparison():
+    """DuckDB on the instances and on the server, configuration by configuration (HOST_COMPARISON), as a paragraph
+    and a table."""
+    ratios = [o / a for _, _, _, a, o in HOST_COMPARISON]
+    rows = "".join(f'<tr><td class="r">{sf}</td><td>{machine}</td><td class="r">{n}</td><td class="r">{a:.1f}&#8202;s</td>'
+                   f'<td class="r">{o:.1f}&#8202;s</td><td class="r">{o / a:.2f}</td></tr>' for sf, machine, n, a, o in HOST_COMPARISON)
+    mean = math.exp(sum(map(math.log, ratios)) / len(ratios))
+    return (f'<p><b>How close the server is to the instances.</b> DuckDB ran every configuration both on the server '
+            f'and on the c8a instances themselves (us-east-2, the same image and settings). The table gives the time of '
+            f'the last run, over the queries both answered correctly. On the server the queries of a configuration '
+            f'take {min(ratios):.2f} to {max(ratios):.2f} times as long as on the instance, {mean:.2f} times in the '
+            f'geometric mean. We expect that the systems’ query times are roughly {100 * (mean - 1):.0f}% slower on '
+            f'the local server than they would be on AWS.</p>'
+            '<table class="spec"><thead><tr><th class="r">Scale</th><th>Machine</th><th class="r">Queries</th>'
+            '<th class="r">c8a</th><th class="r">Server</th><th class="r">Ratio</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table>')
+
 def machines_text():
     """The methodology's paragraphs on the machines, the server that runs them, and their prices."""
     cpu, cores, per_core = SERVER
@@ -426,7 +455,8 @@ def machines_text():
             f'{host["kernel"]}. A configuration gets the first hardware threads of the server and the memory of the '
             f'instance. A vCPU of c8a is a physical core; {per_core}. Every thread has a core of its own, as on c8a, '
             f'and the smaller configurations likely get more of the cache and memory bandwidth than an instance of '
-            f'their size.</p>')
+            f'their size.</p>'
+            + host_comparison())
 
 def example_run():
     """A run command for one configuration of the results, as the reproduce section shows it."""
